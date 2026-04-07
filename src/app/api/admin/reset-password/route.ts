@@ -39,8 +39,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Kein Admin-Konto gefunden.' }, { status: 404 });
   }
 
-  // Generate a random one-time password
-  const oneTimePassword = randomBytes(6).toString('hex'); // 12 hex chars
+  // Generate a cryptographically random one-time password (16 bytes = 128 bits of entropy)
+  const oneTimePassword = randomBytes(16).toString('hex'); // 32 hex chars
   const hashed = await bcrypt.hash(oneTimePassword, 12);
 
   await saveUser({ ...admin, password: hashed });

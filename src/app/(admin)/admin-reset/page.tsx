@@ -8,6 +8,7 @@ export default function AdminResetPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState<{ email: string; oneTimePassword: string } | null>(null);
+  const [revealed, setRevealed] = useState(false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -53,7 +54,16 @@ export default function AdminResetPage() {
                   </div>
                   <div>
                     <span className="text-slate-400">Einmalpasswort: </span>
-                    <span className="text-yellow-300 font-mono text-lg tracking-wider select-all">{result.oneTimePassword}</span>
+                    {revealed ? (
+                      <span className="text-yellow-300 font-mono text-lg tracking-wider select-all">{result.oneTimePassword}</span>
+                    ) : (
+                      <button
+                        onClick={() => setRevealed(true)}
+                        className="text-yellow-400 text-sm underline hover:text-yellow-300"
+                      >
+                        Zum Anzeigen klicken
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
