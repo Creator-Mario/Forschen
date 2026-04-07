@@ -1,0 +1,12 @@
+[
+  {
+    "id": "video-001",
+    "userId": "user-001",
+    "authorName": "Maria Hoffmann",
+    "title": "Einführung in die Johannesevangelium-Forschung",
+    "description": "Ein kurzer Überblick über die wichtigsten Fragen der johanneischen Theologie und wie sie uns heute noch ansprechen.",
+    "url": "https://www.youtube.com/watch?v=example1",
+    "status": "approved",
+    "createdAt": "2024-01-08T12:00:00.000Z"
+  }
+]

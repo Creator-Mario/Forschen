@@ -1,0 +1,115 @@
+name: Weekly Theme Generation
+
+on:
+  schedule:
+    # Runs every Monday at 6:00 AM UTC
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  generate-wochenthema:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate weekly theme
+        run: |
+          node << 'EOF'
+          const fs = require('fs');
+          const path = require('path');
+
+          function getISOWeek(date) {
+            const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const dayNum = d.getUTCDay() || 7;
+            d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            const weekNum = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+            return `${d.getUTCFullYear()}-W${String(weekNum).padStart(2, '0')}`;
+          }
+
+          const themes = [
+            {
+              title: "Die Schöpfung – Staunen, Verantwortung und das Bild Gottes",
+              introduction: "Genesis 1-2 lädt uns ein, Schöpfung neu zu entdecken – nicht als wissenschaftliches Lehrbuch, sondern als theologisches Bekenntnis. Der Mensch als Gottes Ebenbild trägt eine besondere Würde und Verantwortung.",
+              bibleVerses: ["Genesis 1,1-2,3", "Psalm 8", "Römer 8,19-23", "Kolosser 1,15-20"],
+              problemStatement: "Was bedeutet es, als 'Bild Gottes' (imago dei) erschaffen zu sein? Diese Frage berührt Menschenwürde, Ökologie und unser Verständnis von Schöpfungsverantwortung im 21. Jahrhundert.",
+              researchQuestions: [
+                "Was bedeutet 'imago dei' im altorientalischen Kontext?",
+                "Wie unterscheidet sich der biblische Schöpfungsbericht von anderen Schöpfungsmythen der Zeit?",
+                "Welche ethische Verantwortung ergibt sich aus der Gottebenbildlichkeit?",
+                "Wie verhält sich die Schöpfungstheologie zur modernen Ökologie?",
+                "Was bedeutet die 'gute Schöpfung' angesichts von Leid und Tod?"
+              ]
+            },
+            {
+              title: "Das Gebet – Reden mit Gott, Hören auf Gott",
+              introduction: "Gebet ist die älteste und persönlichste Form des Gottesverhältnisses. Von den Psalmen bis zum Vaterunser – die Bibel zeigt uns eine reiche Gebetskultur, die weit mehr umfasst als fromme Formeln.",
+              bibleVerses: ["Matthäus 6,5-15", "Psalm 22", "Römer 8,26-27", "1. Thessalonicher 5,16-18"],
+              problemStatement: "Wird Gebet erhört? Diese schlichte Frage birgt tiefe theologische Abgründe. Wie verhält sich das Beten zu Gottes Souveränität? Was bedeutet es, wenn Gebete scheinbar unerhört bleiben?",
+              researchQuestions: [
+                "Welche verschiedenen Gebetsformen finden sich in der Bibel (Bitte, Klage, Lobpreis, Dank)?",
+                "Was unterscheidet das Vaterunser von Gebeten des antiken Judentums?",
+                "Wie betet der Geist für uns (Römer 8,26)?",
+                "Welche Rolle spielt Stille im biblischen Gebetsverständnis?",
+                "Wie kann Klage (wie in den Klageliedern) eine Form des Gebets sein?"
+              ]
+            },
+            {
+              title: "Die Nachfolge – Was bedeutet es, Jesus nachzufolgen?",
+              introduction: "Nachfolge Jesu ist mehr als Kirchenmitgliedschaft. Die synoptischen Evangelien zeigen radikale Jünger, die alles zurückließen. Was bedeutet das heute, in einer säkularen Gesellschaft?",
+              bibleVerses: ["Markus 1,16-20", "Lukas 9,23-25", "Johannes 15,1-17", "Galater 2,20"],
+              problemStatement: "Jesus ruft zur Nachfolge unter dem Zeichen des Kreuzes. Diese Einladung ist gleichzeitig befreiend und herausfordernd. Wie lässt sich radikale Nachfolge mit dem Leben in der Welt vereinbaren?",
+              researchQuestions: [
+                "Was bedeutete 'Nachfolge' (gr. akolouthein) im Kontext des rabbinischen Judentums?",
+                "Welche Konsequenzen hat das 'Selbst verleugnen' (Lukas 9,23) für das moderne Lebensverständnis?",
+                "Wie versteht Paulus Nachfolge als 'mit Christus gekreuzigt sein'?",
+                "Was lernen wir von historischen Nachfolgebewegungen (Franziskaner, Täufer, Bonhoeffer)?",
+                "Wie verhält sich individuelle Nachfolge zu gemeinschaftlicher Nachfolge?"
+              ]
+            }
+          ];
+
+          const today = new Date();
+          const currentWeek = getISOWeek(today);
+          const dataPath = path.join(process.cwd(), 'data', 'wochenthema.json');
+          const existing = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+
+          if (existing.find(e => e.week === currentWeek)) {
+            console.log(`Wochenthema for ${currentWeek} already exists, skipping.`);
+            process.exit(0);
+          }
+
+          const weekNum = parseInt(currentWeek.split('-W')[1]);
+          const selectedTheme = themes[weekNum % themes.length];
+
+          const newTheme = {
+            id: currentWeek,
+            week: currentWeek,
+            ...selectedTheme,
+            status: 'published',
+            createdAt: new Date().toISOString()
+          };
+
+          existing.push(newTheme);
+          fs.writeFileSync(dataPath, JSON.stringify(existing, null, 2), 'utf-8');
+          console.log(`Generated Wochenthema for ${currentWeek}: ${selectedTheme.title}`);
+          EOF
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/wochenthema.json
+          git diff --staged --quiet || git commit -m "chore: add weekly theme for $(date +%Y-W%V)"
+          git push

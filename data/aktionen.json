@@ -1,0 +1,14 @@
+[
+  {
+    "id": "aktion-001",
+    "userId": "user-001",
+    "authorName": "Maria Hoffmann",
+    "title": "Bibellesekreis – Johannesevangelium",
+    "description": "Wir laden herzlich ein zu einem offenen Bibellesekreis, in dem wir gemeinsam das Johannesevangelium lesen und besprechen. Alle Erfahrungsstufen sind willkommen. Es geht nicht um Vorkenntnisse, sondern um ehrliches Fragen.",
+    "location": "Online via Zoom",
+    "dateEvent": "2024-02-01T19:00:00.000Z",
+    "contactInfo": "bibelkreis@example.de",
+    "status": "approved",
+    "createdAt": "2024-01-15T10:00:00.000Z"
+  }
+]
