@@ -50,6 +50,7 @@ export default function AdminSystemPage() {
               <li><code className="bg-white px-1 rounded">GITHUB_TOKEN</code> – Personal Access Token (repo-Zugriff) für Datenpersistenz</li>
               <li><code className="bg-white px-1 rounded">GITHUB_OWNER</code> – Creator-Mario</li>
               <li><code className="bg-white px-1 rounded">GITHUB_REPO</code> – Forschen</li>
+              <li><code className="bg-white px-1 rounded">ADMIN_RESET_TOKEN</code> – ein geheimes Wort für den Notfall-Reset (z.B. ein langer zufälliger String)</li>
             </ul>
           </div>
         </div>
