@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  output: 'export',
+  basePath: '/Forschen',
+  trailingSlash: true,
   images: {
     unoptimized: true,
   },
-  // For GitHub Pages static export, use 'export' output
-  // output: 'export',
 };
 
 export default nextConfig;

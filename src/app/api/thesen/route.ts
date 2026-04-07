@@ -1,3 +1,4 @@
+export const dynamic = 'force-static';
 import { NextRequest, NextResponse } from 'next/server';
 import { getApprovedThesen, getThesen, saveThese } from '@/lib/db';
 import { getServerSession } from 'next-auth';
@@ -6,7 +7,8 @@ import { generateId } from '@/lib/utils';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const session = await getServerSession(authOptions);
+  let session = null;
+  try { session = await getServerSession(authOptions); } catch { /* static build */ }
   const all = searchParams.get('all');
 
   if (all && session?.user.role === 'ADMIN') {
