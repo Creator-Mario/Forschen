@@ -1,0 +1,19 @@
+[
+  {
+    "id": "gebet-001",
+    "userId": "user-001",
+    "authorName": "Maria H.",
+    "content": "Herr, in dieser Zeit voller Ungewissheit bitte ich dich um Frieden. Nicht den Frieden der Weltabwendung, sondern jenen tiefen Frieden, der durch das Verständnis entsteht, dass du alles in deinen Händen hältst. Hilf mir, heute mutig zu vertrauen.",
+    "anonymous": false,
+    "status": "approved",
+    "createdAt": "2024-01-12T08:00:00.000Z"
+  },
+  {
+    "id": "gebet-002",
+    "userId": "user-001",
+    "content": "Für alle, die heute in Krankenhäusern liegen und bangen – sei ihnen nah, Gott. Gib ihren Angehörigen Kraft und den Pflegenden Ausdauer und Mitgefühl.",
+    "anonymous": true,
+    "status": "approved",
+    "createdAt": "2024-01-18T20:00:00.000Z"
+  }
+]

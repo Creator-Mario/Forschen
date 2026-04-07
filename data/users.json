@@ -1,0 +1,20 @@
+[
+  {
+    "id": "admin-001",
+    "email": "admin@fluss-des-lebens.de",
+    "password": "$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj/xH9QMnzMS",
+    "name": "Administrator",
+    "role": "ADMIN",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "active": true
+  },
+  {
+    "id": "user-001",
+    "email": "maria@example.de",
+    "password": "$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj/xH9QMnzMS",
+    "name": "Maria Hoffmann",
+    "role": "USER",
+    "createdAt": "2024-01-15T10:00:00.000Z",
+    "active": true
+  }
+]

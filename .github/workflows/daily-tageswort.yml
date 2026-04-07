@@ -1,0 +1,104 @@
+name: Daily Tageswort Generation
+
+on:
+  schedule:
+    # Runs every day at 5:00 AM UTC
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+jobs:
+  generate-tageswort:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate daily Tageswort entry
+        run: |
+          node << 'EOF'
+          const fs = require('fs');
+          const path = require('path');
+
+          // Template-based verse selection
+          const verses = [
+            {
+              verse: "Philipper 4,13",
+              text: "Ich vermag alles durch den, der mich stärkt.",
+              context: "Paulus schreibt aus dem Gefängnis an die Gemeinde in Philippi. Diese Aussage ist kein Triumphialismus, sondern ein Bekenntnis der Abhängigkeit von Christus. 'Alles' meint nicht das Unmögliche, sondern die Kraft, in jeder Lage – in Not und Überfluss – zufrieden zu sein."
+            },
+            {
+              verse: "Jesaja 40,31",
+              text: "Die aber, die auf den HERRN hoffen, schöpfen neue Kraft. Sie heben die Schwingen wie Adler. Sie laufen und werden nicht müde, sie gehen und werden nicht matt.",
+              context: "Deuterojesaja richtet diese Worte an das im babylonischen Exil lebende Volk. Die Verheißung der Erneuerung gilt denen, die aktiv auf Gott warten – ein Warten, das nicht passiv ist, sondern vertrauensvolle Ausrichtung auf Gottes Handeln."
+            },
+            {
+              verse: "Matthäus 11,28",
+              text: "Kommt her zu mir, alle, die ihr mühselig und beladen seid; ich will euch Ruhe geben.",
+              context: "Jesus spricht diese Einladung in einem Kontext aus, in dem er die religiöse Last der Zeit beschreibt. Die Einladung ist universell – sie gilt allen Erschöpften. Das griechische 'anapausis' bedeutet nicht nur Pause, sondern tiefe innere Erneuerung."
+            },
+            {
+              verse: "1. Johannes 4,19",
+              text: "Wir lieben, weil er uns zuerst geliebt hat.",
+              context: "Dieser kurze Vers des Johannesbriefes ist ein theologisches Fundament der christlichen Ethik: Liebe ist nicht menschliche Leistung, sondern Reaktion auf Gottes vorausgehende Liebe. Die Fähigkeit zu lieben ist ein Geschenk, keine Pflicht, die aus eigener Kraft erfüllt wird."
+            },
+            {
+              verse: "Psalm 46,2",
+              text: "Gott ist unsere Zuflucht und Stärke, eine Hilfe in den großen Nöten, die uns getroffen haben.",
+              context: "Psalm 46 entstand möglicherweise im Kontext einer konkreten Bedrohung Jerusalems. Das Bild der 'Zuflucht' (hebr. machse) bezeichnet nicht Weltflucht, sondern einen Ort der Sicherheit inmitten des Sturms. Gott ist nicht jenseits der Not, sondern mitten in ihr als Fels."
+            }
+          ];
+
+          const today = new Date().toISOString().split('T')[0];
+          const dataPath = path.join(process.cwd(), 'data', 'tageswort.json');
+          const existing = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+
+          // Check if today's entry already exists
+          if (existing.find(e => e.date === today)) {
+            console.log('Tageswort for today already exists, skipping.');
+            process.exit(0);
+          }
+
+          // Select verse based on day of year
+          const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+          const selectedVerse = verses[dayOfYear % verses.length];
+
+          const questions = [
+            `Was ist der historische Kontext von ${selectedVerse.verse}?`,
+            `Welche theologischen Kernaussagen enthält dieser Vers?`,
+            `Wie verbindet sich dieser Text mit dem Gesamtzeugnis der Schrift?`,
+            `Was fordert dieser Vers mein persönliches Denken heraus?`,
+            `Wie kann die Botschaft dieses Verses konkret gelebt werden?`
+          ];
+
+          const newEntry = {
+            id: today,
+            date: today,
+            verse: selectedVerse.verse,
+            text: selectedVerse.text,
+            context: selectedVerse.context,
+            questions,
+            published: true
+          };
+
+          existing.push(newEntry);
+          fs.writeFileSync(dataPath, JSON.stringify(existing, null, 2), 'utf-8');
+          console.log(`Generated Tageswort for ${today}: ${selectedVerse.verse}`);
+          EOF
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/tageswort.json
+          git diff --staged --quiet || git commit -m "chore: add daily Tageswort for $(date +%Y-%m-%d)"
+          git push

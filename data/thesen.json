@@ -1,0 +1,23 @@
+[
+  {
+    "id": "these-001",
+    "userId": "user-001",
+    "authorName": "Maria Hoffmann",
+    "title": "Die Auferstehung als Fundament christlicher Hoffnung",
+    "content": "Die Auferstehung Jesu Christi ist nicht nur ein historisches Ereignis, sondern das ontologische Fundament christlicher Existenz. Ohne Auferstehung ist der Glaube leer (1 Kor 15,14). Die Auferstehung transformiert unsere Gegenwart: Sie gibt jedem Moment ewige Würde und befreit uns von der Tyrannei des Todes als letzter Wirklichkeit.",
+    "bibleReference": "1. Korinther 15,12-22",
+    "status": "approved",
+    "createdAt": "2024-01-10T14:30:00.000Z",
+    "updatedAt": "2024-01-11T09:00:00.000Z"
+  },
+  {
+    "id": "these-002",
+    "userId": "user-001",
+    "authorName": "Maria Hoffmann",
+    "title": "Gebet als Dialog, nicht Monolog",
+    "content": "Gebet ist keine Einbahnstraße. Wenn wir beten, tun wir nicht nur unsere Bitten kund, sondern öffnen uns für die Antwort Gottes. Diese Antwort kommt selten als Stimme vom Himmel, oft aber durch die Stille, durch andere Menschen, durch eine Schriftstelle, die plötzlich leuchtet. Gebet ist die Praxis der Aufmerksamkeit für Gott.",
+    "bibleReference": "Philipper 4,6-7",
+    "status": "pending",
+    "createdAt": "2024-01-20T11:00:00.000Z"
+  }
+]

@@ -1,0 +1,13 @@
+[
+  {
+    "id": "forschung-001",
+    "userId": "user-001",
+    "authorName": "Maria Hoffmann",
+    "title": "Der Logos-Begriff bei Johannes und Philo von Alexandria",
+    "content": "Johannes' Verwendung des Logos-Begriffs im Prolog seines Evangeliums verbindet zwei Welten: die griechisch-philosophische Tradition (Heraklit, Stoa) und die jüdische Weisheitsliteratur (Proverbia 8, Sirach 24). Philo von Alexandria als zeitgenössischer jüdischer Philosoph zeigt, wie weit diese Verbindung bereits vorbereitet war. Doch Johannes geht einen entscheidenden Schritt weiter: Der Logos wird Fleisch (Joh 1,14) – das ist keine Abstraktion mehr, sondern Person.",
+    "bibleReference": "Johannes 1,1-18",
+    "wochenthemaId": "2024-W01",
+    "status": "approved",
+    "createdAt": "2024-01-05T16:00:00.000Z"
+  }
+]
