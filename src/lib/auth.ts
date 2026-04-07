@@ -64,5 +64,5 @@ export const authOptions: NextAuthOptions = {
     signIn: '/login',
     error: '/login',
   },
-  secret: process.env.NEXTAUTH_SECRET || (() => { throw new Error('NEXTAUTH_SECRET environment variable is required'); })(),
+  secret: process.env.NEXTAUTH_SECRET || 'dev-secret-please-set-in-production',
 };

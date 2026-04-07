@@ -2,7 +2,7 @@
   {
     "id": "admin-001",
     "email": "admin@fluss-des-lebens.de",
-    "password": "$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj/xH9QMnzMS",
+    "password": "$2b$12$mLzr5t9ILKt31Imf6SOlheu1yBZ8KcZjT9CJSC6RytqjZ/3mpCvJe",
     "name": "Administrator",
     "role": "ADMIN",
     "createdAt": "2024-01-01T00:00:00.000Z",
