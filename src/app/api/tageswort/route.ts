@@ -1,4 +1,3 @@
-export const dynamic = 'force-static';
 import { NextRequest, NextResponse } from 'next/server';
 import { getTodayTageswort, saveTageswort } from '@/lib/db';
 import { getServerSession } from 'next-auth';
@@ -15,6 +14,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const body = await req.json();
-  saveTageswort(body);
+  await saveTageswort(body);
   return NextResponse.json({ success: true });
 }
