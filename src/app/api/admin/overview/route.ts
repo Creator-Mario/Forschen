@@ -25,7 +25,9 @@ export async function GET() {
     ...f, contentType: 'forschung' as const, displayTitle: f.title, ...enrichUser(f.userId),
   }));
   const gebete = getGebete().map(g => ({
-    ...g, contentType: 'gebet' as const, displayTitle: g.content.substring(0, 60) + '…', ...enrichUser(g.userId),
+    ...g, contentType: 'gebet' as const,
+    displayTitle: g.content ? (g.content.length > 60 ? g.content.substring(0, 60) + '…' : g.content) : '(kein Inhalt)',
+    ...enrichUser(g.userId),
   }));
   const videos = getVideos().map(v => ({
     ...v, contentType: 'video' as const, displayTitle: v.title, ...enrichUser(v.userId),

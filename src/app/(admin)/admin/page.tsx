@@ -26,6 +26,14 @@ const CONTENT_TYPE_LABELS: Record<string, string> = {
   aktion: 'Aktion',
 };
 
+const CONTENT_TYPE_TO_ROUTE: Record<string, string> = {
+  these: 'thesen',
+  forschung: 'forschung',
+  gebet: 'gebet',
+  video: 'videos',
+  aktion: 'aktionen',
+};
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type OverviewItem = Record<string, any>;
 
@@ -143,7 +151,7 @@ export default function AdminPage() {
                       </td>
                       <td className="px-4 py-3">
                         <Link
-                          href={`/admin/${item.contentType === 'these' ? 'thesen' : item.contentType === 'forschung' ? 'forschung' : item.contentType === 'gebet' ? 'gebet' : item.contentType === 'video' ? 'videos' : 'aktionen'}`}
+                          href={`/admin/${CONTENT_TYPE_TO_ROUTE[item.contentType] || item.contentType}`}
                           className="text-xs text-blue-600 hover:underline"
                         >
                           Bearbeiten →

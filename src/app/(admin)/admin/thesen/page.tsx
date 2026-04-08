@@ -39,7 +39,7 @@ export default function AdminThesenPage() {
         </p>
         <AdminModerationTable
           items={thesen}
-          contentType="These"
+          contentType="Thesen"
           users={users}
           titleField="title"
           authorField="authorName"
