@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { getUserByEmail, saveUser } from '@/lib/db';
 import { generateId } from '@/lib/utils';
+import { sendVerificationEmail } from '@/lib/email';
 import crypto from 'crypto';
 
 export async function POST(req: NextRequest) {
@@ -38,6 +39,19 @@ export async function POST(req: NextRequest) {
       emailToken,
     });
 
+    const baseUrl = process.env.NEXTAUTH_URL;
+    if (!baseUrl) {
+      // No base URL configured – fall back to demo mode (token shown on page)
+      return NextResponse.json({ success: true, emailToken });
+    }
+    const emailSent = await sendVerificationEmail(email, emailToken, baseUrl);
+
+    if (emailSent) {
+      // Email sent via SMTP – do not expose token in the response
+      return NextResponse.json({ success: true });
+    }
+
+    // Fallback: no SMTP configured – return token for on-screen demo link
     return NextResponse.json({ success: true, emailToken });
   } catch {
     return NextResponse.json({ error: 'Registrierung fehlgeschlagen.' }, { status: 500 });
