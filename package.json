@@ -14,12 +14,14 @@
     "bcryptjs": "^3.0.3",
     "next": "^15.5.14",
     "next-auth": "^4.24.13",
+    "nodemailer": "^7.0.11",
     "react": "^19",
     "react-dom": "^19"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22",
+    "@types/nodemailer": "^6.4.17",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

@@ -68,8 +68,9 @@ export default function RegistrierenPage() {
           <div className="text-blue-600 text-4xl mb-4">✉️</div>
           <h1 className="text-xl font-bold text-gray-800 mb-3">Fast geschafft!</h1>
           <p className="text-gray-600 text-sm mb-6 leading-relaxed">
-            Deine E‑Mail‑Adresse muss noch bestätigt werden.
-            In einer echten Umgebung erhältst du eine E‑Mail mit dem Bestätigungslink.
+            {hasDemoToken
+              ? 'Deine E‑Mail‑Adresse muss noch bestätigt werden. Klicke den Link unten, um fortzufahren.'
+              : 'Wir haben dir eine E‑Mail mit dem Bestätigungslink gesendet. Bitte prüfe auch deinen Spam‑Ordner.'}
           </p>
           {hasDemoToken && (
             <>
