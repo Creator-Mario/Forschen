@@ -3,9 +3,20 @@
 @tailwind utilities;
 
 :root {
-  --primary: #1e40af;
-  --primary-light: #dbeafe;
-  --accent: #3b82f6;
+  --river-50:  #e8f4fd;
+  --river-100: #c8e6fa;
+  --river-200: #93cbf5;
+  --river-300: #64b5f6;
+  --river-400: #2196f3;
+  --river-500: #1976d2;
+  --river-600: #1565c0;
+  --river-700: #0d47a1;
+  --river-800: #0a3880;
+  --river-900: #072860;
+  --gold-400:  #fbbf24;
+  --gold-500:  #f9c72a;
+  --gold-600:  #f5a623;
+  --cream:     #fef3e2;
 }
 
 html {
@@ -13,5 +24,79 @@ html {
 }
 
 body {
-  @apply bg-slate-50 text-gray-800;
+  @apply text-gray-800;
+  background: linear-gradient(160deg, #e8f4fd 0%, #f0f7ff 40%, #e3f2fd 70%, #eff8ff 100%);
+  min-height: 100vh;
 }
+
+/* Wavy section backgrounds */
+.wave-bg-dark {
+  background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #1976d2 100%);
+}
+.wave-bg-medium {
+  background: linear-gradient(135deg, #1565c0 0%, #2196f3 50%, #42a5f5 100%);
+}
+.wave-bg-light {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #e8f4fd 100%);
+}
+
+/* Animated wave layer used in hero */
+.wave-container {
+  position: relative;
+  overflow: hidden;
+}
+.wave-layer {
+  position: absolute;
+  bottom: 0;
+  left: -10%;
+  width: 120%;
+  animation: waveFloat 8s ease-in-out infinite;
+}
+.wave-layer-2 {
+  animation-delay: -4s;
+  animation-duration: 11s;
+  opacity: 0.6;
+}
+.wave-layer-3 {
+  animation-delay: -2s;
+  animation-duration: 14s;
+  opacity: 0.4;
+}
+
+@keyframes waveFloat {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  33%       { transform: translateX(-20px) translateY(4px); }
+  66%       { transform: translateX(10px) translateY(-4px); }
+}
+
+/* Card glass effect */
+.card-river {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(33, 150, 243, 0.15);
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(21, 101, 192, 0.12);
+}
+.card-river:hover {
+  box-shadow: 0 8px 32px rgba(21, 101, 192, 0.2);
+}
+
+/* Gradient text */
+.text-river-gradient {
+  background: linear-gradient(90deg, #0d47a1, #2196f3, #f5a623);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Gold underline decoration */
+.heading-gold-line::after {
+  content: '';
+  display: block;
+  width: 4rem;
+  height: 3px;
+  background: linear-gradient(90deg, #f5a623, #fbbf24);
+  border-radius: 2px;
+  margin: 0.5rem auto 0;
+}
+
