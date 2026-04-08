@@ -150,5 +150,13 @@
     "targetType": "video",
     "targetId": "video-1775666132389-s70kxblgw",
     "createdAt": "2026-04-08T17:26:47.426Z"
+  },
+  {
+    "id": "log-1775669208342-eap8hrcay",
+    "adminId": "admin-001",
+    "action": "deleted",
+    "targetType": "video",
+    "targetId": "video-1775666132389-s70kxblgw",
+    "createdAt": "2026-04-08T17:26:48.342Z"
   }
 ]
