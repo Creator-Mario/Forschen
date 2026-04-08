@@ -11,6 +11,7 @@ export default function RegistrierenPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [verifyToken, setVerifyToken] = useState('');
+  const [registered, setRegistered] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: FormEvent) {
@@ -18,20 +19,27 @@ export default function RegistrierenPage() {
     setError('');
     setLoading(true);
 
-    const res = await fetch('/api/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password }),
-    });
+    try {
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+      });
 
-    const data = await res.json();
-    setLoading(false);
+      const data = await res.json();
 
-    if (!res.ok) {
-      setError(data.error || 'Registrierung fehlgeschlagen.');
-    } else {
-      // Show the verification link/token (in production this would be sent via email)
-      setVerifyToken(data.emailToken || '');
+      if (!res.ok) {
+        setError(data.error || 'Registrierung fehlgeschlagen.');
+      } else {
+        // Show the verification link/token (in production this would be sent via email)
+        setVerifyToken(data.emailToken || '');
+        setRegistered(true);
+      }
+    } catch (err) {
+      console.error('Registration request failed:', err);
+      setError('Netzwerkfehler. Bitte versuche es erneut.');
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -51,8 +59,9 @@ export default function RegistrierenPage() {
     );
   }
 
-  if (verifyToken) {
-    const verifyUrl = `/api/auth/verify-email?token=${verifyToken}`;
+  if (registered) {
+    const hasDemoToken = Boolean(verifyToken);
+    const verifyUrl = hasDemoToken ? `/api/auth/verify-email?token=${verifyToken}` : '';
     return (
       <div className="min-h-[70vh] flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md text-center">
@@ -62,21 +71,33 @@ export default function RegistrierenPage() {
             Deine E‑Mail‑Adresse muss noch bestätigt werden.
             In einer echten Umgebung erhältst du eine E‑Mail mit dem Bestätigungslink.
           </p>
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-left mb-6">
-            <p className="text-xs text-blue-700 font-medium mb-2">Bestätigungslink (Demo):</p>
-            <a
-              href={verifyUrl}
-              className="text-xs text-blue-600 hover:underline break-all"
+          {hasDemoToken && (
+            <>
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-left mb-6">
+                <p className="text-xs text-blue-700 font-medium mb-2">Bestätigungslink (Demo):</p>
+                <a
+                  href={verifyUrl}
+                  className="text-xs text-blue-600 hover:underline break-all"
+                >
+                  {typeof window !== 'undefined' ? `${window.location.origin}${verifyUrl}` : verifyUrl}
+                </a>
+              </div>
+              <a
+                href={verifyUrl}
+                className="inline-block bg-blue-800 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
+              >
+                E-Mail jetzt bestätigen →
+              </a>
+            </>
+          )}
+          {!hasDemoToken && (
+            <Link
+              href="/login"
+              className="inline-block bg-blue-800 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
             >
-              {typeof window !== 'undefined' ? `${window.location.origin}${verifyUrl}` : verifyUrl}
-            </a>
-          </div>
-          <a
-            href={verifyUrl}
-            className="inline-block bg-blue-800 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
-          >
-            E-Mail jetzt bestätigen →
-          </a>
+              Zur Anmeldung →
+            </Link>
+          )}
         </div>
       </div>
     );
