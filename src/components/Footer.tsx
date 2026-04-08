@@ -1,20 +1,6 @@
-'use client';
-
 import Link from 'next/link';
-import { useState } from 'react';
 
 export default function Footer() {
-  const [clickCount, setClickCount] = useState(0);
-
-  function handleCopyrightClick() {
-    const newCount = clickCount + 1;
-    setClickCount(newCount);
-    if (newCount >= 5) {
-      setClickCount(0);
-      window.location.href = '/admin-login';
-    }
-  }
-
   return (
     <footer className="bg-slate-800 text-slate-300 mt-auto">
       <div className="max-w-6xl mx-auto px-4 py-10">
@@ -45,14 +31,11 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-t border-slate-700 pt-4 text-center text-sm text-slate-500">
-          <span
-            onClick={handleCopyrightClick}
-            className="cursor-default select-none"
-            title=""
-          >
-            ©
-          </span>
-          {' '}{new Date().getFullYear()} Der Fluss des Lebens – Kostenlose Plattform für christliche Forschung
+          © {new Date().getFullYear()} Der Fluss des Lebens – Kostenlose Plattform für christliche Forschung
+          <span className="mx-2">·</span>
+          <Link href="/admin-login" className="text-slate-600 hover:text-slate-400 transition-colors text-xs">
+            Admin
+          </Link>
         </div>
       </div>
     </footer>
