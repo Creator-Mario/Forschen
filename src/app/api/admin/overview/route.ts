@@ -1,17 +1,19 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import {
   getThesen, getForschung, getGebete, getVideos, getAktionen, getUsers,
 } from '@/lib/db';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== 'ADMIN') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const users = getUsers();
+
+  const userIdParam = req.nextUrl.searchParams.get('userId');
 
   function enrichUser(userId: string) {
     const u = users.find(u => u.id === userId);
@@ -36,8 +38,12 @@ export async function GET() {
     ...a, contentType: 'aktion' as const, displayTitle: a.title, ...enrichUser(a.userId),
   }));
 
-  const all = [...thesen, ...forschung, ...gebete, ...videos, ...aktionen]
+  let all = [...thesen, ...forschung, ...gebete, ...videos, ...aktionen]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+  if (userIdParam) {
+    all = all.filter(item => item.userId === userIdParam);
+  }
 
   return NextResponse.json(all);
 }

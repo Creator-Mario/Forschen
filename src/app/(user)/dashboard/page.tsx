@@ -25,6 +25,8 @@ export default function DashboardPage() {
             { href: '/forschung/beitraege', icon: '📚', title: 'Meine Forschung', desc: 'Deine Forschungsbeiträge verwalten.' },
             { href: '/meine-gebete', icon: '🙏', title: 'Meine Gebete', desc: 'Deine eingereichten Gebete.' },
             { href: '/gebet/neu', icon: '✨', title: 'Gebet einreichen', desc: 'Ein neues Gebet für die Gemeinschaft.' },
+            { href: '/chat', icon: '💬', title: 'Nachrichten', desc: 'Private 1-zu-1-Chats mit Mitgliedern.' },
+            { href: '/mitglieder/vorstellungen', icon: '🧑‍🤝‍🧑', title: 'Mitglieder', desc: 'Vorstellungen der Gemeinschaftsmitglieder.' },
             { href: '/aktionen/neu', icon: '🤝', title: 'Aktion erstellen', desc: 'Eine Gemeinschaftsaktion organisieren.' },
             { href: '/videos/hochladen', icon: '🎥', title: 'Video teilen', desc: 'Ein Video mit der Gemeinschaft teilen.' },
             { href: '/profil', icon: '👤', title: 'Mein Profil', desc: 'Deine persönlichen Daten verwalten.' },

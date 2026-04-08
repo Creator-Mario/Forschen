@@ -5,6 +5,7 @@
     "password": "$2b$12$mLzr5t9ILKt31Imf6SOlheu1yBZ8KcZjT9CJSC6RytqjZ/3mpCvJe",
     "name": "Administrator",
     "role": "ADMIN",
+    "status": "active",
     "createdAt": "2024-01-01T00:00:00.000Z",
     "active": true
   },
@@ -14,6 +15,7 @@
     "password": "$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj/xH9QMnzMS",
     "name": "Maria Hoffmann",
     "role": "USER",
+    "status": "active",
     "createdAt": "2024-01-15T10:00:00.000Z",
     "active": true
   },
@@ -23,6 +25,7 @@
     "password": "$2b$12$WNVL.oCgyZNJR7/q5ouTXOw8.4U7sLZf2iRKl4J7a/3ZahfDaa1E.",
     "name": "Mario Reiner",
     "role": "USER",
+    "status": "active",
     "createdAt": "2026-04-08T00:53:39.026Z",
     "active": true
   }

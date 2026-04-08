@@ -36,7 +36,9 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
         const user = getUserByEmail(credentials.email);
-        if (!user || !user.active) return null;
+        if (!user) return null;
+        // Admin may always log in regardless of status field
+        if (user.role !== 'ADMIN' && (user.status !== 'active' || !user.active)) return null;
         const valid = await bcrypt.compare(credentials.password, user.password);
         if (!valid) return null;
         return { id: user.id, email: user.email, name: user.name, role: user.role };

@@ -5,8 +5,8 @@ import Footer from '@/components/Footer';
 import { SessionProvider } from '@/components/SessionProvider';
 
 export const metadata: Metadata = {
-  title: 'Der Fluss des Lebens – Christliche Forschungsplattform',
-  description: 'Eine freie Plattform für christliche Bibelforschung, Thesen und gemeinsames Gebet.',
+  title: 'Der Fluss des Lebens – Private Christliche Forschungsplattform',
+  description: 'Eine private Plattform für christliche Bibelforschung, Thesen und gemeinsames Gebet.',
 };
 
 export default function RootLayout({

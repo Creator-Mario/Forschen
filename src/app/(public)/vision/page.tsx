@@ -23,8 +23,8 @@ const sections = [
   },
   {
     icon: '🎁',
-    title: 'Kostenlos und frei',
-    text: 'Der Fluss des Lebens ist und bleibt kostenlos. Es gibt keine Premium-Stufen, keine Bezahlschranken. Wer unterstützen möchte, kann spenden – aber niemand soll aus Geldmangel ausgeschlossen sein. Das entspricht unserer Überzeugung: Das Evangelium ist für alle.',
+    title: 'Privat und kostenlos',
+    text: 'Der Fluss des Lebens ist eine private Forschungsplattform und bleibt kostenlos. Es gibt keine Premium-Stufen, keine Bezahlschranken. Wer unterstützen möchte, kann spenden – aber niemand soll aus Geldmangel ausgeschlossen sein. Das entspricht unserer Überzeugung: Das Evangelium ist für alle.',
   },
 ];
 

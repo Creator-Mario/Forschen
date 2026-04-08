@@ -16,7 +16,7 @@ export default function HomePage() {
           Der Fluss des Lebens
         </h1>
         <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-          Eine freie Plattform für ernsthafte christliche Bibelforschung – ohne Gamification, ohne Rankings, nur echte Fragen und ehrliche Suche.
+          Eine private Plattform für ernsthafte christliche Bibelforschung – ohne Gamification, ohne Rankings, nur echte Fragen und ehrliche Suche.
         </p>
         <div className="flex flex-wrap justify-center gap-4 mt-8">
           <Link href="/tageswort" className="bg-blue-800 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium">

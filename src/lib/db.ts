@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import type {
   User, Tageswort, Wochenthema, These, ForschungsBeitrag,
-  Gebet, Video, Aktion, SpendenRecord, AdminLog
+  Gebet, Video, Aktion, SpendenRecord, AdminLog, ChatMessage
 } from '@/types';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
@@ -74,6 +74,16 @@ export function getUserById(id: string): User | undefined {
 }
 export function getUserByEmail(email: string): User | undefined {
   return getUsers().find(u => u.email === email);
+}
+export function getUserByEmailToken(token: string): User | undefined {
+  return getUsers().find(u => u.emailToken === token);
+}
+export function getAwaitingReviewUsers(): User[] {
+  return getUsers().filter(u => u.role !== 'ADMIN' && (
+    u.status === 'awaiting_admin_review' ||
+    u.status === 'question_to_user' ||
+    u.status === 'postponed'
+  ));
 }
 export async function saveUser(user: User): Promise<void> {
   const users = getUsers();
@@ -218,5 +228,32 @@ export async function saveSpende(spende: SpendenRecord): Promise<void> {
   const list = getSpenden();
   list.push(spende);
   await writeJson('spenden.json', list);
+}
+
+// Chat Messages
+export function getChatMessages(): ChatMessage[] {
+  return readJson<ChatMessage>('messages.json');
+}
+export function getConversation(userId1: string, userId2: string): ChatMessage[] {
+  return getChatMessages().filter(
+    m => (m.fromUserId === userId1 && m.toUserId === userId2) ||
+         (m.fromUserId === userId2 && m.toUserId === userId1)
+  ).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+}
+export function getConversationPartners(userId: string): string[] {
+  const msgs = getChatMessages().filter(
+    m => m.fromUserId === userId || m.toUserId === userId
+  );
+  const partners = new Set<string>();
+  for (const m of msgs) {
+    if (m.fromUserId !== userId) partners.add(m.fromUserId);
+    if (m.toUserId !== userId) partners.add(m.toUserId);
+  }
+  return Array.from(partners);
+}
+export async function saveChatMessage(msg: ChatMessage): Promise<void> {
+  const list = getChatMessages();
+  list.push(msg);
+  await writeJson('messages.json', list);
 }
 

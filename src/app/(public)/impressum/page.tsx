@@ -6,45 +6,62 @@ export default function ImpressumPage() {
       <div className="bg-white rounded-xl shadow-md p-8 space-y-6 text-gray-700">
         <section>
           <h2 className="font-semibold text-gray-800 mb-2">Angaben gemäß § 5 TMG</h2>
-          <p>Der Fluss des Lebens e.V.</p>
-          <p>Musterstraße 1</p>
-          <p>12345 Musterstadt</p>
-          <p>Deutschland</p>
+          <p className="font-medium">Mario Reiner Denzer</p>
+          <p>NIRWANA GOLDEN PARK BLOK D9 NO.9</p>
+          <p>Bogor-Cibinong</p>
+          <p>16915</p>
+          <p>Indonesien</p>
         </section>
 
         <section>
-          <h2 className="font-semibold text-gray-800 mb-2">Vertreten durch</h2>
-          <p>Max Mustermann (1. Vorsitzender)</p>
+          <h2 className="font-semibold text-gray-800 mb-2">Verantwortlicher</h2>
+          <p>Mario Reiner Denzer</p>
+          <p className="text-sm text-gray-500 mt-1">
+            Autor &amp; theologischer Forscher — Betreiber und Administrator dieser Plattform
+          </p>
         </section>
 
         <section>
           <h2 className="font-semibold text-gray-800 mb-2">Kontakt</h2>
-          <p>E-Mail: kontakt@fluss-des-lebens.de</p>
+          <p>
+            E-Mail:{' '}
+            <a href="mailto:lebendigenachfolge@gmail.com" className="text-blue-600 hover:underline">
+              lebendigenachfolge@gmail.com
+            </a>
+          </p>
         </section>
 
         <section>
-          <h2 className="font-semibold text-gray-800 mb-2">Registrierung</h2>
-          <p>Eingetragen im Vereinsregister.</p>
-          <p>Registergericht: Amtsgericht Musterstadt</p>
-          <p>Registernummer: VR XXXXX</p>
+          <h2 className="font-semibold text-gray-800 mb-2">Inhaltlich verantwortlich gemäß § 18 Abs. 2 MStV</h2>
+          <p>Mario Reiner Denzer (Anschrift wie oben)</p>
         </section>
 
         <section>
-          <h2 className="font-semibold text-gray-800 mb-2">Inhaltlich verantwortlich</h2>
-          <p>Max Mustermann (Anschrift wie oben)</p>
+          <h2 className="font-semibold text-gray-800 mb-2">Hinweis: Ein-Personen-Projekt</h2>
+          <p className="text-sm leading-relaxed">
+            Diese Plattform wird von einer Einzelperson betrieben. Betreiber, Verantwortlicher und
+            Administrator sind identisch: Mario Reiner Denzer.
+          </p>
         </section>
 
         <section>
           <h2 className="font-semibold text-gray-800 mb-2">Streitschlichtung</h2>
           <p className="text-sm leading-relaxed">
-            Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: https://ec.europa.eu/consumers/odr/. Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
+            Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:{' '}
+            <a href="https://ec.europa.eu/consumers/odr/" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
+              https://ec.europa.eu/consumers/odr/
+            </a>
+            . Ich bin nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
+            Verbraucherschlichtungsstelle teilzunehmen.
           </p>
         </section>
 
         <section>
           <h2 className="font-semibold text-gray-800 mb-2">Haftungsausschluss</h2>
           <p className="text-sm leading-relaxed">
-            Die Inhalte dieser Plattform wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir keine Gewähr übernehmen. Nutzerinhalte werden moderiert, stellen jedoch nicht zwingend die Meinung des Betreibers dar.
+            Die Inhalte dieser Plattform wurden mit größter Sorgfalt erstellt. Für die Richtigkeit,
+            Vollständigkeit und Aktualität der Inhalte kann keine Gewähr übernommen werden.
+            Nutzerinhalte werden moderiert, stellen jedoch nicht zwingend die Meinung des Betreibers dar.
           </p>
         </section>
       </div>

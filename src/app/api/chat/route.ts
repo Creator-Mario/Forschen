@@ -1,0 +1,33 @@
+import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { getConversationPartners, getUserById } from '@/lib/db';
+
+export async function GET() {
+  const session = await getServerSession(authOptions);
+  if (!session) return NextResponse.json({ error: 'Nicht eingeloggt.' }, { status: 401 });
+
+  // Admin sees all unique conversation pairs
+  if (session.user.role === 'ADMIN') {
+    // Return all users who have messages for admin overview
+    const { getUsers, getChatMessages } = await import('@/lib/db');
+    const msgs = getChatMessages();
+    const userIds = new Set<string>();
+    for (const m of msgs) {
+      userIds.add(m.fromUserId);
+      userIds.add(m.toUserId);
+    }
+    const users = getUsers()
+      .filter(u => userIds.has(u.id))
+      .map(u => ({ id: u.id, name: u.name, email: u.email }));
+    return NextResponse.json(users);
+  }
+
+  const partnerIds = getConversationPartners(session.user.id);
+  const partners = partnerIds
+    .map(id => getUserById(id))
+    .filter(Boolean)
+    .map(u => ({ id: u!.id, name: u!.name }));
+
+  return NextResponse.json(partners);
+}

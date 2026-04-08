@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { Wochenthema } from '@/types';
+import BibleLink from './BibleLink';
 
 interface WeeklyThemeCardProps {
   theme: Wochenthema;
@@ -18,7 +19,7 @@ export default function WeeklyThemeCard({ theme, compact = false }: WeeklyThemeC
         <div className="flex flex-wrap gap-2 mb-4">
           {theme.bibleVerses.map((v, i) => (
             <span key={i} className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full">
-              {v}
+              <BibleLink text={v} />
             </span>
           ))}
         </div>
