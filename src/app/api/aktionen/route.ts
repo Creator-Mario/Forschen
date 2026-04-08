@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     location: body.location || '',
     dateEvent: body.dateEvent || '',
     contactInfo: body.contactInfo || '',
-    status: 'pending' as const,
+    status: 'created' as const,
     createdAt: new Date().toISOString(),
   };
   await saveAktion(aktion);

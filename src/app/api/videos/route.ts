@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     title: body.title,
     description: body.description,
     url: body.url,
-    status: 'pending' as const,
+    status: 'created' as const,
     createdAt: new Date().toISOString(),
   };
   await saveVideo(video);

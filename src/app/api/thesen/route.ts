@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     title: body.title,
     content: body.content,
     bibleReference: body.bibleReference || '',
-    status: 'pending' as const,
+    status: 'created' as const,
     createdAt: new Date().toISOString(),
   };
   await saveThese(these);

@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     content: body.content,
     bibleReference: body.bibleReference || '',
     wochenthemaId: body.wochenthemaId || '',
-    status: 'pending' as const,
+    status: 'created' as const,
     createdAt: new Date().toISOString(),
   };
   await saveForschung(beitrag);
