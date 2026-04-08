@@ -53,7 +53,8 @@ jobs:
           NEXTAUTH_SECRET: ci-build-secret
           NEXTAUTH_URL: http://localhost:3000
 
-# Deployment is handled automatically by Vercel on every push to main.
+# Production deployment is handled by deploy-production.yml (push to main / workflow_dispatch).
+# Keeping deploy-production out of this workflow avoids a "skipped" check on every PR.
 # Connect this repository at https://vercel.com/new
 # Required environment variables in Vercel:
 #   NEXTAUTH_SECRET  – a long random string (e.g. openssl rand -base64 32)
