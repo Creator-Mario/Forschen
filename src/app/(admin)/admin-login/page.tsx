@@ -1,6 +1,6 @@
 'use client';
 
-import { signIn } from 'next-auth/react';
+import { signIn, signOut, getSession } from 'next-auth/react';
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -17,12 +17,20 @@ export default function AdminLoginPage() {
     setError('');
     setLoading(true);
     const result = await signIn('credentials', { email, password, redirect: false });
-    setLoading(false);
     if (result?.error) {
+      setLoading(false);
       setError('Anmeldung fehlgeschlagen.');
-    } else {
-      router.push('/admin');
+      return;
     }
+    // Verify the authenticated user actually has the ADMIN role
+    const session = await getSession();
+    setLoading(false);
+    if (session?.user?.role !== 'ADMIN') {
+      await signOut({ redirect: false });
+      setError('Kein Administratorzugang. Nur Administratoren können sich hier anmelden.');
+      return;
+    }
+    router.push('/admin');
   }
 
   return (

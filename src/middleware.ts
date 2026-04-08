@@ -6,9 +6,15 @@ export default withAuth(
     const token = req.nextauth.token;
     const pathname = req.nextUrl.pathname;
 
-    // Admin routes require ADMIN role
-    if (pathname.startsWith('/admin') && token?.role !== 'ADMIN') {
-      return NextResponse.redirect(new URL('/login', req.url));
+    // Admin routes require ADMIN role (excludes /admin-login and /admin-reset which are public)
+    const isAdminRoute = pathname === '/admin' || pathname.startsWith('/admin/');
+    if (isAdminRoute && token?.role !== 'ADMIN') {
+      if (token) {
+        // User is logged in but not an admin – send to their dashboard
+        return NextResponse.redirect(new URL('/dashboard', req.url));
+      }
+      // User is not logged in – send to admin login
+      return NextResponse.redirect(new URL('/admin-login', req.url));
     }
 
     return NextResponse.next();
@@ -21,7 +27,7 @@ export default withAuth(
         // Public routes don't require auth
         const publicRoutes = ['/', '/vision', '/tageswort', '/wochenthema', '/thesen', '/forschung',
           '/gebet', '/videos', '/aktionen', '/spenden', '/login', '/registrieren', '/datenschutz',
-          '/impressum', '/admin-login'];
+          '/impressum', '/admin-login', '/admin-reset'];
         if (publicRoutes.some(r => pathname === r || pathname.startsWith(r + '/'))) {
           return true;
         }
