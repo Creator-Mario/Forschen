@@ -34,6 +34,8 @@ jobs:
         # Middleware and API routes require a server runtime and are not compatible with
         # static export. Auth and API features are unavailable on GitHub Pages; client-side
         # ProtectedRoute components already handle access control in the browser.
+        # These files are removed only in this ephemeral CI environment – the repository
+        # itself is not modified.
         run: |
           echo "export {};" > src/middleware.ts
           rm -rf src/app/api
@@ -42,7 +44,10 @@ jobs:
         run: npm run build
         env:
           GITHUB_PAGES: "true"
-          NEXTAUTH_SECRET: github-pages-build-secret
+          # NEXTAUTH_SECRET is required by next-auth at build time even though auth is
+          # non-functional on a static export.  A real secret is unnecessary here; use
+          # the repository secret if you want to avoid a hardcoded placeholder.
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'github-pages-build-placeholder' }}
           NEXTAUTH_URL: https://creator-mario.github.io/Forschen
 
       - name: Upload artifact
