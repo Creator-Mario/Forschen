@@ -62,5 +62,21 @@
     "targetType": "video",
     "targetId": "video-1775666132389-s70kxblgw",
     "createdAt": "2026-04-08T17:27:05.016Z"
+  },
+  {
+    "id": "log-1775669226272-so29swthq",
+    "adminId": "admin-001",
+    "action": "deleted",
+    "targetType": "video",
+    "targetId": "video-1775666132389-s70kxblgw",
+    "createdAt": "2026-04-08T17:27:06.272Z"
+  },
+  {
+    "id": "log-1775669226293-n7rsr4vlp",
+    "adminId": "admin-001",
+    "action": "deleted",
+    "targetType": "video",
+    "targetId": "video-1775666132389-s70kxblgw",
+    "createdAt": "2026-04-08T17:27:06.293Z"
   }
 ]
