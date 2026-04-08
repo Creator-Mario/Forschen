@@ -1,7 +1,7 @@
 'use client';
 
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { useEffect, useState, useRef, FormEvent, Suspense } from 'react';
+import { useEffect, useState, useRef, useCallback, FormEvent, Suspense } from 'react';
 import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
@@ -26,13 +26,13 @@ function ChatView() {
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  async function loadMessages() {
+  const loadMessages = useCallback(async () => {
     const res = await fetch(`/api/chat/${otherUserId}`);
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data)) setMessages(data);
     }
-  }
+  }, [otherUserId]);
 
   useEffect(() => {
     // Load partner name
@@ -48,10 +48,7 @@ function ChatView() {
     loadMessages();
     const interval = setInterval(loadMessages, 5000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // loadMessages is defined inside the effect to avoid stale closures;
-    // it is safe to omit since it only depends on otherUserId which is in the array.
-  }, [otherUserId]);
+  }, [otherUserId, loadMessages]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
