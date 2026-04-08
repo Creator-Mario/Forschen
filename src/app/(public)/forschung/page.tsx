@@ -1,6 +1,7 @@
 import { getApprovedForschung, getWochenthemaList } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
+import BibleLink from '@/components/BibleLink';
 
 export default function ForschungPage() {
   const beitraege = getApprovedForschung();
@@ -30,7 +31,7 @@ export default function ForschungPage() {
                   {b.bibleReference && (
                     <>
                       <span>·</span>
-                      <span className="text-blue-600">{b.bibleReference}</span>
+                      <BibleLink text={b.bibleReference} className="text-blue-600" />
                     </>
                   )}
                 </div>
