@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "id": "log-1775668648451-qoj530w2y",
+    "adminId": "admin-001",
+    "action": "user_delete",
+    "targetType": "user",
+    "targetId": "user-1775659725056-4fqk3gk90",
+    "createdAt": "2026-04-08T17:17:28.451Z"
+  }
+]
