@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     }
 
     const hashed = await bcrypt.hash(password, 12);
-    saveUser({
+    await saveUser({
       id: `user-${generateId()}`,
       email,
       password: hashed,

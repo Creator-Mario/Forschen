@@ -30,6 +30,6 @@ export async function POST(req: NextRequest) {
     status: 'pending' as const,
     createdAt: new Date().toISOString(),
   };
-  saveThese(these);
+  await saveThese(these);
   return NextResponse.json({ success: true, id: these.id });
 }

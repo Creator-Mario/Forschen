@@ -29,6 +29,6 @@ export async function POST(req: NextRequest) {
     status: 'pending' as const,
     createdAt: new Date().toISOString(),
   };
-  saveGebet(gebet);
+  await saveGebet(gebet);
   return NextResponse.json({ success: true, id: gebet.id });
 }

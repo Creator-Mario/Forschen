@@ -1,18 +1,9 @@
-name: Deploy to GitHub Pages
+name: CI
 
 on:
   push:
     branches: [main]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  pull_request:
 
 jobs:
   build:
@@ -33,21 +24,15 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || 'https://yourusername.github.io/Forschen' }}
+          NEXTAUTH_SECRET: ci-build-secret
+          NEXTAUTH_URL: http://localhost:3000
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: .next/standalone
+# Deployment is handled automatically by Vercel on every push to main.
+# Connect this repository at https://vercel.com/new
+# Required environment variables in Vercel:
+#   NEXTAUTH_SECRET  – a long random string (e.g. openssl rand -base64 32)
+#   NEXTAUTH_URL     – your Vercel URL, e.g. https://forschen.vercel.app
+#   GITHUB_TOKEN     – a Personal Access Token with "repo" scope (for data persistence)
+#   GITHUB_OWNER     – Creator-Mario
+#   GITHUB_REPO      – Forschen
 
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4

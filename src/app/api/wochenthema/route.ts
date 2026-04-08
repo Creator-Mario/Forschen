@@ -18,6 +18,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   const body = await req.json();
-  saveWochenthema(body);
+  await saveWochenthema(body);
   return NextResponse.json({ success: true });
 }

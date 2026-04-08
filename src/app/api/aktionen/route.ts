@@ -30,6 +30,6 @@ export async function POST(req: NextRequest) {
     status: 'pending' as const,
     createdAt: new Date().toISOString(),
   };
-  saveAktion(aktion);
+  await saveAktion(aktion);
   return NextResponse.json({ success: true, id: aktion.id });
 }

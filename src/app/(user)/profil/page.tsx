@@ -2,16 +2,49 @@
 
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useSession } from 'next-auth/react';
+import { useState, FormEvent } from 'react';
 
 export default function ProfilPage() {
   const { data: session } = useSession();
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [pwError, setPwError] = useState('');
+  const [pwSuccess, setPwSuccess] = useState('');
+  const [pwLoading, setPwLoading] = useState(false);
+
+  async function handlePasswordChange(e: FormEvent) {
+    e.preventDefault();
+    setPwError('');
+    setPwSuccess('');
+    if (newPassword !== confirmPassword) {
+      setPwError('Die neuen Passwörter stimmen nicht überein.');
+      return;
+    }
+    setPwLoading(true);
+    const res = await fetch('/api/user/password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+    const data = await res.json();
+    setPwLoading(false);
+    if (!res.ok) {
+      setPwError(data.error || 'Fehler beim Ändern des Passworts.');
+    } else {
+      setPwSuccess('Passwort erfolgreich geändert.');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    }
+  }
 
   return (
     <ProtectedRoute>
       <div className="max-w-2xl mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold text-blue-800 mb-8">Mein Profil</h1>
 
-        <div className="bg-white rounded-xl shadow-md p-8">
+        <div className="bg-white rounded-xl shadow-md p-8 mb-6">
           <div className="flex items-center gap-4 mb-8">
             <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-800 font-bold text-2xl">
               {session?.user.name?.[0]?.toUpperCase() || '?'}
@@ -53,7 +86,73 @@ export default function ProfilPage() {
             </p>
           </div>
         </div>
+
+        {/* Password change */}
+        <div className="bg-white rounded-xl shadow-md p-8">
+          <h2 className="font-semibold text-gray-800 mb-6">Passwort ändern</h2>
+          <form onSubmit={handlePasswordChange} className="space-y-4">
+            <div>
+              <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                Aktuelles Passwort
+              </label>
+              <input
+                id="currentPassword"
+                type="password"
+                value={currentPassword}
+                onChange={e => setCurrentPassword(e.target.value)}
+                required
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                Neues Passwort
+              </label>
+              <input
+                id="newPassword"
+                type="password"
+                value={newPassword}
+                onChange={e => setNewPassword(e.target.value)}
+                required
+                minLength={8}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                Neues Passwort bestätigen
+              </label>
+              <input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={e => setConfirmPassword(e.target.value)}
+                required
+                minLength={8}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            {pwError && (
+              <div className="bg-red-50 border border-red-100 text-red-700 text-sm rounded-lg px-3 py-2">
+                {pwError}
+              </div>
+            )}
+            {pwSuccess && (
+              <div className="bg-green-50 border border-green-100 text-green-700 text-sm rounded-lg px-3 py-2">
+                {pwSuccess}
+              </div>
+            )}
+            <button
+              type="submit"
+              disabled={pwLoading}
+              className="w-full bg-blue-800 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-60"
+            >
+              {pwLoading ? 'Wird gespeichert…' : 'Passwort ändern'}
+            </button>
+          </form>
+        </div>
       </div>
     </ProtectedRoute>
   );
 }
+

@@ -28,6 +28,6 @@ export async function POST(req: NextRequest) {
     status: 'pending' as const,
     createdAt: new Date().toISOString(),
   };
-  saveVideo(video);
+  await saveVideo(video);
   return NextResponse.json({ success: true, id: video.id });
 }

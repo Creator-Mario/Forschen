@@ -3,6 +3,7 @@
 import { signIn } from 'next-auth/react';
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
@@ -65,8 +66,18 @@ export default function AdminLoginPage() {
               {loading ? 'Wird angemeldet...' : 'Anmelden'}
             </button>
           </form>
+
+          <div className="mt-4 text-center">
+            <Link
+              href="/admin-reset"
+              className="text-slate-400 text-sm hover:text-slate-300 transition-colors"
+            >
+              Passwort vergessen?
+            </Link>
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
