@@ -2,11 +2,5 @@
   "framework": "nextjs",
   "buildCommand": "npm run build",
   "installCommand": "npm ci",
-  "devCommand": "npm run dev",
-  "environments": {
-    "staging": {
-      "buildCommand": "npm run build",
-      "installCommand": "npm ci"
-    }
-  }
+  "devCommand": "npm run dev"
 }
