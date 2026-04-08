@@ -134,5 +134,13 @@
     "targetType": "video",
     "targetId": "video-1775668944513-lchtdn4yv",
     "createdAt": "2026-04-08T17:26:35.627Z"
+  },
+  {
+    "id": "log-1775669198564-blawxmm2v",
+    "adminId": "admin-001",
+    "action": "deleted",
+    "targetType": "video",
+    "targetId": "video-1775668944513-lchtdn4yv",
+    "createdAt": "2026-04-08T17:26:38.564Z"
   }
 ]
