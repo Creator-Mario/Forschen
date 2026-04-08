@@ -9,7 +9,7 @@ export default function SpendenPage() {
       <div className="bg-white rounded-xl shadow-md p-8 mb-6">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">Warum spenden?</h2>
         <p className="text-gray-600 leading-relaxed mb-4">
-          Der Fluss des Lebens ist und bleibt kostenlos für alle Nutzerinnen und Nutzer. Um die
+          Der Fluss des Lebens ist eine private Forschungsplattform und bleibt kostenlos für alle Nutzerinnen und Nutzer. Um die
           Plattform betreiben und dauerhaft kostenlos anbieten zu können, ist der Betreiber auf
           freiwillige Unterstützung angewiesen.
         </p>

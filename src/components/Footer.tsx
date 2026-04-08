@@ -8,7 +8,7 @@ export default function Footer() {
           <div>
             <h3 className="font-bold text-white mb-3">Der Fluss des Lebens</h3>
             <p className="text-sm text-slate-400 leading-relaxed">
-              Eine freie christliche Forschungsplattform für alle, die tiefer in die Heilige Schrift eintauchen möchten.
+              Eine private christliche Forschungsplattform für alle, die tiefer in die Heilige Schrift eintauchen möchten.
             </p>
           </div>
           <div>
@@ -33,7 +33,7 @@ export default function Footer() {
         <div className="border-t border-slate-700 pt-4 text-center text-sm text-slate-500 space-y-1">
           <p>© {new Date().getFullYear()} Mario Reiner Denzer · Alle Rechte vorbehalten</p>
           <p className="text-xs text-slate-600">
-            Der Fluss des Lebens – Kostenlose Plattform für christliche Forschung
+            Der Fluss des Lebens – Private Plattform für christliche Forschung
             <span className="mx-2">·</span>
             <Link href="/admin-login" className="hover:text-slate-400 transition-colors">
               Admin
