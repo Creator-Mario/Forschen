@@ -104,7 +104,7 @@ export default function Navbar() {
           <button
             className="md:hidden p-2 flex flex-col gap-1"
             onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Menü öffnen"
+            aria-label={menuOpen ? 'Menü schließen' : 'Menü öffnen'}
           >
             <div className={`w-6 h-0.5 bg-white transition-transform duration-200 ${menuOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
             <div className={`w-6 h-0.5 bg-white transition-opacity duration-200 ${menuOpen ? 'opacity-0' : ''}`} />

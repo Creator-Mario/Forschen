@@ -53,9 +53,7 @@ export default function HomePage() {
             </Link>
             <Link
               href="/vision"
-              className="px-8 py-3 rounded-full font-semibold text-base border-2 border-white text-white hover:bg-white transition-all"
-              style={{ '--tw-hover-text': '#0d47a1' } as React.CSSProperties}
-              onMouseEnter={undefined}
+              className="px-8 py-3 rounded-full font-semibold text-base border-2 border-white text-white hover:bg-white hover:text-river-900 transition-all"
             >
               Unsere Vision
             </Link>
