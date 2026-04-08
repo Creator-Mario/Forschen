@@ -30,12 +30,15 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        <div className="border-t border-slate-700 pt-4 text-center text-sm text-slate-500">
-          © {new Date().getFullYear()} Der Fluss des Lebens – Kostenlose Plattform für christliche Forschung
-          <span className="mx-2">·</span>
-          <Link href="/admin-login" className="text-slate-600 hover:text-slate-400 transition-colors text-xs">
-            Admin
-          </Link>
+        <div className="border-t border-slate-700 pt-4 text-center text-sm text-slate-500 space-y-1">
+          <p>© {new Date().getFullYear()} Mario Reiner Denzer · Alle Rechte vorbehalten</p>
+          <p className="text-xs text-slate-600">
+            Der Fluss des Lebens – Kostenlose Plattform für christliche Forschung
+            <span className="mx-2">·</span>
+            <Link href="/admin-login" className="hover:text-slate-400 transition-colors">
+              Admin
+            </Link>
+          </p>
         </div>
       </div>
     </footer>
