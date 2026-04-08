@@ -2,7 +2,8 @@
 
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { getStatusColor, getStatusLabel, formatDate } from '@/lib/utils';
 
 const adminLinks = [
@@ -37,18 +38,24 @@ const CONTENT_TYPE_TO_ROUTE: Record<string, string> = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type OverviewItem = Record<string, any>;
 
-export default function AdminPage() {
+function AdminPageInner() {
+  const searchParams = useSearchParams();
+  const userIdFilter = searchParams.get('userId') || '';
+
   const [items, setItems] = useState<OverviewItem[]>([]);
   const [filter, setFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/admin/overview')
+    const url = userIdFilter
+      ? `/api/admin/overview?userId=${encodeURIComponent(userIdFilter)}`
+      : '/api/admin/overview';
+    fetch(url)
       .then(r => r.json())
       .then(data => { if (Array.isArray(data)) setItems(data); })
       .finally(() => setLoading(false));
-  }, []);
+  }, [userIdFilter]);
 
   const typeOptions = ['all', 'these', 'forschung', 'gebet', 'video', 'aktion'];
   const statusOptions = ['all', 'created', 'pending', 'review', 'published', 'approved', 'question_to_user', 'postponed', 'deleted', 'rejected'];
@@ -72,18 +79,39 @@ export default function AdminPage() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
-          {adminLinks.map(link => (
-            <Link key={link.href} href={link.href} className="bg-white rounded-xl shadow-md p-5 hover:shadow-lg transition-shadow group border-l-4 border-blue-500">
-              <div className="text-2xl mb-2">{link.icon}</div>
-              <h3 className="font-semibold text-gray-800 mb-1 group-hover:text-blue-800 transition-colors">{link.title}</h3>
-              <p className="text-gray-500 text-sm">{link.desc}</p>
-            </Link>
-          ))}
-        </div>
+        {!userIdFilter && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
+            {adminLinks.map(link => (
+              <Link key={link.href} href={link.href} className="bg-white rounded-xl shadow-md p-5 hover:shadow-lg transition-shadow group border-l-4 border-blue-500">
+                <div className="text-2xl mb-2">{link.icon}</div>
+                <h3 className="font-semibold text-gray-800 mb-1 group-hover:text-blue-800 transition-colors">{link.title}</h3>
+                <p className="text-gray-500 text-sm">{link.desc}</p>
+              </Link>
+            ))}
+          </div>
+        )}
 
         <div className="mb-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Alle Inhalte im System</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-gray-800">
+              {userIdFilter ? 'Inhalte dieses Nutzers' : 'Alle Inhalte im System'}
+            </h2>
+            {userIdFilter && (
+              <Link
+                href="/admin"
+                className="text-sm text-blue-600 hover:underline"
+              >
+                ← Alle Inhalte anzeigen
+              </Link>
+            )}
+          </div>
+
+          {userIdFilter && items.length > 0 && (
+            <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg px-4 py-2 text-sm text-blue-800">
+              Gefiltert nach Nutzer: <span className="font-semibold">{items[0]?.userName}</span>{' '}
+              <span className="text-blue-600">({items[0]?.userEmail})</span>
+            </div>
+          )}
 
           <div className="flex flex-wrap gap-3 mb-4">
             <div>
@@ -173,5 +201,13 @@ export default function AdminPage() {
         </div>
       </div>
     </ProtectedRoute>
+  );
+}
+
+export default function AdminPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-64"><div className="text-gray-500">Laden...</div></div>}>
+      <AdminPageInner />
+    </Suspense>
   );
 }

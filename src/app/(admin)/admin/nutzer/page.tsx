@@ -4,6 +4,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { useEffect, useState } from 'react';
 import type { User } from '@/types';
 import { formatDate } from '@/lib/utils';
+import Link from 'next/link';
 
 export default function AdminNutzerPage() {
   const [users, setUsers] = useState<User[]>([]);
@@ -71,34 +72,42 @@ export default function AdminNutzerPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    {u.role !== 'ADMIN' && (
-                      <div className="flex gap-2">
-                        {u.active ? (
+                    <div className="flex flex-wrap gap-2">
+                      <Link
+                        href={`/admin?userId=${u.id}`}
+                        className="text-xs bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 px-2 py-1 rounded transition-colors"
+                      >
+                        📋 Inhalte
+                      </Link>
+                      {u.role !== 'ADMIN' && (
+                        <>
+                          {u.active ? (
+                            <button
+                              onClick={() => handleAction(u.id, 'lock')}
+                              disabled={loading}
+                              className="text-xs bg-yellow-100 text-yellow-800 hover:bg-yellow-200 px-2 py-1 rounded transition-colors disabled:opacity-50"
+                            >
+                              Sperren
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleAction(u.id, 'unlock')}
+                              disabled={loading}
+                              className="text-xs bg-green-100 text-green-800 hover:bg-green-200 px-2 py-1 rounded transition-colors disabled:opacity-50"
+                            >
+                              Reaktivieren
+                            </button>
+                          )}
                           <button
-                            onClick={() => handleAction(u.id, 'lock')}
+                            onClick={() => handleAction(u.id, 'delete')}
                             disabled={loading}
-                            className="text-xs bg-yellow-100 text-yellow-800 hover:bg-yellow-200 px-2 py-1 rounded transition-colors disabled:opacity-50"
+                            className="text-xs bg-red-100 text-red-700 hover:bg-red-200 px-2 py-1 rounded transition-colors disabled:opacity-50"
                           >
-                            Sperren
+                            Löschen
                           </button>
-                        ) : (
-                          <button
-                            onClick={() => handleAction(u.id, 'unlock')}
-                            disabled={loading}
-                            className="text-xs bg-green-100 text-green-800 hover:bg-green-200 px-2 py-1 rounded transition-colors disabled:opacity-50"
-                          >
-                            Reaktivieren
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleAction(u.id, 'delete')}
-                          disabled={loading}
-                          className="text-xs bg-red-100 text-red-700 hover:bg-red-200 px-2 py-1 rounded transition-colors disabled:opacity-50"
-                        >
-                          Löschen
-                        </button>
-                      </div>
-                    )}
+                        </>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

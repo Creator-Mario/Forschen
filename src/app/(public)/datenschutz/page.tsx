@@ -2,13 +2,27 @@ export default function DatenschutzPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
       <h1 className="text-3xl font-bold text-blue-800 mb-2">Datenschutzerklärung</h1>
-      <p className="text-gray-500 mb-8">Letzte Aktualisierung: Januar 2024</p>
+      <p className="text-gray-500 mb-8">Letzte Aktualisierung: April 2025</p>
 
       <div className="prose prose-gray max-w-none space-y-8 text-gray-700">
         <section>
           <h2 className="text-xl font-semibold text-gray-800 mb-3">1. Verantwortlicher</h2>
           <p>
-            Verantwortlich für die Datenverarbeitung auf dieser Website ist Der Fluss des Lebens e.V. Für Datenschutzfragen wende dich bitte an: datenschutz@fluss-des-lebens.de
+            Verantwortlich für die Datenverarbeitung auf dieser Website ist:
+          </p>
+          <p className="mt-2 font-medium">Mario Reiner Denzer</p>
+          <p className="text-sm">
+            NIRWANA GOLDEN PARK BLOK D9 NO.9, Bogor-Cibinong, 16915, Indonesien
+          </p>
+          <p className="text-sm mt-1">
+            E-Mail:{' '}
+            <a href="mailto:lebendigenachfolge@gmail.com" className="text-blue-600 hover:underline">
+              lebendigenachfolge@gmail.com
+            </a>
+          </p>
+          <p className="text-sm mt-2 text-gray-500">
+            Diese Plattform wird als Ein-Personen-Projekt betrieben. Betreiber, Verantwortlicher
+            und Administrator sind identisch.
           </p>
         </section>
 
@@ -36,7 +50,9 @@ export default function DatenschutzPage() {
         <section>
           <h2 className="text-xl font-semibold text-gray-800 mb-3">4. Datenspeicherung</h2>
           <p>
-            Deine Daten werden auf unseren Servern in der Europäischen Union gespeichert. Wir wenden angemessene technische und organisatorische Maßnahmen an, um deine Daten vor unbefugtem Zugriff zu schützen.
+            Deine Daten werden auf den Servern des Hosting-Dienstleisters (Vercel) gespeichert. Wir
+            wenden angemessene technische und organisatorische Maßnahmen an, um deine Daten vor
+            unbefugtem Zugriff zu schützen.
           </p>
         </section>
 
@@ -52,21 +68,26 @@ export default function DatenschutzPage() {
             <li>Widerspruchsrecht</li>
           </ul>
           <p className="mt-3">
-            Zur Ausübung dieser Rechte wende dich an: datenschutz@fluss-des-lebens.de
+            Zur Ausübung dieser Rechte wende dich an:{' '}
+            <a href="mailto:lebendigenachfolge@gmail.com" className="text-blue-600 hover:underline">
+              lebendigenachfolge@gmail.com
+            </a>
           </p>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-gray-800 mb-3">6. Cookies</h2>
           <p>
-            Diese Website verwendet ausschließlich technisch notwendige Cookies für die Authentifizierung (Session-Cookie). Es werden keine Tracking- oder Marketing-Cookies eingesetzt.
+            Diese Website verwendet ausschließlich technisch notwendige Cookies für die
+            Authentifizierung (Session-Cookie). Es werden keine Tracking- oder Marketing-Cookies
+            eingesetzt.
           </p>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-gray-800 mb-3">7. Beschwerderecht</h2>
           <p>
-            Du hast das Recht, dich bei der zuständigen Datenschutzaufsichtsbehörde zu beschweren. In Deutschland sind dies die Landesdatenschutzbeauftragten der jeweiligen Bundesländer.
+            Du hast das Recht, dich bei der zuständigen Datenschutzaufsichtsbehörde zu beschweren.
           </p>
         </section>
       </div>
