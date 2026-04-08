@@ -26,6 +26,7 @@ export default function Navbar() {
             <Link href="/gebet" className="hover:text-blue-200 transition-colors">Gebet</Link>
             <Link href="/videos" className="hover:text-blue-200 transition-colors">Videos</Link>
             <Link href="/aktionen" className="hover:text-blue-200 transition-colors">Aktionen</Link>
+            <Link href="/vision" className="hover:text-blue-200 transition-colors">Vision</Link>
             {session ? (
               <div className="flex items-center gap-3">
                 <Link href="/dashboard" className="hover:text-blue-200 transition-colors">
@@ -67,6 +68,7 @@ export default function Navbar() {
             <Link href="/gebet" className="hover:text-blue-200 py-1" onClick={() => setMenuOpen(false)}>Gebet</Link>
             <Link href="/videos" className="hover:text-blue-200 py-1" onClick={() => setMenuOpen(false)}>Videos</Link>
             <Link href="/aktionen" className="hover:text-blue-200 py-1" onClick={() => setMenuOpen(false)}>Aktionen</Link>
+            <Link href="/vision" className="hover:text-blue-200 py-1" onClick={() => setMenuOpen(false)}>Vision</Link>
             {session ? (
               <>
                 <Link href="/dashboard" className="hover:text-blue-200 py-1" onClick={() => setMenuOpen(false)}>{session.user.name}</Link>
