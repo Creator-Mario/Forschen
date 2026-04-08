@@ -27,7 +27,10 @@ export default withAuth(
         // Public routes don't require auth
         const publicRoutes = ['/', '/vision', '/tageswort', '/wochenthema', '/thesen', '/forschung',
           '/gebet', '/videos', '/aktionen', '/spenden', '/login', '/registrieren', '/datenschutz',
-          '/impressum', '/admin-login', '/admin-reset', '/mitglieder', '/vorstellung'];
+          '/impressum', '/admin-login', '/admin-reset', '/mitglieder',
+          // /vorstellung is accessible pre-login (user has verified email but not yet submitted intro).
+          // The page itself validates the userId query param against the DB.
+          '/vorstellung'];
         if (publicRoutes.some(r => pathname === r || pathname.startsWith(r + '/'))) {
           return true;
         }

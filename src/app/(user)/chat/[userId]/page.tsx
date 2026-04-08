@@ -48,7 +48,9 @@ function ChatView() {
     loadMessages();
     const interval = setInterval(loadMessages, 5000);
     return () => clearInterval(interval);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // loadMessages is defined inside the effect to avoid stale closures;
+    // it is safe to omit since it only depends on otherUserId which is in the array.
   }, [otherUserId]);
 
   useEffect(() => {

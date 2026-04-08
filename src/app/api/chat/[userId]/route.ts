@@ -13,8 +13,8 @@ export async function GET(
 
   const { userId: otherUserId } = await params;
 
-  // Admin may read any conversation
-  const myId = session.user.role === 'ADMIN' ? session.user.id : session.user.id;
+  // Admin may read any conversation between any two users
+  const myId = session.user.id;
   const messages = getConversation(myId, otherUserId);
   return NextResponse.json(messages);
 }
