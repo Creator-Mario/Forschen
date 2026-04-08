@@ -19,10 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "20"
           cache: "npm"
@@ -31,14 +31,16 @@ jobs:
         run: npm ci
 
       - name: Prepare for static export
-        # Middleware and API routes require a server runtime and are not compatible with
-        # static export. Auth and API features are unavailable on GitHub Pages; client-side
-        # ProtectedRoute components already handle access control in the browser.
-        # These files are removed only in this ephemeral CI environment – the repository
-        # itself is not modified.
+        # Middleware, API routes, and dynamic routes that require a server runtime are not
+        # compatible with static export. Auth and API features are unavailable on GitHub
+        # Pages; client-side ProtectedRoute components already handle access control in the
+        # browser. The chat/[userId] page relies on server-side APIs and cannot be
+        # statically rendered. These files are removed only in this ephemeral CI environment
+        # – the repository itself is not modified.
         run: |
           echo "export {};" > src/middleware.ts
           rm -rf src/app/api
+          rm -rf "src/app/(user)/chat/[userId]"
 
       - name: Build static site
         run: npm run build
@@ -51,7 +53,7 @@ jobs:
           NEXTAUTH_URL: https://creator-mario.github.io/Forschen
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./out
 
@@ -64,4 +66,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
