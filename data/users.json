@@ -28,5 +28,16 @@
     "status": "active",
     "createdAt": "2026-04-08T00:53:39.026Z",
     "active": true
+  },
+  {
+    "id": "user-1775659725056-4fqk3gk90",
+    "email": "denzer97@gmail.com",
+    "password": "$2b$12$lhUOOYEkP9NRlNNK.fiqAOX06UnZzokwR.PzFZy29r7RxsOTWbRpK",
+    "name": "MARIO REINER DENZER ",
+    "role": "USER",
+    "status": "pending_email",
+    "createdAt": "2026-04-08T14:48:45.056Z",
+    "active": false,
+    "emailToken": "ea614236acde7a0da6e7149f8e0e7ebf9bf1885df6769cdb20b91186fbb961d7"
   }
 ]
