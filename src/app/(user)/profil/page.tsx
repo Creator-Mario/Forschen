@@ -1,7 +1,7 @@
 'use client';
 
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { useState, FormEvent } from 'react';
 
 export default function ProfilPage() {
@@ -12,6 +12,35 @@ export default function ProfilPage() {
   const [pwError, setPwError] = useState('');
   const [pwSuccess, setPwSuccess] = useState('');
   const [pwLoading, setPwLoading] = useState(false);
+
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteError, setDeleteError] = useState('');
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
+  async function handleDeleteAccount(e: FormEvent) {
+    e.preventDefault();
+    setDeleteError('');
+    setDeleteLoading(true);
+    try {
+      const res = await fetch('/api/user/account', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: deletePassword }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setDeleteError(data.error || 'Konto konnte nicht gelöscht werden.');
+      } else {
+        await signOut({ callbackUrl: '/' });
+      }
+    } catch (err) {
+      console.error('Account deletion failed:', err instanceof Error ? err.message : String(err));
+      setDeleteError('Netzwerkfehler. Bitte versuche es erneut.');
+    } finally {
+      setDeleteLoading(false);
+    }
+  }
 
   async function handlePasswordChange(e: FormEvent) {
     e.preventDefault();
@@ -76,14 +105,6 @@ export default function ProfilPage() {
                 <span className="font-medium">{session?.user.role === 'ADMIN' ? 'Administrator' : 'Nutzer'}</span>
               </div>
             </div>
-          </div>
-
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg text-sm text-gray-600">
-            <p>Möchtest du dein Konto löschen oder deine Daten anfragen? Wende dich an{' '}
-              <a href="mailto:datenschutz@fluss-des-lebens.de" className="text-blue-600 hover:underline">
-                datenschutz@fluss-des-lebens.de
-              </a>
-            </p>
           </div>
         </div>
 
@@ -150,6 +171,60 @@ export default function ProfilPage() {
               {pwLoading ? 'Wird gespeichert…' : 'Passwort ändern'}
             </button>
           </form>
+        </div>
+
+        {/* Danger zone – account deletion */}
+        <div className="bg-white rounded-xl shadow-md p-8 border border-red-100">
+          <h2 className="font-semibold text-red-700 mb-2">Konto löschen</h2>
+          <p className="text-sm text-gray-500 mb-4">
+            Wenn du dein Konto löschst, werden alle deine persönlichen Daten, Beiträge und
+            Nachrichten dauerhaft und unwiderruflich entfernt.
+          </p>
+
+          {!showDeleteConfirm ? (
+            <button
+              type="button"
+              onClick={() => setShowDeleteConfirm(true)}
+              className="bg-red-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors"
+            >
+              Konto unwiderruflich löschen
+            </button>
+          ) : (
+            <form onSubmit={handleDeleteAccount} className="space-y-4">
+              <p className="text-sm font-medium text-red-700">
+                Bitte gib dein Passwort ein, um die Löschung zu bestätigen:
+              </p>
+              <input
+                type="password"
+                value={deletePassword}
+                onChange={e => setDeletePassword(e.target.value)}
+                required
+                placeholder="Passwort eingeben"
+                className="w-full border border-red-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
+              />
+              {deleteError && (
+                <div className="bg-red-50 border border-red-100 text-red-700 text-sm rounded-lg px-3 py-2">
+                  {deleteError}
+                </div>
+              )}
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => { setShowDeleteConfirm(false); setDeletePassword(''); setDeleteError(''); }}
+                  className="flex-1 border border-gray-200 text-gray-600 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+                >
+                  Abbrechen
+                </button>
+                <button
+                  type="submit"
+                  disabled={deleteLoading}
+                  className="flex-1 bg-red-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-60"
+                >
+                  {deleteLoading ? 'Wird gelöscht…' : 'Ja, Konto löschen'}
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </ProtectedRoute>

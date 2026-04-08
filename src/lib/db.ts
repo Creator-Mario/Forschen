@@ -93,6 +93,32 @@ export async function saveUser(user: User): Promise<void> {
   await writeJson('users.json', users);
 }
 
+/** Hard-delete a user and every piece of content they created. */
+export async function deleteUserAccount(userId: string): Promise<void> {
+  // Read all collections first, then filter, then write — avoids interleaved reads/writes.
+  const [users, thesen, forschung, gebete, videos, aktionen, messages] = await Promise.all([
+    Promise.resolve(getUsers()),
+    Promise.resolve(getThesen()),
+    Promise.resolve(getForschung()),
+    Promise.resolve(getGebete()),
+    Promise.resolve(getVideos()),
+    Promise.resolve(getAktionen()),
+    Promise.resolve(getChatMessages()),
+  ]);
+
+  await Promise.all([
+    writeJson('users.json', users.filter(u => u.id !== userId)),
+    writeJson('thesen.json', thesen.filter(t => t.userId !== userId)),
+    writeJson('forschung.json', forschung.filter(f => f.userId !== userId)),
+    writeJson('gebete.json', gebete.filter(g => g.userId !== userId)),
+    writeJson('videos.json', videos.filter(v => v.userId !== userId)),
+    writeJson('aktionen.json', aktionen.filter(a => a.userId !== userId)),
+    writeJson('messages.json', messages.filter(
+      m => m.fromUserId !== userId && m.toUserId !== userId
+    )),
+  ]);
+}
+
 // Admin Logs (append-only, never deleted)
 export function getAdminLogs(): AdminLog[] {
   return readJson<AdminLog>('admin-logs.json');
