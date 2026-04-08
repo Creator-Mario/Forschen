@@ -62,7 +62,7 @@ jobs:
       contents: read
     environment:
       name: production
-      url: https://www.flussleben.live
+      url: https://www.flussdeslebens.live
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -104,7 +104,7 @@ jobs:
 #
 # Required environment variables in Vercel (production):
 #   NEXTAUTH_SECRET  – a long random string (e.g. openssl rand -base64 32)
-#   NEXTAUTH_URL     – https://www.flussleben.live
+#   NEXTAUTH_URL     – https://www.flussdeslebens.live
 #   GITHUB_TOKEN     – a Personal Access Token with "repo" scope (for data persistence)
 #   GITHUB_OWNER     – Creator-Mario
 #   GITHUB_REPO      – Forschen
