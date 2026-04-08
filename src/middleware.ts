@@ -14,6 +14,7 @@ export default withAuth(
     return NextResponse.next();
   },
   {
+    secret: process.env.NEXTAUTH_SECRET || 'dev-secret-please-set-in-production',
     callbacks: {
       authorized({ token, req }) {
         const pathname = req.nextUrl.pathname;
