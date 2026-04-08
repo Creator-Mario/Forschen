@@ -16,5 +16,14 @@
     "role": "USER",
     "createdAt": "2024-01-15T10:00:00.000Z",
     "active": true
+  },
+  {
+    "id": "user-1775609619026-3fb7xzayj",
+    "email": "marioreinerdenzer@gmail.com",
+    "password": "$2b$12$WNVL.oCgyZNJR7/q5ouTXOw8.4U7sLZf2iRKl4J7a/3ZahfDaa1E.",
+    "name": "Mario Reiner",
+    "role": "USER",
+    "createdAt": "2026-04-08T00:53:39.026Z",
+    "active": true
   }
 ]
