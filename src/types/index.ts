@@ -1,5 +1,15 @@
 export type UserRole = 'USER' | 'ADMIN';
 
+// User account lifecycle status
+export type UserStatus =
+  | 'pending_email'        // registered, awaiting email confirmation
+  | 'email_verified'       // email confirmed, must fill intro form
+  | 'awaiting_admin_review' // intro submitted, awaiting admin approval
+  | 'question_to_user'     // admin sent a question back
+  | 'postponed'            // admin postponed decision
+  | 'active'               // fully approved, may log in
+  | 'deleted';             // soft-deleted
+
 // New canonical status values; legacy 'pending' | 'approved' | 'rejected' kept for backward compat.
 export type ContentStatus =
   | 'created'
@@ -12,14 +22,34 @@ export type ContentStatus =
   | 'approved'
   | 'rejected';
 
+export interface UserIntro {
+  motivation: string;   // "Warum möchtest du mitmachen?"
+  vorstellung: string;  // "Stelle dich den Mitgliedern vor"
+  submittedAt: string;
+}
+
 export interface User {
   id: string;
   email: string;
   password: string;
   name: string;
   role: UserRole;
+  status: UserStatus;
   createdAt: string;
-  active: boolean;
+  active: boolean;         // kept for backward-compat; derived from status === 'active'
+  emailToken?: string;     // one-time token for email verification
+  emailVerifiedAt?: string;
+  intro?: UserIntro;       // mandatory intro/motivation form
+  adminNote?: string;      // admin's internal note or question
+}
+
+export interface ChatMessage {
+  id: string;
+  fromUserId: string;
+  toUserId: string;
+  content: string;
+  createdAt: string;
+  readAt?: string;
 }
 
 export interface Tageswort {

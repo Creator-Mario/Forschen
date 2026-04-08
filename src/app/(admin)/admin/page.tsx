@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import { getStatusColor, getStatusLabel, formatDate } from '@/lib/utils';
 
 const adminLinks = [
+  { href: '/admin/vorstellungen', icon: '🧑‍🤝‍🧑', title: 'Vorstellungen prüfen', desc: 'Neue Mitglieder freischalten oder ablehnen' },
   { href: '/admin/nutzer', icon: '👥', title: 'Nutzerverwaltung', desc: 'Nutzer anzeigen und verwalten' },
   { href: '/admin/thesen', icon: '💡', title: 'Thesen moderieren', desc: 'Eingereichte Thesen prüfen' },
   { href: '/admin/forschung', icon: '📚', title: 'Forschung moderieren', desc: 'Forschungsbeiträge prüfen' },
@@ -43,6 +44,7 @@ function AdminPageInner() {
   const userIdFilter = searchParams.get('userId') || '';
 
   const [items, setItems] = useState<OverviewItem[]>([]);
+  const [pendingVorstellungen, setPendingVorstellungen] = useState(0);
   const [filter, setFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [loading, setLoading] = useState(true);
@@ -55,6 +57,11 @@ function AdminPageInner() {
       .then(r => r.json())
       .then(data => { if (Array.isArray(data)) setItems(data); })
       .finally(() => setLoading(false));
+
+    // Also load pending introductions count
+    fetch('/api/admin/vorstellungen')
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data)) setPendingVorstellungen(data.length); });
   }, [userIdFilter]);
 
   const typeOptions = ['all', 'these', 'forschung', 'gebet', 'video', 'aktion'];
@@ -72,9 +79,14 @@ function AdminPageInner() {
         <div className="mb-8">
           <div className="text-blue-600 text-sm font-medium mb-1">Verwaltungsbereich</div>
           <h1 className="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
+          {pendingVorstellungen > 0 && (
+            <p className="text-sm text-red-600 mt-1 font-medium">
+              🧑‍🤝‍🧑 {pendingVorstellungen} neue Vorstellung{pendingVorstellungen > 1 ? 'en' : ''} warten auf Freischaltung
+            </p>
+          )}
           {pendingCount > 0 && (
             <p className="text-sm text-orange-600 mt-1 font-medium">
-              ⚠️ {pendingCount} Einträge warten auf Bearbeitung
+              ⚠️ {pendingCount} Inhalte warten auf Bearbeitung
             </p>
           )}
         </div>

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function RegistrierenPage() {
@@ -9,9 +8,8 @@ export default function RegistrierenPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
+  const [verifyToken, setVerifyToken] = useState('');
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -30,18 +28,37 @@ export default function RegistrierenPage() {
     if (!res.ok) {
       setError(data.error || 'Registrierung fehlgeschlagen.');
     } else {
-      setSuccess(true);
-      setTimeout(() => router.push('/login'), 2000);
+      // Show the verification link/token (in production this would be sent via email)
+      setVerifyToken(data.emailToken || '');
     }
   }
 
-  if (success) {
+  if (verifyToken) {
+    const verifyUrl = `/api/auth/verify-email?token=${verifyToken}`;
     return (
       <div className="min-h-[70vh] flex items-center justify-center px-4 py-12">
-        <div className="text-center">
-          <div className="text-green-600 text-4xl mb-4">✓</div>
-          <h1 className="text-xl font-bold text-gray-800 mb-2">Registrierung erfolgreich!</h1>
-          <p className="text-gray-500 text-sm">Du wirst zur Anmeldeseite weitergeleitet…</p>
+        <div className="w-full max-w-md text-center">
+          <div className="text-blue-600 text-4xl mb-4">✉️</div>
+          <h1 className="text-xl font-bold text-gray-800 mb-3">Fast geschafft!</h1>
+          <p className="text-gray-600 text-sm mb-6 leading-relaxed">
+            Deine E‑Mail‑Adresse muss noch bestätigt werden.
+            In einer echten Umgebung erhältst du eine E‑Mail mit dem Bestätigungslink.
+          </p>
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-left mb-6">
+            <p className="text-xs text-blue-700 font-medium mb-2">Bestätigungslink (Demo):</p>
+            <a
+              href={verifyUrl}
+              className="text-xs text-blue-600 hover:underline break-all"
+            >
+              {typeof window !== 'undefined' ? `${window.location.origin}${verifyUrl}` : verifyUrl}
+            </a>
+          </div>
+          <a
+            href={verifyUrl}
+            className="inline-block bg-blue-800 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
+          >
+            E-Mail jetzt bestätigen →
+          </a>
         </div>
       </div>
     );

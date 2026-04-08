@@ -29,6 +29,8 @@ export default function Navbar() {
             <Link href="/vision" className="hover:text-blue-200 transition-colors">Vision</Link>
             {session ? (
               <div className="flex items-center gap-3">
+                <Link href="/mitglieder/vorstellungen" className="hover:text-blue-200 transition-colors">Mitglieder</Link>
+                <Link href="/chat" className="hover:text-blue-200 transition-colors">💬</Link>
                 <Link href="/dashboard" className="hover:text-blue-200 transition-colors">
                   {session.user.name}
                 </Link>

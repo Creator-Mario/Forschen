@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { getUserByEmail, saveUser } from '@/lib/db';
 import { generateId } from '@/lib/utils';
+import crypto from 'crypto';
 
 export async function POST(req: NextRequest) {
   try {
@@ -23,17 +24,21 @@ export async function POST(req: NextRequest) {
     }
 
     const hashed = await bcrypt.hash(password, 12);
+    const emailToken = crypto.randomBytes(32).toString('hex');
+
     await saveUser({
       id: `user-${generateId()}`,
       email,
       password: hashed,
       name,
       role: 'USER',
+      status: 'pending_email',
       createdAt: new Date().toISOString(),
-      active: true,
+      active: false,
+      emailToken,
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, emailToken });
   } catch {
     return NextResponse.json({ error: 'Registrierung fehlgeschlagen.' }, { status: 500 });
   }

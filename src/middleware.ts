@@ -27,7 +27,7 @@ export default withAuth(
         // Public routes don't require auth
         const publicRoutes = ['/', '/vision', '/tageswort', '/wochenthema', '/thesen', '/forschung',
           '/gebet', '/videos', '/aktionen', '/spenden', '/login', '/registrieren', '/datenschutz',
-          '/impressum', '/admin-login', '/admin-reset'];
+          '/impressum', '/admin-login', '/admin-reset', '/mitglieder', '/vorstellung'];
         if (publicRoutes.some(r => pathname === r || pathname.startsWith(r + '/'))) {
           return true;
         }

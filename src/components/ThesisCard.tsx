@@ -1,5 +1,6 @@
 import type { These } from '@/types';
 import { formatDate, getStatusColor, getStatusLabel } from '@/lib/utils';
+import BibleLink from './BibleLink';
 
 interface ThesisCardProps {
   these: These;
@@ -17,14 +18,16 @@ export default function ThesisCard({ these, showStatus = false }: ThesisCardProp
           </span>
         )}
       </div>
-      <p className="text-gray-600 text-sm leading-relaxed mb-4">{these.content}</p>
+      <p className="text-gray-600 text-sm leading-relaxed mb-4">
+        <BibleLink text={these.content} />
+      </p>
       <div className="flex items-center justify-between text-xs text-gray-400">
         <div className="flex items-center gap-2">
           <span className="font-medium text-gray-500">{these.authorName}</span>
           {these.bibleReference && (
             <>
               <span>·</span>
-              <span className="text-blue-600">{these.bibleReference}</span>
+              <BibleLink text={these.bibleReference} className="text-blue-600" />
             </>
           )}
         </div>
