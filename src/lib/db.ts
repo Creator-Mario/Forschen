@@ -283,3 +283,11 @@ export async function saveChatMessage(msg: ChatMessage): Promise<void> {
   await writeJson('messages.json', list);
 }
 
+export async function deleteConversation(userId1: string, userId2: string): Promise<void> {
+  const messages = getChatMessages().filter(
+    m => !((m.fromUserId === userId1 && m.toUserId === userId2) ||
+           (m.fromUserId === userId2 && m.toUserId === userId1))
+  );
+  await writeJson('messages.json', messages);
+}
+

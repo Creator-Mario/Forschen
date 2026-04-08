@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { getConversation, saveChatMessage, getUserById } from '@/lib/db';
+import { getConversation, saveChatMessage, getUserById, deleteConversation, saveAdminLog } from '@/lib/db';
 import { generateId } from '@/lib/utils';
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
 ) {
   const session = await getServerSession(authOptions);
@@ -13,7 +13,16 @@ export async function GET(
 
   const { userId: otherUserId } = await params;
 
-  // Admin may read any conversation between any two users
+  // Admin may view a conversation between any two users via ?partner=<userId>
+  if (session.user.role === 'ADMIN') {
+    const { searchParams } = new URL(req.url);
+    const partnerUserId = searchParams.get('partner');
+    if (partnerUserId) {
+      const messages = getConversation(otherUserId, partnerUserId);
+      return NextResponse.json(messages);
+    }
+  }
+
   const myId = session.user.id;
   const messages = getConversation(myId, otherUserId);
   return NextResponse.json(messages);
@@ -54,4 +63,35 @@ export async function POST(
 
   await saveChatMessage(msg);
   return NextResponse.json(msg);
+}
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ userId: string }> }
+) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user.role !== 'ADMIN') {
+    return NextResponse.json({ error: 'Kein Zugang.' }, { status: 403 });
+  }
+
+  const { userId: otherUserId } = await params;
+
+  // The URL carries the second participant's ID; admin is deleting the conversation
+  // between otherUserId and a third user passed as query param, OR the entire
+  // outbox/inbox of otherUserId when used from the admin chat overview.
+  const { searchParams } = new URL(req.url);
+  const partnerUserId = searchParams.get('partner') || session.user.id;
+
+  await deleteConversation(otherUserId, partnerUserId);
+
+  await saveAdminLog({
+    id: `log-${generateId()}`,
+    adminId: session.user.id,
+    action: 'chat_delete',
+    targetType: 'chat',
+    targetId: `${otherUserId}:${partnerUserId}`,
+    createdAt: new Date().toISOString(),
+  });
+
+  return NextResponse.json({ success: true });
 }

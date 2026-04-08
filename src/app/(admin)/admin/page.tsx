@@ -9,6 +9,7 @@ import { getStatusColor, getStatusLabel, formatDate } from '@/lib/utils';
 const adminLinks = [
   { href: '/admin/vorstellungen', icon: '🧑‍🤝‍🧑', title: 'Vorstellungen prüfen', desc: 'Neue Mitglieder freischalten oder ablehnen' },
   { href: '/admin/nutzer', icon: '👥', title: 'Nutzerverwaltung', desc: 'Nutzer anzeigen und verwalten' },
+  { href: '/admin/chats', icon: '💬', title: 'Chat-Moderation', desc: 'Gespräche einsehen und löschen' },
   { href: '/admin/thesen', icon: '💡', title: 'Thesen moderieren', desc: 'Eingereichte Thesen prüfen' },
   { href: '/admin/forschung', icon: '📚', title: 'Forschung moderieren', desc: 'Forschungsbeiträge prüfen' },
   { href: '/admin/gebet', icon: '🙏', title: 'Gebete moderieren', desc: 'Eingereichte Gebete prüfen' },
@@ -17,6 +18,7 @@ const adminLinks = [
   { href: '/admin/tageswort', icon: '📖', title: 'Tageswort verwalten', desc: 'Tagesbibelverse verwalten' },
   { href: '/admin/wochenthema', icon: '🔍', title: 'Wochenthema verwalten', desc: 'Wöchentliche Themen verwalten' },
   { href: '/admin/spenden', icon: '💰', title: 'Spenden', desc: 'Spendenübersicht' },
+  { href: '/admin/logs', icon: '📋', title: 'Admin-Protokoll', desc: 'Alle Admin-Aktionen einsehen' },
   { href: '/admin/system', icon: '⚙️', title: 'System', desc: 'Systemeinstellungen' },
 ];
 
