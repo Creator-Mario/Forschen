@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     authorName: body.anonymous ? undefined : session.user.name,
     content: body.content,
     anonymous: !!body.anonymous,
-    status: 'pending' as const,
+    status: 'created' as const,
     createdAt: new Date().toISOString(),
   };
   await saveGebet(gebet);

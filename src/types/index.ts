@@ -1,5 +1,17 @@
 export type UserRole = 'USER' | 'ADMIN';
 
+// New canonical status values; legacy 'pending' | 'approved' | 'rejected' kept for backward compat.
+export type ContentStatus =
+  | 'created'
+  | 'review'
+  | 'published'
+  | 'question_to_user'
+  | 'postponed'
+  | 'deleted'
+  | 'pending'
+  | 'approved'
+  | 'rejected';
+
 export interface User {
   id: string;
   email: string;
@@ -39,10 +51,11 @@ export interface These {
   title: string;
   content: string;
   bibleReference?: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: ContentStatus;
   createdAt: string;
   updatedAt?: string;
   moderatorNote?: string;
+  adminMessage?: string;
 }
 
 export interface ForschungsBeitrag {
@@ -53,8 +66,9 @@ export interface ForschungsBeitrag {
   content: string;
   bibleReference?: string;
   wochenthemaId?: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: ContentStatus;
   createdAt: string;
+  adminMessage?: string;
 }
 
 export interface Gebet {
@@ -63,8 +77,9 @@ export interface Gebet {
   authorName?: string;
   content: string;
   anonymous: boolean;
-  status: 'pending' | 'approved' | 'rejected';
+  status: ContentStatus;
   createdAt: string;
+  adminMessage?: string;
 }
 
 export interface Video {
@@ -75,8 +90,9 @@ export interface Video {
   description: string;
   url: string;
   thumbnail?: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: ContentStatus;
   createdAt: string;
+  adminMessage?: string;
 }
 
 export interface Aktion {
@@ -88,8 +104,9 @@ export interface Aktion {
   location?: string;
   dateEvent?: string;
   contactInfo?: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: ContentStatus;
   createdAt: string;
+  adminMessage?: string;
 }
 
 export interface SpendenRecord {
@@ -107,5 +124,6 @@ export interface AdminLog {
   action: string;
   targetType: string;
   targetId: string;
+  note?: string;
   createdAt: string;
 }

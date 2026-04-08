@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import type {
   User, Tageswort, Wochenthema, These, ForschungsBeitrag,
-  Gebet, Video, Aktion, SpendenRecord
+  Gebet, Video, Aktion, SpendenRecord, AdminLog
 } from '@/types';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
@@ -83,6 +83,16 @@ export async function saveUser(user: User): Promise<void> {
   await writeJson('users.json', users);
 }
 
+// Admin Logs (append-only, never deleted)
+export function getAdminLogs(): AdminLog[] {
+  return readJson<AdminLog>('admin-logs.json');
+}
+export async function saveAdminLog(log: AdminLog): Promise<void> {
+  const logs = getAdminLogs();
+  logs.push(log);
+  await writeJson('admin-logs.json', logs);
+}
+
 // Tageswort
 export function getTageswortList(): Tageswort[] {
   return readJson<Tageswort>('tageswort.json');
@@ -127,7 +137,7 @@ export function getThesen(): These[] {
   return readJson<These>('thesen.json');
 }
 export function getApprovedThesen(): These[] {
-  return getThesen().filter(t => t.status === 'approved');
+  return getThesen().filter(t => t.status === 'approved' || t.status === 'published');
 }
 export function getTheseById(id: string): These | undefined {
   return getThesen().find(t => t.id === id);
@@ -145,7 +155,7 @@ export function getForschung(): ForschungsBeitrag[] {
   return readJson<ForschungsBeitrag>('forschung.json');
 }
 export function getApprovedForschung(): ForschungsBeitrag[] {
-  return getForschung().filter(f => f.status === 'approved');
+  return getForschung().filter(f => f.status === 'approved' || f.status === 'published');
 }
 export async function saveForschung(beitrag: ForschungsBeitrag): Promise<void> {
   const list = getForschung();
@@ -160,7 +170,7 @@ export function getGebete(): Gebet[] {
   return readJson<Gebet>('gebete.json');
 }
 export function getApprovedGebete(): Gebet[] {
-  return getGebete().filter(g => g.status === 'approved');
+  return getGebete().filter(g => g.status === 'approved' || g.status === 'published');
 }
 export async function saveGebet(gebet: Gebet): Promise<void> {
   const list = getGebete();
@@ -175,7 +185,7 @@ export function getVideos(): Video[] {
   return readJson<Video>('videos.json');
 }
 export function getApprovedVideos(): Video[] {
-  return getVideos().filter(v => v.status === 'approved');
+  return getVideos().filter(v => v.status === 'approved' || v.status === 'published');
 }
 export async function saveVideo(video: Video): Promise<void> {
   const list = getVideos();
@@ -190,7 +200,7 @@ export function getAktionen(): Aktion[] {
   return readJson<Aktion>('aktionen.json');
 }
 export function getApprovedAktionen(): Aktion[] {
-  return getAktionen().filter(a => a.status === 'approved');
+  return getAktionen().filter(a => a.status === 'approved' || a.status === 'published');
 }
 export async function saveAktion(aktion: Aktion): Promise<void> {
   const list = getAktionen();

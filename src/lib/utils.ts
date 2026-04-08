@@ -41,9 +41,14 @@ export function truncate(text: string, length: number): string {
 export function getStatusLabel(status: string): string {
   const labels: Record<string, string> = {
     pending: 'Ausstehend',
+    created: 'Eingereicht',
+    review: 'In Prüfung',
     approved: 'Genehmigt',
-    rejected: 'Abgelehnt',
     published: 'Veröffentlicht',
+    question_to_user: 'Rückfrage',
+    postponed: 'Zurückgestellt',
+    deleted: 'Gelöscht',
+    rejected: 'Abgelehnt',
     draft: 'Entwurf',
     archived: 'Archiviert',
   };
@@ -53,9 +58,14 @@ export function getStatusLabel(status: string): string {
 export function getStatusColor(status: string): string {
   const colors: Record<string, string> = {
     pending: 'bg-yellow-100 text-yellow-800',
+    created: 'bg-yellow-100 text-yellow-800',
+    review: 'bg-blue-100 text-blue-800',
     approved: 'bg-green-100 text-green-800',
+    published: 'bg-green-100 text-green-800',
+    question_to_user: 'bg-orange-100 text-orange-800',
+    postponed: 'bg-slate-100 text-slate-800',
+    deleted: 'bg-red-100 text-red-800',
     rejected: 'bg-red-100 text-red-800',
-    published: 'bg-blue-100 text-blue-800',
     draft: 'bg-gray-100 text-gray-800',
     archived: 'bg-slate-100 text-slate-800',
   };

@@ -2,6 +2,8 @@
 
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { getStatusColor, getStatusLabel, formatDate } from '@/lib/utils';
 
 const adminLinks = [
   { href: '/admin/nutzer', icon: '👥', title: 'Nutzerverwaltung', desc: 'Nutzer anzeigen und verwalten' },
@@ -16,16 +18,53 @@ const adminLinks = [
   { href: '/admin/system', icon: '⚙️', title: 'System', desc: 'Systemeinstellungen' },
 ];
 
+const CONTENT_TYPE_LABELS: Record<string, string> = {
+  these: 'These',
+  forschung: 'Forschung',
+  gebet: 'Gebet',
+  video: 'Video',
+  aktion: 'Aktion',
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type OverviewItem = Record<string, any>;
+
 export default function AdminPage() {
+  const [items, setItems] = useState<OverviewItem[]>([]);
+  const [filter, setFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/admin/overview')
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data)) setItems(data); })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const typeOptions = ['all', 'these', 'forschung', 'gebet', 'video', 'aktion'];
+  const statusOptions = ['all', 'created', 'pending', 'review', 'published', 'approved', 'question_to_user', 'postponed', 'deleted', 'rejected'];
+
+  const filtered = items
+    .filter(i => filter === 'all' || i.contentType === filter)
+    .filter(i => statusFilter === 'all' || i.status === statusFilter);
+
+  const pendingCount = items.filter(i => i.status === 'created' || i.status === 'pending').length;
+
   return (
     <ProtectedRoute requireAdmin>
-      <div className="max-w-5xl mx-auto px-4 py-12">
+      <div className="max-w-6xl mx-auto px-4 py-12">
         <div className="mb-8">
           <div className="text-blue-600 text-sm font-medium mb-1">Verwaltungsbereich</div>
           <h1 className="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
+          {pendingCount > 0 && (
+            <p className="text-sm text-orange-600 mt-1 font-medium">
+              ⚠️ {pendingCount} Einträge warten auf Bearbeitung
+            </p>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
           {adminLinks.map(link => (
             <Link key={link.href} href={link.href} className="bg-white rounded-xl shadow-md p-5 hover:shadow-lg transition-shadow group border-l-4 border-blue-500">
               <div className="text-2xl mb-2">{link.icon}</div>
@@ -35,7 +74,93 @@ export default function AdminPage() {
           ))}
         </div>
 
-        <div className="mt-8">
+        <div className="mb-6">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">Alle Inhalte im System</h2>
+
+          <div className="flex flex-wrap gap-3 mb-4">
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Typ</label>
+              <select
+                value={filter}
+                onChange={e => setFilter(e.target.value)}
+                className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
+                {typeOptions.map(t => (
+                  <option key={t} value={t}>{t === 'all' ? 'Alle Typen' : CONTENT_TYPE_LABELS[t] || t}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Status</label>
+              <select
+                value={statusFilter}
+                onChange={e => setStatusFilter(e.target.value)}
+                className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
+                {statusOptions.map(s => (
+                  <option key={s} value={s}>{s === 'all' ? 'Alle Status' : getStatusLabel(s)}</option>
+                ))}
+              </select>
+            </div>
+            <div className="self-end text-sm text-gray-500">{filtered.length} Einträge</div>
+          </div>
+
+          {loading ? (
+            <div className="text-center py-8 text-gray-400">Laden…</div>
+          ) : (
+            <div className="bg-white rounded-xl shadow-md overflow-hidden">
+              <table className="w-full text-sm">
+                <thead className="bg-slate-50 border-b">
+                  <tr>
+                    <th className="text-left px-4 py-3 font-medium text-gray-600">Typ</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-600">Titel / Inhalt</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-600">Erstellt von</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-600">E-Mail</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-600">Datum</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-600">Status</th>
+                    <th className="text-left px-4 py-3 font-medium text-gray-600">Aktion</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map(item => (
+                    <tr key={item.id} className="border-b last:border-0 hover:bg-slate-50 transition-colors">
+                      <td className="px-4 py-3">
+                        <span className="text-xs font-medium bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
+                          {CONTENT_TYPE_LABELS[item.contentType] || item.contentType}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 max-w-xs">
+                        <p className="font-medium text-gray-800 truncate">{item.displayTitle}</p>
+                        <p className="text-xs text-gray-400 font-mono">{item.id}</p>
+                      </td>
+                      <td className="px-4 py-3 text-gray-700">{item.userName}</td>
+                      <td className="px-4 py-3 text-blue-600 text-xs">{item.userEmail}</td>
+                      <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{formatDate(item.createdAt)}</td>
+                      <td className="px-4 py-3">
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${getStatusColor(item.status)}`}>
+                          {getStatusLabel(item.status)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <Link
+                          href={`/admin/${item.contentType === 'these' ? 'thesen' : item.contentType === 'forschung' ? 'forschung' : item.contentType === 'gebet' ? 'gebet' : item.contentType === 'video' ? 'videos' : 'aktionen'}`}
+                          className="text-xs text-blue-600 hover:underline"
+                        >
+                          Bearbeiten →
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {filtered.length === 0 && (
+                <div className="text-center py-8 text-gray-400">Keine Einträge gefunden.</div>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="mt-4">
           <Link href="/" className="text-gray-400 hover:text-gray-600 text-sm transition-colors">← Zurück zur Plattform</Link>
         </div>
       </div>

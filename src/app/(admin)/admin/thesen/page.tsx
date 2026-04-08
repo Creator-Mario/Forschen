@@ -3,23 +3,29 @@
 import ProtectedRoute from '@/components/ProtectedRoute';
 import AdminModerationTable from '@/components/AdminModerationTable';
 import { useEffect, useState } from 'react';
-import type { These } from '@/types';
+import type { These, User } from '@/types';
 
 export default function AdminThesenPage() {
   const [thesen, setThesen] = useState<These[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
 
   async function load() {
-    const r = await fetch('/api/thesen?all=1');
+    const [r, u] = await Promise.all([
+      fetch('/api/thesen?all=1'),
+      fetch('/api/admin/users'),
+    ]);
     setThesen(await r.json());
+    const userData = await u.json();
+    if (Array.isArray(userData)) setUsers(userData);
   }
 
   useEffect(() => { load(); }, []);
 
-  async function onModerate(id: string, status: 'approved' | 'rejected') {
+  async function onAction(id: string, status: string, message?: string) {
     await fetch('/api/admin/moderate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'these', id, status }),
+      body: JSON.stringify({ type: 'these', id, status, adminMessage: message }),
     });
     load();
   }
@@ -28,14 +34,17 @@ export default function AdminThesenPage() {
     <ProtectedRoute requireAdmin>
       <div className="max-w-4xl mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Thesen moderieren</h1>
-        <p className="text-gray-500 mb-8">{thesen.filter(t => t.status === 'pending').length} ausstehend</p>
+        <p className="text-gray-500 mb-8">
+          {thesen.filter(t => t.status === 'pending' || t.status === 'created').length} ausstehend
+        </p>
         <AdminModerationTable
           items={thesen}
-         
+          contentType="These"
+          users={users}
           titleField="title"
           authorField="authorName"
           contentField="content"
-          onModerate={onModerate}
+          onAction={onAction}
         />
       </div>
     </ProtectedRoute>
