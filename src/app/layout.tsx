@@ -17,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="de">
-      <body className="font-sans flex flex-col min-h-screen bg-slate-50 text-gray-800">
+      <body className="font-sans flex flex-col min-h-screen text-gray-800">
         <SessionProvider>
           <Navbar />
           <main className="flex-1">
