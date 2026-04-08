@@ -49,6 +49,9 @@ jobs:
         run: npm run build
         env:
           GITHUB_PAGES: "true"
+          # Tells client-side code that auth/API features are unavailable on this static
+          # export so it can show an appropriate "not available" notice.
+          NEXT_PUBLIC_GITHUB_PAGES: "true"
           # NEXTAUTH_SECRET is required by next-auth at build time even though auth is
           # non-functional on a static export.  A real secret is unnecessary here; use
           # the repository secret if you want to avoid a hardcoded placeholder.
