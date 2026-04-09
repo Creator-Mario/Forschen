@@ -1,5 +1,8 @@
+export const dynamic = 'force-dynamic';
+
 import { getWochenthemaList } from '@/lib/db';
 import Link from 'next/link';
+import BibleLink from '@/components/BibleLink';
 
 export default function WochenthemaArchivPage() {
   const themes = getWochenthemaList()
@@ -25,7 +28,7 @@ export default function WochenthemaArchivPage() {
             <div className="flex flex-wrap gap-2">
               {theme.bibleVerses.slice(0, 3).map((v, i) => (
                 <span key={i} className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full">
-                  {v}
+                  <BibleLink text={v} />
                 </span>
               ))}
             </div>
