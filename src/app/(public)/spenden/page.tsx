@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { operatorEmail, paypalBusinessEmail } from '@/lib/config';
+import { paypalBusinessEmail } from '@/lib/config';
 
 export default function SpendenPage() {
   return (
@@ -26,26 +26,47 @@ export default function SpendenPage() {
         <p>✅ Es wird keine Spendenquittung ausgestellt.</p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-md p-8 text-center">
-        <h2 className="text-xl font-semibold text-gray-800 mb-3">Jetzt via PayPal spenden</h2>
-        <p className="text-gray-600 text-sm mb-6">
+      <div className="bg-white rounded-xl shadow-md p-8">
+        <h2 className="text-xl font-semibold text-gray-800 mb-3 text-center">Jetzt via PayPal spenden</h2>
+        <p className="text-gray-600 text-sm mb-6 text-center">
           Spenden sind ausschließlich über PayPal möglich.
         </p>
-        <a
-          href={`https://www.paypal.com/donate?business=${encodeURIComponent(paypalBusinessEmail)}&currency_code=EUR`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block"
-        >
-          <Image
-            src="https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donate_LG.gif"
-            alt="Spenden-Button – weiterleiten zu PayPal"
-            width={92}
-            height={26}
-            unoptimized
-          />
-        </a>
-        <p className="text-xs text-gray-400 mt-6">
+
+        <div className="flex flex-col sm:flex-row items-start gap-6">
+          <div className="flex flex-col items-center gap-3 flex-shrink-0">
+            <a
+              href={`https://www.paypal.com/donate?business=${encodeURIComponent(paypalBusinessEmail)}&currency_code=EUR`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block"
+            >
+              <Image
+                src="https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donate_LG.gif"
+                alt="Spenden-Button – weiterleiten zu PayPal"
+                width={92}
+                height={26}
+                unoptimized
+              />
+            </a>
+            <a
+              href="https://paypal.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline text-sm text-center"
+            >
+              Hier klicken für eine freiwillige Gabe für Fluss des Lebens
+            </a>
+          </div>
+
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800">
+            <span className="font-semibold">Hinweis:</span> Wenn Sie die Gebühren für uns vermeiden
+            möchten, senden Sie die Gabe bitte direkt über Ihr PayPal-Konto an{' '}
+            <span className="font-medium">{paypalBusinessEmail}</span> und wählen Sie die Option
+            &lsquo;Für Freunde und Familie&rsquo;.
+          </div>
+        </div>
+
+        <p className="text-xs text-gray-400 mt-6 text-center">
           Du wirst zur sicheren PayPal-Seite weitergeleitet.
         </p>
       </div>
