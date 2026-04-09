@@ -72,6 +72,24 @@ async function sendMail(options: nodemailer.SendMailOptions): Promise<boolean> {
   }
 }
 
+/**
+ * Generic send-email helper.
+ * Matches the interface requested in the task:  sendEmail({ to, subject, html })
+ */
+export async function sendEmail({
+  to,
+  subject,
+  html,
+  text,
+}: {
+  to: string;
+  subject: string;
+  html: string;
+  text?: string;
+}): Promise<boolean> {
+  return sendMail({ to, subject, html, text });
+}
+
 export async function sendVerificationEmail(
   toEmail: string,
   token: string,
