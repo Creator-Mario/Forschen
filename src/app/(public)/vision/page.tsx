@@ -1,4 +1,7 @@
+export const dynamic = 'force-dynamic';
+
 import Link from 'next/link';
+import BibleLink from '@/components/BibleLink';
 
 const sections = [
   {
@@ -54,7 +57,9 @@ export default function VisionPage() {
       {/* Scripture quote */}
       <blockquote className="border-l-4 border-blue-500 pl-5 py-3 bg-blue-50 rounded-r-xl text-gray-700 italic mb-14 text-lg">
         &ldquo;Wer mich dürstet, der komme zu mir und trinke!&rdquo;
-        <span className="block mt-1 text-sm not-italic text-gray-500">Johannes 7,37</span>
+        <span className="block mt-1 text-sm not-italic text-gray-500">
+          <BibleLink text="Johannes 7,37" />
+        </span>
       </blockquote>
 
       {/* Sections */}

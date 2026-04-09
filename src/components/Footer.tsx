@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Logo from './Logo';
-import { operatorName } from '@/lib/config';
+import { operatorName, operatorEmail, operatorPhoneE164 } from '@/lib/config';
 
 export default function Footer() {
   return (
@@ -93,6 +93,24 @@ export default function Footer() {
                     </Link>
                   </li>
                 ))}
+                <li>
+                  <a
+                    href={`mailto:${operatorEmail}`}
+                    className="text-blue-200 hover:text-white transition-colors flex items-center gap-2"
+                  >
+                    <span className="text-blue-400">›</span> {operatorEmail}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`https://wa.me/${operatorPhoneE164.replace(/\D/g, '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-green-300 hover:text-white transition-colors flex items-center gap-2"
+                  >
+                    <span className="text-green-400">›</span> WhatsApp
+                  </a>
+                </li>
               </ul>
             </div>
           </div>

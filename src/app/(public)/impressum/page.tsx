@@ -1,4 +1,4 @@
-import { operatorName, operatorEmail, operatorAddress } from '@/lib/config';
+import { operatorName, operatorEmail, operatorAddress, operatorPhoneE164 } from '@/lib/config';
 
 export default function ImpressumPage() {
   return (
@@ -29,6 +29,17 @@ export default function ImpressumPage() {
             E-Mail:{' '}
             <a href={`mailto:${operatorEmail}`} className="text-blue-600 hover:underline">
               {operatorEmail}
+            </a>
+          </p>
+          <p className="mt-1">
+            WhatsApp:{' '}
+            <a
+              href={`https://wa.me/${operatorPhoneE164.replace(/\D/g, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-green-600 hover:underline"
+            >
+              {operatorPhoneE164}
             </a>
           </p>
         </section>
