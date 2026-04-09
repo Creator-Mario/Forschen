@@ -28,11 +28,11 @@ export const adminSeedEmail =
 
 /**
  * PayPal account e-mail used for donations.
- * Defaults to operatorEmail if not set separately, but can be overridden
- * when the PayPal account differs from the public contact address.
+ * Defaults to marioreinerdenzer@gmail.com (the PayPal account) if not set
+ * separately via env var, as it differs from the public contact address.
  */
 export const paypalBusinessEmail =
-  process.env.PAYPAL_BUSINESS_EMAIL ?? operatorEmail;
+  process.env.PAYPAL_BUSINESS_EMAIL ?? 'marioreinerdenzer@gmail.com';
 
 /** Operator's physical address – update here when it changes. */
 export const operatorAddress = {
