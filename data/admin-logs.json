@@ -134,5 +134,13 @@
     "targetType": "user",
     "targetId": "user-1775705470355-b0ayftesr",
     "createdAt": "2026-04-09T12:00:26.164Z"
+  },
+  {
+    "id": "log-1775736036990-61dh7v2sj",
+    "adminId": "admin-001",
+    "action": "user_hard_delete",
+    "targetType": "user",
+    "targetId": "user-1775659725056-4fqk3gk90",
+    "createdAt": "2026-04-09T12:00:36.990Z"
   }
 ]
