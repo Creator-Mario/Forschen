@@ -1,8 +1,6 @@
 import { paypalBusinessEmail } from '@/lib/config';
 
 export default function SpendenPage() {
-  const paypalSendUrl = `https://www.paypal.com/send?recipient=${encodeURIComponent(paypalBusinessEmail)}&note=${encodeURIComponent('Freiwillige Gabe')}`;
-
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
       <h1 className="text-3xl font-bold text-blue-800 mb-2">Unterstützen</h1>
@@ -28,44 +26,40 @@ export default function SpendenPage() {
       </div>
 
       <div className="bg-white rounded-xl shadow-md p-8">
-        <h2 className="text-xl font-semibold text-gray-800 mb-3 text-center">Jetzt via PayPal senden</h2>
+        <h2 className="text-xl font-semibold text-gray-800 mb-3 text-center">Geld senden via PayPal</h2>
         <p className="text-gray-600 text-sm mb-6 text-center">
-          Freiwillige Gaben sind ausschließlich über PayPal möglich.
+          Öffnen Sie Ihre PayPal-App oder -Website und senden Sie den gewünschten Betrag direkt an folgende Adresse:
         </p>
 
-        <div className="flex flex-col sm:flex-row items-start gap-6">
-          <div className="flex flex-col items-center gap-3 flex-shrink-0">
-            <a
-              href={paypalSendUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-[#0070ba] hover:bg-[#005ea6] text-white font-semibold px-6 py-3 rounded-full transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-                <path d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12zm5.25-1.5a.75.75 0 0 0 0 1.5h7.19l-2.72 2.72a.75.75 0 1 0 1.06 1.06l4-4a.75.75 0 0 0 0-1.06l-4-4a.75.75 0 0 0-1.06 1.06l2.72 2.72H7.25z" />
-              </svg>
-              Freiwillige Gabe senden
-            </a>
-            <a
-              href={paypalSendUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:underline text-sm text-center"
-            >
-              Hier klicken für eine freiwillige Gabe für Fluss des Lebens
-            </a>
+        {/* PayPal email address – the single step everyone needs */}
+        <div className="flex flex-col items-center gap-2 mb-8">
+          <p className="text-xs uppercase tracking-wide text-gray-400 font-semibold">PayPal-Adresse</p>
+          <div className="bg-blue-50 border border-blue-200 rounded-xl px-6 py-4 text-center">
+            <span className="text-xl font-bold text-blue-800 select-all break-all">
+              {paypalBusinessEmail}
+            </span>
           </div>
-
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800">
-            <span className="font-semibold">Hinweis:</span> Um Gebühren zu vermeiden, wählen Sie bitte
-            in PayPal die Option &lsquo;Für Freunde und Familie&rsquo;. Empfänger und Verwendungszweck
-            sind bereits vorausgefüllt – Sie müssen nur noch den Betrag eingeben und absenden.
-          </div>
+          <p className="text-xs text-gray-400">Adresse antippen/anklicken zum Auswählen &amp; Kopieren</p>
         </div>
 
-        <p className="text-xs text-gray-400 mt-6 text-center">
-          Du wirst zur sicheren PayPal-Seite weitergeleitet.
-        </p>
+        {/* Step-by-step instructions */}
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 mb-6">
+          <p className="text-sm font-semibold text-gray-700 mb-3">So funktioniert es (weltweit):</p>
+          <ol className="list-decimal list-inside space-y-2 text-sm text-gray-600">
+            <li>Öffnen Sie Ihre <span className="font-medium">PayPal-App</span> oder <span className="font-medium">paypal.com</span></li>
+            <li>Wählen Sie <span className="font-medium">„Geld senden"</span></li>
+            <li>Geben Sie die obige E-Mail-Adresse ein</li>
+            <li>Tragen Sie den gewünschten Betrag ein</li>
+            <li>Wählen Sie <span className="font-medium">„Für Freunde und Familie"</span> (keine Gebühren)</li>
+            <li>Als Verwendungszweck: <span className="font-medium italic">Freiwillige Gabe</span></li>
+            <li>Senden – fertig! 🙏</li>
+          </ol>
+        </div>
+
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800">
+          <span className="font-semibold">Hinweis:</span> Diese Methode funktioniert mit PayPal in allen Ländern –
+          Europa, Asien, Indonesien und weltweit. Kein spezieller Link nötig.
+        </div>
       </div>
     </div>
   );
