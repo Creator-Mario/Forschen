@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserById, saveUser } from '@/lib/db';
-import { sendEmail } from '@/lib/email';
+import { sendEmail, escHtml } from '@/lib/email';
 
 const MIN_LENGTH = 300;
 
@@ -67,11 +67,11 @@ export async function POST(req: NextRequest) {
               <table style="font-size:14px;color:#4b5563;border-collapse:collapse;width:100%;margin:16px 0;">
                 <tr>
                   <td style="padding:6px 8px;font-weight:600;white-space:nowrap;">Name</td>
-                  <td style="padding:6px 8px;">${user.name.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</td>
+                  <td style="padding:6px 8px;">${escHtml(user.name)}</td>
                 </tr>
                 <tr style="background:#f9fafb;">
                   <td style="padding:6px 8px;font-weight:600;white-space:nowrap;">E-Mail</td>
-                  <td style="padding:6px 8px;">${user.email.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</td>
+                  <td style="padding:6px 8px;">${escHtml(user.email)}</td>
                 </tr>
               </table>
               <a href="${baseUrl}/admin"

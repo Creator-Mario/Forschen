@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { getUsers, saveUser, saveAdminLog, deleteUserAccount } from '@/lib/db';
-import { sendEmail } from '@/lib/email';
+import { sendEmail, escHtml } from '@/lib/email';
 import { generateId } from '@/lib/utils';
 
 export async function GET() {
@@ -80,9 +80,9 @@ export async function PATCH(req: NextRequest) {
         html: `
           <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
             <h2 style="color:#1e3a8a;margin-bottom:16px;">Konto wiederhergestellt</h2>
-            <p style="color:#374151;line-height:1.6;">Hallo ${userName.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')},</p>
+            <p style="color:#374151;line-height:1.6;">Hallo ${escHtml(userName)},</p>
             <p style="color:#374151;line-height:1.6;">
-              dein Konto bei <strong>${siteName}</strong> wurde vom Administrator wiederhergestellt.
+              dein Konto bei <strong>${escHtml(siteName)}</strong> wurde vom Administrator wiederhergestellt.
               Du kannst dich jetzt wieder einloggen.
             </p>
             <p style="color:#9ca3af;font-size:12px;margin-top:24px;">${siteName} · ${siteDomain}</p>
@@ -97,9 +97,9 @@ export async function PATCH(req: NextRequest) {
         html: `
           <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
             <h2 style="color:#1e3a8a;margin-bottom:16px;">Konto gesperrt</h2>
-            <p style="color:#374151;line-height:1.6;">Hallo ${userName.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')},</p>
+            <p style="color:#374151;line-height:1.6;">Hallo ${escHtml(userName)},</p>
             <p style="color:#374151;line-height:1.6;">
-              dein Konto bei <strong>${siteName}</strong> wurde vom Administrator gesperrt.
+              dein Konto bei <strong>${escHtml(siteName)}</strong> wurde vom Administrator gesperrt.
               Falls du Fragen hast, wende dich bitte direkt an uns.
             </p>
             <p style="color:#9ca3af;font-size:12px;margin-top:24px;">${siteName} · ${siteDomain}</p>

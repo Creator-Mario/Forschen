@@ -3,8 +3,8 @@ import nodemailer from 'nodemailer';
 const SITE_NAME = 'Der Fluss des Lebens';
 const SITE_DOMAIN = process.env.SITE_DOMAIN ?? 'flussdeslebens.live';
 
-/** Escapes HTML special characters to prevent XSS in email templates. */
-function escHtml(str: string): string {
+/** Escapes HTML special characters to prevent injection in email templates. */
+export function escHtml(str: string): string {
   return str
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
