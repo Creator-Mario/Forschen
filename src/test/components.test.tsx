@@ -273,7 +273,7 @@ describe('ProtectedRoute', () => {
       useSession: () => ({ data: { user: { id: 'u1', role: 'USER', name: 'Alice' } }, status: 'authenticated' }),
     }));
     const { default: ProtectedRoute } = await import('@/components/ProtectedRoute');
-    const { container } = render(React.createElement(ProtectedRoute, { requireAdmin: true }, React.createElement('div', null, 'Admin Content')));
+    render(React.createElement(ProtectedRoute, { requireAdmin: true }, React.createElement('div', null, 'Admin Content')));
     expect(screen.queryByText('Admin Content')).toBeNull();
   });
 

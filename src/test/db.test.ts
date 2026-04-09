@@ -1,16 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import fs from 'fs';
-import path from 'path';
-
-// ── helpers ─────────────────────────────────────────────────────────────────
-
-/** Reset all in-memory caches inside db.ts between tests. */
-async function freshDb() {
-  vi.resetModules();
-  // ensure no GITHUB_TOKEN so writeJson uses the local fs branch
-  delete process.env.GITHUB_TOKEN;
-  return import('@/lib/db');
-}
 
 // ── readJson / basic lookups ─────────────────────────────────────────────────
 
