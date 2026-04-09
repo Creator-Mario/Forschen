@@ -1,3 +1,5 @@
+import { operatorName, operatorEmail, operatorAddress } from '@/lib/config';
+
 export default function ImpressumPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
@@ -6,16 +8,16 @@ export default function ImpressumPage() {
       <div className="bg-white rounded-xl shadow-md p-8 space-y-6 text-gray-700">
         <section>
           <h2 className="font-semibold text-gray-800 mb-2">Angaben gemäß § 5 TMG</h2>
-          <p className="font-medium">Mario Reiner Denzer</p>
-          <p>NIRWANA GOLDEN PARK BLOK D9 NO.9</p>
-          <p>Bogor-Cibinong</p>
-          <p>16915</p>
-          <p>Indonesien</p>
+          <p className="font-medium">{operatorName}</p>
+          <p>{operatorAddress.street}</p>
+          <p>{operatorAddress.city}</p>
+          <p>{operatorAddress.zip}</p>
+          <p>{operatorAddress.country}</p>
         </section>
 
         <section>
           <h2 className="font-semibold text-gray-800 mb-2">Verantwortlicher</h2>
-          <p>Mario Reiner Denzer</p>
+          <p>{operatorName}</p>
           <p className="text-sm text-gray-500 mt-1">
             Autor &amp; theologischer Forscher — Betreiber und Administrator dieser Plattform
           </p>
@@ -25,22 +27,22 @@ export default function ImpressumPage() {
           <h2 className="font-semibold text-gray-800 mb-2">Kontakt</h2>
           <p>
             E-Mail:{' '}
-            <a href="mailto:lebendigenachfolge@gmail.com" className="text-blue-600 hover:underline">
-              lebendigenachfolge@gmail.com
+            <a href={`mailto:${operatorEmail}`} className="text-blue-600 hover:underline">
+              {operatorEmail}
             </a>
           </p>
         </section>
 
         <section>
           <h2 className="font-semibold text-gray-800 mb-2">Inhaltlich verantwortlich gemäß § 18 Abs. 2 MStV</h2>
-          <p>Mario Reiner Denzer (Anschrift wie oben)</p>
+          <p>{operatorName} (Anschrift wie oben)</p>
         </section>
 
         <section>
           <h2 className="font-semibold text-gray-800 mb-2">Hinweis: Ein-Personen-Projekt</h2>
           <p className="text-sm leading-relaxed">
             Diese Plattform wird von einer Einzelperson betrieben. Betreiber, Verantwortlicher und
-            Administrator sind identisch: Mario Reiner Denzer.
+            Administrator sind identisch: {operatorName}.
           </p>
         </section>
 

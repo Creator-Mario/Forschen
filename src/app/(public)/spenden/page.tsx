@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { operatorEmail, paypalBusinessEmail } from '@/lib/config';
 
 export default function SpendenPage() {
   return (
@@ -31,7 +32,7 @@ export default function SpendenPage() {
           Spenden sind ausschließlich über PayPal möglich.
         </p>
         <a
-          href="https://www.paypal.com/donate?business=lebendigenachfolge%40gmail.com&currency_code=EUR"
+          href={`https://www.paypal.com/donate?business=${encodeURIComponent(paypalBusinessEmail)}&currency_code=EUR`}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-block"

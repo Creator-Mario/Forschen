@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Logo from './Logo';
+import { operatorName } from '@/lib/config';
 
 export default function Footer() {
   return (
@@ -104,7 +105,7 @@ export default function Footer() {
                 <path d="M0,6 C25,12 50,0 75,6 C100,12 125,0 150,6 C175,12 190,4 200,6" fill="none" stroke="#f5a623" strokeWidth="2" />
               </svg>
             </div>
-            <p className="text-sm text-blue-300">© {new Date().getFullYear()} Mario Reiner Denzer · Alle Rechte vorbehalten</p>
+            <p className="text-sm text-blue-300">© {new Date().getFullYear()} {operatorName} · Alle Rechte vorbehalten</p>
             <p className="text-xs text-blue-500">
               Der Fluss des Lebens – Private Plattform für christliche Forschung
               <span className="mx-2 text-blue-600">·</span>

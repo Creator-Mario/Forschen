@@ -1,3 +1,5 @@
+import { operatorName, operatorEmail, operatorAddress } from '@/lib/config';
+
 export default function DatenschutzPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
@@ -10,14 +12,14 @@ export default function DatenschutzPage() {
           <p>
             Verantwortlich für die Datenverarbeitung auf dieser Website ist:
           </p>
-          <p className="mt-2 font-medium">Mario Reiner Denzer</p>
+          <p className="mt-2 font-medium">{operatorName}</p>
           <p className="text-sm">
-            NIRWANA GOLDEN PARK BLOK D9 NO.9, Bogor-Cibinong, 16915, Indonesien
+            {operatorAddress.street}, {operatorAddress.city}, {operatorAddress.zip}, {operatorAddress.country}
           </p>
           <p className="text-sm mt-1">
             E-Mail:{' '}
-            <a href="mailto:lebendigenachfolge@gmail.com" className="text-blue-600 hover:underline">
-              lebendigenachfolge@gmail.com
+            <a href={`mailto:${operatorEmail}`} className="text-blue-600 hover:underline">
+              {operatorEmail}
             </a>
           </p>
           <p className="text-sm mt-2 text-gray-500">
@@ -69,8 +71,8 @@ export default function DatenschutzPage() {
           </ul>
           <p className="mt-3">
             Zur Ausübung dieser Rechte wende dich an:{' '}
-            <a href="mailto:lebendigenachfolge@gmail.com" className="text-blue-600 hover:underline">
-              lebendigenachfolge@gmail.com
+            <a href={`mailto:${operatorEmail}`} className="text-blue-600 hover:underline">
+              {operatorEmail}
             </a>
           </p>
         </section>
