@@ -40,6 +40,7 @@ export default function SpendenPage() {
             width={260}
             height={260}
             className="rounded-xl border border-gray-200"
+            style={{ objectFit: 'contain' }}
             priority
           />
           <p className="text-sm text-gray-500">📱 QR-Code mit der PayPal-App scannen</p>
