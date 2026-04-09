@@ -126,5 +126,13 @@
     "targetType": "video",
     "targetId": "video-001",
     "createdAt": "2026-04-09T11:55:51.181Z"
+  },
+  {
+    "id": "log-1775736026164-qlydbo8zn",
+    "adminId": "admin-001",
+    "action": "user_hard_delete",
+    "targetType": "user",
+    "targetId": "user-1775705470355-b0ayftesr",
+    "createdAt": "2026-04-09T12:00:26.164Z"
   }
 ]
