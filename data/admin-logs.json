@@ -112,35 +112,11 @@
     "createdAt": "2026-04-09T02:32:50.849Z"
   },
   {
-    "id": "log-1775735728921-20wti6h71",
+    "id": "log-1775736092239-b5ov70vbu",
     "adminId": "admin-001",
-    "action": "hard_delete",
+    "action": "published",
     "targetType": "video",
     "targetId": "video-1775666132389-s70kxblgw",
-    "createdAt": "2026-04-09T11:55:28.921Z"
-  },
-  {
-    "id": "log-1775735751181-yotxd88po",
-    "adminId": "admin-001",
-    "action": "hard_delete",
-    "targetType": "video",
-    "targetId": "video-001",
-    "createdAt": "2026-04-09T11:55:51.181Z"
-  },
-  {
-    "id": "log-1775736026164-qlydbo8zn",
-    "adminId": "admin-001",
-    "action": "user_hard_delete",
-    "targetType": "user",
-    "targetId": "user-1775705470355-b0ayftesr",
-    "createdAt": "2026-04-09T12:00:26.164Z"
-  },
-  {
-    "id": "log-1775736036990-61dh7v2sj",
-    "adminId": "admin-001",
-    "action": "user_hard_delete",
-    "targetType": "user",
-    "targetId": "user-1775659725056-4fqk3gk90",
-    "createdAt": "2026-04-09T12:00:36.990Z"
+    "createdAt": "2026-04-09T12:01:32.239Z"
   }
 ]
