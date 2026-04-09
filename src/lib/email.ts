@@ -28,6 +28,8 @@ function createTransporter() {
     host,
     port,
     secure: port === 465,
+    // Enforce STARTTLS on port 587 so the connection is always encrypted.
+    requireTLS: port !== 465,
     auth: { user, pass },
   });
 }

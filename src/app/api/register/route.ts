@@ -27,17 +27,22 @@ export async function POST(req: NextRequest) {
     const hashed = await bcrypt.hash(password, 12);
     const emailToken = crypto.randomBytes(32).toString('hex');
 
-    await saveUser({
-      id: `user-${generateId()}`,
-      email,
-      password: hashed,
-      name,
-      role: 'USER',
-      status: 'pending_email',
-      createdAt: new Date().toISOString(),
-      active: false,
-      emailToken,
-    });
+    try {
+      await saveUser({
+        id: `user-${generateId()}`,
+        email,
+        password: hashed,
+        name,
+        role: 'USER',
+        status: 'pending_email',
+        createdAt: new Date().toISOString(),
+        active: false,
+        emailToken,
+      });
+    } catch (err) {
+      console.error('[register] saveUser failed:', err);
+      return NextResponse.json({ error: err instanceof Error ? err.message : 'Registrierung fehlgeschlagen.' }, { status: 500 });
+    }
 
     const baseUrl =
       process.env.NEXTAUTH_URL ??

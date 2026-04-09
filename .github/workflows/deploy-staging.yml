@@ -13,6 +13,10 @@ jobs:
     environment:
       name: staging
       url: ${{ steps.deploy.outputs.url }}
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
     steps:
       - name: Checkout
@@ -24,26 +28,31 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Check Vercel secrets
+        id: check
+        run: |
+          if [ -z "${VERCEL_TOKEN}" ]; then
+            echo "::warning title=Vercel deployment skipped::VERCEL_TOKEN is not configured. Set VERCEL_TOKEN, VERCEL_ORG_ID, and VERCEL_PROJECT_ID in repository secrets."
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Install Vercel CLI
+        if: steps.check.outputs.configured == 'true'
         run: npm install --global vercel@latest
 
       - name: Pull staging environment variables
-        run: vercel pull --yes --environment=staging --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        if: steps.check.outputs.configured == 'true'
+        run: vercel pull --yes --environment=staging --token="${VERCEL_TOKEN}"
 
       - name: Build project
-        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        if: steps.check.outputs.configured == 'true'
+        run: vercel build --token="${VERCEL_TOKEN}"
 
       - name: Deploy to staging
+        if: steps.check.outputs.configured == 'true'
         id: deploy
         run: |
-          url=$(vercel deploy --prebuilt --target=staging --token=${{ secrets.VERCEL_TOKEN }})
+          url=$(vercel deploy --prebuilt --target=staging --token="${VERCEL_TOKEN}")
           echo "url=$url" >> "$GITHUB_OUTPUT"
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
