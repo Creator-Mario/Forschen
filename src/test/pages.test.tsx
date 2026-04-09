@@ -257,6 +257,7 @@ describe('SpendenPage', () => {
 
 describe('MitgliederVorstellungenPage', () => {
   beforeEach(() => vi.resetModules());
+  afterEach(() => vi.unstubAllGlobals());
 
   it('renders the page heading', async () => {
     // Mock fetch so the useEffect doesn't fail with invalid URL in jsdom
@@ -268,7 +269,6 @@ describe('MitgliederVorstellungenPage', () => {
     const { default: MitgliederPage } = await import('@/app/(public)/mitglieder/vorstellungen/page');
     render(React.createElement(MitgliederPage));
     expect(screen.getByRole('heading', { name: /Mitglieder/i })).toBeInTheDocument();
-    vi.unstubAllGlobals();
   });
 });
 
