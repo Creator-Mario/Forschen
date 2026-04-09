@@ -112,11 +112,19 @@
     "createdAt": "2026-04-09T02:32:50.849Z"
   },
   {
-    "id": "log-1775735738755-80flhi7z7",
+    "id": "log-1775735728921-20wti6h71",
     "adminId": "admin-001",
     "action": "hard_delete",
     "targetType": "video",
     "targetId": "video-1775666132389-s70kxblgw",
-    "createdAt": "2026-04-09T11:55:38.755Z"
+    "createdAt": "2026-04-09T11:55:28.921Z"
+  },
+  {
+    "id": "log-1775735751181-yotxd88po",
+    "adminId": "admin-001",
+    "action": "hard_delete",
+    "targetType": "video",
+    "targetId": "video-001",
+    "createdAt": "2026-04-09T11:55:51.181Z"
   }
 ]
