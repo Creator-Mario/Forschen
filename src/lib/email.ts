@@ -209,7 +209,7 @@ export async function sendPasswordResetEmail(
     html: `
       <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
         <h2 style="color:#1e3a8a;margin-bottom:16px;">Passwort zurücksetzen</h2>
-        <p style="color:#374151;line-height:1.6;">Hallo ${userName},</p>
+        <p style="color:#374151;line-height:1.6;">Hallo ${escHtml(userName)},</p>
         <p style="color:#374151;line-height:1.6;">
           Du hast eine Anfrage zum Zurücksetzen deines Passworts gestellt.
           Klicke auf den folgenden Button, um ein neues Passwort zu vergeben.
