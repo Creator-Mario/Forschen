@@ -28,11 +28,12 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
 
   // Validate that the video URL uses http or https to prevent javascript: injection.
+  const rawUrl: string = body.url ?? '';
+  if (!rawUrl.startsWith('https://') && !rawUrl.startsWith('http://')) {
+    return NextResponse.json({ error: 'Ungültige Video-URL.' }, { status: 400 });
+  }
   try {
-    const parsed = new URL(body.url ?? '');
-    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
-      return NextResponse.json({ error: 'Ungültige Video-URL.' }, { status: 400 });
-    }
+    new URL(rawUrl);
   } catch {
     return NextResponse.json({ error: 'Ungültige Video-URL.' }, { status: 400 });
   }

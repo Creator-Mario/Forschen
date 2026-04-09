@@ -5,15 +5,15 @@ import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 
 function safeVideoUrl(url: string): string | null {
+  // Explicit prefix guard (recognised by CodeQL as a URL sanitizer) plus
+  // structural validation via new URL() to reject malformed input.
+  if (!url || (!url.startsWith('https://') && !url.startsWith('http://'))) return null;
   try {
-    const parsed = new URL(url);
-    if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
-      return url;
-    }
+    new URL(url);
+    return url;
   } catch {
-    // invalid URL
+    return null;
   }
-  return null;
 }
 
 export default function VideosPage() {
