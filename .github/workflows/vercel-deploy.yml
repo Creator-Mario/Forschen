@@ -2,7 +2,7 @@ name: Deploy to Vercel (Production)
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   workflow_dispatch:
 
 env:
@@ -12,64 +12,23 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write   # needed for the optional PR comment step
-
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      - name: Pull production environment variables
+      - name: Pull environment variables
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Build for production
+      - name: Build project
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Deploy to Vercel (production)
-        id: deploy
-        run: |
-          url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
-          echo "url=$url" >> "$GITHUB_OUTPUT"
-
-      # Optional: post the live URL as a comment on the PR that triggered this push
-      - name: Find associated pull request
-        id: find-pr
-        if: github.event_name == 'push'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { data: pulls } = await github.rest.pulls.list({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'open',
-              head: `${context.repo.owner}:${context.ref.replace('refs/heads/', '')}`,
-            });
-            const pr = pulls[0];
-            core.setOutput('pr_number', pr && pr.number ? String(pr.number) : '');
-
-      - name: Comment live URL on pull request
-        if: steps.find-pr.outputs.pr_number != ''
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: Number('${{ steps.find-pr.outputs.pr_number }}'),
-              body: `✅ Production deployment successful!\n\n🔗 **Live URL:** ${{ steps.deploy.outputs.url }}`,
-            });
-
-# Required repository secrets:
-#   VERCEL_TOKEN      – Vercel API token  (https://vercel.com/account/tokens)
-#   VERCEL_ORG_ID     – Vercel team/org ID (Vercel team settings → General)
-#   VERCEL_PROJECT_ID – Vercel project ID  (Vercel project settings → General)
+      - name: Deploy to Vercel
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
