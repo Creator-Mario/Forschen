@@ -3,6 +3,16 @@ import nodemailer from 'nodemailer';
 const SITE_NAME = 'Der Fluss des Lebens';
 const SITE_DOMAIN = process.env.SITE_DOMAIN ?? 'flussdeslebens.live';
 
+/** Escapes HTML special characters to prevent XSS in email templates. */
+function escHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 function createTransporter() {
   const host = process.env.SMTP_HOST;
   const port = parseInt(process.env.SMTP_PORT || '587', 10);
@@ -28,7 +38,7 @@ function buildFrom(): string {
     process.env.MAIL_FROM_ADDRESS ??
     process.env.SMTP_FROM ??
     `noreply@${SITE_DOMAIN}`;
-  return `"${name}" <${address}>`;
+  return `${name} <${address}>`;
 }
 
 function buildReplyTo(): string {
@@ -114,12 +124,12 @@ export async function sendAdminMessageEmail(
     html: `
       <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
         <h2 style="color:#1e3a8a;margin-bottom:16px;">Rückfrage zu deinem Beitrag</h2>
-        <p style="color:#374151;line-height:1.6;">Hallo ${userName},</p>
+        <p style="color:#374151;line-height:1.6;">Hallo ${escHtml(userName)},</p>
         <p style="color:#374151;line-height:1.6;">
-          Der Administrator hat eine Rückfrage zu deinem <strong>${contentType}</strong>:
+          Der Administrator hat eine Rückfrage zu deinem <strong>${escHtml(contentType)}</strong>:
         </p>
         <blockquote style="border-left:4px solid #f97316;padding:12px 16px;margin:16px 0;background:#fff7ed;color:#374151;border-radius:0 8px 8px 0;">
-          ${adminMessage}
+          ${escHtml(adminMessage)}
         </blockquote>
         <p style="color:#374151;line-height:1.6;">
           Bitte melde dich in deinem
@@ -150,12 +160,12 @@ export async function sendAdminApprovalEmail(
     ? `
       <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
         <h2 style="color:#1e3a8a;margin-bottom:16px;">Dein Konto wurde freigeschaltet 🎉</h2>
-        <p style="color:#374151;line-height:1.6;">Hallo ${userName},</p>
+        <p style="color:#374151;line-height:1.6;">Hallo ${escHtml(userName)},</p>
         <p style="color:#374151;line-height:1.6;">
           Dein Konto bei <strong>${SITE_NAME}</strong> wurde freigeschaltet.
           Du kannst dich jetzt einloggen.
         </p>
-        ${note ? `<p style="color:#374151;line-height:1.6;font-style:italic;">${note}</p>` : ''}
+        ${note ? `<p style="color:#374151;line-height:1.6;font-style:italic;">${escHtml(note)}</p>` : ''}
         <p style="color:#374151;line-height:1.6;">Herzlich willkommen!</p>
         <p style="color:#9ca3af;font-size:12px;margin-top:24px;">${SITE_NAME} · ${SITE_DOMAIN}</p>
       </div>
@@ -163,12 +173,12 @@ export async function sendAdminApprovalEmail(
     : `
       <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
         <h2 style="color:#1e3a8a;margin-bottom:16px;">Rückfrage zu deiner Anmeldung</h2>
-        <p style="color:#374151;line-height:1.6;">Hallo ${userName},</p>
+        <p style="color:#374151;line-height:1.6;">Hallo ${escHtml(userName)},</p>
         <p style="color:#374151;line-height:1.6;">
           Der Administrator hat eine Rückfrage zu deiner Anmeldung:
         </p>
         <blockquote style="border-left:4px solid #f97316;padding:12px 16px;margin:16px 0;background:#fff7ed;color:#374151;border-radius:0 8px 8px 0;">
-          ${note}
+          ${note ? escHtml(note) : ''}
         </blockquote>
         <p style="color:#374151;line-height:1.6;">
           Bitte melde dich in deinem Dashboard, um zu antworten.

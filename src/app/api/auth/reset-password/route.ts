@@ -24,7 +24,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Ungültiger oder abgelaufener Link.' }, { status: 400 });
     }
 
-    if (new Date(user.passwordResetExpiry) < new Date()) {
+    const now = new Date();
+    if (new Date(user.passwordResetExpiry) < now) {
       return NextResponse.json({ error: 'Der Link ist abgelaufen. Bitte fordere einen neuen an.' }, { status: 400 });
     }
 
