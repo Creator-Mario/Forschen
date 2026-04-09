@@ -134,5 +134,21 @@
     "targetType": "video",
     "targetId": "video-1775666132389-s70kxblgw",
     "createdAt": "2026-04-09T14:19:39.002Z"
+  },
+  {
+    "id": "log-1775744379098-hh6nm77fx",
+    "adminId": "admin-001",
+    "action": "published",
+    "targetType": "video",
+    "targetId": "video-1775666132389-s70kxblgw",
+    "createdAt": "2026-04-09T14:19:39.098Z"
+  },
+  {
+    "id": "log-1775744379862-87nlhbp29",
+    "adminId": "admin-001",
+    "action": "published",
+    "targetType": "video",
+    "targetId": "video-1775666132389-s70kxblgw",
+    "createdAt": "2026-04-09T14:19:39.862Z"
   }
 ]
