@@ -39,6 +39,8 @@ export interface User {
   active: boolean;         // kept for backward-compat; derived from status === 'active'
   emailToken?: string;     // one-time token for email verification
   emailVerifiedAt?: string;
+  passwordResetToken?: string;   // one-time token for self-service password reset
+  passwordResetExpiry?: string;  // ISO timestamp – token expires after this
   intro?: UserIntro;       // mandatory intro/motivation form
   adminNote?: string;      // admin's internal note or question
 }

@@ -39,20 +39,18 @@ export async function POST(req: NextRequest) {
       emailToken,
     });
 
-    const baseUrl = process.env.NEXTAUTH_URL;
-    if (!baseUrl) {
-      // No base URL configured – fall back to demo mode (token shown on page)
-      return NextResponse.json({ success: true, emailToken });
-    }
+    const baseUrl =
+      process.env.NEXTAUTH_URL ??
+      `https://${process.env.SITE_DOMAIN ?? 'flussdeslebens.live'}`;
+
     const emailSent = await sendVerificationEmail(email, emailToken, baseUrl);
 
-    if (emailSent) {
-      // Email sent via SMTP – do not expose token in the response
-      return NextResponse.json({ success: true });
+    if (!emailSent) {
+      console.error('[register] Verification email could not be sent to', email);
     }
 
-    // Fallback: no SMTP configured – return token for on-screen demo link
-    return NextResponse.json({ success: true, emailToken });
+    // Never expose the token in the response – email is the only delivery channel.
+    return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: 'Registrierung fehlgeschlagen.' }, { status: 500 });
   }
