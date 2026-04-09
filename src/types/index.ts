@@ -163,3 +163,13 @@ export interface AdminLog {
   note?: string;
   createdAt: string;
 }
+
+export interface AdminNotification {
+  id: string;
+  contentType: string;
+  contentTypeLabel: string;
+  title: string;
+  status: string;
+  adminMessage: string;
+  createdAt: string;
+}

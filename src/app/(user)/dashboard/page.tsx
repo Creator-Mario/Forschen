@@ -4,7 +4,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import type { AdminNotification } from '@/app/api/user/notifications/route';
+import type { AdminNotification } from '@/types';
 
 export default function DashboardPage() {
   const { data: session } = useSession();
