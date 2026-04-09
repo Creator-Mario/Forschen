@@ -102,5 +102,13 @@
     "targetType": "video",
     "targetId": "video-1775666132389-s70kxblgw",
     "createdAt": "2026-04-09T02:32:23.704Z"
+  },
+  {
+    "id": "log-1775701970849-v96vkoile",
+    "adminId": "admin-001",
+    "action": "user_delete",
+    "targetType": "user",
+    "targetId": "user-1775659725056-4fqk3gk90",
+    "createdAt": "2026-04-09T02:32:50.849Z"
   }
 ]
