@@ -1,55 +1,53 @@
-import Image from 'next/image';
 import { paypalBusinessEmail } from '@/lib/config';
 
 export default function SpendenPage() {
+  const paypalSendUrl = `https://www.paypal.com/send?recipient=${encodeURIComponent(paypalBusinessEmail)}&note=${encodeURIComponent('Freiwillige Gabe')}`;
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
       <h1 className="text-3xl font-bold text-blue-800 mb-2">Unterstützen</h1>
       <p className="text-gray-500 mb-8">Der Fluss des Lebens – freiwillig und ohne Gegenleistung</p>
 
       <div className="bg-white rounded-xl shadow-md p-8 mb-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Warum spenden?</h2>
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Warum unterstützen?</h2>
         <p className="text-gray-600 leading-relaxed mb-4">
           Der Fluss des Lebens ist eine private Forschungsplattform und bleibt kostenlos für alle Nutzerinnen und Nutzer. Um die
           Plattform betreiben und dauerhaft kostenlos anbieten zu können, ist der Betreiber auf
           freiwillige Unterstützung angewiesen.
         </p>
         <p className="text-gray-600 leading-relaxed">
-          Jede Spende – egal in welcher Höhe – hilft, diese Plattform für die christliche Gemeinschaft
+          Jede freiwillige Gabe – egal in welcher Höhe – hilft, diese Plattform für die christliche Gemeinschaft
           am Leben zu erhalten.
         </p>
       </div>
 
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-8 text-sm text-amber-800 space-y-1">
-        <p>✅ Spenden sind freiwillig und ohne Gegenleistung.</p>
-        <p>✅ Eine Spende begründet keine Rechte oder Vorteile auf der Plattform.</p>
+        <p>✅ Freiwillige Gaben sind ohne Gegenleistung.</p>
+        <p>✅ Eine Gabe begründet keine Rechte oder Vorteile auf der Plattform.</p>
         <p>✅ Es wird keine Spendenquittung ausgestellt.</p>
       </div>
 
       <div className="bg-white rounded-xl shadow-md p-8">
-        <h2 className="text-xl font-semibold text-gray-800 mb-3 text-center">Jetzt via PayPal spenden</h2>
+        <h2 className="text-xl font-semibold text-gray-800 mb-3 text-center">Jetzt via PayPal senden</h2>
         <p className="text-gray-600 text-sm mb-6 text-center">
-          Spenden sind ausschließlich über PayPal möglich.
+          Freiwillige Gaben sind ausschließlich über PayPal möglich.
         </p>
 
         <div className="flex flex-col sm:flex-row items-start gap-6">
           <div className="flex flex-col items-center gap-3 flex-shrink-0">
             <a
-              href={`https://www.paypal.com/donate?business=${encodeURIComponent(paypalBusinessEmail)}&currency_code=EUR&item_name=${encodeURIComponent('Freiwillige Gabe')}`}
+              href={paypalSendUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block"
+              className="inline-flex items-center gap-2 bg-[#0070ba] hover:bg-[#005ea6] text-white font-semibold px-6 py-3 rounded-full transition-colors"
             >
-              <Image
-                src="https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donate_LG.gif"
-                alt="Spenden-Button – weiterleiten zu PayPal"
-                width={92}
-                height={26}
-                unoptimized
-              />
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                <path d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12zm5.25-1.5a.75.75 0 0 0 0 1.5h7.19l-2.72 2.72a.75.75 0 1 0 1.06 1.06l4-4a.75.75 0 0 0 0-1.06l-4-4a.75.75 0 0 0-1.06 1.06l2.72 2.72H7.25z" />
+              </svg>
+              Freiwillige Gabe senden
             </a>
             <a
-              href={`https://www.paypal.com/donate?business=${encodeURIComponent(paypalBusinessEmail)}&currency_code=EUR&item_name=${encodeURIComponent('Freiwillige Gabe')}`}
+              href={paypalSendUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:underline text-sm text-center"
@@ -59,10 +57,9 @@ export default function SpendenPage() {
           </div>
 
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800">
-            <span className="font-semibold">Hinweis:</span> Wenn Sie die Gebühren für uns vermeiden
-            möchten, senden Sie die Gabe bitte direkt über Ihr PayPal-Konto an{' '}
-            <span className="font-medium">{paypalBusinessEmail}</span> und wählen Sie die Option
-            &lsquo;Für Freunde und Familie&rsquo;.
+            <span className="font-semibold">Hinweis:</span> Um Gebühren zu vermeiden, wählen Sie bitte
+            in PayPal die Option &lsquo;Für Freunde und Familie&rsquo;. Empfänger und Verwendungszweck
+            sind bereits vorausgefüllt – Sie müssen nur noch den Betrag eingeben und absenden.
           </div>
         </div>
 
