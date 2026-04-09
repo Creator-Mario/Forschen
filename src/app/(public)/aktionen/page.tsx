@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { getApprovedAktionen } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';

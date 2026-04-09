@@ -149,6 +149,14 @@ export async function saveTageswort(entry: Tageswort): Promise<void> {
   await writeJson('tageswort.json', list);
 }
 
+export async function deleteTageswort(id: string): Promise<boolean> {
+  const list = getTageswortList();
+  const next = list.filter(t => t.id !== id);
+  if (next.length === list.length) return false;
+  await writeJson('tageswort.json', next);
+  return true;
+}
+
 // Wochenthema
 export function getWochenthemaList(): Wochenthema[] {
   return readJson<Wochenthema>('wochenthema.json');
@@ -166,6 +174,14 @@ export async function saveWochenthema(entry: Wochenthema): Promise<void> {
   if (idx >= 0) list[idx] = entry;
   else list.push(entry);
   await writeJson('wochenthema.json', list);
+}
+
+export async function deleteWochenthema(id: string): Promise<boolean> {
+  const list = getWochenthemaList();
+  const next = list.filter(w => w.id !== id);
+  if (next.length === list.length) return false;
+  await writeJson('wochenthema.json', next);
+  return true;
 }
 
 // Thesen

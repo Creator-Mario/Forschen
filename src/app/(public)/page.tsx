@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import Link from 'next/link';
 import BibleVerseCard from '@/components/BibleVerseCard';
 import WeeklyThemeCard from '@/components/WeeklyThemeCard';

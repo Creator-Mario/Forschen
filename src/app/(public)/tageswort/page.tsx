@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import BibleVerseCard from '@/components/BibleVerseCard';
 import { getTodayTageswort } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
