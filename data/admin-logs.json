@@ -120,19 +120,11 @@
     "createdAt": "2026-04-09T12:08:32.086Z"
   },
   {
-    "id": "log-1775744270033-ybe0stcc4",
+    "id": "log-1775744377770-72aomiztv",
     "adminId": "admin-001",
-    "action": "user_hard_delete",
-    "targetType": "user",
-    "targetId": "user-1775705470355-b0ayftesr",
-    "createdAt": "2026-04-09T14:17:50.033Z"
-  },
-  {
-    "id": "log-1775744274523-4g8axxhqy",
-    "adminId": "admin-001",
-    "action": "user_hard_delete",
-    "targetType": "user",
-    "targetId": "user-1775659725056-4fqk3gk90",
-    "createdAt": "2026-04-09T14:17:54.523Z"
+    "action": "published",
+    "targetType": "video",
+    "targetId": "video-1775666132389-s70kxblgw",
+    "createdAt": "2026-04-09T14:19:37.770Z"
   }
 ]
