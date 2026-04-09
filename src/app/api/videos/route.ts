@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
     await saveVideo(video);
   } catch (err) {
     console.error('[videos] saveVideo failed:', err);
-    return NextResponse.json({ error: 'Video konnte nicht gespeichert werden. Bitte erneut versuchen.' }, { status: 500 });
+    return NextResponse.json({ error: err instanceof Error ? err.message : 'Video konnte nicht gespeichert werden.' }, { status: 500 });
   }
   return NextResponse.json({ success: true, id: video.id });
 }

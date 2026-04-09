@@ -57,7 +57,9 @@ async function writeJson<T>(filename: string, data: T[]): Promise<void> {
       });
     } catch (error) {
       console.error(`[db] GitHub write failed for ${filename}:`, error);
-      throw new Error(`Datenpersistenz fehlgeschlagen: ${filename}. Bitte GITHUB_TOKEN prüfen.`);
+      throw new Error(
+        `Datenpersistenz fehlgeschlagen: ${filename}. ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   } else {
     // Development: write directly to local filesystem.

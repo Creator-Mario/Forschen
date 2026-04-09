@@ -49,8 +49,8 @@ jobs:
           rm -rf "src/app/(user)/chat/[userId]"
           # Remove `force-dynamic` so all remaining pages are statically exportable.
           find src/app -name "*.tsx" -o -name "*.ts" | \
-            xargs grep -rl "export const dynamic" | \
-            xargs sed -i "/^export const dynamic/d"
+            xargs grep -rl "export const dynamic" 2>/dev/null | \
+            xargs --no-run-if-empty sed -i "/^export const dynamic/d"
 
       - name: Build static site
         run: npm run build
