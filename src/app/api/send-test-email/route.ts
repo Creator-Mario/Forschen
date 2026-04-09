@@ -18,7 +18,7 @@ export async function GET() {
   // Only allow admins to trigger this endpoint.
   const session = await getServerSession(authOptions);
   if (!session || (session.user as { role?: string })?.role !== 'ADMIN') {
-    return NextResponse.json({ error: 'Nicht autorisiert.' }, { status: 401 });
+    return NextResponse.json({ error: 'Nicht autorisiert.' }, { status: 403 });
   }
 
   const to = process.env.MAIL_REPLY_TO ?? process.env.MAIL_FROM_ADDRESS ?? '';
@@ -38,7 +38,8 @@ export async function GET() {
       <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
         <h2 style="color:#1e3a8a;">✅ SMTP-Test erfolgreich</h2>
         <p style="color:#374151;line-height:1.6;">
-          Diese E-Mail wurde über den Brevo-SMTP-Relay (<code>smtp-relay.brevo.com</code>)
+          Diese E-Mail wurde über den SMTP-Relay
+          (<code>${process.env.SMTP_HOST ?? 'smtp-relay.brevo.com'}</code>)
           versendet und beweist, dass die Konfiguration korrekt ist.
         </p>
         <table style="font-size:13px;color:#4b5563;border-collapse:collapse;width:100%;margin-top:16px;">
