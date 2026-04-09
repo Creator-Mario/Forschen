@@ -26,6 +26,17 @@ export async function POST(req: NextRequest) {
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await req.json();
+
+  // Validate that the video URL uses http or https to prevent javascript: injection.
+  try {
+    const parsed = new URL(body.url ?? '');
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+      return NextResponse.json({ error: 'Ungültige Video-URL.' }, { status: 400 });
+    }
+  } catch {
+    return NextResponse.json({ error: 'Ungültige Video-URL.' }, { status: 400 });
+  }
+
   const video = {
     id: `video-${generateId()}`,
     userId: session.user.id,

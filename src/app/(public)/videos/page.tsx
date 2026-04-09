@@ -4,6 +4,18 @@ import { getApprovedVideos } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 
+function safeVideoUrl(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
+      return url;
+    }
+  } catch {
+    // invalid URL
+  }
+  return null;
+}
+
 export default function VideosPage() {
   const videos = getApprovedVideos();
 
@@ -25,14 +37,18 @@ export default function VideosPage() {
             <div key={v.id} className="bg-white rounded-xl shadow-md p-6">
               <h2 className="font-bold text-gray-800 mb-2">{v.title}</h2>
               <p className="text-gray-600 text-sm leading-relaxed mb-4">{v.description}</p>
-              <a
-                href={v.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 text-sm transition-colors"
-              >
-                Video ansehen →
-              </a>
+              {safeVideoUrl(v.url) ? (
+                <a
+                  href={safeVideoUrl(v.url)!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 text-sm transition-colors"
+                >
+                  Video ansehen →
+                </a>
+              ) : (
+                <span className="text-gray-400 text-sm">Link nicht verfügbar</span>
+              )}
               <div className="mt-3 text-xs text-gray-400 flex items-center justify-between">
                 <span>{v.authorName}</span>
                 <span>{formatDate(v.createdAt)}</span>
