@@ -37,13 +37,20 @@ jobs:
         # The admin area requires server-side API routes and NextAuth – it is removed
         # so visitors receive a clean 404 rather than a broken non-functional UI.
         # The chat/[userId] page relies on server-side APIs and cannot be statically
-        # rendered. These files are removed only in this ephemeral CI environment –
+        # rendered. Pages with `dynamic = "force-dynamic"` must have that directive
+        # removed so Next.js can render them statically at build time with whatever
+        # data is present in the repository JSON files.
+        # These changes are made only in this ephemeral CI environment –
         # the repository itself is not modified.
         run: |
           echo "export {};" > src/middleware.ts
           rm -rf src/app/api
           rm -rf "src/app/(admin)"
           rm -rf "src/app/(user)/chat/[userId]"
+          # Remove `force-dynamic` so all remaining pages are statically exportable.
+          find src/app -name "*.tsx" -o -name "*.ts" | \
+            xargs grep -rl "export const dynamic" | \
+            xargs sed -i "/^export const dynamic/d"
 
       - name: Build static site
         run: npm run build

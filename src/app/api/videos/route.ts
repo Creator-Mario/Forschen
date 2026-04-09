@@ -48,6 +48,11 @@ export async function POST(req: NextRequest) {
     status: 'created' as const,
     createdAt: new Date().toISOString(),
   };
-  await saveVideo(video);
+  try {
+    await saveVideo(video);
+  } catch (err) {
+    console.error('[videos] saveVideo failed:', err);
+    return NextResponse.json({ error: 'Video konnte nicht gespeichert werden. Bitte erneut versuchen.' }, { status: 500 });
+  }
   return NextResponse.json({ success: true, id: video.id });
 }
