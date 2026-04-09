@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { getUsers, saveUser, saveAdminLog, deleteUserAccount } from '@/lib/db';
+import { sendEmail } from '@/lib/email';
 import { generateId } from '@/lib/utils';
 
 export async function GET() {
@@ -49,6 +50,12 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ success: true });
   }
 
+  // Capture email and name before any mutation (soft-delete anonymises the email).
+  const userEmail = user.email;
+  const userName = user.name;
+  const siteName = process.env.MAIL_FROM_NAME ?? 'Der Fluss des Lebens';
+  const siteDomain = process.env.SITE_DOMAIN ?? 'flussdeslebens.live';
+
   if (action === 'lock') {
     user.active = false;
     user.status = 'deleted';
@@ -63,6 +70,47 @@ export async function PATCH(req: NextRequest) {
   }
 
   await saveUser(user);
+
+  // Send notification email to the affected user.
+  try {
+    if (action === 'unlock') {
+      await sendEmail({
+        to: userEmail,
+        subject: `Dein Konto wurde wiederhergestellt – ${siteName}`,
+        html: `
+          <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
+            <h2 style="color:#1e3a8a;margin-bottom:16px;">Konto wiederhergestellt</h2>
+            <p style="color:#374151;line-height:1.6;">Hallo ${userName.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')},</p>
+            <p style="color:#374151;line-height:1.6;">
+              dein Konto bei <strong>${siteName}</strong> wurde vom Administrator wiederhergestellt.
+              Du kannst dich jetzt wieder einloggen.
+            </p>
+            <p style="color:#9ca3af;font-size:12px;margin-top:24px;">${siteName} · ${siteDomain}</p>
+          </div>
+        `,
+        text: `Hallo ${userName},\n\ndein Konto bei „${siteName}" wurde vom Administrator wiederhergestellt. Du kannst dich jetzt wieder einloggen.\n\n${siteName}`,
+      });
+    } else if (action === 'lock') {
+      await sendEmail({
+        to: userEmail,
+        subject: `Dein Konto wurde gesperrt – ${siteName}`,
+        html: `
+          <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
+            <h2 style="color:#1e3a8a;margin-bottom:16px;">Konto gesperrt</h2>
+            <p style="color:#374151;line-height:1.6;">Hallo ${userName.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')},</p>
+            <p style="color:#374151;line-height:1.6;">
+              dein Konto bei <strong>${siteName}</strong> wurde vom Administrator gesperrt.
+              Falls du Fragen hast, wende dich bitte direkt an uns.
+            </p>
+            <p style="color:#9ca3af;font-size:12px;margin-top:24px;">${siteName} · ${siteDomain}</p>
+          </div>
+        `,
+        text: `Hallo ${userName},\n\ndein Konto bei „${siteName}" wurde vom Administrator gesperrt. Falls du Fragen hast, wende dich bitte direkt an uns.\n\n${siteName}`,
+      });
+    }
+  } catch (err) {
+    console.error('[admin/users] Notification email could not be sent for action', action, err);
+  }
 
   await saveAdminLog({
     id: `log-${generateId()}`,
