@@ -118,5 +118,13 @@
     "targetType": "video",
     "targetId": "video-1775666132389-s70kxblgw",
     "createdAt": "2026-04-09T12:01:32.239Z"
+  },
+  {
+    "id": "log-1775736450813-vjymky4ez",
+    "adminId": "admin-001",
+    "action": "hard_delete",
+    "targetType": "video",
+    "targetId": "video-1775666132389-s70kxblgw",
+    "createdAt": "2026-04-09T12:07:30.813Z"
   }
 ]
