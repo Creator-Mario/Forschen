@@ -49,7 +49,7 @@ export async function GET() {
   }> = [
     { type: 'these', items: getThesen() },
     { type: 'forschung', items: getForschung() },
-    { type: 'gebet', items: getGebete().map(g => ({ ...g, title: g.content.substring(0, 60) })) },
+    { type: 'gebet', items: getGebete().map(g => ({ ...g, title: g.content?.substring(0, 60) ?? '' })) },
     { type: 'video', items: getVideos() },
     { type: 'aktion', items: getAktionen() },
   ];

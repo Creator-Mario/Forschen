@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
         const item = list.find(f => f.id === id);
         if (!item) return NextResponse.json({ error: 'Not found' }, { status: 404 });
         affectedUserId = item.userId;
-        await saveForschung({ ...item, status, adminMessage });
+        await saveForschung({ ...item, status, adminMessage, updatedAt: new Date().toISOString() });
         break;
       }
       case 'gebet': {
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
         const item = list.find(g => g.id === id);
         if (!item) return NextResponse.json({ error: 'Not found' }, { status: 404 });
         affectedUserId = item.userId;
-        await saveGebet({ ...item, status, adminMessage });
+        await saveGebet({ ...item, status, adminMessage, updatedAt: new Date().toISOString() });
         break;
       }
       case 'video': {
@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
         const item = list.find(v => v.id === id);
         if (!item) return NextResponse.json({ error: 'Not found' }, { status: 404 });
         affectedUserId = item.userId;
-        await saveVideo({ ...item, status, adminMessage });
+        await saveVideo({ ...item, status, adminMessage, updatedAt: new Date().toISOString() });
         break;
       }
       case 'aktion': {
@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
         const item = list.find(a => a.id === id);
         if (!item) return NextResponse.json({ error: 'Not found' }, { status: 404 });
         affectedUserId = item.userId;
-        await saveAktion({ ...item, status, adminMessage });
+        await saveAktion({ ...item, status, adminMessage, updatedAt: new Date().toISOString() });
         break;
       }
       default:
