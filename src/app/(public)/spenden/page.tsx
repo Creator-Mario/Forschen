@@ -35,7 +35,7 @@ export default function SpendenPage() {
         <div className="flex flex-col sm:flex-row items-start gap-6">
           <div className="flex flex-col items-center gap-3 flex-shrink-0">
             <a
-              href={`https://www.paypal.com/donate?business=${encodeURIComponent(paypalBusinessEmail)}&currency_code=EUR`}
+              href={`https://www.paypal.com/donate?business=${encodeURIComponent(paypalBusinessEmail)}&currency_code=EUR&item_name=${encodeURIComponent('Freiwillige Gabe')}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block"
@@ -49,7 +49,7 @@ export default function SpendenPage() {
               />
             </a>
             <a
-              href="https://paypal.com"
+              href={`https://www.paypal.com/donate?business=${encodeURIComponent(paypalBusinessEmail)}&currency_code=EUR&item_name=${encodeURIComponent('Freiwillige Gabe')}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 hover:underline text-sm text-center"
