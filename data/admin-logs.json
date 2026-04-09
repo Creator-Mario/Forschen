@@ -94,5 +94,21 @@
     "targetType": "video",
     "targetId": "video-1775666132389-s70kxblgw",
     "createdAt": "2026-04-09T02:32:05.420Z"
+  },
+  {
+    "id": "log-1775701926922-6kyc7jidy",
+    "adminId": "admin-001",
+    "action": "deleted",
+    "targetType": "video",
+    "targetId": "video-1775666132389-s70kxblgw",
+    "createdAt": "2026-04-09T02:32:06.922Z"
+  },
+  {
+    "id": "log-1775701927217-d51yrwuma",
+    "adminId": "admin-001",
+    "action": "deleted",
+    "targetType": "video",
+    "targetId": "video-1775666132389-s70kxblgw",
+    "createdAt": "2026-04-09T02:32:07.217Z"
   }
 ]
