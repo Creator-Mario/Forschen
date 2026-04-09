@@ -10,7 +10,6 @@ export default function RegistrierenPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [verifyToken, setVerifyToken] = useState('');
   const [registered, setRegistered] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -31,8 +30,6 @@ export default function RegistrierenPage() {
       if (!res.ok) {
         setError(data.error || 'Registrierung fehlgeschlagen.');
       } else {
-        // Show the verification link/token (in production this would be sent via email)
-        setVerifyToken(data.emailToken || '');
         setRegistered(true);
       }
     } catch (err) {
@@ -60,45 +57,20 @@ export default function RegistrierenPage() {
   }
 
   if (registered) {
-    const hasDemoToken = Boolean(verifyToken);
-    const verifyUrl = hasDemoToken ? `/api/auth/verify-email?token=${verifyToken}` : '';
     return (
       <div className="min-h-[70vh] flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md text-center">
           <div className="text-blue-600 text-4xl mb-4">✉️</div>
           <h1 className="text-xl font-bold text-gray-800 mb-3">Fast geschafft!</h1>
           <p className="text-gray-600 text-sm mb-6 leading-relaxed">
-            {hasDemoToken
-              ? 'Deine E‑Mail‑Adresse muss noch bestätigt werden. Klicke den Link unten, um fortzufahren.'
-              : 'Wir haben dir eine E‑Mail mit dem Bestätigungslink gesendet. Bitte prüfe auch deinen Spam‑Ordner.'}
+            Wir haben dir eine E‑Mail mit dem Bestätigungslink gesendet. Bitte prüfe auch deinen Spam‑Ordner.
           </p>
-          {hasDemoToken && (
-            <>
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-left mb-6">
-                <p className="text-xs text-blue-700 font-medium mb-2">Bestätigungslink (Demo):</p>
-                <a
-                  href={verifyUrl}
-                  className="text-xs text-blue-600 hover:underline break-all"
-                >
-                  {typeof window !== 'undefined' ? `${window.location.origin}${verifyUrl}` : verifyUrl}
-                </a>
-              </div>
-              <a
-                href={verifyUrl}
-                className="inline-block bg-blue-800 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
-              >
-                E-Mail jetzt bestätigen →
-              </a>
-            </>
-          )}
-          {!hasDemoToken && (
-            <Link
-              href="/login"
-              className="inline-block bg-blue-800 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
-            >
-              Zur Anmeldung →
-            </Link>
-          )}
+          <Link
+            href="/login"
+            className="inline-block bg-blue-800 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
+          >
+            Zur Anmeldung →
+          </Link>
         </div>
       </div>
     );
