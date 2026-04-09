@@ -7,11 +7,17 @@ import { generateId } from '@/lib/utils';
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const session = await getServerSession(authOptions);
-  if (searchParams.get('all') && session?.user.role === 'ADMIN') {
-    return NextResponse.json(getGebete());
-  }
   // Prayers require login to view
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (searchParams.get('all')) {
+    if (session.user.role === 'ADMIN') {
+      return NextResponse.json(getGebete());
+    }
+    const userId = session.user.id;
+    return NextResponse.json(
+      getGebete().filter(g => g.userId === userId || g.status === 'approved' || g.status === 'published')
+    );
+  }
   return NextResponse.json(getApprovedGebete());
 }
 

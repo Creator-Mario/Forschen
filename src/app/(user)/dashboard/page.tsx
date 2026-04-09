@@ -3,9 +3,19 @@
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import type { AdminNotification } from '@/app/api/user/notifications/route';
 
 export default function DashboardPage() {
   const { data: session } = useSession();
+  const [notifications, setNotifications] = useState<AdminNotification[]>([]);
+
+  useEffect(() => {
+    fetch('/api/user/notifications')
+      .then(r => r.ok ? r.json() : [])
+      .then(data => { if (Array.isArray(data)) setNotifications(data); })
+      .catch(() => {});
+  }, []);
 
   return (
     <ProtectedRoute>
@@ -16,6 +26,22 @@ export default function DashboardPage() {
           </h1>
           <p className="text-gray-500">Dein persönlicher Bereich bei Der Fluss des Lebens</p>
         </div>
+
+        {notifications.length > 0 && (
+          <div className="mb-8 space-y-3">
+            {notifications.map(n => (
+              <div key={n.id} className="bg-orange-50 border border-orange-200 rounded-xl p-4 flex gap-3 items-start">
+                <span className="text-xl shrink-0">❓</span>
+                <div>
+                  <p className="font-semibold text-orange-800 text-sm">
+                    Rückfrage des Admins zu deinem {n.contentTypeLabel}: &bdquo;{n.title}&ldquo;
+                  </p>
+                  <p className="text-orange-700 text-sm mt-1">{n.adminMessage}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {[

@@ -98,6 +98,7 @@ export interface ForschungsBeitrag {
   wochenthemaId?: string;
   status: ContentStatus;
   createdAt: string;
+  updatedAt?: string;
   adminMessage?: string;
 }
 
@@ -109,6 +110,7 @@ export interface Gebet {
   anonymous: boolean;
   status: ContentStatus;
   createdAt: string;
+  updatedAt?: string;
   adminMessage?: string;
 }
 
@@ -122,6 +124,7 @@ export interface Video {
   thumbnail?: string;
   status: ContentStatus;
   createdAt: string;
+  updatedAt?: string;
   adminMessage?: string;
 }
 
@@ -136,6 +139,7 @@ export interface Aktion {
   contactInfo?: string;
   status: ContentStatus;
   createdAt: string;
+  updatedAt?: string;
   adminMessage?: string;
 }
 

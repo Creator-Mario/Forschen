@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { getAwaitingReviewUsers, getUserById, saveUser, saveAdminLog } from '@/lib/db';
+import { sendAdminApprovalEmail } from '@/lib/email';
 import { generateId } from '@/lib/utils';
 import type { UserStatus } from '@/types';
 
@@ -42,6 +43,13 @@ export async function PATCH(req: NextRequest) {
     active: newStatus === 'active',
     adminNote: note || user.adminNote,
   });
+
+  // Send email notifications for relevant actions.
+  if (action === 'approve') {
+    await sendAdminApprovalEmail(user.email, user.name, true, note || undefined);
+  } else if (action === 'question' && note) {
+    await sendAdminApprovalEmail(user.email, user.name, false, note);
+  }
 
   await saveAdminLog({
     id: `log-${generateId()}`,
