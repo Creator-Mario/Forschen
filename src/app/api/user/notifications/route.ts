@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { getThesen, getForschung, getGebete, getVideos, getAktionen, getUserById } from '@/lib/db';
+import type { AdminNotification } from '@/types';
 
 const TYPE_LABELS: Record<string, string> = {
   these: 'These',
@@ -10,16 +11,6 @@ const TYPE_LABELS: Record<string, string> = {
   video: 'Video',
   aktion: 'Aktion',
 };
-
-export interface AdminNotification {
-  id: string;
-  contentType: string;
-  contentTypeLabel: string;
-  title: string;
-  status: string;
-  adminMessage: string;
-  createdAt: string;
-}
 
 export async function GET() {
   const session = await getServerSession(authOptions);
