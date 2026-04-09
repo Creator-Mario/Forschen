@@ -246,6 +246,55 @@ export async function saveAktion(aktion: Aktion): Promise<void> {
   await writeJson('aktionen.json', list);
 }
 
+/**
+ * Hard-delete a single content item by type and id.
+ * Returns true if the item was found and removed, false otherwise.
+ */
+export async function deleteContentItem(
+  type: 'these' | 'forschung' | 'gebet' | 'video' | 'aktion',
+  id: string,
+): Promise<boolean> {
+  switch (type) {
+    case 'these': {
+      const list = getThesen();
+      const next = list.filter(t => t.id !== id);
+      if (next.length === list.length) return false;
+      await writeJson('thesen.json', next);
+      return true;
+    }
+    case 'forschung': {
+      const list = getForschung();
+      const next = list.filter(f => f.id !== id);
+      if (next.length === list.length) return false;
+      await writeJson('forschung.json', next);
+      return true;
+    }
+    case 'gebet': {
+      const list = getGebete();
+      const next = list.filter(g => g.id !== id);
+      if (next.length === list.length) return false;
+      await writeJson('gebete.json', next);
+      return true;
+    }
+    case 'video': {
+      const list = getVideos();
+      const next = list.filter(v => v.id !== id);
+      if (next.length === list.length) return false;
+      await writeJson('videos.json', next);
+      return true;
+    }
+    case 'aktion': {
+      const list = getAktionen();
+      const next = list.filter(a => a.id !== id);
+      if (next.length === list.length) return false;
+      await writeJson('aktionen.json', next);
+      return true;
+    }
+    default:
+      return false;
+  }
+}
+
 // Spenden
 export function getSpenden(): SpendenRecord[] {
   return readJson<SpendenRecord>('spenden.json');

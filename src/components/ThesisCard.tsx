@@ -21,6 +21,11 @@ export default function ThesisCard({ these, showStatus = false }: ThesisCardProp
       <p className="text-gray-600 text-sm leading-relaxed mb-4">
         <BibleLink text={these.content} />
       </p>
+      {showStatus && these.adminMessage && (
+        <div className="mb-3 bg-orange-50 border border-orange-200 rounded-lg px-3 py-2 text-sm text-orange-800">
+          <span className="font-medium">Rückfrage des Admins:</span> {these.adminMessage}
+        </div>
+      )}
       <div className="flex items-center justify-between text-xs text-gray-400">
         <div className="flex items-center gap-2">
           <span className="font-medium text-gray-500">{these.authorName}</span>

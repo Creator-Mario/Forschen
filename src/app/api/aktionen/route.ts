@@ -7,8 +7,16 @@ import { generateId } from '@/lib/utils';
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const session = await getServerSession(authOptions);
-  if (searchParams.get('all') && session?.user.role === 'ADMIN') {
-    return NextResponse.json(getAktionen());
+  if (searchParams.get('all')) {
+    if (session?.user.role === 'ADMIN') {
+      return NextResponse.json(getAktionen());
+    }
+    if (session) {
+      const userId = session.user.id;
+      return NextResponse.json(
+        getAktionen().filter(a => a.userId === userId || a.status === 'approved' || a.status === 'published')
+      );
+    }
   }
   return NextResponse.json(getApprovedAktionen());
 }

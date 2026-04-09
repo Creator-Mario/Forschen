@@ -9,8 +9,17 @@ export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
   const all = searchParams.get('all');
 
-  if (all && session?.user.role === 'ADMIN') {
-    return NextResponse.json(getThesen());
+  if (all) {
+    if (session?.user.role === 'ADMIN') {
+      return NextResponse.json(getThesen());
+    }
+    if (session) {
+      // Return all of the current user's thesen plus all approved/published thesen from others.
+      const userId = session.user.id;
+      return NextResponse.json(
+        getThesen().filter(t => t.userId === userId || t.status === 'approved' || t.status === 'published')
+      );
+    }
   }
   return NextResponse.json(getApprovedThesen());
 }

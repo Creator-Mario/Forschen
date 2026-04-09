@@ -130,10 +130,21 @@ export default function AdminModerationTable({
                 </button>
                 <button
                   onClick={() => handleAction(item.id, 'deleted')}
-                  className="bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-red-700 transition-colors"
-                  title="Löschen (Soft Delete)"
+                  className="bg-red-200 text-red-800 px-3 py-1.5 rounded-lg text-sm hover:bg-red-300 transition-colors"
+                  title="Soft-Delete: Status auf gelöscht setzen (Daten bleiben erhalten)"
                 >
-                  🗑️ Löschen
+                  🗑️ Zurückziehen
+                </button>
+                <button
+                  onClick={() => {
+                    if (confirm('ACHTUNG: Diesen Eintrag unwiderruflich aus der Datenbank löschen?')) {
+                      handleAction(item.id, 'hard_delete');
+                    }
+                  }}
+                  className="bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-red-700 transition-colors"
+                  title="Hard-Delete: Eintrag endgültig aus der Datenbank entfernen"
+                >
+                  💥 Endgültig löschen
                 </button>
                 {contentField && item[contentField] && (
                   <button
