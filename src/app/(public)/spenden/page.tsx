@@ -35,7 +35,7 @@ export default function SpendenPage() {
         {/* PayPal QR code */}
         <div className="flex flex-col items-center gap-3 mb-8">
           <Image
-            src="/paypal-qr.png"
+            src="/paypal-qr.jpg"
             alt="PayPal QR-Code – Scan to pay Mario Reiner Denzer"
             width={260}
             height={260}
@@ -68,9 +68,9 @@ export default function SpendenPage() {
           <p className="text-sm font-semibold text-gray-700 mb-3">So funktioniert es (weltweit):</p>
           <ol className="list-decimal list-inside space-y-2 text-sm text-gray-600">
             <li>Öffnen Sie Ihre <span className="font-medium">PayPal-App</span></li>
-            <li>Scannen Sie den QR-Code <span className="text-gray-400">– oder wählen Sie „Geld senden" und geben Sie die obige E-Mail-Adresse ein</span></li>
+            <li>Scannen Sie den QR-Code <span className="text-gray-400">– oder wählen Sie &bdquo;Geld senden&ldquo; und geben Sie die obige E-Mail-Adresse ein</span></li>
             <li>Tragen Sie den gewünschten Betrag ein</li>
-            <li>Wählen Sie <span className="font-medium">„Für Freunde und Familie"</span> (keine Gebühren)</li>
+            <li>Wählen Sie <span className="font-medium">&bdquo;Für Freunde und Familie&ldquo;</span> (keine Gebühren)</li>
             <li>Als Verwendungszweck: <span className="font-medium italic">Freiwillige Gabe</span></li>
             <li>Senden – fertig! 🙏</li>
           </ol>
