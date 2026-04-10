@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserById, saveUser } from '@/lib/db';
 import { sendEmail, escHtml } from '@/lib/email';
+import { operatorEmail, siteDomain, siteName } from '@/lib/config';
 
 const MIN_LENGTH = 300;
 
@@ -49,14 +50,11 @@ export async function POST(req: NextRequest) {
     });
 
     // Notify admin that a new user is awaiting review.
-    const adminEmail = process.env.MAIL_REPLY_TO;
-    if (adminEmail) {
-      const siteName = process.env.MAIL_FROM_NAME ?? 'Der Fluss des Lebens';
-      const siteDomain = process.env.SITE_DOMAIN ?? 'flussdeslebens.live';
+    if (operatorEmail) {
       const baseUrl = process.env.NEXTAUTH_URL ?? `https://${siteDomain}`;
       try {
         await sendEmail({
-          to: adminEmail,
+          to: operatorEmail,
           subject: `Neue Vorstellung zur Prüfung – ${siteName}`,
           html: `
             <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">

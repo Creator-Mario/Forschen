@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth';
 import { getUsers, saveUser, saveAdminLog, deleteUserAccount } from '@/lib/db';
 import { sendEmail, escHtml } from '@/lib/email';
 import { generateId } from '@/lib/utils';
+import { siteDomain, siteName } from '@/lib/config';
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -53,9 +54,6 @@ export async function PATCH(req: NextRequest) {
   // Capture email and name before any mutation (soft-delete anonymises the email).
   const userEmail = user.email;
   const userName = user.name;
-  const siteName = process.env.MAIL_FROM_NAME ?? 'Der Fluss des Lebens';
-  const siteDomain = process.env.SITE_DOMAIN ?? 'flussdeslebens.live';
-
   if (action === 'lock') {
     user.active = false;
     user.status = 'deleted';

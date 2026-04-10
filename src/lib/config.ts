@@ -23,6 +23,8 @@ export const operatorPhoneE164 =
 export const siteDomain =
   process.env.SITE_DOMAIN ?? 'flussdeslebens.live';
 
+export const siteName = 'Der Fluss des Lebens';
+
 export const adminSeedEmail =
   process.env.ADMIN_SEED_EMAIL ?? 'kontakt@flussdeslebens.live';
 

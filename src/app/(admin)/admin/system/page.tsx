@@ -51,6 +51,9 @@ export default function AdminSystemPage() {
               <li><code className="bg-white px-1 rounded">GITHUB_OWNER</code> – Creator-Mario</li>
               <li><code className="bg-white px-1 rounded">GITHUB_REPO</code> – Forschen</li>
               <li><code className="bg-white px-1 rounded">ADMIN_RESET_TOKEN</code> – ein geheimes Wort für den Notfall-Reset (z.B. ein langer zufälliger String)</li>
+              <li><code className="bg-white px-1 rounded">RESEND_API_KEY</code> – API-Key von <a href="https://resend.com/api-keys" className="underline">resend.com</a> für den E-Mail-Versand</li>
+              <li><code className="bg-white px-1 rounded">EMAIL_FROM</code> – Absenderadresse (muss eine bei Resend verifizierte Domain verwenden, z.B. noreply@flussdeslebens.live)</li>
+              <li><code className="bg-white px-1 rounded">OPERATOR_EMAIL</code> – Kontaktadresse des Betreibers; wird auch für Admin-Benachrichtigungen verwendet</li>
             </ul>
           </div>
         </div>
