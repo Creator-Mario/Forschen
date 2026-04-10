@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { getUserByEmail, saveUser } from '@/lib/db';
 import { generateId } from '@/lib/utils';
-import { sendPasswordResetEmail } from '@/lib/email';
+import { sendVerificationEmail } from '@/lib/email';
 import crypto from 'crypto';
 
 export async function POST(req: NextRequest) {
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: err instanceof Error ? err.message : 'Registrierung fehlgeschlagen.' }, { status: 500 });
     }
 
-    const emailSent = await sendPasswordResetEmail(email, name, emailToken);
+    const emailSent = await sendVerificationEmail(email, emailToken);
 
     if (emailSent) {
       console.info('[register] Verification email sent successfully.');

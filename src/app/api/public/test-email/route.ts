@@ -13,7 +13,7 @@ export async function GET() {
     } else {
       return NextResponse.json({ success: false, error: 'sendEmail returned false' }, { status: 500 });
     }
-  } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+  } catch (err) {
+    return NextResponse.json({ success: false, error: err instanceof Error ? err.message : 'Unknown error' }, { status: 500 });
   }
 }
