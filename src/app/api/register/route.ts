@@ -45,16 +45,27 @@ export async function POST(req: NextRequest) {
     }
 
     const baseUrl =
-      process.env.NEXTAUTH_URL ??
-      `https://${process.env.SITE_DOMAIN ?? 'flussdeslebens.live'}`;
+  process.env.NEXTAUTH_URL ??
+  `https://${process.env.SITE_DOMAIN ?? 'flussdeslebens.live'}`;
 
-    const emailSent = await sendVerificationEmail(email, emailToken, baseUrl);
+let emailSent = false;
+let emailError = null;
+try {
+  emailSent = await sendVerificationEmail(email, emailToken, baseUrl);
+} catch (err: any) {
+  emailError = err;
+  console.error('[register] sendVerificationEmail threw:', err);
+}
 
-    if (emailSent) {
-      console.info('[register] Verification email sent successfully.');
-    } else {
-      console.error('[register] Verification email could not be sent.');
-    }
+if (emailSent) {
+  console.info('[register] Verification email sent successfully.');
+  return NextResponse.json({ success: true });
+} else {
+  const errorMsg = emailError?.message || 'Email send failed (returned false)';
+  console.error('[register] Verification email failed:', errorMsg);
+  // Gib den Fehler im Klartext zurück (nur für Debugging)
+  return NextResponse.json({ success: false, error: errorMsg }, { status: 500 });
+}
 
     // Never expose the token in the response – email is the only delivery channel.
     return NextResponse.json({ success: true });
