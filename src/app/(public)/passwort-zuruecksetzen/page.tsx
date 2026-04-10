@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent, Suspense } from 'react';
+import { useState, FormEvent, Suspense, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
@@ -13,6 +13,10 @@ function ResetForm() {
   const [done, setDone] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    console.info('[passwort-zuruecksetzen] Token from URL present:', !!token);
+  }, [token]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
