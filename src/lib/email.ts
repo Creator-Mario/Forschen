@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { siteName as SITE_NAME, siteDomain as SITE_DOMAIN } from '@/lib/config';
 
 let _resend: Resend | null = null;
 function getResend(): Resend {
@@ -10,8 +11,6 @@ function getResend(): Resend {
   }
   return _resend;
 }
-const SITE_NAME = 'Der Fluss des Lebens';
-const SITE_DOMAIN = process.env.SITE_DOMAIN ?? 'flussdeslebens.live';
 const FROM_EMAIL = process.env.EMAIL_FROM ?? `noreply@${SITE_DOMAIN}`;
 
 /** Escapes HTML special characters to prevent injection in email templates. */
