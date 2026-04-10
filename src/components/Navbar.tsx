@@ -73,6 +73,15 @@ export default function Navbar() {
               <div className="flex items-center gap-3">
                 <Link href="/mitglieder/vorstellungen" className="hover:text-yellow-300 transition-colors font-medium">Mitglieder</Link>
                 <Link href="/chat" className="hover:text-yellow-300 transition-colors" title="Chat">💬</Link>
+                {session.user.role === 'ADMIN' && (
+                  <Link
+                    href="/admin"
+                    className="hover:text-yellow-300 transition-colors font-medium"
+                    title="Admin-Bereich"
+                  >
+                    🛠️ Admin
+                  </Link>
+                )}
                 <Link
                   href="/dashboard"
                   className="hover:text-yellow-300 transition-colors font-medium"
@@ -137,6 +146,9 @@ export default function Navbar() {
             {session ? (
               <>
                 <Link href="/mitglieder/vorstellungen" className="py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors" onClick={() => setMenuOpen(false)}>Mitglieder</Link>
+                {session.user.role === 'ADMIN' && (
+                  <Link href="/admin" className="py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors font-medium text-yellow-300" onClick={() => setMenuOpen(false)}>🛠️ Admin-Bereich</Link>
+                )}
                 <Link href="/dashboard" className="py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors" onClick={() => setMenuOpen(false)}>{session.user.name}</Link>
                 <button onClick={() => signOut({ callbackUrl: '/' })} className="text-left py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors text-yellow-300">Abmelden</button>
               </>

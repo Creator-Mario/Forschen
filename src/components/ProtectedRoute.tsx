@@ -17,11 +17,11 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
   useEffect(() => {
     if (status === 'loading') return;
     if (!session) {
-      router.push('/login');
+      router.push(requireAdmin ? '/admin-login' : '/login');
       return;
     }
     if (requireAdmin && session.user.role !== 'ADMIN') {
-      router.push('/dashboard');
+      router.push('/admin-login');
     }
   }, [session, status, router, requireAdmin]);
 
