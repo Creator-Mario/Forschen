@@ -5,5 +5,25 @@ export default withAuth({
 });
 
 export const config = {
-  matcher: ['/((?!api/public|api/register|api/auth|_next/static|_next/image|favicon.ico).*)'],
+  // Only protect authenticated (user) and (admin) routes.
+  // Public routes (home, tageswort, wochenthema, thesen, forschung, gebet,
+  // videos, aktionen, vision, login, registrieren, passwort-*, etc.) remain
+  // freely accessible without a session.
+  matcher: [
+    '/dashboard/:path*',
+    '/mein-tageswort/:path*',
+    '/meine-thesen/:path*',
+    '/meine-gebete/:path*',
+    '/thesen/neu',
+    '/forschung/beitraege',
+    '/gebet/neu',
+    '/chat/:path*',
+    '/aktionen/neu',
+    '/videos/hochladen',
+    '/profil',
+    '/vorstellung',
+    '/admin/:path*',
+    '/admin-login',
+    '/admin-reset',
+  ],
 };
