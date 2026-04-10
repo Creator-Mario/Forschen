@@ -63,5 +63,16 @@
     "createdAt": "2026-04-10T07:25:49.950Z",
     "active": false,
     "emailToken": "5b7f4e97ae41f0bb0bcb5b7082fa828c9814852028db7cf6aa117b86034142da"
+  },
+  {
+    "id": "user-1775807464596-alc0kxj2t",
+    "email": "test-1775807464156@example.com",
+    "password": "$2b$12$/cA2cy4/yE8HinolzYDgI.1FCSn8yWbXD9cAXsePgv..7ovW4qigu",
+    "name": "TestUser",
+    "role": "USER",
+    "status": "pending_email",
+    "createdAt": "2026-04-10T07:51:04.596Z",
+    "active": false,
+    "emailToken": "c13a89404df4aa46f40d2ae7b73eb56873d90e3e7f870f6f8fab207fe2eecbe6"
   }
 ]
