@@ -18,6 +18,7 @@ export default function AdminChatsPage() {
   const [pairs, setPairs] = useState<ConversationPair[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
 
   function load() {
     setLoading(true);
@@ -32,9 +33,20 @@ export default function AdminChatsPage() {
   async function handleDelete(userId1: string, userId2: string, name1: string, name2: string) {
     if (!confirm(`Gespräch zwischen „${name1}" und „${name2}" wirklich löschen?`)) return;
     setDeleting(true);
-    await fetch(`/api/chat/${userId1}?partner=${userId2}`, { method: 'DELETE' });
-    setDeleting(false);
-    load();
+    setFeedback(null);
+    try {
+      const res = await fetch(`/api/chat/${userId1}?partner=${userId2}`, { method: 'DELETE' });
+      if (res.ok) {
+        setFeedback({ type: 'success', msg: 'Gespräch gelöscht.' });
+      } else {
+        setFeedback({ type: 'error', msg: 'Löschen fehlgeschlagen.' });
+      }
+    } catch {
+      setFeedback({ type: 'error', msg: 'Netzwerkfehler. Bitte erneut versuchen.' });
+    } finally {
+      setDeleting(false);
+      load();
+    }
   }
 
   return (
@@ -49,6 +61,12 @@ export default function AdminChatsPage() {
           </div>
           <Link href="/admin" className="text-sm text-blue-600 hover:underline">← Admin</Link>
         </div>
+
+        {feedback && (
+          <div className={`mb-4 rounded-lg px-4 py-3 text-sm font-medium ${feedback.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
+            {feedback.type === 'success' ? '✅ ' : '❌ '}{feedback.msg}
+          </div>
+        )}
 
         {loading ? (
           <div className="text-center py-12 text-gray-400">Laden…</div>
@@ -90,6 +108,7 @@ export default function AdminChatsPage() {
                           👁 Einsehen
                         </Link>
                         <button
+                          type="button"
                           onClick={() => handleDelete(p.userId1, p.userId2, p.user1Name, p.user2Name)}
                           disabled={deleting}
                           className="text-xs bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 px-2 py-1 rounded transition-colors disabled:opacity-50"

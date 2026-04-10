@@ -9,6 +9,7 @@ import Link from 'next/link';
 export default function AdminNutzerPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
 
   function load() {
     fetch('/api/admin/users').then(r => r.json()).then(data => {
@@ -25,13 +26,31 @@ export default function AdminNutzerPage() {
       action === 'lock' ? 'Nutzer sperren?' : 'Nutzer reaktivieren?';
     if (!confirm(confirmMsg)) return;
     setLoading(true);
-    await fetch('/api/admin/users', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, action }),
-    });
-    setLoading(false);
-    load();
+    setFeedback(null);
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, action }),
+      });
+      if (res.ok) {
+        const labels: Record<string, string> = {
+          lock: 'Nutzer gesperrt.',
+          unlock: 'Nutzer reaktiviert.',
+          delete: 'Nutzer deaktiviert.',
+          hard_delete: 'Nutzer endgültig gelöscht.',
+        };
+        setFeedback({ type: 'success', msg: labels[action] ?? 'Aktion ausgeführt.' });
+      } else {
+        const d = await res.json().catch(() => ({}));
+        setFeedback({ type: 'error', msg: d.error ?? 'Fehler bei der Aktion.' });
+      }
+    } catch {
+      setFeedback({ type: 'error', msg: 'Netzwerkfehler. Bitte erneut versuchen.' });
+    } finally {
+      setLoading(false);
+      load();
+    }
   }
 
   return (
@@ -41,6 +60,12 @@ export default function AdminNutzerPage() {
           <h1 className="text-3xl font-bold text-gray-800">Nutzerverwaltung</h1>
           <span className="text-sm text-gray-500">{users.length} Nutzer gesamt</span>
         </div>
+
+        {feedback && (
+          <div className={`mb-4 rounded-lg px-4 py-3 text-sm font-medium ${feedback.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
+            {feedback.type === 'success' ? '✅ ' : '❌ '}{feedback.msg}
+          </div>
+        )}
 
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
           <table className="w-full text-sm">

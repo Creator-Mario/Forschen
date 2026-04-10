@@ -44,11 +44,15 @@ export async function PATCH(req: NextRequest) {
     adminNote: note || user.adminNote,
   });
 
-  // Send email notifications for relevant actions.
-  if (action === 'approve') {
-    await sendAdminApprovalEmail(user.email, user.name, true, note || undefined);
-  } else if (action === 'question' && note) {
-    await sendAdminApprovalEmail(user.email, user.name, false, note);
+  // Send email notifications for relevant actions (errors are non-fatal).
+  try {
+    if (action === 'approve') {
+      await sendAdminApprovalEmail(user.email, user.name, true, note || undefined);
+    } else if (action === 'question' && note) {
+      await sendAdminApprovalEmail(user.email, user.name, false, note);
+    }
+  } catch (err) {
+    console.error('[vorstellungen] Email notification could not be sent:', err);
   }
 
   await saveAdminLog({
