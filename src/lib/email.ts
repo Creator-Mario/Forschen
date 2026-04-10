@@ -102,9 +102,8 @@ export async function sendEmail({
 export async function sendVerificationEmail(
   toEmail: string,
   token: string,
-  baseUrl: string,
 ): Promise<boolean> {
-  const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${token}`;
+  const verifyUrl = `${siteBaseUrl()}/api/auth/verify-email?token=${token}`;
 
   return sendMail({
     to: toEmail,

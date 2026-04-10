@@ -44,11 +44,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: err instanceof Error ? err.message : 'Registrierung fehlgeschlagen.' }, { status: 500 });
     }
 
-    const baseUrl =
-      process.env.NEXTAUTH_URL ??
-      `https://${process.env.SITE_DOMAIN ?? 'flussdeslebens.live'}`;
-
-    const emailSent = await sendVerificationEmail(email, emailToken, baseUrl);
+    const emailSent = await sendVerificationEmail(email, emailToken);
 
     if (emailSent) {
       console.info('[register] Verification email sent successfully.');
