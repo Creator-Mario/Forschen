@@ -1,7 +1,18 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
+let _resend: Resend | null = null;
+function getResend(): Resend {
+  if (!_resend) {
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error('[email] RESEND_API_KEY is not configured.');
+    }
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 const SITE_NAME = 'Der Fluss des Lebens';
 const SITE_DOMAIN = process.env.SITE_DOMAIN ?? 'flussdeslebens.live';
+const FROM_EMAIL = process.env.EMAIL_FROM ?? `noreply@${SITE_DOMAIN}`;
 
 /** Escapes HTML special characters to prevent injection in email templates. */
 export function escHtml(str: string): string {
@@ -13,77 +24,12 @@ export function escHtml(str: string): string {
     .replace(/'/g, '&#039;');
 }
 
-function createTransporter() {
-  // Accept both the Vercel-standard EMAIL_SERVER_* names and the legacy SMTP_* names.
-  const host = process.env.EMAIL_SERVER_HOST ?? process.env.SMTP_HOST;
-  const portRaw =
-    process.env.EMAIL_SERVER_PORT ?? process.env.SMTP_PORT ?? '587';
-  const port = parseInt(portRaw, 10);
-  const user = process.env.EMAIL_SERVER_USER ?? process.env.SMTP_USER;
-  const pass = process.env.EMAIL_SERVER_PASSWORD ?? process.env.SMTP_PASS;
-
-  if (!host || !user || !pass) {
-    console.error(
-      '[email] SMTP not configured – EMAIL_SERVER_HOST, EMAIL_SERVER_USER or EMAIL_SERVER_PASSWORD missing.',
-    );
-    return null;
-  }
-
-  return nodemailer.createTransport({
-    host,
-    port,
-    secure: port === 465,
-    // Enforce STARTTLS on port 587 so the connection is always encrypted.
-    requireTLS: port !== 465,
-    auth: { user, pass },
-  });
-}
-
-function buildFrom(): string {
-  const name = process.env.MAIL_FROM_NAME ?? SITE_NAME;
-  // Accept EMAIL_FROM (Vercel standard), MAIL_FROM_ADDRESS (legacy), or SMTP_FROM (legacy).
-  const address =
-    process.env.EMAIL_FROM ??
-    process.env.MAIL_FROM_ADDRESS ??
-    process.env.SMTP_FROM ??
-    `noreply@${SITE_DOMAIN}`;
-  return `${name} <${address}>`;
-}
-
-function buildReplyTo(): string {
-  return process.env.MAIL_REPLY_TO ?? `kontakt@${SITE_DOMAIN}`;
-}
-
 function siteBaseUrl(): string {
-  return (
-    process.env.NEXTAUTH_URL ??
-    `https://${SITE_DOMAIN}`
-  );
-}
-
-async function sendMail(options: nodemailer.SendMailOptions): Promise<boolean> {
-  const transporter = createTransporter();
-  if (!transporter) return false;
-
-  const envelope: nodemailer.SendMailOptions = {
-    from: buildFrom(),
-    replyTo: buildReplyTo(),
-    ...options,
-  };
-
-  try {
-    const info = await transporter.sendMail(envelope);
-    console.info('[email] Sent:', options.subject, '→', options.to, '| messageId:', info.messageId);
-    return true;
-  } catch (err) {
-    console.error('[email] Failed to send:', options.subject, '→', options.to, err);
-    return false;
-  }
+  return process.env.NEXTAUTH_URL ?? `https://${SITE_DOMAIN}`;
 }
 
 /**
  * Generic send-email helper.
- * Matches the interface requested in the task:  sendEmail({ to, subject, html })
  */
 export async function sendEmail({
   to,
@@ -96,7 +42,26 @@ export async function sendEmail({
   html: string;
   text?: string;
 }): Promise<boolean> {
-  return sendMail({ to, subject, html, text });
+  try {
+    const { data, error } = await getResend().emails.send({
+      from: `${SITE_NAME} <${FROM_EMAIL}>`,
+      to,
+      subject,
+      html,
+      text,
+    });
+
+    if (error) {
+      console.error('[email] Resend error:', error);
+      return false;
+    }
+
+    console.info('[email] Sent:', subject, '→', to, '| id:', data?.id);
+    return true;
+  } catch (err) {
+    console.error('[email] Failed to send:', subject, '→', to, err);
+    return false;
+  }
 }
 
 export async function sendVerificationEmail(
@@ -105,7 +70,7 @@ export async function sendVerificationEmail(
 ): Promise<boolean> {
   const verifyUrl = `${siteBaseUrl()}/api/auth/verify-email?token=${token}`;
 
-  return sendMail({
+  return sendEmail({
     to: toEmail,
     subject: `E-Mail-Adresse bestätigen – ${SITE_NAME}`,
     text: `Bitte bestätige deine E-Mail-Adresse, indem du diesen Link öffnest:\n\n${verifyUrl}\n\nFalls du dich nicht registriert hast, ignoriere diese Nachricht.\n\n${SITE_NAME}`,
@@ -143,7 +108,7 @@ export async function sendAdminMessageEmail(
 ): Promise<boolean> {
   const dashboardUrl = `${siteBaseUrl()}/dashboard`;
 
-  return sendMail({
+  return sendEmail({
     to: toEmail,
     subject: `Rückfrage des Admins zu deinem Beitrag – ${SITE_NAME}`,
     text: `Hallo ${userName},\n\nder Administrator hat eine Rückfrage zu deinem Beitrag (${contentType}):\n\n"${adminMessage}"\n\nBitte melde dich in deinem Dashboard, um zu antworten.\n\n${SITE_NAME}`,
@@ -213,7 +178,7 @@ export async function sendAdminApprovalEmail(
       </div>
     `;
 
-  return sendMail({
+  return sendEmail({
     to: toEmail,
     subject,
     text: bodyText,
@@ -228,7 +193,7 @@ export async function sendPasswordResetEmail(
 ): Promise<boolean> {
   const resetUrl = `${siteBaseUrl()}/passwort-zuruecksetzen?token=${token}`;
 
-  return sendMail({
+  return sendEmail({
     to: toEmail,
     subject: `Passwort zurücksetzen – ${SITE_NAME}`,
     text: `Hallo ${userName},\n\ndu hast eine Anfrage zum Zurücksetzen deines Passworts gestellt. Öffne diesen Link, um ein neues Passwort zu vergeben:\n\n${resetUrl}\n\nDer Link ist 1 Stunde gültig. Falls du diese Anfrage nicht gestellt hast, ignoriere diese Nachricht.\n\n${SITE_NAME}`,
