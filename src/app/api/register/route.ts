@@ -17,10 +17,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Das Passwort muss mindestens 8 Zeichen haben.' }, { status: 400 });
     }
 
-    // Check if user exists without revealing this via error message
+    // Check if user exists
     const existing = getUserByEmail(email);
     if (existing) {
-      // Return success to avoid email enumeration
+      // If the user registered but never confirmed their email, resend the verification.
+      // For any other status (already verified, active, etc.) silently return success
+      // to avoid leaking whether an account exists.
+      if (existing.status === 'pending_email') {
+        const newEmailToken = crypto.randomBytes(32).toString('hex');
+        try {
+          await saveUser({ ...existing, emailToken: newEmailToken });
+        } catch (err) {
+          console.error('[register] resend saveUser failed:', err);
+          return NextResponse.json({ error: err instanceof Error ? err.message : 'Registrierung fehlgeschlagen.' }, { status: 500 });
+        }
+        const emailSent = await sendVerificationEmail(email, newEmailToken);
+        if (emailSent) {
+          console.info('[register] Verification email resent to pending user.');
+        } else {
+          console.error('[register] Could not resend verification email to pending user.');
+        }
+      }
       return NextResponse.json({ success: true });
     }
 
