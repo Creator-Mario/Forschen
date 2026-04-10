@@ -3,8 +3,6 @@
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
 
-const isGitHubPages = process.env.NEXT_PUBLIC_GITHUB_PAGES === 'true';
-
 export default function RegistrierenPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -38,22 +36,6 @@ export default function RegistrierenPage() {
     } finally {
       setLoading(false);
     }
-  }
-
-  if (isGitHubPages) {
-    return (
-      <div className="min-h-[70vh] flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md text-center">
-          <div className="text-5xl mb-4">🔒</div>
-          <h1 className="text-2xl font-bold text-blue-800 mb-3">Registrierung nicht verfügbar</h1>
-          <p className="text-gray-600 text-sm leading-relaxed">
-            Die Registrierung ist auf dieser statischen Vorschau nicht verfügbar, da sie
-            eine Serververbindung erfordert. Bitte nutze die vollständige Anwendung,
-            um ein Konto zu erstellen.
-          </p>
-        </div>
-      </div>
-    );
   }
 
   if (registered) {
