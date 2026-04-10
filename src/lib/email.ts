@@ -1,11 +1,12 @@
 import { Resend } from 'resend';
 import { siteName as SITE_NAME, siteDomain as SITE_DOMAIN } from '@/lib/config';
 
-if (!process.env.NEXTAUTH_URL) {
-  throw new Error('[email] NEXTAUTH_URL is not set in environment variables');
+/** Returns the canonical base URL (no trailing slash). Throws at call time if unset. */
+function getBaseUrl(): string {
+  const url = process.env.NEXTAUTH_URL;
+  if (!url) throw new Error('[email] NEXTAUTH_URL is not set in environment variables');
+  return url.replace(/\/$/, '');
 }
-/** Canonical base URL – no trailing slash. */
-const BASE_URL = process.env.NEXTAUTH_URL.replace(/\/$/, '');
 
 let _resend: Resend | null = null;
 function getResend(): Resend {
@@ -69,8 +70,8 @@ export async function sendVerificationEmail(
   toEmail: string,
   token: string,
 ): Promise<boolean> {
-  console.log('[sendVerificationEmail] Called with', { toEmail, token: token.slice(0, 8) + '…', baseUrl: BASE_URL });
-  const verifyUrl = `${BASE_URL}/api/auth/verify-email?token=${token}`;
+  console.log('[sendVerificationEmail] Called with', { toEmail, token: token.slice(0, 8) + '…', baseUrl: getBaseUrl() });
+  const verifyUrl = `${getBaseUrl()}/api/auth/verify-email?token=${token}`;
 
   const result = await sendEmail({
     to: toEmail,
@@ -110,7 +111,7 @@ export async function sendAdminMessageEmail(
   contentType: string,
   adminMessage: string,
 ): Promise<boolean> {
-  const dashboardUrl = `${BASE_URL}/dashboard`;
+  const dashboardUrl = `${getBaseUrl()}/dashboard`;
 
   return sendEmail({
     to: toEmail,
@@ -195,7 +196,7 @@ export async function sendPasswordResetEmail(
   userName: string,
   token: string,
 ): Promise<boolean> {
-  const resetUrl = `${BASE_URL}/passwort-zuruecksetzen?token=${token}`;
+  const resetUrl = `${getBaseUrl()}/passwort-zuruecksetzen?token=${token}`;
 
   return sendEmail({
     to: toEmail,
