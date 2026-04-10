@@ -22,15 +22,25 @@ export async function POST(req: NextRequest) {
 
       await saveUser({ ...user, passwordResetToken: token, passwordResetExpiry: expiry });
 
+      console.info('[forgot-password] Sending password-reset email.');
       const sent = await sendPasswordResetEmail(user.email, user.name, token);
-      if (!sent) {
-        console.error('[forgot-password] Could not send reset email to', email);
+      if (sent) {
+        console.info('[forgot-password] Password-reset email sent successfully.');
+      } else {
+        console.error(
+          '[forgot-password] Failed to send reset email.',
+          '| Check EMAIL_SERVER_HOST / EMAIL_SERVER_USER / EMAIL_SERVER_PASSWORD env vars in Vercel.',
+        );
       }
+    } else {
+      // Do not log the email address to avoid exposing whether an account exists.
+      console.info('[forgot-password] Reset email skipped – no matching active account.');
     }
 
     // Always return the same response to prevent email enumeration
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (err) {
+    console.error('[forgot-password] Unexpected error:', err);
     return NextResponse.json({ error: 'Anfrage fehlgeschlagen.' }, { status: 500 });
   }
 }

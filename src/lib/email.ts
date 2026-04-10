@@ -14,13 +14,18 @@ export function escHtml(str: string): string {
 }
 
 function createTransporter() {
-  const host = process.env.SMTP_HOST;
-  const port = parseInt(process.env.SMTP_PORT || '587', 10);
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
+  // Accept both the Vercel-standard EMAIL_SERVER_* names and the legacy SMTP_* names.
+  const host = process.env.EMAIL_SERVER_HOST ?? process.env.SMTP_HOST;
+  const portRaw =
+    process.env.EMAIL_SERVER_PORT ?? process.env.SMTP_PORT ?? '587';
+  const port = parseInt(portRaw, 10);
+  const user = process.env.EMAIL_SERVER_USER ?? process.env.SMTP_USER;
+  const pass = process.env.EMAIL_SERVER_PASSWORD ?? process.env.SMTP_PASS;
 
   if (!host || !user || !pass) {
-    console.error('[email] SMTP not configured – SMTP_HOST, SMTP_USER or SMTP_PASS missing.');
+    console.error(
+      '[email] SMTP not configured – EMAIL_SERVER_HOST, EMAIL_SERVER_USER or EMAIL_SERVER_PASSWORD missing.',
+    );
     return null;
   }
 
@@ -36,7 +41,9 @@ function createTransporter() {
 
 function buildFrom(): string {
   const name = process.env.MAIL_FROM_NAME ?? SITE_NAME;
+  // Accept EMAIL_FROM (Vercel standard), MAIL_FROM_ADDRESS (legacy), or SMTP_FROM (legacy).
   const address =
+    process.env.EMAIL_FROM ??
     process.env.MAIL_FROM_ADDRESS ??
     process.env.SMTP_FROM ??
     `noreply@${SITE_DOMAIN}`;

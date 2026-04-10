@@ -50,8 +50,13 @@ export async function POST(req: NextRequest) {
 
     const emailSent = await sendVerificationEmail(email, emailToken, baseUrl);
 
-    if (!emailSent) {
-      console.error('[register] Verification email could not be sent to', email);
+    if (emailSent) {
+      console.info('[register] Verification email sent successfully.');
+    } else {
+      console.error(
+        '[register] Verification email could not be sent.',
+        '| Check EMAIL_SERVER_HOST / EMAIL_SERVER_USER / EMAIL_SERVER_PASSWORD env vars in Vercel.',
+      );
     }
 
     // Never expose the token in the response – email is the only delivery channel.
