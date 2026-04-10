@@ -3,6 +3,7 @@ import { getApprovedThesen, getThesen, saveThese } from '@/lib/db';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { generateId } from '@/lib/utils';
+import type { ContentStatus } from '@/types';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest) {
     title: body.title,
     content: body.content,
     bibleReference: body.bibleReference || '',
-    status: 'created' as const,
+    status: (session.user.role === 'ADMIN' ? 'published' : 'created') as ContentStatus,
     createdAt: new Date().toISOString(),
   };
   await saveThese(these);
