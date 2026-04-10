@@ -28,8 +28,8 @@
     "status": "active",
     "createdAt": "2026-04-08T00:53:39.026Z",
     "active": true,
-    "passwordResetToken": "9c3e928c70365b1aa38c39c92a38da7a99c91d58bcf093b2d9f0335e1bc4c4b5",
-    "passwordResetExpiry": "2026-04-10T05:40:35.460Z"
+    "passwordResetToken": "207f3d32177fb349e79e16a0173a133387ba4ef81e405ee36e81a808e8b6b4dd",
+    "passwordResetExpiry": "2026-04-10T16:58:57.263Z"
   },
   {
     "id": "user-1775659725056-4fqk3gk90",
