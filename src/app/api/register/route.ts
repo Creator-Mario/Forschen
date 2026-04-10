@@ -48,15 +48,12 @@ export async function POST(req: NextRequest) {
       process.env.NEXTAUTH_URL ??
       `https://${process.env.SITE_DOMAIN ?? 'flussdeslebens.live'}`;
 
-    const emailSent = await sendVerificationEmail(email, emailToken, baseUrl);
-
-    if (emailSent) {
-      console.info('[register] Verification email sent successfully.');
-    } else {
-      console.error(
-        '[register] Verification email could not be sent.',
-        '| Check EMAIL_SERVER_HOST / EMAIL_SERVER_USER / EMAIL_SERVER_PASSWORD env vars in Vercel.',
-      );
+    try {
+      await sendVerificationEmail(email, emailToken, baseUrl);
+      console.log('Verification email sent successfully');
+    } catch (error: any) {
+      console.error('Error sending verification email:', error);
+      return NextResponse.json({ success: false, error: error.message || 'Email send failed' }, { status: 500 });
     }
 
     // Never expose the token in the response – email is the only delivery channel.
