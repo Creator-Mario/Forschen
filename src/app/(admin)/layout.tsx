@@ -66,11 +66,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         `}
       >
         {/* Sidebar header */}
-        <div className="px-5 py-4 border-b border-slate-700 flex-shrink-0">
+        <header className="px-5 py-4 border-b border-slate-700 flex-shrink-0">
           <div className="text-xs font-medium tracking-widest text-slate-400 uppercase mb-0.5">Schaltzentrale</div>
-          <div className="text-base font-bold text-white">Admin-Bereich</div>
+          <h1 className="text-base font-bold text-white">Admin-Bereich</h1>
           <div className="text-xs text-slate-400 mt-0.5 truncate">{session.user.name}</div>
-        </div>
+        </header>
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto py-2 px-2">
