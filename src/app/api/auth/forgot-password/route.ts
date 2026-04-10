@@ -27,10 +27,7 @@ export async function POST(req: NextRequest) {
       if (sent) {
         console.info('[forgot-password] Password-reset email sent successfully.');
       } else {
-        console.error(
-          '[forgot-password] Failed to send reset email.',
-          '| Check EMAIL_SERVER_HOST / EMAIL_SERVER_USER / EMAIL_SERVER_PASSWORD env vars in Vercel.',
-        );
+        console.error('[forgot-password] Failed to send reset email.');
       }
     } else {
       // Do not log the email address to avoid exposing whether an account exists.
