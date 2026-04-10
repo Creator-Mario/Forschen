@@ -9,6 +9,11 @@ export const config = {
   // Public routes (home, tageswort, wochenthema, thesen, forschung, gebet,
   // videos, aktionen, vision, login, registrieren, passwort-*, etc.) remain
   // freely accessible without a session.
+  //
+  // NOTE: /vorstellung, /admin-login and /admin-reset are intentionally NOT
+  // protected here so that newly-verified users can fill in the intro form
+  // before they have a session, and the admin can always reach their own
+  // login / reset pages without an existing session.
   matcher: [
     '/dashboard/:path*',
     '/mein-tageswort/:path*',
@@ -21,9 +26,6 @@ export const config = {
     '/aktionen/neu',
     '/videos/hochladen',
     '/profil',
-    '/vorstellung',
     '/admin/:path*',
-    '/admin-login',
-    '/admin-reset',
   ],
 };

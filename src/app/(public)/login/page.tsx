@@ -1,6 +1,6 @@
 'use client';
 
-import { signIn } from 'next-auth/react';
+import { signIn, getSession } from 'next-auth/react';
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -25,7 +25,12 @@ export default function LoginPage() {
     if (result?.error) {
       setError('Anmeldung fehlgeschlagen. Bitte überprüfe deine Zugangsdaten.');
     } else {
-      router.push('/dashboard');
+      const session = await getSession();
+      if (session?.user?.role === 'ADMIN') {
+        router.push('/admin');
+      } else {
+        router.push('/dashboard');
+      }
     }
   }
 

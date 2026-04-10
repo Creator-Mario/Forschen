@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserById, saveUser } from '@/lib/db';
-import { sendEmail, escHtml } from '@/lib/email';
+import { sendEmail, sendRegistrationPendingEmail, escHtml } from '@/lib/email';
 import { operatorEmail, siteDomain, siteName } from '@/lib/config';
 
 const MIN_LENGTH = 300;
@@ -85,6 +85,13 @@ export async function POST(req: NextRequest) {
       } catch (err) {
         console.error('[intro] Admin notification email could not be sent:', err);
       }
+    }
+
+    // Confirm receipt to the user.
+    try {
+      await sendRegistrationPendingEmail(user.email, user.name);
+    } catch (err) {
+      console.error('[intro] User confirmation email could not be sent:', err);
     }
 
     return NextResponse.json({ success: true });
