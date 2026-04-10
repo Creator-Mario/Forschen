@@ -23,10 +23,6 @@ export function escHtml(str: string): string {
     .replace(/'/g, '&#039;');
 }
 
-function siteBaseUrl(): string {
-  return process.env.NEXTAUTH_URL ?? `https://${SITE_DOMAIN}`;
-}
-
 /**
  * Generic send-email helper.
  */
@@ -67,9 +63,11 @@ export async function sendVerificationEmail(
   toEmail: string,
   token: string,
 ): Promise<boolean> {
-  const verifyUrl = `${siteBaseUrl()}/api/auth/verify-email?token=${token}`;
+  const baseUrl = process.env.NEXTAUTH_URL ?? `https://${SITE_DOMAIN}`;
+  console.log('[sendVerificationEmail] Called with', { toEmail, token: token.slice(0, 8) + '…', baseUrl });
+  const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${token}`;
 
-  return sendEmail({
+  const result = await sendEmail({
     to: toEmail,
     subject: `E-Mail-Adresse bestätigen – ${SITE_NAME}`,
     text: `Bitte bestätige deine E-Mail-Adresse, indem du diesen Link öffnest:\n\n${verifyUrl}\n\nFalls du dich nicht registriert hast, ignoriere diese Nachricht.\n\n${SITE_NAME}`,
@@ -97,6 +95,8 @@ export async function sendVerificationEmail(
       </div>
     `,
   });
+  console.log('[sendVerificationEmail] sendEmail result:', result);
+  return result;
 }
 
 export async function sendAdminMessageEmail(
@@ -105,7 +105,7 @@ export async function sendAdminMessageEmail(
   contentType: string,
   adminMessage: string,
 ): Promise<boolean> {
-  const dashboardUrl = `${siteBaseUrl()}/dashboard`;
+  const dashboardUrl = `${process.env.NEXTAUTH_URL ?? `https://${SITE_DOMAIN}`}/dashboard`;
 
   return sendEmail({
     to: toEmail,
@@ -190,7 +190,7 @@ export async function sendPasswordResetEmail(
   userName: string,
   token: string,
 ): Promise<boolean> {
-  const resetUrl = `${siteBaseUrl()}/passwort-zuruecksetzen?token=${token}`;
+  const resetUrl = `${process.env.NEXTAUTH_URL ?? `https://${SITE_DOMAIN}`}/passwort-zuruecksetzen?token=${token}`;
 
   return sendEmail({
     to: toEmail,
