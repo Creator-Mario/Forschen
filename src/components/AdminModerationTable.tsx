@@ -52,8 +52,9 @@ export default function AdminModerationTable({
         hard_delete: 'Endgültig gelöscht.',
       };
       setFeedback({ type: 'success', msg: labels[status] ?? 'Aktion ausgeführt.' });
-    } catch {
-      setFeedback({ type: 'error', msg: 'Aktion fehlgeschlagen. Bitte erneut versuchen.' });
+    } catch (err) {
+      console.error('[AdminModerationTable] Action failed:', err);
+      setFeedback({ type: 'error', msg: 'Aktion fehlgeschlagen. Bitte Seite neu laden und erneut versuchen.' });
     } finally {
       setLoadingId(null);
     }

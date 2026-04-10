@@ -56,7 +56,7 @@ export default function AdminVorstellungenPage() {
         setFeedback({ type: 'success', msg: labels[action] ?? 'Aktion ausgeführt.' });
       } else {
         const d = await res.json().catch(() => ({}));
-        setFeedback({ type: 'error', msg: d.error ?? 'Fehler bei der Aktion.' });
+        setFeedback({ type: 'error', msg: d.error ?? `Aktion fehlgeschlagen (${res.status}).` });
       }
     } catch {
       setFeedback({ type: 'error', msg: 'Netzwerkfehler. Bitte erneut versuchen.' });

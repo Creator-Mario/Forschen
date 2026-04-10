@@ -22,48 +22,53 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'Kein Zugang.' }, { status: 403 });
   }
 
-  const { userId, action, note } = await req.json();
-
-  const user = getUserById(userId);
-  if (!user) return NextResponse.json({ error: 'Nutzer nicht gefunden.' }, { status: 404 });
-
-  const statusMap: Record<string, UserStatus> = {
-    approve: 'active',
-    question: 'question_to_user',
-    postpone: 'postponed',
-    delete: 'deleted',
-  };
-
-  const newStatus = statusMap[action];
-  if (!newStatus) return NextResponse.json({ error: 'Unbekannte Aktion.' }, { status: 400 });
-
-  await saveUser({
-    ...user,
-    status: newStatus,
-    active: newStatus === 'active',
-    adminNote: note || user.adminNote,
-  });
-
-  // Send email notifications for relevant actions (errors are non-fatal).
   try {
-    if (action === 'approve') {
-      await sendAdminApprovalEmail(user.email, user.name, true, note || undefined);
-    } else if (action === 'question' && note) {
-      await sendAdminApprovalEmail(user.email, user.name, false, note);
+    const { userId, action, note } = await req.json();
+
+    const user = getUserById(userId);
+    if (!user) return NextResponse.json({ error: 'Nutzer nicht gefunden.' }, { status: 404 });
+
+    const statusMap: Record<string, UserStatus> = {
+      approve: 'active',
+      question: 'question_to_user',
+      postpone: 'postponed',
+      delete: 'deleted',
+    };
+
+    const newStatus = statusMap[action];
+    if (!newStatus) return NextResponse.json({ error: 'Unbekannte Aktion.' }, { status: 400 });
+
+    await saveUser({
+      ...user,
+      status: newStatus,
+      active: newStatus === 'active',
+      adminNote: note || user.adminNote,
+    });
+
+    // Send email notifications for relevant actions (errors are non-fatal).
+    try {
+      if (action === 'approve') {
+        await sendAdminApprovalEmail(user.email, user.name, true, note || undefined);
+      } else if (action === 'question' && note) {
+        await sendAdminApprovalEmail(user.email, user.name, false, note);
+      }
+    } catch (err) {
+      console.error('[vorstellungen] Email notification could not be sent:', err);
     }
+
+    await saveAdminLog({
+      id: `log-${generateId()}`,
+      adminId: session.user.id,
+      action: `vorstellung_${action}`,
+      targetType: 'user',
+      targetId: userId,
+      note: note || '',
+      createdAt: new Date().toISOString(),
+    });
+
+    return NextResponse.json({ success: true });
   } catch (err) {
-    console.error('[vorstellungen] Email notification could not be sent:', err);
+    console.error('[vorstellungen] PATCH failed:', err);
+    return NextResponse.json({ error: 'Aktion fehlgeschlagen. Bitte erneut versuchen.' }, { status: 500 });
   }
-
-  await saveAdminLog({
-    id: `log-${generateId()}`,
-    adminId: session.user.id,
-    action: `vorstellung_${action}`,
-    targetType: 'user',
-    targetId: userId,
-    note: note || '',
-    createdAt: new Date().toISOString(),
-  });
-
-  return NextResponse.json({ success: true });
 }
