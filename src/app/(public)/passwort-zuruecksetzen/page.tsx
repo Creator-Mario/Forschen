@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 function ResetForm() {
   const searchParams = useSearchParams();
-  const token = searchParams.get('token') ?? '';
+  const token = (searchParams.get('token') ?? '').trim();
 
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -28,6 +28,7 @@ function ResetForm() {
     }
 
     setLoading(true);
+    console.info('[passwort-zuruecksetzen] Submitting password reset. Token present:', !!token);
 
     try {
       const res = await fetch('/api/auth/reset-password', {
@@ -39,11 +40,14 @@ function ResetForm() {
       const data = await res.json();
 
       if (res.ok) {
+        console.info('[passwort-zuruecksetzen] Password reset successful.');
         setDone(true);
       } else {
+        console.warn('[passwort-zuruecksetzen] Password reset failed:', data.error);
         setError(data.error || 'Passwort-Reset fehlgeschlagen.');
       }
-    } catch {
+    } catch (err) {
+      console.error('[passwort-zuruecksetzen] Network error:', err);
       setError('Netzwerkfehler. Bitte versuche es erneut.');
     } finally {
       setLoading(false);
