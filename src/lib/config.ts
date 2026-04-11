@@ -12,7 +12,7 @@
  */
 
 export const operatorName =
-  process.env.OPERATOR_NAME ?? 'Mario Reiner';
+  process.env.OPERATOR_NAME ?? 'Der Fluss des Lebens';
 
 export const operatorEmail =
   process.env.OPERATOR_EMAIL ?? 'kontakt@flussdeslebens.live';

@@ -22,7 +22,10 @@ function isDeliverableEmail(address: string): boolean {
   const atIdx = trimmed.lastIndexOf('@');
   if (atIdx < 1) return false;
   const domain = trimmed.slice(atIdx + 1);
-  // Domain must contain at least one dot and a TLD with at least 2 chars
+  // Domain must look like a normal public hostname such as:
+  //   example.com
+  //   mail.example.co.uk
+  // We intentionally reject bare hostnames like `localhost` or `user@nodot`.
   if (!/^[^.]+\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})*$/.test(domain)) return false;
   return true;
 }
