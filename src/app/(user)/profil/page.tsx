@@ -72,7 +72,7 @@ export default function ProfilPage() {
         setEmail(data.user.email);
         setWeeklyFaithEmailEnabled(data.user.weeklyFaithEmailEnabled === true);
         await update({ name: data.user.name, email: data.user.email });
-        setAccountSuccess('Deine privaten Daten wurden gespeichert.');
+        setAccountSuccess('Deine Kontoeinstellungen wurden gespeichert.');
       }
     } catch (err) {
       console.error('Account update failed:', err);
@@ -154,7 +154,7 @@ export default function ProfilPage() {
           </div>
 
           <div className="border-t pt-6">
-            <h2 className="font-semibold text-gray-700 mb-4">Private Daten</h2>
+            <h2 className="font-semibold text-gray-700 mb-4">Kontoeinstellungen</h2>
             <form onSubmit={handleAccountSave} className="space-y-4">
               <div>
                 <label htmlFor="profileName" className="block text-sm font-medium text-gray-700 mb-1">
@@ -213,7 +213,7 @@ export default function ProfilPage() {
                 disabled={accountLoading}
                 className="w-full bg-blue-800 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-60"
               >
-                {accountLoading ? 'Wird gespeichert…' : 'Private Daten speichern'}
+                {accountLoading ? 'Wird gespeichert…' : 'Kontoeinstellungen speichern'}
               </button>
             </form>
           </div>
