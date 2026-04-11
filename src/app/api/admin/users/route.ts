@@ -26,6 +26,8 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 
+  console.info('[admin/users] PATCH', { id, action });
+
   const users = getUsers();
   const user = users.find(u => u.id === id);
   if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -35,14 +37,39 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'Cannot modify your own account' }, { status: 400 });
   }
 
-  if (action === 'hard_delete') {
-    // Physically remove the user and ALL their content from the database.
+  // Both 'delete' and 'hard_delete' permanently remove the user and all their content.
+  if (action === 'delete' || action === 'hard_delete') {
+    const userEmail = user.email;
+    const userName = user.name;
+
+    // Notify the user before deletion so email is still accessible.
+    try {
+      await sendEmail({
+        to: userEmail,
+        subject: `Dein Konto wurde gelöscht – ${siteName}`,
+        html: `
+          <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
+            <h2 style="color:#1e3a8a;margin-bottom:16px;">Konto gelöscht</h2>
+            <p style="color:#374151;line-height:1.6;">Hallo ${escHtml(userName)},</p>
+            <p style="color:#374151;line-height:1.6;">
+              dein Konto bei <strong>${escHtml(siteName)}</strong> wurde vom Administrator gelöscht.
+              Falls du Fragen hast, wende dich bitte direkt an uns.
+            </p>
+            <p style="color:#9ca3af;font-size:12px;margin-top:24px;">${siteName} · ${siteDomain}</p>
+          </div>
+        `,
+        text: `Hallo ${userName},\n\ndein Konto bei „${siteName}" wurde vom Administrator gelöscht. Falls du Fragen hast, wende dich bitte direkt an uns.\n\n${siteName}`,
+      });
+    } catch (err) {
+      console.error('[admin/users] Delete notification email could not be sent:', err);
+    }
+
     await deleteUserAccount(id);
 
     await saveAdminLog({
       id: `log-${generateId()}`,
       adminId: session.user.id,
-      action: 'user_hard_delete',
+      action: 'user_delete',
       targetType: 'user',
       targetId: id,
       createdAt: new Date().toISOString(),
@@ -51,7 +78,6 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ success: true });
   }
 
-  // Capture email and name before any mutation (soft-delete anonymises the email).
   const userEmail = user.email;
   const userName = user.name;
   if (action === 'lock') {
@@ -60,11 +86,6 @@ export async function PATCH(req: NextRequest) {
   } else if (action === 'unlock') {
     user.active = true;
     user.status = 'active';
-  } else if (action === 'delete') {
-    // Soft delete: deactivate the account while keeping the data.
-    user.active = false;
-    user.status = 'deleted';
-    user.email = `deleted-${user.id}@deleted`;
   }
 
   await saveUser(user);

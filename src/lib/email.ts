@@ -59,14 +59,29 @@ export async function sendEmail({
     });
 
     if (error) {
-      console.error('[email] Resend error:', error);
+      const resendErr = error as { name?: string; message?: string; statusCode?: number };
+      console.error('[email] Resend error:', JSON.stringify({
+        name: resendErr.name,
+        message: resendErr.message,
+        statusCode: resendErr.statusCode,
+        subject,
+        to,
+        from: `${SITE_NAME} <${FROM_EMAIL}>`,
+      }));
       return false;
     }
 
     console.info('[email] Sent:', subject, '→', to, '| id:', data?.id);
     return true;
   } catch (err) {
-    console.error('[email] Failed to send:', subject, '→', to, err);
+    const caught = err as { name?: string; message?: string; statusCode?: number };
+    console.error('[email] Failed to send:', JSON.stringify({
+      name: caught.name,
+      message: caught.message,
+      statusCode: caught.statusCode,
+      subject,
+      to,
+    }));
     return false;
   }
 }

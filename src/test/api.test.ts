@@ -321,6 +321,31 @@ describe('POST /api/videos', () => {
     expect(saveVideo).toHaveBeenCalledOnce();
     expect(saveVideo.mock.calls[0][0].url).toBe('https://youtube.com/watch?v=abc');
   });
+
+  it('saves video with wochenthemaId when provided', async () => {
+    const saveVideo = vi.fn().mockResolvedValue(undefined);
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', name: 'Alice', role: 'USER' } }) }));
+    vi.doMock('@/lib/db', () => ({ saveVideo }));
+    const { POST } = await import('@/app/api/videos/route');
+    const res = await POST(makeJsonRequest('http://localhost/api/videos', { title: 'My Video', url: 'https://youtube.com/watch?v=abc', description: 'Desc', wochenthemaId: 'wt-1' }));
+    expect(res.status).toBe(200);
+    expect(saveVideo.mock.calls[0][0].wochenthemaId).toBe('wt-1');
+  });
+
+  it('filters videos by wochenthemaId when query param is set', async () => {
+    const videos = [
+      { id: 'v1', status: 'published', url: 'https://a.com', wochenthemaId: 'wt-1' },
+      { id: 'v2', status: 'published', url: 'https://b.com', wochenthemaId: 'wt-2' },
+    ];
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
+    vi.doMock('@/lib/db', () => ({ getApprovedVideos: vi.fn().mockReturnValue(videos), getVideos: vi.fn().mockReturnValue(videos) }));
+    const { GET } = await import('@/app/api/videos/route');
+    const res = await GET(makeRequest('http://localhost/api/videos?wochenthemaId=wt-1'));
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json).toHaveLength(1);
+    expect(json[0].id).toBe('v1');
+  });
 });
 
 // ─── /api/auth/verify-email ───────────────────────────────────────────────────
@@ -451,5 +476,82 @@ describe('POST /api/user/password', () => {
     const { POST } = await import('@/app/api/user/password/route');
     const res = await POST(makeJsonRequest('http://localhost/api/user/password', { currentPassword: 'a', newPassword: 'b' }));
     expect(res.status).toBe(401);
+  });
+});
+
+// ─── /api/admin/users – hard delete ──────────────────────────────────────────
+
+describe('PATCH /api/admin/users (delete action)', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('calls deleteUserAccount for delete action (hard delete, no soft delete)', async () => {
+    const deleteUserAccount = vi.fn().mockResolvedValue(undefined);
+    const saveAdminLog = vi.fn().mockResolvedValue(undefined);
+    const user = { id: 'u2', email: 'bob@example.com', name: 'Bob', status: 'active', active: true };
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'admin1', role: 'ADMIN' } }) }));
+    vi.doMock('@/lib/db', () => ({
+      getUsers: vi.fn().mockReturnValue([user]),
+      saveUser: vi.fn(),
+      deleteUserAccount,
+      saveAdminLog,
+    }));
+    vi.doMock('@/lib/email', () => ({ sendEmail: vi.fn().mockResolvedValue(true), escHtml: (s: string) => s }));
+    vi.doMock('@/lib/config', () => ({ siteName: 'Site', siteDomain: 'example.com' }));
+    const { PATCH } = await import('@/app/api/admin/users/route');
+    const res = await PATCH(makeJsonRequest('http://localhost/api/admin/users', { id: 'u2', action: 'delete' }, 'PATCH'));
+    expect(res.status).toBe(200);
+    expect(deleteUserAccount).toHaveBeenCalledWith('u2');
+    expect(saveAdminLog).toHaveBeenCalledOnce();
+    expect(saveAdminLog.mock.calls[0][0].action).toBe('user_delete');
+  });
+
+  it('calls deleteUserAccount for hard_delete action', async () => {
+    const deleteUserAccount = vi.fn().mockResolvedValue(undefined);
+    const saveAdminLog = vi.fn().mockResolvedValue(undefined);
+    const user = { id: 'u3', email: 'carol@example.com', name: 'Carol', status: 'active', active: true };
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'admin1', role: 'ADMIN' } }) }));
+    vi.doMock('@/lib/db', () => ({
+      getUsers: vi.fn().mockReturnValue([user]),
+      saveUser: vi.fn(),
+      deleteUserAccount,
+      saveAdminLog,
+    }));
+    vi.doMock('@/lib/email', () => ({ sendEmail: vi.fn().mockResolvedValue(true), escHtml: (s: string) => s }));
+    vi.doMock('@/lib/config', () => ({ siteName: 'Site', siteDomain: 'example.com' }));
+    const { PATCH } = await import('@/app/api/admin/users/route');
+    const res = await PATCH(makeJsonRequest('http://localhost/api/admin/users', { id: 'u3', action: 'hard_delete' }, 'PATCH'));
+    expect(res.status).toBe(200);
+    expect(deleteUserAccount).toHaveBeenCalledWith('u3');
+  });
+});
+
+// ─── /api/admin/vorstellungen – hard delete ───────────────────────────────────
+
+describe('PATCH /api/admin/vorstellungen (delete action)', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('calls deleteUserAccount for delete action and returns 200', async () => {
+    const deleteUserAccount = vi.fn().mockResolvedValue(undefined);
+    const saveAdminLog = vi.fn().mockResolvedValue(undefined);
+    const user = { id: 'u4', email: 'dave@example.com', name: 'Dave', status: 'awaiting_admin_review' };
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'admin1', role: 'ADMIN' } }) }));
+    vi.doMock('@/lib/db', () => ({
+      getAwaitingReviewUsers: vi.fn().mockReturnValue([user]),
+      getUserById: vi.fn().mockReturnValue(user),
+      saveUser: vi.fn(),
+      deleteUserAccount,
+      saveAdminLog,
+    }));
+    vi.doMock('@/lib/email', () => ({
+      sendAdminApprovalEmail: vi.fn().mockResolvedValue(true),
+      sendEmail: vi.fn().mockResolvedValue(true),
+      escHtml: (s: string) => s,
+    }));
+    vi.doMock('@/lib/config', () => ({ siteName: 'Site', siteDomain: 'example.com' }));
+    const { PATCH } = await import('@/app/api/admin/vorstellungen/route');
+    const res = await PATCH(makeJsonRequest('http://localhost/api/admin/vorstellungen', { userId: 'u4', action: 'delete', note: '' }, 'PATCH'));
+    expect(res.status).toBe(200);
+    expect(deleteUserAccount).toHaveBeenCalledWith('u4');
+    expect(saveAdminLog.mock.calls[0][0].action).toBe('vorstellung_delete');
   });
 });

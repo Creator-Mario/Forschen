@@ -8,18 +8,30 @@ import type { ContentStatus } from '@/types';
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const session = await getServerSession(authOptions);
+  const filterWochenthemaId = searchParams.get('wochenthemaId');
+
+  console.info('[videos] GET', { all: !!searchParams.get('all'), wochenthemaId: filterWochenthemaId });
+
+  let videos: ReturnType<typeof getVideos>;
+
   if (searchParams.get('all')) {
     if (session?.user.role === 'ADMIN') {
-      return NextResponse.json(getVideos());
-    }
-    if (session) {
+      videos = getVideos();
+    } else if (session) {
       const userId = session.user.id;
-      return NextResponse.json(
-        getVideos().filter(v => v.userId === userId || v.status === 'approved' || v.status === 'published')
-      );
+      videos = getVideos().filter(v => v.userId === userId || v.status === 'approved' || v.status === 'published');
+    } else {
+      videos = getApprovedVideos();
     }
+  } else {
+    videos = getApprovedVideos();
   }
-  return NextResponse.json(getApprovedVideos());
+
+  if (filterWochenthemaId) {
+    videos = videos.filter(v => v.wochenthemaId === filterWochenthemaId);
+  }
+
+  return NextResponse.json(videos);
 }
 
 export async function POST(req: NextRequest) {
@@ -27,6 +39,8 @@ export async function POST(req: NextRequest) {
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await req.json();
+
+  console.info('[videos] POST', { title: body.title, userId: session.user.id, wochenthemaId: body.wochenthemaId ?? null });
 
   // Validate that the video URL uses http or https to prevent javascript: injection.
   const rawUrl: string = body.url ?? '';
@@ -46,6 +60,7 @@ export async function POST(req: NextRequest) {
     title: body.title,
     description: body.description,
     url: body.url,
+    ...(body.wochenthemaId ? { wochenthemaId: String(body.wochenthemaId) } : {}),
     status: (session.user.role === 'ADMIN' ? 'published' : 'created') as ContentStatus,
     createdAt: new Date().toISOString(),
   };
