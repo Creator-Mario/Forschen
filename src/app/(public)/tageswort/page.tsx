@@ -3,17 +3,23 @@ export const dynamic = 'force-dynamic';
 import BibleVerseCard from '@/components/BibleVerseCard';
 import { getTodayTageswort } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
+import Link from 'next/link';
 
 export default function TageswortPage() {
   const tageswort = getTodayTageswort();
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-blue-800 mb-2">Tageswort</h1>
-        <p className="text-gray-500">
-          {tageswort ? formatDate(tageswort.date) : 'Heutiger Tag'}
-        </p>
+      <div className="flex items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-blue-800 mb-2">Tageswort</h1>
+          <p className="text-gray-500">
+            {tageswort ? formatDate(tageswort.date) : 'Heutiger Tag'}
+          </p>
+        </div>
+        <Link href="/tageswort/archiv" className="text-blue-600 hover:text-blue-800 text-sm transition-colors">
+          Archiv →
+        </Link>
       </div>
 
       {tageswort ? (

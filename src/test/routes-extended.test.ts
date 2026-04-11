@@ -277,6 +277,15 @@ describe('DELETE /api/wochenthema', () => {
 describe('GET /api/mitglieder', () => {
   beforeEach(() => vi.resetModules());
 
+  it('returns 401 when unauthenticated', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
+    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
+    vi.doMock('@/lib/db', () => ({ getUsers: vi.fn().mockReturnValue([]) }));
+    const { GET } = await import('@/app/api/mitglieder/route');
+    const res = await GET();
+    expect(res.status).toBe(401);
+  });
+
   it('returns only active members with intro', async () => {
     const users = [
       { id: 'u1', name: 'Alice', role: 'USER', status: 'active', createdAt: '2024-01-01', intro: { vorstellung: 'Ich bin Alice', motivation: 'm', submittedAt: '2024-01-01' } },
@@ -284,6 +293,8 @@ describe('GET /api/mitglieder', () => {
       { id: 'u3', name: 'Carol', role: 'USER', status: 'awaiting_admin_review', createdAt: '2024-01-03', intro: { vorstellung: 'Ich bin Carol', motivation: 'm', submittedAt: '2024-01-03' } },
       { id: 'adm', name: 'Admin', role: 'ADMIN', status: 'active', createdAt: '2024-01-04', intro: { vorstellung: 'Admin', motivation: 'm', submittedAt: '2024-01-04' } },
     ];
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(USER_SESSION) }));
+    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
     vi.doMock('@/lib/db', () => ({ getUsers: vi.fn().mockReturnValue(users) }));
     const { GET } = await import('@/app/api/mitglieder/route');
     const res = await GET();

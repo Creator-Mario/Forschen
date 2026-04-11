@@ -147,6 +147,26 @@ describe('TageswortPage', () => {
   });
 });
 
+describe('TageswortArchivPage', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('renders published archived daily words', async () => {
+    const items = [
+      { id: 'tw1', date: '2024-01-02', verse: 'Psalm 1,1', text: 'Text 1', context: '', questions: [], published: true },
+      { id: 'tw2', date: '2024-01-01', verse: 'Psalm 2,1', text: 'Text 2', context: '', questions: [], published: false },
+    ];
+    vi.doMock('@/lib/db', () => ({ getTageswortList: vi.fn().mockReturnValue(items) }));
+    vi.doMock('@/components/BibleVerseCard', () => ({
+      default: ({ tageswort }: { tageswort: { verse: string } }) => React.createElement('div', null, tageswort.verse),
+    }));
+    const { default: TageswortArchivPage } = await import('@/app/(public)/tageswort/archiv/page');
+    render(React.createElement(TageswortArchivPage));
+    expect(screen.getByRole('heading', { name: /Archiv – Tageswörter/i })).toBeInTheDocument();
+    expect(screen.getByText('Psalm 1,1')).toBeInTheDocument();
+    expect(screen.queryByText('Psalm 2,1')).not.toBeInTheDocument();
+  });
+});
+
 // ─── Thesen page ──────────────────────────────────────────────────────────────
 
 describe('ThesenPage', () => {
@@ -217,6 +237,23 @@ describe('WochenthemaPage', () => {
     const { default: WochenthemaPage } = await import('@/app/(public)/wochenthema/page');
     render(React.createElement(WochenthemaPage));
     expect(screen.getByRole('heading', { name: /Wochenthema/i, level: 1 })).toBeInTheDocument();
+  });
+});
+
+describe('WochenthemaArchivPage', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('renders archived themes in the archive view', async () => {
+    vi.doMock('@/lib/db', () => ({
+      getWochenthemaList: vi.fn().mockReturnValue([
+        { id: 'w1', week: '2024-W02', title: 'Archiviertes Thema', introduction: 'Einführung', bibleVerses: [], problemStatement: '', researchQuestions: [], status: 'archived' },
+        { id: 'w2', week: '2024-W03', title: 'Aktuelles Thema', introduction: 'Einführung', bibleVerses: [], problemStatement: '', researchQuestions: [], status: 'published' },
+      ]),
+    }));
+    const { default: WochenthemaArchivPage } = await import('@/app/(public)/wochenthema/archiv/page');
+    render(React.createElement(WochenthemaArchivPage));
+    expect(screen.getByText('Archiviertes Thema')).toBeInTheDocument();
+    expect(screen.getByText(/Archiviert/i)).toBeInTheDocument();
   });
 });
 

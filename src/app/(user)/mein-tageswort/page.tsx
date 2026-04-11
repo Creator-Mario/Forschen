@@ -4,6 +4,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import BibleVerseCard from '@/components/BibleVerseCard';
 import { useEffect, useState } from 'react';
 import type { Tageswort } from '@/types';
+import Link from 'next/link';
 
 export default function MeinTageswortPage() {
   const [tageswort, setTageswort] = useState<Tageswort | null>(null);
@@ -25,7 +26,12 @@ export default function MeinTageswortPage() {
   return (
     <ProtectedRoute>
       <div className="max-w-3xl mx-auto px-4 py-12">
-        <h1 className="text-3xl font-bold text-blue-800 mb-8">Mein Tageswort</h1>
+        <div className="flex items-center justify-between gap-4 mb-8">
+          <h1 className="text-3xl font-bold text-blue-800">Mein Tageswort</h1>
+          <Link href="/tageswort/archiv" className="text-blue-600 hover:text-blue-800 text-sm transition-colors">
+            Archiv →
+          </Link>
+        </div>
 
         {tageswort && (
           <div className="mb-6">

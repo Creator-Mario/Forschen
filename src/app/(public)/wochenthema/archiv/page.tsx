@@ -6,7 +6,7 @@ import BibleLink from '@/components/BibleLink';
 
 export default function WochenthemaArchivPage() {
   const themes = getWochenthemaList()
-    .filter(t => t.status === 'published')
+    .filter(t => t.status === 'published' || t.status === 'archived')
     .sort((a, b) => b.week.localeCompare(a.week));
 
   return (
@@ -19,9 +19,14 @@ export default function WochenthemaArchivPage() {
 
       <div className="space-y-4">
         {themes.map(theme => (
-          <div key={theme.id} className="bg-white rounded-xl shadow-md p-6">
-            <div className="text-blue-500 text-xs font-medium mb-1">{theme.week}</div>
-            <h2 className="font-bold text-gray-800 text-lg mb-2">{theme.title}</h2>
+            <div key={theme.id} className="bg-white rounded-xl shadow-md p-6">
+              <div className="flex items-center justify-between gap-3 mb-1">
+                <div className="text-blue-500 text-xs font-medium">{theme.week}</div>
+                {theme.status === 'archived' && (
+                  <span className="bg-slate-100 text-slate-700 text-xs px-2 py-1 rounded-full">Archiviert</span>
+                )}
+              </div>
+              <h2 className="font-bold text-gray-800 text-lg mb-2">{theme.title}</h2>
             <p className="text-gray-600 text-sm leading-relaxed mb-3">
               {theme.introduction.substring(0, 180)}…
             </p>
