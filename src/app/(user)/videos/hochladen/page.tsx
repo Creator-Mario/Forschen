@@ -26,7 +26,7 @@ export default function VideoHochladenPage() {
     if (!res.ok) {
       setError(data.error || 'Fehler beim Speichern.');
     } else {
-      router.push('/videos');
+      router.push('/meine-videos');
     }
   }
 
