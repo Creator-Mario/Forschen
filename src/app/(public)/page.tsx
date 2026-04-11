@@ -7,6 +7,7 @@ import PsalmThemeCard from '@/components/PsalmThemeCard';
 import CurrentTopicCard from '@/components/CurrentTopicCard';
 import BookRecommendationsCard from '@/components/BookRecommendationsCard';
 import Logo from '@/components/Logo';
+import { canonicalSiteUrl, siteName } from '@/lib/config';
 import { getTodayTageswort, getCurrentWochenthema, getApprovedThesen } from '@/lib/db';
 import { getTodayPsalmThema, getTodayGlaubenHeuteThema, getTodayBuchempfehlungen } from '@/lib/generated-content';
 
@@ -93,6 +94,34 @@ export default function HomePage() {
             ) : (
               <div className="card-river p-6 text-gray-500 text-center">Kein Wochenthema verfügbar</div>
             )}
+          </div>
+        </div>
+
+        <div className="mb-14">
+          <div className="bg-white rounded-2xl shadow-md border border-blue-100 p-6 md:p-7 flex flex-col md:flex-row items-center gap-6">
+            <img
+              src="/api/share-qr"
+              alt="QR-Code zum Teilen der Website"
+              className="w-36 h-36 rounded-xl border border-blue-100 bg-blue-50 p-2"
+            />
+            <div className="flex-1 text-center md:text-left">
+              <h2 className="text-xl font-bold text-blue-800 mb-2" style={{ fontFamily: 'Georgia, serif' }}>
+                Freunde zur Webseite einladen
+              </h2>
+              <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                Teile diesen QR-Code, damit Freunde die Webseite direkt öffnen und die wichtigsten Informationen schnell erreichen.
+              </p>
+              <div className="space-y-1 mb-4">
+                <p className="text-sm font-semibold text-gray-800">{siteName}</p>
+                <p className="text-xs text-gray-500 break-all">{canonicalSiteUrl}</p>
+              </div>
+              <a
+                href={canonicalSiteUrl}
+                className="inline-flex bg-blue-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors"
+              >
+                Webseite öffnen
+              </a>
+            </div>
           </div>
         </div>
 

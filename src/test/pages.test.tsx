@@ -144,6 +144,7 @@ describe('TageswortPage', () => {
     const { default: TageswortPage } = await import('@/app/(public)/tageswort/page');
     render(React.createElement(TageswortPage));
     expect(screen.getByText('Denn also hat Gott')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /beitrag verfassen/i })).toHaveAttribute('href', '/forschung/beitraege');
   });
 });
 
@@ -252,10 +253,23 @@ describe('WochenthemaPage', () => {
   beforeEach(() => vi.resetModules());
 
   it('renders the Wochenthema heading', async () => {
-    vi.doMock('@/lib/db', () => ({ getCurrentWochenthema: vi.fn().mockReturnValue(undefined), getWochenthemaList: vi.fn().mockReturnValue([]) }));
+    vi.doMock('@/lib/db', () => ({
+      getCurrentWochenthema: vi.fn().mockReturnValue({
+        id: 'w1',
+        week: '2026-W16',
+        title: 'Wochenthema',
+        introduction: 'Einführung',
+        bibleVerses: [],
+        problemStatement: 'Frage',
+        researchQuestions: ['RQ1'],
+        status: 'published',
+      }),
+      getWochenthemaList: vi.fn().mockReturnValue([]),
+    }));
     const { default: WochenthemaPage } = await import('@/app/(public)/wochenthema/page');
     render(React.createElement(WochenthemaPage));
     expect(screen.getByRole('heading', { name: /Wochenthema/i, level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /beitrag verfassen/i })).toHaveAttribute('href', '/forschung/beitraege');
   });
 });
 
@@ -297,6 +311,7 @@ describe('PsalmenPage', () => {
     render(React.createElement(PsalmenPage));
     expect(screen.getByRole('heading', { name: /Psalm des Tages/i })).toBeInTheDocument();
     expect(screen.getByText('Frage 1')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /psalm-beitrag verfassen/i })).toHaveAttribute('href', '/forschung/beitraege');
   });
 });
 
@@ -321,6 +336,7 @@ describe('GlaubenHeutePage', () => {
     render(React.createElement(GlaubenHeutePage));
     expect(screen.getByRole('heading', { name: /Glauben heute/i })).toBeInTheDocument();
     expect(screen.getByText('Frage A')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /gedankenbeitrag verfassen/i })).toHaveAttribute('href', '/forschung/beitraege');
   });
 });
 
@@ -529,5 +545,8 @@ describe('HomePage', () => {
     const { default: HomePage } = await import('@/app/(public)/page');
     render(React.createElement(HomePage));
     expect(screen.getByRole('heading', { name: /Der Fluss/i, level: 1 })).toBeInTheDocument();
+    expect(screen.getByAltText(/qr-code zum teilen der website/i)).toHaveAttribute('src', '/api/share-qr');
+    expect(screen.getByText('Der Fluss des Lebens')).toBeInTheDocument();
+    expect(screen.getByText('https://flussdeslebens.live')).toBeInTheDocument();
   });
 });

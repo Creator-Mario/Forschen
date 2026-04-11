@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { getCurrentWochenthema } from '@/lib/db';
 import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
+import SubmissionCta from '@/components/SubmissionCta';
 
 export default function WochenthemaPage() {
   const theme = getCurrentWochenthema();
@@ -55,13 +56,12 @@ export default function WochenthemaPage() {
             </ol>
           </div>
 
-          <div className="bg-blue-50 rounded-xl p-6 text-center">
-            <h3 className="font-semibold text-blue-800 mb-2">Deine Forschung beitragen</h3>
-            <p className="text-sm text-gray-600 mb-4">Teile deine Erkenntnisse zu diesem Wochenthema mit der Gemeinschaft.</p>
-            <Link href="/forschung/beitraege" className="bg-blue-800 text-white px-5 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
-              Beitrag verfassen
-            </Link>
-          </div>
+          <SubmissionCta
+            title="Deine Forschung beitragen"
+            description="Teile deine Erkenntnisse zu diesem Wochenthema mit der Gemeinschaft."
+            href="/forschung/beitraege"
+            actionLabel="Beitrag verfassen"
+          />
         </article>
       ) : (
         <div className="bg-blue-50 rounded-xl p-8 text-center text-gray-500">

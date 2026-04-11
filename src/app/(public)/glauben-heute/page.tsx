@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { formatDate } from '@/lib/utils';
 import { getTodayGlaubenHeuteThema } from '@/lib/generated-content';
 import CurrentTopicCard from '@/components/CurrentTopicCard';
+import SubmissionCta from '@/components/SubmissionCta';
 
 export default function GlaubenHeutePage() {
   const item = getTodayGlaubenHeuteThema();
@@ -33,6 +34,13 @@ export default function GlaubenHeutePage() {
           ))}
         </ol>
       </div>
+
+      <SubmissionCta
+        title="Deinen Gedankenbeitrag einreichen"
+        description="Teile deine Beobachtungen, Fragen oder einen Forschungsbeitrag zu diesem aktuellen Thema."
+        href="/forschung/beitraege"
+        actionLabel="Gedankenbeitrag verfassen"
+      />
     </div>
   );
 }

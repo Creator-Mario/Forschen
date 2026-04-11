@@ -21,6 +21,21 @@ function makeJsonRequest(url: string, body: unknown, method = 'POST'): NextReque
   });
 }
 
+describe('GET /api/share-qr', () => {
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
+  it('returns an SVG QR code for the canonical website URL', async () => {
+    const { GET } = await import('@/app/api/share-qr/route');
+    const res = await GET();
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Content-Type')).toContain('image/svg+xml');
+    expect(await res.text()).toContain('<svg');
+  });
+});
+
 // ─── /api/register ───────────────────────────────────────────────────────────
 
 describe('POST /api/register', () => {

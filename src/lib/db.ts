@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { normalizeEmail } from '@/lib/utils';
+import { getCurrentPublicationDate, getCurrentPublicationWeek } from '@/lib/publishing';
 import type {
   User, Tageswort, Wochenthema, These, ForschungsBeitrag,
   Gebet, Video, Aktion, SpendenRecord, AdminLog, ChatMessage, NutzerBuchempfehlung
@@ -160,7 +161,7 @@ export function getTageswortList(): Tageswort[] {
   return readJson<Tageswort>('tageswort.json');
 }
 export function getTodayTageswort(): Tageswort | undefined {
-  const today = new Date().toISOString().split('T')[0];
+  const today = getCurrentPublicationDate();
   const list = getTageswortList();
   return list.find(t => t.date === today && t.published) || list.filter(t => t.published).at(-1);
 }
@@ -189,7 +190,8 @@ export function getWochenthemaList(): Wochenthema[] {
 }
 export function getCurrentWochenthema(): Wochenthema | undefined {
   const published = getWochenthemaList().filter(w => w.status === 'published');
-  return published.at(-1);
+  const currentWeek = getCurrentPublicationWeek();
+  return published.find(w => w.week === currentWeek) || published.at(-1);
 }
 export function getWochenthemaById(id: string): Wochenthema | undefined {
   return getWochenthemaList().find(w => w.id === id);

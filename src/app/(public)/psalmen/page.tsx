@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { formatDate } from '@/lib/utils';
 import { getTodayPsalmThema } from '@/lib/generated-content';
 import PsalmThemeCard from '@/components/PsalmThemeCard';
+import SubmissionCta from '@/components/SubmissionCta';
 
 export default function PsalmenPage() {
   const item = getTodayPsalmThema();
@@ -33,6 +34,13 @@ export default function PsalmenPage() {
           ))}
         </ol>
       </div>
+
+      <SubmissionCta
+        title="Deinen Psalm-Beitrag einreichen"
+        description="Schreibe einen eigenen Forschungsbeitrag oder eine geistliche Beobachtung zu diesem Psalm."
+        href="/forschung/beitraege"
+        actionLabel="Psalm-Beitrag verfassen"
+      />
     </div>
   );
 }

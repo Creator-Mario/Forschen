@@ -114,20 +114,24 @@ describe('db – getAwaitingReviewUsers', () => {
 // ── Tageswort lookups ─────────────────────────────────────────────────────────
 
 describe('db – getTodayTageswort', () => {
-  const today = new Date().toISOString().split('T')[0];
   const tageswortList = [
-    { id: 't1', date: '2000-01-01', published: true, verse: 'old', text: 'old text', context: '', questions: [] },
-    { id: 't2', date: today, published: true, verse: 'John 3:16', text: 'For God…', context: '', questions: [] },
-    { id: 't3', date: today, published: false, verse: 'Draft', text: 'draft', context: '', questions: [] },
+    { id: 't1', date: '2026-04-10', published: true, verse: 'old', text: 'old text', context: '', questions: [] },
+    { id: 't2', date: '2026-04-11', published: true, verse: 'John 3:16', text: 'For God…', context: '', questions: [] },
+    { id: 't3', date: '2026-04-11', published: false, verse: 'Draft', text: 'draft', context: '', questions: [] },
   ];
 
   beforeEach(() => {
     vi.resetModules();
     delete process.env.GITHUB_TOKEN;
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-04-11T10:00:00Z'));
     vi.spyOn(fs, 'existsSync').mockReturnValue(true);
     vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(tageswortList));
   });
-  afterEach(() => vi.restoreAllMocks());
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
 
   it("returns today's published tageswort", async () => {
     const { getTodayTageswort } = await import('@/lib/db');
@@ -137,6 +141,12 @@ describe('db – getTodayTageswort', () => {
   it('does not return unpublished entries', async () => {
     const { getTodayTageswort } = await import('@/lib/db');
     expect(getTodayTageswort()?.id).not.toBe('t3');
+  });
+
+  it('uses the previous day before 03:00 Europe/Berlin', async () => {
+    vi.setSystemTime(new Date('2026-04-11T00:30:00Z'));
+    const { getTodayTageswort } = await import('@/lib/db');
+    expect(getTodayTageswort()?.id).toBe('t1');
   });
 });
 
@@ -264,20 +274,25 @@ describe('db – saveUser (local fs write)', () => {
 
 describe('db – getCurrentWochenthema', () => {
   const themes = [
-    { id: 'w1', week: '2024-W01', status: 'published', title: 'First', introduction: '', bibleVerses: [], problemStatement: '', researchQuestions: [] },
-    { id: 'w2', week: '2024-W02', status: 'draft', title: 'Draft', introduction: '', bibleVerses: [], problemStatement: '', researchQuestions: [] },
-    { id: 'w3', week: '2024-W03', status: 'published', title: 'Latest', introduction: '', bibleVerses: [], problemStatement: '', researchQuestions: [] },
+    { id: 'w1', week: '2026-W15', status: 'published', title: 'Week 15', introduction: '', bibleVerses: [], problemStatement: '', researchQuestions: [] },
+    { id: 'w2', week: '2026-W16', status: 'draft', title: 'Draft', introduction: '', bibleVerses: [], problemStatement: '', researchQuestions: [] },
+    { id: 'w3', week: '2026-W16', status: 'published', title: 'Week 16', introduction: '', bibleVerses: [], problemStatement: '', researchQuestions: [] },
   ];
 
   beforeEach(() => {
     vi.resetModules();
     delete process.env.GITHUB_TOKEN;
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-04-12T01:30:00Z'));
     vi.spyOn(fs, 'existsSync').mockReturnValue(true);
     vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(themes));
   });
-  afterEach(() => vi.restoreAllMocks());
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
 
-  it('returns the last published theme', async () => {
+  it('returns the theme matching the effective publication week', async () => {
     const { getCurrentWochenthema } = await import('@/lib/db');
     expect(getCurrentWochenthema()?.id).toBe('w3');
   });
@@ -286,6 +301,12 @@ describe('db – getCurrentWochenthema', () => {
     vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify([themes[1]]));
     const { getCurrentWochenthema } = await import('@/lib/db');
     expect(getCurrentWochenthema()).toBeUndefined();
+  });
+
+  it('keeps the previous week before the Sunday 03:00 Europe/Berlin switch', async () => {
+    vi.setSystemTime(new Date('2026-04-12T00:30:00Z'));
+    const { getCurrentWochenthema } = await import('@/lib/db');
+    expect(getCurrentWochenthema()?.id).toBe('w1');
   });
 });
 

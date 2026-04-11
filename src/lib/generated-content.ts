@@ -4,6 +4,7 @@ import type {
   Buchempfehlung,
   BuchempfehlungsSammlung,
 } from '@/types';
+import { getCurrentPublicationDate } from './publishing';
 
 const MS_PER_DAY = 86400000;
 // Business rule: generated daily archives stay browsable for 90 days.
@@ -365,26 +366,26 @@ function buildBuchempfehlungsSammlung(date: string): BuchempfehlungsSammlung {
   };
 }
 
-export function getTodayPsalmThema(date = toIsoDate(new Date())): PsalmThema {
+export function getTodayPsalmThema(date = getCurrentPublicationDate()): PsalmThema {
   return buildPsalmThema(date);
 }
 
-export function getPsalmThemaArchiv(date = toIsoDate(new Date())): PsalmThema[] {
+export function getPsalmThemaArchiv(date = getCurrentPublicationDate()): PsalmThema[] {
   return buildDateList(date).map(buildPsalmThema);
 }
 
-export function getTodayGlaubenHeuteThema(date = toIsoDate(new Date())): GlaubenHeuteThema {
+export function getTodayGlaubenHeuteThema(date = getCurrentPublicationDate()): GlaubenHeuteThema {
   return buildGlaubenHeuteThema(date);
 }
 
-export function getGlaubenHeuteArchiv(date = toIsoDate(new Date())): GlaubenHeuteThema[] {
+export function getGlaubenHeuteArchiv(date = getCurrentPublicationDate()): GlaubenHeuteThema[] {
   return buildDateList(date).map(buildGlaubenHeuteThema);
 }
 
-export function getTodayBuchempfehlungen(date = toIsoDate(new Date())): BuchempfehlungsSammlung {
+export function getTodayBuchempfehlungen(date = getCurrentPublicationDate()): BuchempfehlungsSammlung {
   return buildBuchempfehlungsSammlung(date);
 }
 
-export function getBuchempfehlungenArchiv(date = toIsoDate(new Date())): BuchempfehlungsSammlung[] {
+export function getBuchempfehlungenArchiv(date = getCurrentPublicationDate()): BuchempfehlungsSammlung[] {
   return buildDateList(date).map(buildBuchempfehlungsSammlung);
 }
