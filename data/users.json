@@ -37,9 +37,9 @@
     "password": "$2b$12$fTwhQSdGeyZlzypxI2mk0umJZNR.i39OaIdk1OG0lQD9OOZc0Rzd.",
     "name": "Test login",
     "role": "USER",
-    "status": "pending_email",
+    "status": "email_verified",
     "createdAt": "2026-04-11T09:04:20.048Z",
     "active": false,
-    "emailToken": "0d0af69651872e5e6c87d3f5b3427d3763132b739d7efa44e4c6a0fb54efe852"
+    "emailVerifiedAt": "2026-04-11T09:04:54.228Z"
   }
 ]
