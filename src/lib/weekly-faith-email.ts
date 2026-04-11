@@ -14,9 +14,14 @@ function normalizeLines(lines: string[]): string[] {
 }
 
 function buildBibleStory(theme: Wochenthema): { title: string; summary: string; explanation: string } {
-  const fingerprint = `${theme.title} ${theme.problemStatement} ${theme.introduction}`.toLowerCase();
+  const keywords = new Set(
+    `${theme.title} ${theme.problemStatement} ${theme.introduction}`
+      .toLowerCase()
+      .split(/[^a-zäöüß]+/u)
+      .filter(Boolean)
+  );
 
-  if (fingerprint.includes('schöpf')) {
+  if (keywords.has('schöpfung') || keywords.has('schöpfungsverantwortung')) {
     return {
       title: 'Die Schöpfung in 1. Mose 1–2',
       summary: 'Gott ruft Licht, Leben und Ordnung ins Dasein und setzt den Menschen als sein Ebenbild in die Schöpfung. Diese Geschichte erinnert daran, dass Würde und Verantwortung von Gott her kommen.',
@@ -24,7 +29,7 @@ function buildBibleStory(theme: Wochenthema): { title: string; summary: string; 
     };
   }
 
-  if (fingerprint.includes('gebet')) {
+  if (keywords.has('gebet') || keywords.has('beten') || keywords.has('vaterunser')) {
     return {
       title: 'Jesus lehrt seine Jünger zu beten',
       summary: 'In Matthäus 6 zeigt Jesus, dass Gebet keine Show ist, sondern ein vertrauensvolles Reden mit dem Vater. Er richtet den Blick weg von äußerer Frömmigkeit hin zu echter Beziehung.',
@@ -32,7 +37,7 @@ function buildBibleStory(theme: Wochenthema): { title: string; summary: string; 
     };
   }
 
-  if (fingerprint.includes('nachfolg')) {
+  if (keywords.has('nachfolge') || keywords.has('jünger')) {
     return {
       title: 'Die Berufung der ersten Jünger',
       summary: 'Jesus ruft Menschen mitten aus ihrem Alltag heraus: „Folgt mir nach.“ Petrus, Andreas, Jakobus und Johannes lassen sich auf diesen Ruf ein und lernen Schritt für Schritt, Jesus zu vertrauen.',

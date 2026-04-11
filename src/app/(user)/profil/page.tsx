@@ -71,8 +71,14 @@ export default function ProfilPage() {
         setName(data.user.name);
         setEmail(data.user.email);
         setWeeklyFaithEmailEnabled(data.user.weeklyFaithEmailEnabled === true);
-        await update({ name: data.user.name, email: data.user.email });
-        setAccountSuccess('Deine Kontoeinstellungen wurden gespeichert.');
+        let successMessage = 'Deine Kontoeinstellungen wurden gespeichert.';
+        try {
+          await update({ name: data.user.name, email: data.user.email });
+        } catch (updateError) {
+          console.error('Session update failed:', updateError);
+          successMessage = 'Deine Kontoeinstellungen wurden gespeichert. Bitte lade die Seite neu, damit alle Anzeigen aktualisiert werden.';
+        }
+        setAccountSuccess(successMessage);
       }
     } catch (err) {
       console.error('Account update failed:', err);
