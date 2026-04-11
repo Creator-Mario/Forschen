@@ -9,6 +9,7 @@ import { formatDate } from '@/lib/utils';
 
 export default function WochenthemaPage() {
   const theme = getCurrentWochenthema();
+  const currentDate = formatDate(new Date().toISOString());
   const research = theme
     ? getApprovedForschung().filter(item => item.wochenthemaId === theme.id)
     : [];
@@ -21,7 +22,7 @@ export default function WochenthemaPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-blue-800 mb-1">Wochenthema</h1>
-          {theme && <p className="text-gray-500">Woche {theme.week}</p>}
+          {theme && <p className="text-gray-500">Woche {theme.week} · {currentDate}</p>}
         </div>
         <Link href="/wochenthema/archiv" className="text-blue-600 hover:text-blue-800 text-sm transition-colors">
           Archiv →
@@ -113,18 +114,30 @@ export default function WochenthemaPage() {
               {videos.length > 0 ? (
                 <div className="space-y-4">
                   {videos.map(item => (
-                    <article key={item.id} className="border border-gray-100 rounded-lg p-4">
-                      <h4 className="font-medium text-gray-800">{item.title}</h4>
-                      <p className="text-sm text-gray-600 mt-2 line-clamp-4">{item.description}</p>
-                      <a
-                        href={item.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-block mt-3 text-sm text-blue-600 hover:text-blue-800"
-                      >
-                        Video ansehen →
-                      </a>
-                    </article>
+                    (() => {
+                      const safeHref =
+                        item.url && (item.url.startsWith('https://') || item.url.startsWith('http://'))
+                          ? item.url
+                          : null;
+                      return (
+                        <article key={item.id} className="border border-gray-100 rounded-lg p-4">
+                          <h4 className="font-medium text-gray-800">{item.title}</h4>
+                          <p className="text-sm text-gray-600 mt-2 line-clamp-4">{item.description}</p>
+                          {safeHref ? (
+                            <a
+                              href={safeHref}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-block mt-3 text-sm text-blue-600 hover:text-blue-800"
+                            >
+                              Video ansehen →
+                            </a>
+                          ) : (
+                            <span className="inline-block mt-3 text-sm text-gray-400">Link nicht verfügbar</span>
+                          )}
+                        </article>
+                      );
+                    })()
                   ))}
                 </div>
               ) : (

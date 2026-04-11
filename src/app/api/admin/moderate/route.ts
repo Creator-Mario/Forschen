@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
           status,
           adminMessage,
           updatedAt: new Date().toISOString(),
-          ...(wochenthemaId && typeof wochenthemaId === 'string' ? { wochenthemaId } : {}),
+          ...(wochenthemaId ? { wochenthemaId } : {}),
         });
         break;
       }

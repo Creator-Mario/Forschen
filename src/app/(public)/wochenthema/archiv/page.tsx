@@ -3,8 +3,10 @@ export const dynamic = 'force-dynamic';
 import { getWochenthemaList } from '@/lib/db';
 import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
+import { formatDate } from '@/lib/utils';
 
 export default function WochenthemaArchivPage() {
+  const currentDate = formatDate(new Date().toISOString());
   const themes = getWochenthemaList()
     .filter(t => t.status === 'published' || t.status === 'archived')
     .sort((a, b) => b.week.localeCompare(a.week));
@@ -14,7 +16,7 @@ export default function WochenthemaArchivPage() {
       <div className="mb-8">
         <Link href="/wochenthema" className="text-blue-600 hover:text-blue-800 text-sm transition-colors">← Aktuelles Wochenthema</Link>
         <h1 className="text-3xl font-bold text-blue-800 mt-3 mb-2">Archiv – Wochenthemen</h1>
-        <p className="text-gray-500">{themes.length} veröffentlichte Themen</p>
+        <p className="text-gray-500">{themes.length} veröffentlichte Themen · {currentDate}</p>
       </div>
 
       <div className="space-y-4">
