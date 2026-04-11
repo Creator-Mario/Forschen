@@ -36,6 +36,11 @@ export async function POST(req: NextRequest) {
     status: (session.user.role === 'ADMIN' ? 'published' : 'created') as ContentStatus,
     createdAt: new Date().toISOString(),
   };
-  await saveGebet(gebet);
+  try {
+    await saveGebet(gebet);
+  } catch (err) {
+    console.error('[gebet] saveGebet failed:', err);
+    return NextResponse.json({ error: err instanceof Error ? err.message : 'Gebet konnte nicht gespeichert werden.' }, { status: 500 });
+  }
   return NextResponse.json({ success: true, id: gebet.id });
 }

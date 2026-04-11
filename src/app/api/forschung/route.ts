@@ -38,6 +38,11 @@ export async function POST(req: NextRequest) {
     status: (session.user.role === 'ADMIN' ? 'published' : 'created') as ContentStatus,
     createdAt: new Date().toISOString(),
   };
-  await saveForschung(beitrag);
+  try {
+    await saveForschung(beitrag);
+  } catch (err) {
+    console.error('[forschung] saveForschung failed:', err);
+    return NextResponse.json({ error: err instanceof Error ? err.message : 'Beitrag konnte nicht gespeichert werden.' }, { status: 500 });
+  }
   return NextResponse.json({ success: true, id: beitrag.id });
 }
