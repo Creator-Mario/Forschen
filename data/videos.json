@@ -19,26 +19,6 @@
     "url": "https://youtu.be/FXelf4YMNfw?si=I4euPWB1OcOIHLYp",
     "status": "published",
     "createdAt": "2026-04-11T06:43:20.906Z",
-    "updatedAt": "2026-04-11T09:02:12.537Z"
-  },
-  {
-    "id": "video-1775912810121-a9r8jp1fd",
-    "userId": "admin-001",
-    "authorName": "Administrator",
-    "title": "Das Matthäusevangelium (Bibelfilm)",
-    "description": "Das Matthäusevangelium präsentiert Jesus als den verheißenen Messias, der in fünf Hauptlehrreden das Reich Gottes verkündet und als „neuer Mose“ das Gesetz erfüllt . \nDie Erzählung reicht von Jesu Herkunft und der Bergpredigt bis zu seinem Tod und \nder Auferstehung, womit er die Brücke zwischen Altem und Neuem Testament schlägt.",
-    "url": "https://youtu.be/-yjVASjSc4w?si=YDV2SC20JXnDn7Sn",
-    "status": "published",
-    "createdAt": "2026-04-11T13:06:50.121Z"
-  },
-  {
-    "id": "video-1775913014378-0vaz7opn1",
-    "userId": "admin-001",
-    "authorName": "Administrator",
-    "title": "Das Markusevangelium (Bibelfilm)",
-    "description": "Das Markusevangelium wird vom Bibelprojekt als ein dramatischer Bericht in drei Akten dargestellt, der Jesus als leidenden, unerwarteten messianischen König präsentiert. Der Bericht strukturiert sich von Jesu Wirken in Galiläa über den Weg nach Jerusalem bis hin zur Kreuzigung, wobei der Fokus auf seiner Identität und dem Reich Gottes liegt.",
-    "url": "https://youtu.be/zQNQn30PMPs?si=eL9xRFZ7qlPO1VcV",
-    "status": "published",
-    "createdAt": "2026-04-11T13:10:14.378Z"
+    "updatedAt": "2026-04-11T13:10:32.485Z"
   }
 ]
