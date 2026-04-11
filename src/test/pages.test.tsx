@@ -303,7 +303,7 @@ describe('ChatPage', () => {
     expect(await screen.findByRole('option', { name: 'Bob' })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'Carla' })).toBeInTheDocument();
     expect(screen.queryByRole('option', { name: 'Alice' })).toBeNull();
-    expect(screen.getByRole('link', { name: /chat öffnen/i })).toHaveAttribute('href', '/chat/u2');
+    expect(screen.getByRole('button', { name: /chat öffnen/i })).toBeEnabled();
   });
 });
 

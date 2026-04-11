@@ -49,7 +49,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Nutzer konnte nicht gelöscht werden.' }, { status: 500 });
     }
 
-    const backgroundTasks = await Promise.allSettled([
+    const followUpTasks = await Promise.allSettled([
       sendEmail({
         to: userEmail,
         subject: `Dein Konto wurde gelöscht – ${siteName}`,
@@ -76,11 +76,11 @@ export async function PATCH(req: NextRequest) {
       }),
     ]);
 
-    if (backgroundTasks[0].status === 'rejected') {
-      console.error('[admin/users] Delete notification email could not be sent:', backgroundTasks[0].reason);
+    if (followUpTasks[0].status === 'rejected') {
+      console.error('[admin/users] Delete notification email could not be sent:', followUpTasks[0].reason);
     }
-    if (backgroundTasks[1].status === 'rejected') {
-      console.error('[admin/users] Hard delete log could not be written:', backgroundTasks[1].reason);
+    if (followUpTasks[1].status === 'rejected') {
+      console.error('[admin/users] Hard delete log could not be written:', followUpTasks[1].reason);
     }
 
     return NextResponse.json({ success: true });

@@ -4,6 +4,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 interface Partner {
   id: string;
@@ -17,8 +18,14 @@ interface MemberOption {
   name: string;
 }
 
+function getValidSelectedMemberId(currentId: string, availableMembers: MemberOption[]) {
+  if (availableMembers.some(member => member.id === currentId)) return currentId;
+  return availableMembers[0]?.id || '';
+}
+
 export default function ChatPage() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [partners, setPartners] = useState<Partner[]>([]);
   const [members, setMembers] = useState<MemberOption[]>([]);
   const [selectedMemberId, setSelectedMemberId] = useState('');
@@ -36,11 +43,13 @@ export default function ChatPage() {
             .filter((member: MemberOption) => member.id !== session?.user.id)
             .sort((a: MemberOption, b: MemberOption) => a.name.localeCompare(b.name, 'de'));
           setMembers(availableMembers);
-          setSelectedMemberId(current => current || availableMembers[0]?.id || '');
+          setSelectedMemberId(current => getValidSelectedMemberId(current, availableMembers));
         }
       })
       .finally(() => setLoading(false));
   }, [session?.user.id]);
+
+  const selectedMember = members.find(member => member.id === selectedMemberId);
 
   return (
     <ProtectedRoute>
@@ -75,17 +84,21 @@ export default function ChatPage() {
                   ))
                 )}
               </select>
-              <Link
-                href={selectedMemberId ? `/chat/${selectedMemberId}` : '/mitglieder/vorstellungen'}
-                aria-disabled={!selectedMemberId}
+              <button
+                type="button"
+                disabled={!selectedMember}
+                onClick={() => {
+                  if (!selectedMember) return;
+                  router.push(`/chat/${encodeURIComponent(selectedMember.id)}`);
+                }}
                 className={`inline-flex items-center justify-center rounded-xl px-5 py-3 text-base font-semibold text-white transition-all ${
-                  selectedMemberId
+                  selectedMember
                     ? 'bg-blue-700 shadow-lg shadow-blue-200 hover:bg-blue-600'
-                    : 'pointer-events-none bg-slate-300'
+                    : 'bg-slate-300'
                 }`}
               >
                 💬 Chat öffnen
-              </Link>
+              </button>
             </div>
           </div>
         </div>
