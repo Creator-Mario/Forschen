@@ -166,5 +166,13 @@
     "targetType": "video",
     "targetId": "video-1775666132389-s70kxblgw",
     "createdAt": "2026-04-09T14:20:32.090Z"
+  },
+  {
+    "id": "log-1775889853949-ctvtni0uz",
+    "adminId": "admin-001",
+    "action": "published",
+    "targetType": "video",
+    "targetId": "video-1775887204193-1eqb2vqjx",
+    "createdAt": "2026-04-11T06:44:13.949Z"
   }
 ]
