@@ -118,13 +118,13 @@ export async function sendAdminMessageEmail(
   adminMessage: string,
 ): Promise<boolean> {
   try {
-  const dashboardUrl = `${getBaseUrl()}/dashboard`;
+    const dashboardUrl = `${getBaseUrl()}/dashboard`;
 
-  return await sendEmail({
-    to: toEmail,
-    subject: `Rückfrage des Admins zu deinem Beitrag – ${SITE_NAME}`,
-    text: `Hallo ${userName},\n\nder Administrator hat eine Rückfrage zu deinem Beitrag (${contentType}):\n\n"${adminMessage}"\n\nBitte melde dich in deinem Dashboard, um zu antworten.\n\n${SITE_NAME}`,
-    html: `
+    return await sendEmail({
+      to: toEmail,
+      subject: `Rückfrage des Admins zu deinem Beitrag – ${SITE_NAME}`,
+      text: `Hallo ${userName},\n\nder Administrator hat eine Rückfrage zu deinem Beitrag (${contentType}):\n\n"${adminMessage}"\n\nBitte melde dich in deinem Dashboard, um zu antworten.\n\n${SITE_NAME}`,
+      html: `
       <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
         <h2 style="color:#1e3a8a;margin-bottom:16px;">Rückfrage zu deinem Beitrag</h2>
         <p style="color:#374151;line-height:1.6;">Hallo ${escHtml(userName)},</p>
@@ -142,7 +142,7 @@ export async function sendAdminMessageEmail(
         <p style="color:#9ca3af;font-size:12px;margin-top:24px;">${SITE_NAME} · ${SITE_DOMAIN}</p>
       </div>
     `,
-  });
+    });
   } catch (err) {
     console.error('[email] sendAdminMessageEmail failed:', err);
     return false;
@@ -188,18 +188,18 @@ export async function sendAdminApprovalEmail(
   note?: string,
 ): Promise<boolean> {
   try {
-  const loginUrl = `${getBaseUrl()}/login`;
+    const loginUrl = `${getBaseUrl()}/login`;
 
-  const subject = approved
-    ? `Dein Konto wurde freigeschaltet – ${SITE_NAME}`
-    : `Rückfrage zu deiner Anmeldung – ${SITE_NAME}`;
+    const subject = approved
+      ? `Dein Konto wurde freigeschaltet – ${SITE_NAME}`
+      : `Rückfrage zu deiner Anmeldung – ${SITE_NAME}`;
 
-  const bodyText = approved
-    ? `Hallo ${userName},\n\nDein Konto bei „${SITE_NAME}" wurde freigeschaltet. Du kannst dich jetzt einloggen:\n\n${loginUrl}\n\n${note ? `Notiz des Admins: ${note}\n\n` : ''}Herzlich willkommen!\n\n${SITE_NAME}`
-    : `Hallo ${userName},\n\nDer Administrator hat eine Rückfrage zu deiner Anmeldung:\n\n"${note}"\n\nBitte melde dich in deinem Dashboard.\n\n${SITE_NAME}`;
+    const bodyText = approved
+      ? `Hallo ${userName},\n\nDein Konto bei „${SITE_NAME}" wurde freigeschaltet. Du kannst dich jetzt einloggen:\n\n${loginUrl}\n\n${note ? `Notiz des Admins: ${note}\n\n` : ''}Herzlich willkommen!\n\n${SITE_NAME}`
+      : `Hallo ${userName},\n\nDer Administrator hat eine Rückfrage zu deiner Anmeldung:\n\n"${note}"\n\nBitte melde dich in deinem Dashboard.\n\n${SITE_NAME}`;
 
-  const bodyHtml = approved
-    ? `
+    const bodyHtml = approved
+      ? `
       <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
         <h2 style="color:#1e3a8a;margin-bottom:16px;">Dein Konto wurde freigeschaltet 🎉</h2>
         <p style="color:#374151;line-height:1.6;">Hallo ${escHtml(userName)},</p>
@@ -221,7 +221,7 @@ export async function sendAdminApprovalEmail(
         <p style="color:#9ca3af;font-size:12px;margin-top:24px;">${SITE_NAME} · ${SITE_DOMAIN}</p>
       </div>
     `
-    : `
+      : `
       <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
         <h2 style="color:#1e3a8a;margin-bottom:16px;">Rückfrage zu deiner Anmeldung</h2>
         <p style="color:#374151;line-height:1.6;">Hallo ${escHtml(userName)},</p>
@@ -238,12 +238,12 @@ export async function sendAdminApprovalEmail(
       </div>
     `;
 
-  return await sendEmail({
-    to: toEmail,
-    subject,
-    text: bodyText,
-    html: bodyHtml,
-  });
+    return await sendEmail({
+      to: toEmail,
+      subject,
+      text: bodyText,
+      html: bodyHtml,
+    });
   } catch (err) {
     console.error('[email] sendAdminApprovalEmail failed:', err);
     return false;
@@ -256,13 +256,13 @@ export async function sendPasswordResetEmail(
   token: string,
 ): Promise<boolean> {
   try {
-  const resetUrl = `${getBaseUrl()}/passwort-zuruecksetzen?token=${token}`;
+    const resetUrl = `${getBaseUrl()}/passwort-zuruecksetzen?token=${token}`;
 
-  return await sendEmail({
-    to: toEmail,
-    subject: `Passwort zurücksetzen – ${SITE_NAME}`,
-    text: `Hallo ${userName},\n\ndu hast eine Anfrage zum Zurücksetzen deines Passworts gestellt. Öffne diesen Link, um ein neues Passwort zu vergeben:\n\n${resetUrl}\n\nDer Link ist 1 Stunde gültig. Falls du diese Anfrage nicht gestellt hast, ignoriere diese Nachricht.\n\n${SITE_NAME}`,
-    html: `
+    return await sendEmail({
+      to: toEmail,
+      subject: `Passwort zurücksetzen – ${SITE_NAME}`,
+      text: `Hallo ${userName},\n\ndu hast eine Anfrage zum Zurücksetzen deines Passworts gestellt. Öffne diesen Link, um ein neues Passwort zu vergeben:\n\n${resetUrl}\n\nDer Link ist 1 Stunde gültig. Falls du diese Anfrage nicht gestellt hast, ignoriere diese Nachricht.\n\n${SITE_NAME}`,
+      html: `
       <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
         <h2 style="color:#1e3a8a;margin-bottom:16px;">Passwort zurücksetzen</h2>
         <p style="color:#374151;line-height:1.6;">Hallo ${escHtml(userName)},</p>
@@ -288,7 +288,7 @@ export async function sendPasswordResetEmail(
         <p style="color:#9ca3af;font-size:12px;">${SITE_NAME} · ${SITE_DOMAIN}</p>
       </div>
     `,
-  });
+    });
   } catch (err) {
     console.error('[email] sendPasswordResetEmail failed:', err);
     return false;
