@@ -351,6 +351,17 @@ export async function saveChatMessage(msg: ChatMessage): Promise<void> {
   await writeJson('messages.json', list);
 }
 
+export async function markMessagesAsRead(toUserId: string, fromUserId: string): Promise<void> {
+  const now = new Date().toISOString();
+  const messages = getChatMessages().map(m => {
+    if (m.fromUserId === fromUserId && m.toUserId === toUserId && !m.readAt) {
+      return { ...m, readAt: now };
+    }
+    return m;
+  });
+  await writeJson('messages.json', messages);
+}
+
 export async function deleteConversation(userId1: string, userId2: string): Promise<void> {
   const messages = getChatMessages().filter(
     m => !((m.fromUserId === userId1 && m.toUserId === userId2) ||

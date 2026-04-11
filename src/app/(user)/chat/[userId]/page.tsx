@@ -3,7 +3,7 @@
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useEffect, useState, useRef, useCallback, FormEvent, Suspense } from 'react';
 import { useSession } from 'next-auth/react';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { formatDate } from '@/lib/utils';
 
@@ -13,42 +13,73 @@ interface Message {
   toUserId: string;
   content: string;
   createdAt: string;
+  readAt?: string;
 }
 
 function ChatView() {
   const { data: session } = useSession();
   const params = useParams();
+  const searchParams = useSearchParams();
   const otherUserId = params.userId as string;
 
+  // Admin may view a conversation between two other users via ?partner=<userId>
+  const partnerParam = searchParams.get('partner');
+  const isAdminView = session?.user.role === 'ADMIN' && !!partnerParam;
+
   const [messages, setMessages] = useState<Message[]>([]);
-  const [partnerName, setPartnerName] = useState('');
+  const [headerTitle, setHeaderTitle] = useState('');
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const loadMessages = useCallback(async () => {
-    const res = await fetch(`/api/chat/${otherUserId}`);
+    const url = isAdminView
+      ? `/api/chat/${otherUserId}?partner=${partnerParam}`
+      : `/api/chat/${otherUserId}`;
+    const res = await fetch(url);
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data)) setMessages(data);
     }
-  }, [otherUserId]);
+  }, [otherUserId, isAdminView, partnerParam]);
 
   useEffect(() => {
-    // Load partner name
-    fetch('/api/chat')
-      .then(r => r.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          const p = data.find((x: { id: string; name: string }) => x.id === otherUserId);
-          if (p) setPartnerName(p.name);
+    if (isAdminView) {
+      // Resolve names for both participants
+      Promise.all([
+        fetch(`/api/chat`).then(r => r.json()),
+      ]).then(([allUsers]) => {
+        if (Array.isArray(allUsers)) {
+          const u1 = allUsers.find((x: { id: string; name: string }) => x.id === otherUserId);
+          const u2 = allUsers.find((x: { id: string; name: string }) => x.id === partnerParam);
+          setHeaderTitle(
+            `${u1?.name || otherUserId} & ${u2?.name || partnerParam}`
+          );
         }
       });
+    } else {
+      // Load partner name from the partners list
+      fetch('/api/chat')
+        .then(r => r.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            const p = data.find((x: { id: string; name: string }) => x.id === otherUserId);
+            if (p) setHeaderTitle(p.name);
+          }
+        });
+    }
 
     loadMessages();
     const interval = setInterval(loadMessages, 5000);
     return () => clearInterval(interval);
-  }, [otherUserId, loadMessages]);
+  }, [otherUserId, isAdminView, partnerParam, loadMessages]);
+
+  // Mark incoming messages as read when the chat is opened (non-admin only)
+  useEffect(() => {
+    if (!isAdminView && session?.user.id) {
+      fetch(`/api/chat/${otherUserId}`, { method: 'PATCH' }).catch(() => {});
+    }
+  }, [otherUserId, isAdminView, session?.user.id]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -67,6 +98,7 @@ function ChatView() {
     if (res.ok) {
       setText('');
       loadMessages();
+      // Mark own sent message as immediately visible (no unread for sender)
     }
   }
 
@@ -78,10 +110,21 @@ function ChatView() {
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
           <Link href="/chat" className="text-blue-600 hover:text-blue-800 text-sm">← Chats</Link>
-          <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold text-sm shrink-0">
-            {partnerName.charAt(0).toUpperCase() || '?'}
-          </div>
-          <h1 className="font-semibold text-gray-800">{partnerName || 'Lade…'}</h1>
+          {isAdminView ? (
+            <>
+              <span className="text-xs bg-amber-100 text-amber-800 border border-amber-300 px-2 py-0.5 rounded-full font-medium">
+                Admin-Ansicht (nur lesen)
+              </span>
+              <h1 className="font-semibold text-gray-800">{headerTitle || 'Lade…'}</h1>
+            </>
+          ) : (
+            <>
+              <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold text-sm shrink-0">
+                {headerTitle.charAt(0).toUpperCase() || '?'}
+              </div>
+              <h1 className="font-semibold text-gray-800">{headerTitle || 'Lade…'}</h1>
+            </>
+          )}
         </div>
 
         {/* Messages */}
@@ -90,7 +133,7 @@ function ChatView() {
             <p className="text-center text-gray-400 text-sm mt-8">Noch keine Nachrichten.</p>
           )}
           {messages.map(m => {
-            const isMe = m.fromUserId === myId;
+            const isMe = !isAdminView && m.fromUserId === myId;
             return (
               <div key={m.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl text-sm ${
@@ -101,6 +144,7 @@ function ChatView() {
                   <p className="whitespace-pre-wrap">{m.content}</p>
                   <p className={`text-xs mt-1 ${isMe ? 'text-blue-200' : 'text-gray-400'}`}>
                     {formatDate(m.createdAt)}
+                    {isMe && m.readAt && <span className="ml-1" title="Gelesen">✓✓</span>}
                   </p>
                 </div>
               </div>
@@ -109,23 +153,25 @@ function ChatView() {
           <div ref={bottomRef} />
         </div>
 
-        {/* Input */}
-        <form onSubmit={handleSend} className="mt-3 flex gap-2">
-          <input
-            type="text"
-            value={text}
-            onChange={e => setText(e.target.value)}
-            placeholder="Nachricht schreiben…"
-            className="flex-1 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-          <button
-            type="submit"
-            disabled={loading || !text.trim()}
-            className="bg-blue-700 text-white px-5 py-2 rounded-xl text-sm font-medium hover:bg-blue-600 disabled:opacity-50 transition-colors"
-          >
-            Senden
-          </button>
-        </form>
+        {/* Input – hidden for admin view */}
+        {!isAdminView && (
+          <form onSubmit={handleSend} className="mt-3 flex gap-2">
+            <input
+              type="text"
+              value={text}
+              onChange={e => setText(e.target.value)}
+              placeholder="Nachricht schreiben…"
+              className="flex-1 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            <button
+              type="submit"
+              disabled={loading || !text.trim()}
+              className="bg-blue-700 text-white px-5 py-2 rounded-xl text-sm font-medium hover:bg-blue-600 disabled:opacity-50 transition-colors"
+            >
+              Senden
+            </button>
+          </form>
+        )}
       </div>
     </ProtectedRoute>
   );

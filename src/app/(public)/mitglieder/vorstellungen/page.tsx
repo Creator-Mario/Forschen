@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { formatDate } from '@/lib/utils';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 interface Member {
   id: string;
@@ -12,6 +14,7 @@ interface Member {
 }
 
 export default function VorstellungenPage() {
+  const { data: session } = useSession();
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -45,7 +48,17 @@ export default function VorstellungenPage() {
               <div key={m.id} className="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="font-semibold text-gray-800 text-lg">{m.name}</h2>
-                  <span className="text-xs text-gray-400">Mitglied seit {formatDate(m.createdAt)}</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-gray-400">Mitglied seit {formatDate(m.createdAt)}</span>
+                    {session?.user.id && session.user.id !== m.id && (
+                      <Link
+                        href={`/chat/${m.id}`}
+                        className="text-xs bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 px-3 py-1 rounded-full transition-colors font-medium"
+                      >
+                        💬 Nachricht senden
+                      </Link>
+                    )}
+                  </div>
                 </div>
                 <p className="text-gray-600 leading-relaxed text-sm whitespace-pre-wrap">{m.vorstellung}</p>
               </div>
