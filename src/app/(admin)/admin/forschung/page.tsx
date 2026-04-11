@@ -22,7 +22,8 @@ export default function AdminForschungPage() {
       else setLoadError('Fehler beim Laden der Forschungsbeiträge.');
       const userData = await u.json();
       if (Array.isArray(userData)) setUsers(userData);
-    } catch {
+    } catch (err) {
+      console.error('[admin/forschung] load failed:', err);
       setLoadError('Fehler beim Laden der Daten. Bitte Seite neu laden.');
     }
   }

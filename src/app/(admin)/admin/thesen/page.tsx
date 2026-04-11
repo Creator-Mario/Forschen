@@ -22,7 +22,8 @@ export default function AdminThesenPage() {
       else setLoadError('Fehler beim Laden der Thesen.');
       const userData = await u.json();
       if (Array.isArray(userData)) setUsers(userData);
-    } catch {
+    } catch (err) {
+      console.error('[admin/thesen] load failed:', err);
       setLoadError('Fehler beim Laden der Daten. Bitte Seite neu laden.');
     }
   }

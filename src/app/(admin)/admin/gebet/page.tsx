@@ -22,7 +22,8 @@ export default function AdminGebetPage() {
       else setLoadError('Fehler beim Laden der Gebete.');
       const userData = await u.json();
       if (Array.isArray(userData)) setUsers(userData);
-    } catch {
+    } catch (err) {
+      console.error('[admin/gebet] load failed:', err);
       setLoadError('Fehler beim Laden der Daten. Bitte Seite neu laden.');
     }
   }
