@@ -28,24 +28,7 @@
     "status": "active",
     "createdAt": "2026-04-08T00:53:39.026Z",
     "active": true,
-    "passwordResetToken": "207f3d32177fb349e79e16a0173a133387ba4ef81e405ee36e81a808e8b6b4dd",
-    "passwordResetExpiry": "2026-04-10T16:58:57.263Z"
-  },
-  {
-    "id": "user-1775898260048-th41dfuje",
-    "email": "denzer97@gmail.com",
-    "password": "$2b$12$fTwhQSdGeyZlzypxI2mk0umJZNR.i39OaIdk1OG0lQD9OOZc0Rzd.",
-    "name": "Test login",
-    "role": "USER",
-    "status": "active",
-    "createdAt": "2026-04-11T09:04:20.048Z",
-    "active": true,
-    "emailVerifiedAt": "2026-04-11T09:04:54.228Z",
-    "intro": {
-      "motivation": "Yyggfghhhhhhjhhchhjgggjjjjjjvjggjghhjbbnjjgfxdggjghfdgdfghgdfhghjhgfdghhhhvbbbbvvvbbnbvvvbbbbnmnvvvbnbbxvhhffghgggghjjhgggvvcvvbbjjhgffdfhhhjhggggggggggbvhhhhhbhvvvgggggghhhhhhhhhhgggghhhbhhggggggggfggghhhhhyyhhhgyyytttyyyuuuuuhgygffffffgggggggggggggggghhhhhhjjjhggggffggdffgghyhgfghhffghujhgfgghhhfff",
-      "vorstellung": "Gggvfxsxvvxdghuygffghjjhgffddccvbhjjuuuuyfffffggghhhjjjygffddfvghjjhgggghhgggfffdffhhjhjbvxxcbbbvcfgddttyrerthtrertyyfdfvbbvxfdyyyfrrdfhhhhvccvhhjytrddtyrterrryuuyyhhhhhgffftyytytrrrrryyuggghggghvghhjhhhdfdfffghhhcfghjkkuhfffvvvhjiiiuuyrrdddfffvvbhjjjijjgffcfvvbhjjhgffghhjjjjuuugfgggvghhjvvgjjhgdffghh",
-      "submittedAt": "2026-04-11T09:09:50.419Z"
-    },
-    "adminNote": "Herzlich Willkommen! \nBei Anregungen und Fragen kannst du dich jederzeit an mich wenden über WhatsApp oder E-Mail "
+    "passwordResetToken": "df20b68ec99b68fbf6d291b6bb98b1fe99f1bc1ee3595c320f67249c4c0c7533",
+    "passwordResetExpiry": "2026-04-11T11:50:05.421Z"
   }
 ]
