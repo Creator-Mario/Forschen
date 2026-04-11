@@ -70,14 +70,16 @@ export async function sendVerificationEmail(
   toEmail: string,
   token: string,
 ): Promise<boolean> {
-  console.log('[sendVerificationEmail] Called with', { toEmail, token: token.slice(0, 8) + '…', baseUrl: getBaseUrl() });
-  const verifyUrl = `${getBaseUrl()}/api/auth/verify-email?token=${token}`;
+  try {
+    const baseUrl = getBaseUrl();
+    console.log('[sendVerificationEmail] Called with', { toEmail, token: token.slice(0, 8) + '…', baseUrl });
+    const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${token}`;
 
-  const result = await sendEmail({
-    to: toEmail,
-    subject: `E-Mail-Adresse bestätigen – ${SITE_NAME}`,
-    text: `Bitte bestätige deine E-Mail-Adresse, indem du diesen Link öffnest:\n\n${verifyUrl}\n\nFalls du dich nicht registriert hast, ignoriere diese Nachricht.\n\n${SITE_NAME}`,
-    html: `
+    const result = await sendEmail({
+      to: toEmail,
+      subject: `E-Mail-Adresse bestätigen – ${SITE_NAME}`,
+      text: `Bitte bestätige deine E-Mail-Adresse, indem du diesen Link öffnest:\n\n${verifyUrl}\n\nFalls du dich nicht registriert hast, ignoriere diese Nachricht.\n\n${SITE_NAME}`,
+      html: `
       <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
         <h2 style="color:#1e3a8a;margin-bottom:16px;">E-Mail-Adresse bestätigen</h2>
         <p style="color:#374151;line-height:1.6;">
@@ -100,9 +102,13 @@ export async function sendVerificationEmail(
         <p style="color:#9ca3af;font-size:12px;">${SITE_NAME} · ${SITE_DOMAIN}</p>
       </div>
     `,
-  });
-  console.log('[sendVerificationEmail] sendEmail result:', result);
-  return result;
+    });
+    console.log('[sendVerificationEmail] sendEmail result:', result);
+    return result;
+  } catch (err) {
+    console.error('[email] sendVerificationEmail failed:', err);
+    return false;
+  }
 }
 
 export async function sendAdminMessageEmail(
@@ -111,9 +117,10 @@ export async function sendAdminMessageEmail(
   contentType: string,
   adminMessage: string,
 ): Promise<boolean> {
+  try {
   const dashboardUrl = `${getBaseUrl()}/dashboard`;
 
-  return sendEmail({
+  return await sendEmail({
     to: toEmail,
     subject: `Rückfrage des Admins zu deinem Beitrag – ${SITE_NAME}`,
     text: `Hallo ${userName},\n\nder Administrator hat eine Rückfrage zu deinem Beitrag (${contentType}):\n\n"${adminMessage}"\n\nBitte melde dich in deinem Dashboard, um zu antworten.\n\n${SITE_NAME}`,
@@ -136,6 +143,10 @@ export async function sendAdminMessageEmail(
       </div>
     `,
   });
+  } catch (err) {
+    console.error('[email] sendAdminMessageEmail failed:', err);
+    return false;
+  }
 }
 
 /**
@@ -176,6 +187,7 @@ export async function sendAdminApprovalEmail(
   approved: boolean,
   note?: string,
 ): Promise<boolean> {
+  try {
   const loginUrl = `${getBaseUrl()}/login`;
 
   const subject = approved
@@ -226,12 +238,16 @@ export async function sendAdminApprovalEmail(
       </div>
     `;
 
-  return sendEmail({
+  return await sendEmail({
     to: toEmail,
     subject,
     text: bodyText,
     html: bodyHtml,
   });
+  } catch (err) {
+    console.error('[email] sendAdminApprovalEmail failed:', err);
+    return false;
+  }
 }
 
 export async function sendPasswordResetEmail(
@@ -239,9 +255,10 @@ export async function sendPasswordResetEmail(
   userName: string,
   token: string,
 ): Promise<boolean> {
+  try {
   const resetUrl = `${getBaseUrl()}/passwort-zuruecksetzen?token=${token}`;
 
-  return sendEmail({
+  return await sendEmail({
     to: toEmail,
     subject: `Passwort zurücksetzen – ${SITE_NAME}`,
     text: `Hallo ${userName},\n\ndu hast eine Anfrage zum Zurücksetzen deines Passworts gestellt. Öffne diesen Link, um ein neues Passwort zu vergeben:\n\n${resetUrl}\n\nDer Link ist 1 Stunde gültig. Falls du diese Anfrage nicht gestellt hast, ignoriere diese Nachricht.\n\n${SITE_NAME}`,
@@ -272,4 +289,8 @@ export async function sendPasswordResetEmail(
       </div>
     `,
   });
+  } catch (err) {
+    console.error('[email] sendPasswordResetEmail failed:', err);
+    return false;
+  }
 }
