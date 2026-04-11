@@ -44,7 +44,8 @@ export const adminSeedEmail =
  */
 export const emailFromAddress = (() => {
   const configured = process.env.EMAIL_FROM?.trim();
-  if (configured && !/no-?reply/i.test(configured)) return configured;
+  const localPart = configured?.split('@')[0] ?? '';
+  if (configured && !/^no-?reply$/i.test(localPart)) return configured;
   return operatorEmail;
 })();
 
