@@ -67,7 +67,8 @@ describe('BookRecommendationsCard', () => {
     expect(screen.getByText('Erstes Buch')).toBeInTheDocument();
     expect(screen.queryByText('Zweites Buch')).toBeNull();
 
-    fireEvent.click(screen.getByRole('button', { name: /\+ 1 weitere Empfehlung/i }));
+    expect(screen.getByText('+ 1 weitere Empfehlung')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Weitere Empfehlungen anzeigen/i }));
 
     expect(screen.getByText('Zweites Buch')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Weniger anzeigen/i })).toBeInTheDocument();
