@@ -410,7 +410,7 @@ describe('POST /api/user/intro', () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(USER_SESSION) }));
     vi.doMock('@/lib/db', () => ({ getUserById: vi.fn(), saveUser: vi.fn() }));
     vi.doMock('@/lib/email', () => ({ sendEmail: vi.fn(), sendRegistrationPendingEmail: vi.fn(), escHtml: (s: string) => s }));
-    vi.doMock('@/lib/config', () => ({ operatorEmail: 'op@example.com', siteDomain: 'example.com', siteName: 'Site' }));
+    vi.doMock('@/lib/config', () => ({ operatorEmail: 'op@example.com', canonicalSiteUrl: 'https://flussdeslebens.live', siteDomain: 'example.com', siteName: 'Site' }));
     const { POST } = await import('@/app/api/user/intro/route');
     const res = await POST(makeJsonRequest('http://localhost/api/user/intro', { userId: 'u1' }));
     expect(res.status).toBe(400);
@@ -420,7 +420,7 @@ describe('POST /api/user/intro', () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(USER_SESSION) }));
     vi.doMock('@/lib/db', () => ({ getUserById: vi.fn().mockReturnValue({ id: 'u1', status: 'email_verified' }), saveUser: vi.fn() }));
     vi.doMock('@/lib/email', () => ({ sendEmail: vi.fn(), sendRegistrationPendingEmail: vi.fn(), escHtml: (s: string) => s }));
-    vi.doMock('@/lib/config', () => ({ operatorEmail: 'op@example.com', siteDomain: 'example.com', siteName: 'Site' }));
+    vi.doMock('@/lib/config', () => ({ operatorEmail: 'op@example.com', canonicalSiteUrl: 'https://flussdeslebens.live', siteDomain: 'example.com', siteName: 'Site' }));
     const { POST } = await import('@/app/api/user/intro/route');
     const res = await POST(makeJsonRequest('http://localhost/api/user/intro', { userId: 'u1', motivation: 'too short', vorstellung: 'too short' }));
     expect(res.status).toBe(400);
@@ -436,7 +436,7 @@ describe('POST /api/user/intro', () => {
       saveUser,
     }));
     vi.doMock('@/lib/email', () => ({ sendEmail, sendRegistrationPendingEmail, escHtml: (s: string) => s }));
-    vi.doMock('@/lib/config', () => ({ operatorEmail: 'op@example.com', siteDomain: 'example.com', siteName: 'Site' }));
+    vi.doMock('@/lib/config', () => ({ operatorEmail: 'op@example.com', canonicalSiteUrl: 'https://flussdeslebens.live', siteDomain: 'example.com', siteName: 'Site' }));
     const longText = 'A'.repeat(310);
     const { POST } = await import('@/app/api/user/intro/route');
     const res = await POST(makeJsonRequest('http://localhost/api/user/intro', { userId: 'u1', motivation: longText, vorstellung: longText }));
