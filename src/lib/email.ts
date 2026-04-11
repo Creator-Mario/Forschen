@@ -55,6 +55,10 @@ export function escHtml(str: string): string {
     .replace(/'/g, '&#039;');
 }
 
+function escapeEmailDisplayName(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
 /**
  * Generic send-email helper.
  */
@@ -79,7 +83,7 @@ export async function sendEmail({
 
   try {
     // RFC 5322: display names containing spaces must be double-quoted.
-    const fromHeader = `"${SITE_NAME}" <${FROM_EMAIL}>`;
+    const fromHeader = `"${escapeEmailDisplayName(SITE_NAME)}" <${FROM_EMAIL}>`;
 
     const { data, error } = await getResend().emails.send({
       from: fromHeader,
