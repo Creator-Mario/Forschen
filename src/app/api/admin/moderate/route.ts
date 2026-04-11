@@ -71,6 +71,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
   }
 
+  if (
+    status === 'published' &&
+    (type === 'video' || type === 'forschung') &&
+    (typeof wochenthemaId !== 'string' || !wochenthemaId.trim())
+  ) {
+    return NextResponse.json({ error: 'Wochenthema is required for publishing this content' }, { status: 400 });
+  }
+
   try {
     let affectedUserId: string | undefined;
 
@@ -88,7 +96,13 @@ export async function POST(req: NextRequest) {
         const item = list.find(f => f.id === id);
         if (!item) return NextResponse.json({ error: 'Not found' }, { status: 404 });
         affectedUserId = item.userId;
-        await saveForschung({ ...item, status, adminMessage, updatedAt: new Date().toISOString() });
+        await saveForschung({
+          ...item,
+          status,
+          adminMessage,
+          updatedAt: new Date().toISOString(),
+          ...(wochenthemaId && typeof wochenthemaId === 'string' ? { wochenthemaId } : {}),
+        });
         break;
       }
       case 'gebet': {

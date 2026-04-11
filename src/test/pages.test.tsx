@@ -264,12 +264,44 @@ describe('WochenthemaPage', () => {
         researchQuestions: ['RQ1'],
         status: 'published',
       }),
+      getApprovedForschung: vi.fn().mockReturnValue([]),
+      getApprovedVideos: vi.fn().mockReturnValue([]),
       getWochenthemaList: vi.fn().mockReturnValue([]),
     }));
     const { default: WochenthemaPage } = await import('@/app/(public)/wochenthema/page');
     render(React.createElement(WochenthemaPage));
     expect(screen.getByRole('heading', { name: /Wochenthema/i, level: 1 })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /beitrag verfassen/i })).toHaveAttribute('href', '/forschung/beitraege');
+  });
+
+  it('renders approved research and videos for the current theme', async () => {
+    vi.doMock('@/lib/db', () => ({
+      getCurrentWochenthema: vi.fn().mockReturnValue({
+        id: 'w1',
+        week: '2026-W16',
+        title: 'Wochenthema',
+        introduction: 'Einführung',
+        bibleVerses: [],
+        problemStatement: 'Frage',
+        researchQuestions: ['RQ1'],
+        status: 'published',
+      }),
+      getApprovedForschung: vi.fn().mockReturnValue([
+        { id: 'f1', title: 'Passender Beitrag', content: 'Inhalt', authorName: 'Anna', createdAt: '2026-04-11T00:00:00Z', wochenthemaId: 'w1', status: 'published' },
+        { id: 'f2', title: 'Falsches Thema', content: 'Inhalt', authorName: 'Ben', createdAt: '2026-04-11T00:00:00Z', wochenthemaId: 'w2', status: 'published' },
+      ]),
+      getApprovedVideos: vi.fn().mockReturnValue([
+        { id: 'v1', title: 'Passendes Video', description: 'Beschreibung', url: 'https://example.com/video', authorName: 'Anna', createdAt: '2026-04-11T00:00:00Z', wochenthemaId: 'w1', status: 'published' },
+        { id: 'v2', title: 'Falsches Video', description: 'Beschreibung', url: 'https://example.com/other', authorName: 'Ben', createdAt: '2026-04-11T00:00:00Z', wochenthemaId: 'w2', status: 'published' },
+      ]),
+      getWochenthemaList: vi.fn().mockReturnValue([]),
+    }));
+    const { default: WochenthemaPage } = await import('@/app/(public)/wochenthema/page');
+    render(React.createElement(WochenthemaPage));
+    expect(screen.getByText('Passender Beitrag')).toBeInTheDocument();
+    expect(screen.getByText('Passendes Video')).toBeInTheDocument();
+    expect(screen.queryByText('Falsches Thema')).not.toBeInTheDocument();
+    expect(screen.queryByText('Falsches Video')).not.toBeInTheDocument();
   });
 });
 

@@ -1,12 +1,20 @@
 export const dynamic = 'force-dynamic';
 
 import { getCurrentWochenthema } from '@/lib/db';
+import { getApprovedForschung, getApprovedVideos } from '@/lib/db';
 import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
 import SubmissionCta from '@/components/SubmissionCta';
+import { formatDate } from '@/lib/utils';
 
 export default function WochenthemaPage() {
   const theme = getCurrentWochenthema();
+  const research = theme
+    ? getApprovedForschung().filter(item => item.wochenthemaId === theme.id)
+    : [];
+  const videos = theme
+    ? getApprovedVideos().filter(item => item.wochenthemaId === theme.id)
+    : [];
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
@@ -62,6 +70,68 @@ export default function WochenthemaPage() {
             href="/forschung/beitraege"
             actionLabel="Beitrag verfassen"
           />
+
+          <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <section className="bg-white rounded-xl shadow-md p-6">
+              <div className="flex items-center justify-between gap-3 mb-4">
+                <div>
+                  <h3 className="font-semibold text-gray-800">Beiträge zu diesem Thema</h3>
+                  <p className="text-sm text-gray-500">Freigegebene Forschungsbeiträge</p>
+                </div>
+                <Link href="/forschung" className="text-blue-600 hover:text-blue-800 text-sm transition-colors">
+                  Alle Beiträge →
+                </Link>
+              </div>
+              {research.length > 0 ? (
+                <div className="space-y-4">
+                  {research.map(item => (
+                    <article key={item.id} className="border border-gray-100 rounded-lg p-4">
+                      <h4 className="font-medium text-gray-800">{item.title}</h4>
+                      <p className="text-sm text-gray-600 mt-2 line-clamp-4">{item.content}</p>
+                      <div className="mt-3 text-xs text-gray-400 flex items-center justify-between gap-3">
+                        <span>{item.authorName}</span>
+                        <span>{formatDate(item.createdAt)}</span>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">Noch keine freigegebenen Beiträge zu diesem Wochenthema.</p>
+              )}
+            </section>
+
+            <section className="bg-white rounded-xl shadow-md p-6">
+              <div className="flex items-center justify-between gap-3 mb-4">
+                <div>
+                  <h3 className="font-semibold text-gray-800">Videos zu diesem Thema</h3>
+                  <p className="text-sm text-gray-500">Freigegebene Videos</p>
+                </div>
+                <Link href="/videos" className="text-blue-600 hover:text-blue-800 text-sm transition-colors">
+                  Alle Videos →
+                </Link>
+              </div>
+              {videos.length > 0 ? (
+                <div className="space-y-4">
+                  {videos.map(item => (
+                    <article key={item.id} className="border border-gray-100 rounded-lg p-4">
+                      <h4 className="font-medium text-gray-800">{item.title}</h4>
+                      <p className="text-sm text-gray-600 mt-2 line-clamp-4">{item.description}</p>
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block mt-3 text-sm text-blue-600 hover:text-blue-800"
+                      >
+                        Video ansehen →
+                      </a>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">Noch keine freigegebenen Videos zu diesem Wochenthema.</p>
+              )}
+            </section>
+          </div>
         </article>
       ) : (
         <div className="bg-blue-50 rounded-xl p-8 text-center text-gray-500">

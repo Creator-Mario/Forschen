@@ -12,6 +12,12 @@ interface User {
   email: string;
 }
 
+interface ThemeOption {
+  id: string;
+  title: string;
+  week?: string;
+}
+
 interface AdminModerationTableProps {
   items: Item[];
   titleField: string;
@@ -19,19 +25,23 @@ interface AdminModerationTableProps {
   contentField?: string;
   contentType: string;
   users?: User[];
-  onAction: (id: string, status: string, message?: string) => void | Promise<void>;
+  onAction: (id: string, status: string, message?: string, wochenthemaId?: string) => void | Promise<void>;
+  themeOptions?: ThemeOption[];
+  requireThemeForPublish?: boolean;
   /** @deprecated use onAction instead */
   onModerate?: (id: string, status: 'approved' | 'rejected') => void;
 }
 
 export default function AdminModerationTable({
   items, titleField, authorField, contentField, contentType, users, onAction, onModerate,
+  themeOptions = [], requireThemeForPublish = false,
 }: AdminModerationTableProps) {
   const [questionModal, setQuestionModal] = useState<{ id: string } | null>(null);
   const [questionText, setQuestionText] = useState('');
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
+  const [selectedThemeIds, setSelectedThemeIds] = useState<Record<string, string>>({});
 
   function getUserEmail(userId: string): string {
     if (!users) return '';
@@ -42,7 +52,14 @@ export default function AdminModerationTable({
     setLoadingId(id);
     setFeedback(null);
     try {
-      if (onAction) await onAction(id, status, message);
+      const item = items.find(entry => entry.id === id);
+      const selectedThemeId = selectedThemeIds[id] || String(item?.wochenthemaId || '');
+      if (status === 'published' && requireThemeForPublish && !selectedThemeId) {
+        setFeedback({ type: 'error', msg: 'Bitte zuerst ein Wochenthema auswählen.' });
+        return;
+      }
+
+      if (onAction) await onAction(id, status, message, selectedThemeId || undefined);
       else if (onModerate && (status === 'approved' || status === 'rejected')) onModerate(id, status);
       const labels: Record<string, string> = {
         published: 'Veröffentlicht.',
@@ -57,6 +74,10 @@ export default function AdminModerationTable({
     } finally {
       setLoadingId(null);
     }
+  }
+
+  function setThemeForItem(id: string, value: string) {
+    setSelectedThemeIds(current => ({ ...current, [id]: value }));
   }
 
   function openQuestionModal(id: string) {
@@ -126,6 +147,24 @@ export default function AdminModerationTable({
               {item.moderatorNote && (
                 <div className="mb-3 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 text-sm text-blue-800">
                   <span className="font-medium">Moderationsnotiz:</span> {item.moderatorNote}
+                </div>
+              )}
+
+              {themeOptions.length > 0 && (
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Wochenthema</label>
+                  <select
+                    value={selectedThemeIds[item.id] ?? String(item.wochenthemaId || '')}
+                    onChange={e => setThemeForItem(item.id, e.target.value)}
+                    className="w-full md:w-auto border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Bitte Wochenthema wählen</option>
+                    {themeOptions.map(theme => (
+                      <option key={theme.id} value={theme.id}>
+                        {theme.week ? `${theme.week} · ${theme.title}` : theme.title}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               )}
 
