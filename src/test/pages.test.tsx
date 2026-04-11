@@ -198,6 +198,25 @@ describe('ThesenPage', () => {
   });
 });
 
+describe('ThesenArchivPage', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('renders published theses in the member archive', async () => {
+    const these = { id: 'th1', userId: 'u1', authorName: 'Alice', title: 'Archiv-These', content: 'Body', bibleReference: '', status: 'published', createdAt: '2024-01-01T00:00:00Z' };
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', name: 'Test', role: 'USER' } }) }));
+    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
+    vi.doMock('@/lib/db', () => ({ getApprovedThesen: vi.fn().mockReturnValue([these]) }));
+    vi.doMock('@/components/ThesisCard', () => ({
+      default: ({ these }: { these: { title: string } }) => React.createElement('div', null, these.title),
+    }));
+    const { default: ThesenArchivPage } = await import('@/app/(user)/thesen/archiv/page');
+    const jsx = await ThesenArchivPage();
+    render(React.createElement(React.Fragment, null, jsx));
+    expect(screen.getByRole('heading', { name: /Archiv – Thesen/i, level: 1 })).toBeInTheDocument();
+    expect(screen.getByText('Archiv-These')).toBeInTheDocument();
+  });
+});
+
 // ─── Gebet page ──────────────────────────────────────────────────────────────
 
 describe('GebetPage', () => {
@@ -270,6 +289,25 @@ describe('ForschungPage', () => {
     const jsx = await ForschungPage();
     render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByRole('heading', { name: /Forschung/i, level: 1 })).toBeInTheDocument();
+  });
+});
+
+describe('ForschungArchivPage', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('renders published research contributions in the member archive', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', name: 'Test', role: 'USER' } }) }));
+    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
+    vi.doMock('@/lib/db', () => ({
+      getApprovedForschung: vi.fn().mockReturnValue([
+        { id: 'f1', userId: 'u1', authorName: 'Alice', title: 'Archiv-Beitrag', content: 'Inhalt', bibleReference: '', status: 'published', createdAt: '2024-01-01T00:00:00Z' },
+      ]),
+    }));
+    const { default: ForschungArchivPage } = await import('@/app/(user)/forschung/archiv/page');
+    const jsx = await ForschungArchivPage();
+    render(React.createElement(React.Fragment, null, jsx));
+    expect(screen.getByRole('heading', { name: /Archiv – Forschungsbeiträge/i, level: 1 })).toBeInTheDocument();
+    expect(screen.getByText('Archiv-Beitrag')).toBeInTheDocument();
   });
 });
 
