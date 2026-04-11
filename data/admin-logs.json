@@ -182,5 +182,13 @@
     "targetType": "video",
     "targetId": "video-1775887204193-1eqb2vqjx",
     "createdAt": "2026-04-11T06:45:41.570Z"
+  },
+  {
+    "id": "log-1775890047877-557bvjxux",
+    "adminId": "admin-001",
+    "action": "published",
+    "targetType": "forschung",
+    "targetId": "forschung-001",
+    "createdAt": "2026-04-11T06:47:27.877Z"
   }
 ]
