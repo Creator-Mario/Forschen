@@ -3,6 +3,7 @@
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 interface Partner {
   id: string;
@@ -11,16 +12,35 @@ interface Partner {
   unreadCount: number;
 }
 
+interface MemberOption {
+  id: string;
+  name: string;
+}
+
 export default function ChatPage() {
+  const { data: session } = useSession();
   const [partners, setPartners] = useState<Partner[]>([]);
+  const [members, setMembers] = useState<MemberOption[]>([]);
+  const [selectedMemberId, setSelectedMemberId] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/chat')
-      .then(r => r.json())
-      .then(data => { if (Array.isArray(data)) setPartners(data); })
+    Promise.all([
+      fetch('/api/chat').then(r => r.json()),
+      fetch('/api/mitglieder').then(r => r.json()),
+    ])
+      .then(([chatData, memberData]) => {
+        if (Array.isArray(chatData)) setPartners(chatData);
+        if (Array.isArray(memberData)) {
+          const availableMembers = memberData
+            .filter((member: MemberOption) => member.id !== session?.user.id)
+            .sort((a: MemberOption, b: MemberOption) => a.name.localeCompare(b.name, 'de'));
+          setMembers(availableMembers);
+          setSelectedMemberId(current => current || availableMembers[0]?.id || '');
+        }
+      })
       .finally(() => setLoading(false));
-  }, []);
+  }, [session?.user.id]);
 
   return (
     <ProtectedRoute>
@@ -29,6 +49,46 @@ export default function ChatPage() {
         <p className="text-gray-500 text-sm mb-8">
           Private 1-zu-1-Chats – nur für freigeschaltete Mitglieder
         </p>
+
+        <div className="mb-8 rounded-2xl border border-blue-200 bg-gradient-to-r from-blue-50 via-white to-cyan-50 p-5 shadow-sm">
+          <div className="flex flex-col gap-4 md:flex-row md:items-end">
+            <div className="flex-1">
+              <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">Neuen Chat starten</p>
+              <h2 className="mt-1 text-xl font-bold text-gray-800">Registrierte Mitglieder direkt auswählen</h2>
+              <p className="mt-1 text-sm text-gray-600">
+                Wähle einen Namen aus und öffne sofort den privaten Chat.
+              </p>
+            </div>
+            <div className="flex w-full flex-col gap-3 md:w-auto md:min-w-80">
+              <select
+                value={selectedMemberId}
+                onChange={e => setSelectedMemberId(e.target.value)}
+                className="w-full rounded-xl border border-blue-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
+                {members.length === 0 ? (
+                  <option value="">Keine Mitglieder verfügbar</option>
+                ) : (
+                  members.map(member => (
+                    <option key={member.id} value={member.id}>
+                      {member.name}
+                    </option>
+                  ))
+                )}
+              </select>
+              <Link
+                href={selectedMemberId ? `/chat/${selectedMemberId}` : '/mitglieder/vorstellungen'}
+                aria-disabled={!selectedMemberId}
+                className={`inline-flex items-center justify-center rounded-xl px-5 py-3 text-base font-semibold text-white transition-all ${
+                  selectedMemberId
+                    ? 'bg-blue-700 shadow-lg shadow-blue-200 hover:bg-blue-600'
+                    : 'pointer-events-none bg-slate-300'
+                }`}
+              >
+                💬 Chat öffnen
+              </Link>
+            </div>
+          </div>
+        </div>
 
         {loading ? (
           <div className="text-center py-12 text-gray-400">Laden…</div>

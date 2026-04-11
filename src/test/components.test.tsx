@@ -325,6 +325,16 @@ describe('Navbar', () => {
     expect(screen.getAllByText('Abmelden').length).toBeGreaterThan(0);
   });
 
+  it('shows a prominent chat link for authenticated users', async () => {
+    vi.doMock('next-auth/react', () => ({
+      useSession: () => ({ data: { user: { id: 'u1', name: 'Alice', role: 'USER' } }, status: 'authenticated' }),
+      signOut: vi.fn(),
+    }));
+    const { default: Navbar } = await import('@/components/Navbar');
+    render(React.createElement(Navbar));
+    expect(screen.getAllByRole('link', { name: /chat/i }).length).toBeGreaterThan(0);
+  });
+
   it('toggles mobile menu on button click', async () => {
     vi.doMock('next-auth/react', () => ({
       useSession: () => ({ data: null, status: 'unauthenticated' }),

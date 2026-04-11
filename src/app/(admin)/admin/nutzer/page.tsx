@@ -38,6 +38,12 @@ export default function AdminNutzerPage() {
           unlock: 'Nutzer reaktiviert.',
           hard_delete: 'Nutzer endgültig gelöscht.',
         };
+        setUsers(prev => prev.filter(u => action !== 'hard_delete' || u.id !== id).map(u => {
+          if (u.id !== id || action === 'hard_delete') return u;
+          if (action === 'lock') return { ...u, active: false, status: 'deleted' };
+          if (action === 'unlock') return { ...u, active: true, status: 'active' };
+          return u;
+        }));
         setFeedback({ type: 'success', msg: labels[action] ?? 'Aktion ausgeführt.' });
       } else {
         const d = await res.json().catch(() => ({}));

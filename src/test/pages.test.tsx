@@ -280,6 +280,33 @@ describe('MitgliederVorstellungenPage', () => {
   });
 });
 
+describe('ChatPage', () => {
+  beforeEach(() => vi.resetModules());
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('loads existing chats and selectable member names', async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce({ json: () => Promise.resolve([{ id: 'u2', name: 'Bob', unreadCount: 0 }]), ok: true })
+      .mockResolvedValueOnce({ json: () => Promise.resolve([{ id: 'u1', name: 'Alice' }, { id: 'u2', name: 'Bob' }, { id: 'u3', name: 'Carla' }]), ok: true });
+    vi.stubGlobal('fetch', fetchMock);
+    vi.doMock('next-auth/react', () => ({
+      useSession: () => ({ data: { user: { id: 'u1', role: 'USER', name: 'Alice' } }, status: 'authenticated' }),
+      signOut: vi.fn(),
+      signIn: vi.fn(),
+      SessionProvider: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
+    }));
+    const { default: ChatPage } = await import('@/app/(user)/chat/page');
+    render(React.createElement(ChatPage));
+    expect(screen.getByRole('heading', { name: /Nachrichten/i })).toBeInTheDocument();
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/chat'));
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/mitglieder'));
+    expect(await screen.findByRole('option', { name: 'Bob' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Carla' })).toBeInTheDocument();
+    expect(screen.queryByRole('option', { name: 'Alice' })).toBeNull();
+    expect(screen.getByRole('link', { name: /chat öffnen/i })).toHaveAttribute('href', '/chat/u2');
+  });
+});
+
 // ─── Home page ────────────────────────────────────────────────────────────────
 
 describe('HomePage', () => {

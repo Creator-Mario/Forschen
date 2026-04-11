@@ -72,7 +72,14 @@ export default function Navbar() {
             {session ? (
               <div className="flex items-center gap-3">
                 <Link href="/mitglieder/vorstellungen" className="hover:text-yellow-300 transition-colors font-medium">Mitglieder</Link>
-                <Link href="/chat" className="hover:text-yellow-300 transition-colors" title="Chat">💬</Link>
+                <Link
+                  href="/chat"
+                  className="inline-flex items-center gap-2 rounded-full border border-cyan-300 bg-cyan-400/15 px-4 py-2 text-sm font-semibold text-cyan-100 shadow-md shadow-cyan-950/20 transition-all hover:-translate-y-0.5 hover:bg-cyan-400/25 hover:text-white"
+                  title="Chat"
+                >
+                  <span className="text-base" aria-hidden="true">💬</span>
+                  <span>Chat</span>
+                </Link>
                 {session.user.role === 'ADMIN' && (
                   <Link
                     href="/admin"
@@ -146,6 +153,7 @@ export default function Navbar() {
             {session ? (
               <>
                 <Link href="/mitglieder/vorstellungen" className="py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors" onClick={() => setMenuOpen(false)}>Mitglieder</Link>
+                <Link href="/chat" className="py-2 px-3 rounded-lg bg-cyan-400/15 border border-cyan-300 text-cyan-100 hover:bg-cyan-400/25 transition-colors font-semibold" onClick={() => setMenuOpen(false)}>💬 Chat</Link>
                 {session.user.role === 'ADMIN' && (
                   <Link href="/admin" className="py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors font-medium text-yellow-300" onClick={() => setMenuOpen(false)}>🛠️ Admin-Bereich</Link>
                 )}
@@ -161,4 +169,3 @@ export default function Navbar() {
     </nav>
   );
 }
-

@@ -519,6 +519,25 @@ describe('PATCH /api/admin/users', () => {
     expect(saveAdminLog).toHaveBeenCalledOnce();
     expect(saveAdminLog.mock.calls[0][0].action).toBe('user_hard_delete');
   });
+
+  it('still returns 200 when logging fails after hard delete', async () => {
+    const deleteUserAccount = vi.fn().mockResolvedValue(undefined);
+    const saveAdminLog = vi.fn().mockRejectedValue(new Error('log failed'));
+    const user = { id: 'u3', email: 'carol@example.com', name: 'Carol', status: 'active', active: true };
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'admin1', role: 'ADMIN' } }) }));
+    vi.doMock('@/lib/db', () => ({
+      getUsers: vi.fn().mockReturnValue([user]),
+      saveUser: vi.fn(),
+      deleteUserAccount,
+      saveAdminLog,
+    }));
+    vi.doMock('@/lib/email', () => ({ sendEmail: vi.fn().mockResolvedValue(true), escHtml: (s: string) => s }));
+    vi.doMock('@/lib/config', () => ({ siteName: 'Site', siteDomain: 'example.com' }));
+    const { PATCH } = await import('@/app/api/admin/users/route');
+    const res = await PATCH(makeJsonRequest('http://localhost/api/admin/users', { id: 'u3', action: 'hard_delete' }, 'PATCH'));
+    expect(res.status).toBe(200);
+    expect(deleteUserAccount).toHaveBeenCalledWith('u3');
+  });
 });
 
 // ─── /api/admin/vorstellungen – hard delete ───────────────────────────────────
