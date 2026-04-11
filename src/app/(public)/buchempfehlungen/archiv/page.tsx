@@ -6,9 +6,7 @@ import { getBuchempfehlungenArchiv } from '@/lib/generated-content';
 import BookRecommendationsCard from '@/components/BookRecommendationsCard';
 import UserBookRecommendationCard from '@/components/UserBookRecommendationCard';
 import { getApprovedBuchempfehlungen } from '@/lib/db';
-
-const COMMUNITY_ARCHIVE_DAYS = 90;
-const MS_PER_DAY = 86400000;
+import { COMMUNITY_ARCHIVE_DAYS, MS_PER_DAY } from '@/lib/archive-window';
 
 function isWithinArchiveWindow(dateStr: string) {
   return Date.now() - new Date(dateStr).getTime() <= COMMUNITY_ARCHIVE_DAYS * MS_PER_DAY;
