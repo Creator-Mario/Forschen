@@ -52,6 +52,8 @@ export async function POST(req: NextRequest) {
     // Notify admin that a new user is awaiting review.
     if (operatorEmail) {
       try {
+        const adminReviewUrl = `${canonicalSiteUrl}/admin/vorstellungen`;
+
         await sendEmail({
           to: operatorEmail,
           subject: `Neue Vorstellung zur Prüfung – ${siteName}`,
@@ -71,15 +73,15 @@ export async function POST(req: NextRequest) {
                   <td style="padding:6px 8px;">${escHtml(user.email)}</td>
                 </tr>
               </table>
-              <a href="${canonicalSiteUrl}/admin"
+              <a href="${adminReviewUrl}"
                  style="display:inline-block;margin:16px 0;background:#1e40af;color:#fff;
                         text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:600;">
-                Zum Admin-Bereich
+                Vorstellungen prüfen
               </a>
               <p style="color:#9ca3af;font-size:12px;margin-top:24px;">${siteName} · ${siteDomain}</p>
             </div>
           `,
-          text: `Neue Vorstellung zur Prüfung\n\nName: ${user.name}\nE-Mail: ${user.email}\n\nBitte melde dich im Admin-Bereich: ${canonicalSiteUrl}/admin`,
+          text: `Neue Vorstellung zur Prüfung\n\nName: ${user.name}\nE-Mail: ${user.email}\n\nBitte prüfe die Vorstellung hier: ${adminReviewUrl}`,
         });
       } catch (err) {
         console.error('[intro] Admin notification email could not be sent:', err);

@@ -46,6 +46,7 @@ afterAll(() => {
 import {
   escHtml,
   sendEmail,
+  sendAdminApprovalEmail,
   sendVerificationEmail,
   sendPasswordResetEmail,
 } from '@/lib/email';
@@ -178,5 +179,20 @@ describe('sendPasswordResetEmail', () => {
     mockEmailSend.mockResolvedValue({ data: null, error: { name: 'rate_limit_exceeded', message: 'Rate limited', statusCode: 429 } });
     const result = await sendPasswordResetEmail('alice@example.com', 'Alice', 'token');
     expect(result).toBe(false);
+  });
+});
+
+describe('sendAdminApprovalEmail', () => {
+  beforeEach(() => mockEmailSend.mockReset());
+
+  it('uses the canonical login URL in the approval email', async () => {
+    mockEmailSend.mockResolvedValue({ data: { id: 'ap-1' }, error: null });
+    const result = await sendAdminApprovalEmail('alice@example.com', 'Alice', true, 'Willkommen!');
+    expect(result).toBe(true);
+    expect(mockEmailSend).toHaveBeenCalledOnce();
+    const callArgs = mockEmailSend.mock.calls[0][0] as { html: string; text: string };
+    expect(callArgs.html).toContain('https://flussdeslebens.live/login');
+    expect(callArgs.text).toContain('https://flussdeslebens.live/login');
+    expect(callArgs.html).not.toContain('https://example.com/login');
   });
 });

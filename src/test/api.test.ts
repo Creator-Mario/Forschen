@@ -550,4 +550,33 @@ describe('PATCH /api/admin/vorstellungen (reject action)', () => {
     expect(deleteUserAccount).toHaveBeenCalledWith('u4');
     expect(saveAdminLog.mock.calls[0][0].action).toBe('vorstellung_reject');
   });
+
+  it('sends the approval email with the released account after approve action', async () => {
+    const saveUser = vi.fn().mockResolvedValue(undefined);
+    const saveAdminLog = vi.fn().mockResolvedValue(undefined);
+    const sendAdminApprovalEmail = vi.fn().mockResolvedValue(true);
+    const user = { id: 'u4', email: 'dave@example.com', name: 'Dave', status: 'awaiting_admin_review', active: false };
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'admin1', role: 'ADMIN' } }) }));
+    vi.doMock('@/lib/db', () => ({
+      getAwaitingReviewUsers: vi.fn().mockReturnValue([user]),
+      getUserById: vi.fn().mockReturnValue(user),
+      saveUser,
+      deleteUserAccount: vi.fn(),
+      saveAdminLog,
+    }));
+    vi.doMock('@/lib/email', () => ({
+      sendAdminApprovalEmail,
+      sendEmail: vi.fn().mockResolvedValue(true),
+      escHtml: (s: string) => s,
+    }));
+    vi.doMock('@/lib/config', () => ({ siteName: 'Site', siteDomain: 'example.com' }));
+    const { PATCH } = await import('@/app/api/admin/vorstellungen/route');
+    const res = await PATCH(makeJsonRequest('http://localhost/api/admin/vorstellungen', { userId: 'u4', action: 'approve', note: 'Willkommen!' }, 'PATCH'));
+    expect(res.status).toBe(200);
+    expect(saveUser).toHaveBeenCalledOnce();
+    expect(saveUser.mock.calls[0][0].status).toBe('active');
+    expect(saveUser.mock.calls[0][0].active).toBe(true);
+    expect(sendAdminApprovalEmail).toHaveBeenCalledWith('dave@example.com', 'Dave', true, 'Willkommen!');
+    expect(saveAdminLog.mock.calls[0][0].action).toBe('vorstellung_approve');
+  });
 });
