@@ -255,5 +255,13 @@
     "targetType": "video",
     "targetId": "video-1775889800906-hslxewrhn",
     "createdAt": "2026-04-11T15:04:04.351Z"
+  },
+  {
+    "id": "log-1775919848034-ulcy01duk",
+    "adminId": "admin-001",
+    "action": "published",
+    "targetType": "video",
+    "targetId": "video-1775889800906-hslxewrhn",
+    "createdAt": "2026-04-11T15:04:08.034Z"
   }
 ]
