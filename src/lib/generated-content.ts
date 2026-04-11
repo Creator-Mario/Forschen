@@ -4,11 +4,8 @@ import type {
   Buchempfehlung,
   BuchempfehlungsSammlung,
 } from '@/types';
-import { MS_PER_DAY } from './archive-window';
+import { GENERATED_ARCHIVE_DAYS, MS_PER_DAY } from './archive-window';
 import { getCurrentPublicationDate } from './publishing';
-
-// Business rule: generated daily archives stay browsable for 90 days.
-const GENERATED_ARCHIVE_DAYS = 90;
 
 const psalmSeeds = [
   {
