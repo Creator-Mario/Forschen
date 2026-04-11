@@ -71,7 +71,7 @@ export async function PATCH(req: NextRequest) {
     await saveAdminLog({
       id: `log-${generateId()}`,
       adminId: session.user.id,
-        action: 'user_hard_delete',
+      action: 'user_hard_delete',
       targetType: 'user',
       targetId: id,
       createdAt: new Date().toISOString(),
