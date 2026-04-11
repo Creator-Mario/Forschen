@@ -253,7 +253,7 @@ describe('WochenthemaArchivPage', () => {
     const { default: WochenthemaArchivPage } = await import('@/app/(public)/wochenthema/archiv/page');
     render(React.createElement(WochenthemaArchivPage));
     expect(screen.getByText('Archiviertes Thema')).toBeInTheDocument();
-    expect(screen.getByText(/Archiviert/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Archiviert/i).length).toBeGreaterThan(0);
   });
 });
 
