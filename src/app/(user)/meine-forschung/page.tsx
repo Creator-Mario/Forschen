@@ -11,6 +11,8 @@ import BibleLink from '@/components/BibleLink';
 export default function MeineForschungPage() {
   const { data: session } = useSession();
   const [beitraege, setBeitraege] = useState<ForschungsBeitrag[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetch('/api/forschung?all=1')
@@ -19,6 +21,11 @@ export default function MeineForschungPage() {
         if (session?.user.id) {
           setBeitraege(data.filter(b => b.userId === session.user.id));
         }
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('Forschungsbeiträge konnten nicht geladen werden.');
+        setLoading(false);
       });
   }, [session]);
 
@@ -32,7 +39,12 @@ export default function MeineForschungPage() {
           </Link>
         </div>
 
-        {beitraege.length > 0 ? (
+        {error && (
+          <div className="bg-red-50 border border-red-100 text-red-700 text-sm rounded-lg px-3 py-2 mb-6">{error}</div>
+        )}
+        {loading ? (
+          <p className="text-gray-400 text-center py-12">Wird geladen...</p>
+        ) : beitraege.length > 0 ? (
           <div className="space-y-5">
             {beitraege.map(b => (
               <div key={b.id} className="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">

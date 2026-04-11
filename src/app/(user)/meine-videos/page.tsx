@@ -10,6 +10,8 @@ import { formatDate, getStatusColor, getStatusLabel } from '@/lib/utils';
 export default function MeineVideosPage() {
   const { data: session } = useSession();
   const [videos, setVideos] = useState<Video[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetch('/api/videos?all=1')
@@ -18,6 +20,11 @@ export default function MeineVideosPage() {
         if (session?.user.id) {
           setVideos(data.filter(v => v.userId === session.user.id));
         }
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('Videos konnten nicht geladen werden.');
+        setLoading(false);
       });
   }, [session]);
 
@@ -31,7 +38,12 @@ export default function MeineVideosPage() {
           </Link>
         </div>
 
-        {videos.length > 0 ? (
+        {error && (
+          <div className="bg-red-50 border border-red-100 text-red-700 text-sm rounded-lg px-3 py-2 mb-6">{error}</div>
+        )}
+        {loading ? (
+          <p className="text-gray-400 text-center py-12">Wird geladen...</p>
+        ) : videos.length > 0 ? (
           <div className="space-y-5">
             {videos.map(v => {
               const safeHref =
