@@ -49,9 +49,7 @@ export async function POST(req: NextRequest) {
             { status: 503 },
           );
         }
-        if (emailSent) {
-          console.info('[register] Verification email resent to pending user.');
-        }
+        console.info('[register] Verification email resent to pending user.');
       }
       return NextResponse.json({ success: true });
     }
