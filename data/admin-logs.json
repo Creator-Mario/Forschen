@@ -223,5 +223,13 @@
     "targetType": "video",
     "targetId": "video-1775889800906-hslxewrhn",
     "createdAt": "2026-04-11T13:10:33.152Z"
+  },
+  {
+    "id": "log-1775913038435-6d9h6ajie",
+    "adminId": "admin-001",
+    "action": "published",
+    "targetType": "video",
+    "targetId": "video-1775887204193-1eqb2vqjx",
+    "createdAt": "2026-04-11T13:10:38.435Z"
   }
 ]
