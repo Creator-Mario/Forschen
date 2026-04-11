@@ -43,18 +43,53 @@ jobs:
 
       - name: Pull production environment variables
         if: steps.check.outputs.configured == 'true'
-        run: vercel pull --yes --environment=production --token="${VERCEL_TOKEN}"
+        run: |
+          for attempt in 1 2 3; do
+            if vercel pull --yes --environment=production --token="${VERCEL_TOKEN}"; then
+              exit 0
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "vercel pull failed after ${attempt} attempts."
+              exit 1
+            fi
+            echo "vercel pull failed on attempt ${attempt}. Retrying..."
+            sleep $((attempt * 10))
+          done
 
       - name: Build for production
         if: steps.check.outputs.configured == 'true'
-        run: vercel build --prod --token="${VERCEL_TOKEN}"
+        run: |
+          for attempt in 1 2 3; do
+            if vercel build --prod --token="${VERCEL_TOKEN}"; then
+              exit 0
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "vercel build failed after ${attempt} attempts."
+              exit 1
+            fi
+            echo "vercel build failed on attempt ${attempt}. Retrying..."
+            sleep $((attempt * 10))
+          done
 
       - name: Deploy to production
         if: steps.check.outputs.configured == 'true'
         id: deploy
         run: |
-          url=$(vercel deploy --prebuilt --prod --token="${VERCEL_TOKEN}")
-          echo "url=$url" >> "$GITHUB_OUTPUT"
+          for attempt in 1 2 3; do
+            output=$(vercel deploy --prebuilt --prod --token="${VERCEL_TOKEN}" 2>&1) && status=0 || status=$?
+            echo "$output"
+            if [ "$status" -eq 0 ]; then
+              url=$(printf '%s\n' "$output" | tail -n 1)
+              echo "url=$url" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "vercel deploy failed after ${attempt} attempts."
+              exit "$status"
+            fi
+            echo "vercel deploy failed on attempt ${attempt}. Retrying..."
+            sleep $((attempt * 10))
+          done
 
 # Required repository secrets:
 #   VERCEL_TOKEN      – Vercel API token (https://vercel.com/account/tokens)

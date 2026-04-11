@@ -1,6 +1,6 @@
 'use client';
 
-import { getStatusColor, getStatusLabel, formatDate } from '@/lib/utils';
+import { getStatusColor, getStatusLabel, formatDate, isModerationQueueStatus } from '@/lib/utils';
 import { useState } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -42,6 +42,7 @@ export default function AdminModerationTable({
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
   const [selectedThemeIds, setSelectedThemeIds] = useState<Record<string, string>>({});
+  const visibleItems = items.filter(item => isModerationQueueStatus(String(item.status)));
 
   function getUserEmail(userId: string): string {
     if (!users) return '';
@@ -52,7 +53,7 @@ export default function AdminModerationTable({
     setLoadingId(id);
     setFeedback(null);
     try {
-      const item = items.find(entry => entry.id === id);
+      const item = visibleItems.find(entry => entry.id === id);
       const selectedThemeId = selectedThemeIds[id] || String(item?.wochenthemaId || '');
       if (status === 'published' && requireThemeForPublish && !selectedThemeId) {
         setFeedback({ type: 'error', msg: 'Bitte zuerst ein Wochenthema auswählen.' });
@@ -108,7 +109,7 @@ export default function AdminModerationTable({
         </div>
       )}
       <div className="space-y-4">
-        {items.map(item => {
+        {visibleItems.map(item => {
           const isExpanded = expandedIds.has(item.id);
           return (
             <div key={item.id} className="bg-white rounded-xl shadow-md p-5">
@@ -223,7 +224,7 @@ export default function AdminModerationTable({
             </div>
           );
         })}
-        {items.length === 0 && (
+        {visibleItems.length === 0 && (
           <div className="text-center py-8 text-gray-400">Keine Einträge gefunden.</div>
         )}
       </div>

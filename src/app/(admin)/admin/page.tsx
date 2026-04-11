@@ -4,7 +4,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import Link from 'next/link';
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { getStatusColor, getStatusLabel, formatDate } from '@/lib/utils';
+import { getStatusColor, getStatusLabel, formatDate, isModerationQueueStatus } from '@/lib/utils';
 
 const adminLinks = [
   { href: '/admin/vorstellungen', icon: '🧑‍🤝‍🧑', title: 'Vorstellungen prüfen', desc: 'Neue Mitglieder freischalten oder ablehnen' },
@@ -76,7 +76,7 @@ function AdminPageInner() {
     .filter(i => filter === 'all' || i.contentType === filter)
     .filter(i => statusFilter === 'all' || i.status === statusFilter);
 
-  const pendingCount = items.filter(i => i.status === 'created' || i.status === 'pending').length;
+  const pendingCount = items.filter(i => isModerationQueueStatus(String(i.status))).length;
 
   return (
     <ProtectedRoute requireAdmin>

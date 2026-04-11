@@ -4,6 +4,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import AdminModerationTable from '@/components/AdminModerationTable';
 import { useEffect, useState } from 'react';
 import type { Video, User, Wochenthema } from '@/types';
+import { isModerationQueueStatus } from '@/lib/utils';
 
 export default function AdminVideosPage() {
   const [items, setItems] = useState<Video[]>([]);
@@ -34,6 +35,8 @@ export default function AdminVideosPage() {
 
   useEffect(() => { load(); }, []);
 
+  const moderationItems = items.filter(item => isModerationQueueStatus(item.status));
+
   async function onAction(id: string, status: string, message?: string, wochenthemaId?: string) {
     const res = await fetch('/api/admin/moderate', {
       method: 'POST',
@@ -52,7 +55,7 @@ export default function AdminVideosPage() {
       <div className="max-w-4xl mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Videos moderieren</h1>
         <p className="text-gray-500 mb-8">
-          {items.filter(i => i.status === 'pending' || i.status === 'created').length} ausstehend
+          {moderationItems.length} ausstehend
         </p>
         {loadError && (
           <div className="mb-4 rounded-lg px-4 py-3 text-sm font-medium bg-red-50 text-red-800 border border-red-200">
@@ -60,7 +63,7 @@ export default function AdminVideosPage() {
           </div>
         )}
         <AdminModerationTable
-          items={items}
+          items={moderationItems}
           contentType="Video"
           users={users}
           titleField="title"

@@ -75,3 +75,13 @@ export function getStatusColor(status: string): string {
   };
   return colors[status] || 'bg-gray-100 text-gray-800';
 }
+
+export function isModerationQueueStatus(status: string): boolean {
+  return (
+    status === 'created' ||
+    status === 'pending' ||
+    status === 'review' ||
+    status === 'question_to_user' ||
+    status === 'postponed'
+  );
+}
