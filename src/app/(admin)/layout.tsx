@@ -23,18 +23,28 @@ const adminNav = [
   { href: '/admin/system', icon: '⚙️', label: 'System' },
 ];
 
+const PUBLIC_ADMIN_PATHS = ['/admin-login', '/admin-reset'];
+
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const isPublicPath = PUBLIC_ADMIN_PATHS.includes(pathname);
+
   useEffect(() => {
+    if (isPublicPath) return;
     if (status === 'loading') return;
     if (!session || session.user.role !== 'ADMIN') {
       router.replace('/admin-login');
     }
-  }, [session, status, router]);
+  }, [isPublicPath, pathname, session, status, router]);
+
+  // admin-login and admin-reset are publicly accessible — render without auth wrapper
+  if (isPublicPath) {
+    return <>{children}</>;
+  }
 
   if (status === 'loading') {
     return (
