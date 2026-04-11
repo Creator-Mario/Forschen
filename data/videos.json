@@ -20,5 +20,15 @@
     "status": "published",
     "createdAt": "2026-04-11T06:43:20.906Z",
     "updatedAt": "2026-04-11T09:02:12.537Z"
+  },
+  {
+    "id": "video-1775912810121-a9r8jp1fd",
+    "userId": "admin-001",
+    "authorName": "Administrator",
+    "title": "Das Matthäusevangelium (Bibelfilm)",
+    "description": "Das Matthäusevangelium präsentiert Jesus als den verheißenen Messias, der in fünf Hauptlehrreden das Reich Gottes verkündet und als „neuer Mose“ das Gesetz erfüllt . \nDie Erzählung reicht von Jesu Herkunft und der Bergpredigt bis zu seinem Tod und \nder Auferstehung, womit er die Brücke zwischen Altem und Neuem Testament schlägt.",
+    "url": "https://youtu.be/-yjVASjSc4w?si=YDV2SC20JXnDn7Sn",
+    "status": "published",
+    "createdAt": "2026-04-11T13:06:50.121Z"
   }
 ]
