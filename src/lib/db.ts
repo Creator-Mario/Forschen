@@ -3,7 +3,7 @@ import path from 'path';
 import { normalizeEmail } from '@/lib/utils';
 import type {
   User, Tageswort, Wochenthema, These, ForschungsBeitrag,
-  Gebet, Video, Aktion, SpendenRecord, AdminLog, ChatMessage
+  Gebet, Video, Aktion, SpendenRecord, AdminLog, ChatMessage, NutzerBuchempfehlung
 } from '@/types';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
@@ -120,13 +120,14 @@ export async function saveUser(user: User): Promise<void> {
 /** Hard-delete a user and every piece of content they created. */
 export async function deleteUserAccount(userId: string): Promise<void> {
   // Read all collections first, then filter, then write — avoids interleaved reads/writes.
-  const [users, thesen, forschung, gebete, videos, aktionen, messages] = await Promise.all([
+  const [users, thesen, forschung, gebete, videos, aktionen, buchempfehlungen, messages] = await Promise.all([
     Promise.resolve(getUsers()),
     Promise.resolve(getThesen()),
     Promise.resolve(getForschung()),
     Promise.resolve(getGebete()),
     Promise.resolve(getVideos()),
     Promise.resolve(getAktionen()),
+    Promise.resolve(getBuchempfehlungen()),
     Promise.resolve(getChatMessages()),
   ]);
 
@@ -137,6 +138,7 @@ export async function deleteUserAccount(userId: string): Promise<void> {
     writeJson('gebete.json', gebete.filter(g => g.userId !== userId)),
     writeJson('videos.json', videos.filter(v => v.userId !== userId)),
     writeJson('aktionen.json', aktionen.filter(a => a.userId !== userId)),
+    writeJson('buchempfehlungen.json', buchempfehlungen.filter(b => b.userId !== userId)),
     writeJson('messages.json', messages.filter(
       m => m.fromUserId !== userId && m.toUserId !== userId
     )),
@@ -286,12 +288,27 @@ export async function saveAktion(aktion: Aktion): Promise<void> {
   await writeJson('aktionen.json', list);
 }
 
+// Buchempfehlungen
+export function getBuchempfehlungen(): NutzerBuchempfehlung[] {
+  return readJson<NutzerBuchempfehlung>('buchempfehlungen.json');
+}
+export function getApprovedBuchempfehlungen(): NutzerBuchempfehlung[] {
+  return getBuchempfehlungen().filter(b => b.status === 'approved' || b.status === 'published');
+}
+export async function saveBuchempfehlung(entry: NutzerBuchempfehlung): Promise<void> {
+  const list = getBuchempfehlungen();
+  const idx = list.findIndex(b => b.id === entry.id);
+  if (idx >= 0) list[idx] = entry;
+  else list.push(entry);
+  await writeJson('buchempfehlungen.json', list);
+}
+
 /**
  * Hard-delete a single content item by type and id.
  * Returns true if the item was found and removed, false otherwise.
  */
 export async function deleteContentItem(
-  type: 'these' | 'forschung' | 'gebet' | 'video' | 'aktion',
+  type: 'these' | 'forschung' | 'gebet' | 'video' | 'aktion' | 'buchempfehlung',
   id: string,
 ): Promise<boolean> {
   switch (type) {
@@ -328,6 +345,13 @@ export async function deleteContentItem(
       const next = list.filter(a => a.id !== id);
       if (next.length === list.length) return false;
       await writeJson('aktionen.json', next);
+      return true;
+    }
+    case 'buchempfehlung': {
+      const list = getBuchempfehlungen();
+      const next = list.filter(b => b.id !== id);
+      if (next.length === list.length) return false;
+      await writeJson('buchempfehlungen.json', next);
       return true;
     }
     default:

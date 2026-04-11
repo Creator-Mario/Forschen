@@ -115,6 +115,20 @@ export interface BuchempfehlungsSammlung {
   recommendations: Buchempfehlung[];
 }
 
+export interface NutzerBuchempfehlung {
+  id: string;
+  userId: string;
+  recommenderName: string;
+  title: string;
+  author: string;
+  description: string;
+  themeReference: string;
+  status: ContentStatus;
+  createdAt: string;
+  updatedAt?: string;
+  adminMessage?: string;
+}
+
 export interface These {
   id: string;
   userId: string;
