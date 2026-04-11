@@ -34,33 +34,52 @@ async function writeJson<T>(filename: string, data: T[]): Promise<void> {
     const filePath = `data/${filename}`;
     const encoded = Buffer.from(JSON.stringify(data, null, 2) + '\n', 'utf-8').toString('base64');
 
-    try {
-      const { data: existing } = await octokit.repos.getContent({
-        owner: GITHUB_OWNER,
-        repo: GITHUB_REPO,
-        path: filePath,
-        ref: GITHUB_BRANCH,
-      });
-      const sha =
-        !Array.isArray(existing) && 'sha' in existing
-          ? (existing.sha as string)
-          : undefined;
+    // Retry up to 3 times to handle SHA conflicts from concurrent writes (Vercel serverless).
+    const MAX_RETRIES = 3;
+    let lastError: unknown;
 
-      await octokit.repos.createOrUpdateFileContents({
-        owner: GITHUB_OWNER,
-        repo: GITHUB_REPO,
-        path: filePath,
-        branch: GITHUB_BRANCH,
-        message: `data: update ${filename}`,
-        content: encoded,
-        sha,
-      });
-    } catch (error) {
-      console.error(`[db] GitHub write failed for ${filename}:`, error);
-      throw new Error(
-        `Datenpersistenz fehlgeschlagen: ${filename}. ${error instanceof Error ? error.message : String(error)}`
-      );
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        // Always re-fetch the current SHA on each attempt so we have the latest.
+        const { data: existing } = await octokit.repos.getContent({
+          owner: GITHUB_OWNER,
+          repo: GITHUB_REPO,
+          path: filePath,
+          ref: GITHUB_BRANCH,
+        });
+        const sha =
+          !Array.isArray(existing) && 'sha' in existing
+            ? (existing.sha as string)
+            : undefined;
+
+        await octokit.repos.createOrUpdateFileContents({
+          owner: GITHUB_OWNER,
+          repo: GITHUB_REPO,
+          path: filePath,
+          branch: GITHUB_BRANCH,
+          message: `data: update ${filename}`,
+          content: encoded,
+          sha,
+        });
+
+        return; // Success — exit the retry loop.
+      } catch (error) {
+        lastError = error;
+        const status = (error as { status?: number }).status;
+        // 422 = SHA conflict (another write raced us); wait briefly and retry.
+        if (status === 422 && attempt < MAX_RETRIES) {
+          await new Promise(res => setTimeout(res, 200 * attempt));
+          continue;
+        }
+        // For any other error, or after all retries exhausted, give up.
+        break;
+      }
     }
+
+    console.error(`[db] GitHub write failed for ${filename} after ${MAX_RETRIES} attempts:`, lastError);
+    throw new Error(
+      `Datenpersistenz fehlgeschlagen: ${filename}. ${lastError instanceof Error ? lastError.message : String(lastError)}`
+    );
   } else {
     // Development: write directly to local filesystem.
     const filePath = path.join(DATA_DIR, filename);
