@@ -182,6 +182,8 @@ describe('public form entry routes', () => {
     expect(screen.getByRole('heading', { name: /konto erstellen/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /datenschutzerklärung/i })).toHaveAttribute('href', '/datenschutz');
     expect(screen.getByRole('link', { name: /^anmelden$/i })).toHaveAttribute('href', '/login');
+    expect(screen.getByText(/geschützter Bereich/i)).toBeInTheDocument();
+    expect(screen.getByRole('checkbox')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /konto erstellen/i })).toBeInTheDocument();
   });
 

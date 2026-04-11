@@ -104,6 +104,14 @@ describe('RegistrierenPage', () => {
     render(React.createElement(RegistrierenPage));
     expect(screen.getByRole('button', { name: /Konto erstellen/i })).toBeInTheDocument();
   });
+
+  it('renders the registration explanations and weekly faith email option', async () => {
+    const { default: RegistrierenPage } = await import('@/app/(public)/registrieren/page');
+    render(React.createElement(RegistrierenPage));
+    expect(screen.getByText(/Wir geben deine Daten nicht an Dritte weiter/i)).toBeInTheDocument();
+    expect(screen.getByText(/Im Vorstellungsbereich können alle freigeschalteten Mitglieder sehen/i)).toBeInTheDocument();
+    expect(screen.getByRole('checkbox')).toBeInTheDocument();
+  });
 });
 
 // ─── Passwort-vergessen page ──────────────────────────────────────────────────

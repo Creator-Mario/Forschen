@@ -7,6 +7,7 @@ export default function RegistrierenPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [weeklyFaithEmailEnabled, setWeeklyFaithEmailEnabled] = useState(false);
   const [error, setError] = useState('');
   const [registered, setRegistered] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -20,7 +21,7 @@ export default function RegistrierenPage() {
       const res = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, weeklyFaithEmailEnabled }),
       });
 
       const data = await res.json();
@@ -67,6 +68,17 @@ export default function RegistrierenPage() {
         </div>
 
         <div className="bg-white rounded-xl shadow-md p-8">
+          <div className="mb-6 space-y-3 text-sm">
+            <div className="rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-blue-900">
+              Wir geben deine Daten nicht an Dritte weiter. Diese Webseite ist ein geschützter Bereich für Personen,
+              die durch den Admin bestätigt wurden und den Registrierungsprozess vollständig durchlaufen haben.
+            </div>
+            <div className="rounded-lg border border-amber-100 bg-amber-50 px-4 py-3 text-amber-900">
+              Bitte beachte: Im Vorstellungsbereich können alle freigeschalteten Mitglieder sehen, wer Teil der
+              Gemeinschaft ist.
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -116,6 +128,19 @@ export default function RegistrierenPage() {
                 placeholder="••••••••"
               />
             </div>
+
+            <label className="flex items-start gap-3 rounded-lg border border-gray-200 px-4 py-3 text-sm">
+              <input
+                type="checkbox"
+                checked={weeklyFaithEmailEnabled}
+                onChange={e => setWeeklyFaithEmailEnabled(e.target.checked)}
+                className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-700 focus:ring-blue-500"
+              />
+              <span className="text-gray-600">
+                Ich möchte einmal pro Woche eine E-Mail mit christlichen Inhalten erhalten – mit persönlicher Ansprache,
+                einem Glaubensthema, einer biblischen Geschichte, Erklärungen, Reflexionsfragen und einem Segenswunsch.
+              </span>
+            </label>
 
             {error && (
               <div className="bg-red-50 border border-red-100 text-red-700 text-sm rounded-lg px-3 py-2">

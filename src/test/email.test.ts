@@ -49,6 +49,7 @@ import {
   sendAdminApprovalEmail,
   sendVerificationEmail,
   sendPasswordResetEmail,
+  sendWeeklyFaithEmail,
 } from '@/lib/email';
 
 // ─── escHtml ─────────────────────────────────────────────────────────────────
@@ -194,5 +195,30 @@ describe('sendAdminApprovalEmail', () => {
     expect(callArgs.html).toContain('https://flussdeslebens.live/login');
     expect(callArgs.text).toContain('https://flussdeslebens.live/login');
     expect(callArgs.html).not.toContain('https://example.com/login');
+  });
+});
+
+describe('sendWeeklyFaithEmail', () => {
+  beforeEach(() => mockEmailSend.mockReset());
+
+  it('sends a personalized weekly faith email with topic, story and blessing', async () => {
+    mockEmailSend.mockResolvedValue({ data: { id: 'wf-1' }, error: null });
+    const result = await sendWeeklyFaithEmail('alice@example.com', 'Alice', {
+      id: '2026-W15',
+      week: '2026-W15',
+      title: 'Die Nachfolge',
+      introduction: 'Jesus ruft in die Nachfolge.',
+      bibleVerses: ['Markus 1,16-20'],
+      problemStatement: 'Was bedeutet Nachfolge heute?',
+      researchQuestions: ['Welchen Schritt des Vertrauens möchte ich gehen?'],
+      status: 'published',
+    });
+    expect(result).toBe(true);
+    const callArgs = mockEmailSend.mock.calls[0][0] as { html: string; text: string; subject: string };
+    expect(callArgs.subject).toContain('Die Nachfolge');
+    expect(callArgs.html).toContain('Hallo Alice');
+    expect(callArgs.html).toContain('Biblische Geschichte');
+    expect(callArgs.html).toContain('Segenswunsch');
+    expect(callArgs.text).toContain('Welchen Schritt des Vertrauens möchte ich gehen?');
   });
 });

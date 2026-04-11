@@ -2,10 +2,16 @@
 
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useSession, signOut } from 'next-auth/react';
-import { useState, FormEvent } from 'react';
+import { useEffect, useState, FormEvent } from 'react';
 
 export default function ProfilPage() {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [weeklyFaithEmailEnabled, setWeeklyFaithEmailEnabled] = useState(false);
+  const [accountError, setAccountError] = useState('');
+  const [accountSuccess, setAccountSuccess] = useState('');
+  const [accountLoading, setAccountLoading] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -17,6 +23,70 @@ export default function ProfilPage() {
   const [deletePassword, setDeletePassword] = useState('');
   const [deleteError, setDeleteError] = useState('');
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  useEffect(() => {
+    if (!session?.user) return;
+    setName(session.user.name ?? '');
+    setEmail(session.user.email ?? '');
+  }, [session]);
+
+  useEffect(() => {
+    if (!session?.user) return;
+
+    let cancelled = false;
+
+    async function loadAccountData() {
+      try {
+        const res = await fetch('/api/user/account');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (cancelled) return;
+        setName(data.name ?? '');
+        setEmail(data.email ?? '');
+        setWeeklyFaithEmailEnabled(data.weeklyFaithEmailEnabled === true);
+      } catch (err) {
+        console.error('Account loading failed:', err);
+      }
+    }
+
+    void loadAccountData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [session]);
+
+  async function handleAccountSave(e: FormEvent) {
+    e.preventDefault();
+    setAccountError('');
+    setAccountSuccess('');
+    setAccountLoading(true);
+
+    try {
+      const res = await fetch('/api/user/account', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, weeklyFaithEmailEnabled }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setAccountError(data.error || 'Private Daten konnten nicht gespeichert werden.');
+      } else {
+        setName(data.user.name);
+        setEmail(data.user.email);
+        setWeeklyFaithEmailEnabled(data.user.weeklyFaithEmailEnabled === true);
+        await update({ name: data.user.name, email: data.user.email });
+        setAccountSuccess('Deine privaten Daten wurden gespeichert.');
+      }
+    } catch (err) {
+      console.error('Account update failed:', err);
+      setAccountError('Netzwerkfehler. Bitte versuche es erneut.');
+    } finally {
+      setAccountLoading(false);
+    }
+  }
 
   async function handleDeleteAccount(e: FormEvent) {
     e.preventDefault();
@@ -90,21 +160,68 @@ export default function ProfilPage() {
           </div>
 
           <div className="border-t pt-6">
-            <h2 className="font-semibold text-gray-700 mb-4">Kontoinformationen</h2>
-            <div className="space-y-3 text-sm">
-              <div className="flex items-center justify-between py-2 border-b border-gray-50">
-                <span className="text-gray-500">Name</span>
-                <span className="font-medium">{session?.user.name}</span>
+            <h2 className="font-semibold text-gray-700 mb-4">Private Daten</h2>
+            <form onSubmit={handleAccountSave} className="space-y-4">
+              <div>
+                <label htmlFor="profileName" className="block text-sm font-medium text-gray-700 mb-1">
+                  Vollständiger Name
+                </label>
+                <input
+                  id="profileName"
+                  type="text"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  required
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
               </div>
-              <div className="flex items-center justify-between py-2 border-b border-gray-50">
-                <span className="text-gray-500">E-Mail</span>
-                <span className="font-medium">{session?.user.email}</span>
+              <div>
+                <label htmlFor="profileEmail" className="block text-sm font-medium text-gray-700 mb-1">
+                  E-Mail-Adresse
+                </label>
+                <input
+                  id="profileEmail"
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
               </div>
-              <div className="flex items-center justify-between py-2">
+              <label className="flex items-start gap-3 rounded-lg border border-gray-200 px-4 py-3 text-sm">
+                <input
+                  type="checkbox"
+                  checked={weeklyFaithEmailEnabled}
+                  onChange={e => setWeeklyFaithEmailEnabled(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-700 focus:ring-blue-500"
+                />
+                <span className="text-gray-600">
+                  Ich möchte wöchentlich eine persönliche E-Mail mit christlichem Inhalt, einer biblischen Geschichte,
+                  Erklärungen, Reflexionsfragen und einem Segenswunsch erhalten.
+                </span>
+              </label>
+              <div className="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-3 text-sm">
                 <span className="text-gray-500">Rolle</span>
                 <span className="font-medium">{session?.user.role === 'ADMIN' ? 'Administrator' : 'Nutzer'}</span>
               </div>
-            </div>
+              {accountError && (
+                <div className="bg-red-50 border border-red-100 text-red-700 text-sm rounded-lg px-3 py-2">
+                  {accountError}
+                </div>
+              )}
+              {accountSuccess && (
+                <div className="bg-green-50 border border-green-100 text-green-700 text-sm rounded-lg px-3 py-2">
+                  {accountSuccess}
+                </div>
+              )}
+              <button
+                type="submit"
+                disabled={accountLoading}
+                className="w-full bg-blue-800 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-60"
+              >
+                {accountLoading ? 'Wird gespeichert…' : 'Private Daten speichern'}
+              </button>
+            </form>
           </div>
         </div>
 
@@ -230,4 +347,3 @@ export default function ProfilPage() {
     </ProtectedRoute>
   );
 }
-
