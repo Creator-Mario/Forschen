@@ -300,6 +300,8 @@ describe('Navbar', () => {
     const { default: Navbar } = await import('@/components/Navbar');
     render(React.createElement(Navbar));
     expect(screen.getAllByText('Tageswort').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Psalmen').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Glauben heute').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Thesen').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Gebet').length).toBeGreaterThan(0);
   });

@@ -165,6 +165,30 @@ describe('db – getApprovedThesen', () => {
   });
 });
 
+describe('db – getBuchempfehlungen', () => {
+  beforeEach(() => {
+    vi.resetModules();
+    delete process.env.GITHUB_TOKEN;
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-04-11T12:00:00Z'));
+    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify([
+      { id: 'b1', createdAt: '2026-04-11T00:00:00Z', status: 'published' },
+      { id: 'b2', createdAt: '2025-12-01T00:00:00Z', status: 'published' },
+    ]));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
+
+  it('returns stored entries without deleting older archive items', async () => {
+    const { getBuchempfehlungen } = await import('@/lib/db');
+    expect(getBuchempfehlungen().map(item => item.id)).toEqual(['b1', 'b2']);
+  });
+});
+
 // ── getConversation / getConversationPartners ─────────────────────────────────
 
 describe('db – chat helpers', () => {

@@ -7,9 +7,16 @@ import BookRecommendationsCard from '@/components/BookRecommendationsCard';
 import UserBookRecommendationCard from '@/components/UserBookRecommendationCard';
 import { getApprovedBuchempfehlungen } from '@/lib/db';
 
+const COMMUNITY_ARCHIVE_DAYS = 90;
+
+function isWithinArchiveWindow(dateStr: string) {
+  return Date.now() - new Date(dateStr).getTime() <= COMMUNITY_ARCHIVE_DAYS * 86400000;
+}
+
 export default function BuchempfehlungenArchivPage() {
   const items = getBuchempfehlungenArchiv();
   const communityRecommendations = getApprovedBuchempfehlungen()
+    .filter(item => isWithinArchiveWindow(item.createdAt))
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   return (

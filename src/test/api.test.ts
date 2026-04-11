@@ -214,6 +214,52 @@ describe('POST /api/thesen', () => {
   });
 });
 
+describe('GET /api/buchempfehlungen', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('returns approved recommendations without authentication', async () => {
+    const approved = [{ id: 'b1', status: 'published', title: 'Nachfolge' }];
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
+    vi.doMock('@/lib/db', () => ({ getApprovedBuchempfehlungen: vi.fn().mockReturnValue(approved), getBuchempfehlungen: vi.fn().mockReturnValue(approved) }));
+    const { GET } = await import('@/app/api/buchempfehlungen/route');
+    const res = await GET(makeRequest('http://localhost/api/buchempfehlungen'));
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual(approved);
+  });
+});
+
+describe('POST /api/buchempfehlungen', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('returns 401 when unauthenticated', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
+    vi.doMock('@/lib/db', () => ({ saveBuchempfehlung: vi.fn() }));
+    const { POST } = await import('@/app/api/buchempfehlungen/route');
+    const res = await POST(makeJsonRequest('http://localhost/api/buchempfehlungen', { title: 'T', author: 'A', description: 'D', themeReference: 'Thema' }));
+    expect(res.status).toBe(401);
+  });
+
+  it('requires a theme reference', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', name: 'Alice', role: 'USER' } }) }));
+    vi.doMock('@/lib/db', () => ({ saveBuchempfehlung: vi.fn() }));
+    const { POST } = await import('@/app/api/buchempfehlungen/route');
+    const res = await POST(makeJsonRequest('http://localhost/api/buchempfehlungen', { title: 'T', author: 'A', description: 'D', themeReference: '' }));
+    expect(res.status).toBe(400);
+  });
+
+  it('saves a recommendation and returns success when authenticated', async () => {
+    const saveBuchempfehlung = vi.fn().mockResolvedValue(undefined);
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', name: 'Alice', role: 'USER' } }) }));
+    vi.doMock('@/lib/db', () => ({ saveBuchempfehlung }));
+    const { POST } = await import('@/app/api/buchempfehlungen/route');
+    const res = await POST(makeJsonRequest('http://localhost/api/buchempfehlungen', { title: 'Nachfolge', author: 'Bonhoeffer', description: 'Sehr hilfreich', themeReference: 'Psalmen' }));
+    expect(res.status).toBe(200);
+    const saved = saveBuchempfehlung.mock.calls[0][0];
+    expect(saved.themeReference).toBe('Psalmen');
+    expect(saved.status).toBe('created');
+  });
+});
+
 // ─── /api/tageswort ──────────────────────────────────────────────────────────
 
 describe('GET /api/tageswort', () => {

@@ -11,7 +11,6 @@ const DATA_DIR = path.join(process.cwd(), 'data');
 const GITHUB_OWNER = process.env.GITHUB_OWNER || 'Creator-Mario';
 const GITHUB_REPO = process.env.GITHUB_REPO || 'Forschen';
 const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main';
-const CONTRIBUTION_RETENTION_DAYS = 90;
 
 // In-memory overlay so writes are immediately visible within the current process instance.
 const memoryCache = new Map<string, unknown[]>();
@@ -22,13 +21,6 @@ function readJson<T>(filename: string): T[] {
   if (!fs.existsSync(filePath)) return [];
   const content = fs.readFileSync(filePath, 'utf-8');
   return JSON.parse(content) as T[];
-}
-
-function isWithinRetentionWindow(dateStr?: string): boolean {
-  if (!dateStr) return true;
-  const createdAt = new Date(dateStr).getTime();
-  const ageInDays = (Date.now() - createdAt) / 86400000;
-  return ageInDays <= CONTRIBUTION_RETENTION_DAYS;
 }
 
 async function writeJson<T>(filename: string, data: T[]): Promise<void> {
@@ -298,13 +290,13 @@ export async function saveAktion(aktion: Aktion): Promise<void> {
 
 // Buchempfehlungen
 export function getBuchempfehlungen(): NutzerBuchempfehlung[] {
-  return readJson<NutzerBuchempfehlung>('buchempfehlungen.json').filter(entry => isWithinRetentionWindow(entry.createdAt));
+  return readJson<NutzerBuchempfehlung>('buchempfehlungen.json');
 }
 export function getApprovedBuchempfehlungen(): NutzerBuchempfehlung[] {
   return getBuchempfehlungen().filter(b => b.status === 'approved' || b.status === 'published');
 }
 export async function saveBuchempfehlung(entry: NutzerBuchempfehlung): Promise<void> {
-  const list = getBuchempfehlungen().filter(item => isWithinRetentionWindow(item.createdAt));
+  const list = getBuchempfehlungen();
   const idx = list.findIndex(b => b.id === entry.id);
   if (idx >= 0) list[idx] = entry;
   else list.push(entry);

@@ -1,53 +1,36 @@
 [
   {
-    "id": "2024-W01",
-    "week": "2024-W01",
-    "title": "Die Taufe Jesu – Identität, Sendung und der Heilige Geist",
-    "introduction": "Die Taufe Jesu am Jordan ist ein theologischer Schlüsselmoment, der uns tief in das Wesen der Heilsgeschichte führt. Hier begegnen wir einem Jesus, der sich trotz seiner Sündlosigkeit in Solidarität mit der sündigen Menschheit taufen lässt – ein Akt, der seine Sendung offenbart und den Beginn seines öffentlichen Wirkens markiert.",
-    "bibleVerses": ["Matthäus 3,13-17", "Markus 1,9-11", "Lukas 3,21-22", "Johannes 1,29-34"],
-    "problemStatement": "Warum ließ sich der sündlose Jesus taufen? Diese Frage berührt zentrale Themen: Identität, Solidarität und Sendung. Die Taufe Jesu ist kein bloßes Ritual, sondern ein theologisches Ereignis mit tiefgreifenden Konsequenzen für unser Verständnis von Christus, dem Geist Gottes und der christlichen Gemeinschaft.",
+    "id": "2026-W14",
+    "week": "2026-W14",
+    "title": "Wahrheit und Barmherzigkeit im öffentlichen Gespräch",
+    "introduction": "Viele Gespräche unserer Zeit sind von Schnelligkeit, Polarisierung und Misstrauen geprägt. Dieses Wochenthema lädt dazu ein, Wahrhaftigkeit und Barmherzigkeit nicht gegeneinander auszuspielen, sondern als geistliche Doppelbewegung der Nachfolge zu verstehen.",
+    "bibleVerses": ["Epheser 4,15", "Jakobus 1,19-20", "Sprüche 15,1", "Johannes 1,14"],
+    "problemStatement": "Wie können Christen in einem zugespitzten öffentlichen Klima klar, wahrhaftig und gleichzeitig barmherzig sprechen? Die Herausforderung liegt darin, weder Wahrheit zu verwässern noch Menschen im Namen der Wahrheit zu verletzen.",
     "researchQuestions": [
-      "Was bedeutet Jesu Taufe für unser Verständnis von Gerechtigkeit (Mt 3,15)?",
-      "Welche Rolle spielt der Heilige Geist bei Jesu Taufe und bei unserer?",
-      "Wie verbindet die Taufe Altes und Neues Testament?",
-      "Was lehrt die Taufe Jesu über christliche Solidarität mit Sündern?",
-      "Welche Konsequenzen hat dieses Ereignis für das Verständnis der Trinität?"
+      "Wie verbindet das Neue Testament Wahrheit und Liebe?",
+      "Welche Rolle spielen Hören und Langsamkeit im christlichen Zeugnis?",
+      "Wie verändert die Nachfolge Jesu unseren Tonfall in Konflikten?",
+      "Wann wird Klarheit zur Härte und Barmherzigkeit zur Beliebigkeit?",
+      "Wie kann Gemeinde ein Ort heilsamer Gesprächskultur werden?"
     ],
     "status": "published",
-    "createdAt": "2024-01-01T06:00:00.000Z"
+    "createdAt": "2026-04-04T06:00:00.000Z"
   },
   {
-    "id": "2024-W02",
-    "week": "2024-W02",
-    "title": "Die Versuchung Jesu – Grenzen, Vertrauen und die Kraft des Wortes",
-    "introduction": "Unmittelbar nach der Taufe führt der Geist Jesus in die Wüste. Vierzig Tage Einsamkeit, Hunger und Versuchung. In dieser extremen Situation zeigt sich, wer Jesus wirklich ist – nicht durch übernatürliche Kraft, sondern durch Vertrauen in den Vater und die Autorität der Heiligen Schrift.",
-    "bibleVerses": ["Matthäus 4,1-11", "Lukas 4,1-13", "Markus 1,12-13", "Hebräer 4,15"],
-    "problemStatement": "Die drei Versuchungen repräsentieren fundamentale menschliche Versuchungsmuster: der Drang nach Selbstversorgung außerhalb Gottes Willen, der Hunger nach Sicherheit durch Spektakel und die Verlockung weltlicher Macht. Jesu Antworten offenbaren den Weg der Nachfolge.",
+    "id": "2026-W15",
+    "week": "2026-W15",
+    "title": "Treue in kleinen Schritten der Nachfolge",
+    "introduction": "Nicht jeder geistliche Durchbruch geschieht spektakulär. Oft wächst Nachfolge in verborgenen Entscheidungen, stiller Beständigkeit und treuer Wiederholung dessen, was Gott bereits gesagt hat. Dieses Thema rückt die Bedeutung des kleinen, aber gehorsamen Schrittes in den Mittelpunkt.",
+    "bibleVerses": ["Lukas 16,10", "Galater 6,9", "Johannes 15,4-5", "Hebräer 12,1-2"],
+    "problemStatement": "Wie bewahrt man geistliche Ausdauer, wenn Wachstum unscheinbar wirkt und schnelle Ergebnisse ausbleiben? Die Frage berührt Gewohnheiten, Hoffnung, Geduld und die verborgene Formung des Charakters.",
     "researchQuestions": [
-      "Was symbolisiert die Zahl '40' im biblischen Kontext?",
-      "Welche drei Grundversuchungen identifiziert der Text und wie begegnen sie uns heute?",
-      "Warum antwortet Jesus nur mit Schriftzitaten aus dem Deuteronomium?",
-      "Was lernen wir über den Zusammenhang von Identität und Versuchung?",
-      "Wie kann dieser Text als Ressource in persönlichen Krisenzeiten dienen?"
+      "Warum betont die Schrift Treue im Kleinen so stark?",
+      "Wie hängen Ausdauer, Hoffnung und geistliche Frucht zusammen?",
+      "Welche unscheinbaren Gewohnheiten prägen Nachfolge langfristig?",
+      "Wie gehen Christen mit Entmutigung und scheinbar ausbleibendem Fortschritt um?",
+      "Was bedeutet es, den Lauf mit Blick auf Jesus zu vollenden?"
     ],
     "status": "published",
-    "createdAt": "2024-01-08T06:00:00.000Z"
-  },
-  {
-    "id": "2024-W03",
-    "week": "2024-W03",
-    "title": "Die Bergpredigt – Das Reich Gottes und die Umkehrung der Werte",
-    "introduction": "Die Bergpredigt (Matthäus 5-7) ist das umfassendste Lehrgedicht Jesu und eine der revolutionärsten ethischen Reden der Geschichte. Sie beschreibt nicht eine Ethik für Übermensch, sondern zeigt das Reich Gottes als alternative Realität, die bereits jetzt in die Welt einbricht.",
-    "bibleVerses": ["Matthäus 5,1-12", "Matthäus 5,13-16", "Matthäus 6,9-13", "Matthäus 7,24-27"],
-    "problemStatement": "Die Seligpreisungen erscheinen paradox: Selig sind die Armen, die Trauernden, die Sanftmütigen. Diese Umkehrung weltlicher Werte stellt die Frage: Ist die Bergpredigt utopische Radikalethik oder praktische Orientierung für das tägliche Leben?",
-    "researchQuestions": [
-      "Was bedeutet 'Arm im Geist' (Mt 5,3) – Demut oder materielle Armut?",
-      "Wie versteht sich Jesus als Erfüller des Gesetzes (Mt 5,17)?",
-      "Was unterscheidet das Beten Jesu von religiöser Praxis seiner Zeit?",
-      "Welche politische Dimension trägt die Bergpredigt?",
-      "Wie ist die Bergpredigt in der Kirchengeschichte unterschiedlich interpretiert worden?"
-    ],
-    "status": "published",
-    "createdAt": "2024-01-15T06:00:00.000Z"
+    "createdAt": "2026-04-11T06:00:00.000Z"
   }
 ]

@@ -5,7 +5,7 @@ import type {
   BuchempfehlungsSammlung,
 } from '@/types';
 
-const GENERATED_ARCHIVE_DAYS = 90;
+const GENERATED_ARCHIVE_DAYS = 8;
 
 const psalmSeeds = [
   {
@@ -327,7 +327,13 @@ function buildPsalmThema(date: string): PsalmThema {
   return {
     id: `psalm-${date}`,
     date,
-    ...seed,
+    psalmReference: seed.psalmReference,
+    title: seed.title,
+    excerpt: seed.excerpt,
+    summary: seed.summary,
+    significance: seed.significance,
+    practice: seed.practice,
+    questions: [...seed.questions],
   };
 }
 

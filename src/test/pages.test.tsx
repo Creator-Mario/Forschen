@@ -276,6 +276,84 @@ describe('WochenthemaArchivPage', () => {
   });
 });
 
+describe('PsalmenPage', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('renders the Psalmen heading', async () => {
+    vi.doMock('@/lib/generated-content', () => ({
+      getTodayPsalmThema: vi.fn().mockReturnValue({
+        id: 'ps-1',
+        date: '2026-04-11',
+        psalmReference: 'Psalm 1,1-3',
+        title: 'Verwurzelt leben',
+        excerpt: 'Auszug',
+        summary: 'Zusammenfassung',
+        significance: 'Bedeutung',
+        practice: 'Praxis',
+        questions: ['Frage 1'],
+      }),
+    }));
+    const { default: PsalmenPage } = await import('@/app/(public)/psalmen/page');
+    render(React.createElement(PsalmenPage));
+    expect(screen.getByRole('heading', { name: /Psalmen des Tages/i })).toBeInTheDocument();
+    expect(screen.getByText('Frage 1')).toBeInTheDocument();
+  });
+});
+
+describe('GlaubenHeutePage', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('renders the Glauben heute heading', async () => {
+    vi.doMock('@/lib/generated-content', () => ({
+      getTodayGlaubenHeuteThema: vi.fn().mockReturnValue({
+        id: 'gh-1',
+        date: '2026-04-11',
+        title: 'Digitale Überforderung',
+        headline: 'Zwischen Dauerrauschen',
+        worldFocus: 'Weltfokus',
+        faithPerspective: 'Glaubensperspektive',
+        discipleshipImpulse: 'Impuls',
+        bibleVerses: ['Psalm 46,11'],
+        questions: ['Frage A'],
+      }),
+    }));
+    const { default: GlaubenHeutePage } = await import('@/app/(public)/glauben-heute/page');
+    render(React.createElement(GlaubenHeutePage));
+    expect(screen.getByRole('heading', { name: /Glauben heute/i })).toBeInTheDocument();
+    expect(screen.getByText('Frage A')).toBeInTheDocument();
+  });
+});
+
+describe('BuchempfehlungenPage', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('renders generated and community book recommendations', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-04-11T12:00:00Z'));
+    vi.doMock('@/lib/generated-content', () => ({
+      getTodayBuchempfehlungen: vi.fn().mockReturnValue({
+        id: 'bk-1',
+        date: '2026-04-11',
+        topicTitle: 'Digitale Überforderung',
+        introduction: 'Intro',
+        recommendations: [{ title: 'Nachfolge', author: 'Bonhoeffer', description: 'Desc', relevance: 'Fit' }],
+      }),
+    }));
+    vi.doMock('@/lib/db', () => ({
+      getApprovedBuchempfehlungen: vi.fn().mockReturnValue([
+        { id: 'u1', userId: 'u1', recommenderName: 'Alice', title: 'Gemeinschaftsbuch', author: 'Autor', description: 'Beschreibung', themeReference: 'Psalmen', status: 'published', createdAt: '2026-04-11T00:00:00Z' },
+        { id: 'u2', userId: 'u2', recommenderName: 'Bob', title: 'Altes Buch', author: 'Autor', description: 'Alt', themeReference: 'Archiv', status: 'published', createdAt: '2025-12-01T00:00:00Z' },
+      ]),
+    }));
+    const { default: BuchempfehlungenPage } = await import('@/app/(public)/buchempfehlungen/page');
+    render(React.createElement(BuchempfehlungenPage));
+    expect(screen.getByRole('heading', { name: /Buchempfehlungen des Tages/i })).toBeInTheDocument();
+    expect(screen.getByText('Gemeinschaftsbuch')).toBeInTheDocument();
+    expect(screen.queryByText('Altes Buch')).toBeNull();
+    vi.useRealTimers();
+  });
+});
+
 // ─── Forschung page ──────────────────────────────────────────────────────────
 
 describe('ForschungPage', () => {
@@ -413,6 +491,37 @@ describe('HomePage', () => {
       getTodayTageswort: vi.fn().mockReturnValue(undefined),
       getCurrentWochenthema: vi.fn().mockReturnValue(undefined),
       getApprovedThesen: vi.fn().mockReturnValue([]),
+    }));
+    vi.doMock('@/lib/generated-content', () => ({
+      getTodayPsalmThema: vi.fn().mockReturnValue({
+        id: 'ps-1',
+        date: '2026-04-11',
+        psalmReference: 'Psalm 1,1-3',
+        title: 'Verwurzelt leben',
+        excerpt: 'Auszug',
+        summary: 'Zusammenfassung',
+        significance: 'Bedeutung',
+        practice: 'Praxis',
+        questions: [],
+      }),
+      getTodayGlaubenHeuteThema: vi.fn().mockReturnValue({
+        id: 'gh-1',
+        date: '2026-04-11',
+        title: 'Digitale Überforderung',
+        headline: 'Zwischen Dauerrauschen',
+        worldFocus: 'Weltfokus',
+        faithPerspective: 'Perspektive',
+        discipleshipImpulse: 'Impuls',
+        bibleVerses: [],
+        questions: [],
+      }),
+      getTodayBuchempfehlungen: vi.fn().mockReturnValue({
+        id: 'bk-1',
+        date: '2026-04-11',
+        topicTitle: 'Digitale Überforderung',
+        introduction: 'Intro',
+        recommendations: [],
+      }),
     }));
     vi.doMock('@/components/BibleVerseCard', () => ({ default: () => null }));
     vi.doMock('@/components/WeeklyThemeCard', () => ({ default: () => null }));

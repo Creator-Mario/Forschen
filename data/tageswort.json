@@ -1,46 +1,61 @@
 [
   {
-    "id": "2024-01-01",
-    "date": "2024-01-01",
-    "verse": "Johannes 1,1",
-    "text": "Im Anfang war das Wort, und das Wort war bei Gott, und das Wort war Gott.",
-    "context": "Der Prolog des Johannesevangeliums führt uns in das Mysterium des göttlichen Logos ein. Johannes greift bewusst den Beginn der Genesis auf ('Im Anfang') und offenbart die ewige Präexistenz Christi. Der Begriff 'Logos' verbindet griechisches Philosophiedenken mit jüdischer Weisheitstradition und zeigt Gottes Selbstoffenbarung in Person.",
+    "id": "2026-04-04",
+    "date": "2026-04-04",
+    "verse": "Micha 6,8",
+    "text": "Es ist dir gesagt, Mensch, was gut ist und was der HERR von dir fordert: nichts als Gottes Wort halten und Liebe üben und demütig sein vor deinem Gott.",
+    "context": "Micha richtet diese Worte in eine Zeit religiöser Ermüdung und sozialer Ungerechtigkeit hinein. Der Vers bündelt Gottes Willen nicht in religiösem Aufwand, sondern in gelebter Gerechtigkeit, liebevoller Treue und demütiger Gemeinschaft mit Gott.",
     "questions": [
-      "Was bedeutet 'Logos' in seinem griechischen und jüdischen Kontext?",
-      "Wie verändert diese Aussage unser Verständnis von Schöpfung?",
-      "Welche Brücke schlägt Johannes zwischen Altem und Neuem Testament?",
-      "Was sagt dieser Vers über die Beziehung zwischen Vater und Sohn?",
-      "Welche praktische Konsequenz hat 'das Wort war Gott' für meinen Alltag?"
+      "Wie verbindet Micha Gottesdienst und gelebte Gerechtigkeit?",
+      "Was bedeutet Demut vor Gott im Alltag einer lauten Gegenwart?",
+      "Welche Formen von Frömmigkeit kritisiert dieser Text indirekt?",
+      "Wie fordert uns dieser Vers zu sozialer Verantwortung heraus?",
+      "Welche kleinen Schritte von Gerechtigkeit und Liebe sind heute konkret möglich?"
     ],
     "published": true
   },
   {
-    "id": "2024-01-02",
-    "date": "2024-01-02",
-    "verse": "Psalm 23,1",
-    "text": "Der Herr ist mein Hirte, mir wird nichts mangeln.",
-    "context": "Psalm 23 gehört zu den bekanntesten und trost­reichsten Texten der gesamten Bibel. David, selbst ein Hirte, beschreibt Gottes Fürsorge aus eigener Erfahrung. Das Bild des Hirten steht für vollständige Verantwortungsübernahme, Schutz und Versorgung.",
+    "id": "2026-04-05",
+    "date": "2026-04-05",
+    "verse": "Psalm 121,1-2",
+    "text": "Ich hebe meine Augen auf zu den Bergen: Woher wird mir Hilfe kommen? Meine Hilfe kommt vom HERRN, der Himmel und Erde gemacht hat.",
+    "context": "Der Wallfahrtspsalm stellt der sichtbaren Bedrohung die unsichtbare, aber wirkliche Hilfe Gottes entgegen. Hoffnung wächst hier nicht aus Selbstvertrauen, sondern aus dem Blick auf den Schöpfer.",
     "questions": [
-      "Was bedeutete das Bild des Hirten in der antiken Welt?",
-      "Wie erleben wir Gottes Führung konkret in unserem Leben?",
-      "Was bedeutet 'mir wird nichts mangeln' angesichts realer Not?",
-      "Wie greift Jesus selbst das Hirtenbild auf?",
-      "Welche Verheißungen enthält dieser Vers für unsere tägliche Praxis?"
+      "Warum beginnt der Psalm mit einer Frage und nicht sofort mit Gewissheit?",
+      "Was sagt der Hinweis auf den Schöpfer über Gottes Hilfe aus?",
+      "Wie verändert der Blickwechsel unseren Umgang mit Sorge?",
+      "Welche Rolle spielen Erinnerung und Bekenntnis in Krisenzeiten?",
+      "Wie kann dieser Psalm heute gebetet werden?"
     ],
     "published": true
   },
   {
-    "id": "2024-01-03",
-    "date": "2024-01-03",
-    "verse": "Römer 8,28",
-    "text": "Wir wissen aber, dass denen, die Gott lieben, alle Dinge zum Besten mitwirken, denen, die nach seinem Ratschluss berufen sind.",
-    "context": "Paulus schreibt aus einer Gemeinschaft, die Verfolgung kennt. Seine Aussage ist kein billiger Trost, sondern theologisch tief verwurzelt: Gottes Providenz umfasst alles – auch Leid und Scheitern – und wandelt es zum Heil derer, die in Liebe mit ihm verbunden sind.",
+    "id": "2026-04-06",
+    "date": "2026-04-06",
+    "verse": "Johannes 15,5",
+    "text": "Ich bin der Weinstock, ihr seid die Reben. Wer in mir bleibt und ich in ihm, der bringt viel Frucht; denn ohne mich könnt ihr nichts tun.",
+    "context": "Jesus spricht in den Abschiedsreden über bleibende Gemeinschaft mit ihm. Fruchtbarkeit wird nicht als hektische Aktivität beschrieben, sondern als Folge lebendiger Verbindung mit Christus.",
     "questions": [
-      "Wie unterscheidet sich dieser Vers von einem naiven 'alles wird gut'?",
-      "Was bedeutet 'berufen nach Gottes Ratschluss' für unser Selbstverständnis?",
-      "Wie verhalten sich menschliche Freiheit und göttliche Providenz?",
-      "Gibt es Grenzen dieser Verheißung?",
-      "Wie kann dieser Vers Menschen in tiefer Not ehrlich begegnen?"
+      "Was meint Jesus mit dem Bleiben in ihm?",
+      "Wie unterscheidet sich geistliche Frucht von äußerem Erfolg?",
+      "Welche Warnung steckt im Satz 'ohne mich könnt ihr nichts tun'?",
+      "Wie wachsen Abhängigkeit und Freiheit in diesem Bild zusammen?",
+      "Was bedeutet dieser Vers für Gemeindearbeit und persönliche Nachfolge?"
+    ],
+    "published": true
+  },
+  {
+    "id": "2026-04-07",
+    "date": "2026-04-07",
+    "verse": "Jakobus 1,5",
+    "text": "Wenn es aber jemandem unter euch an Weisheit mangelt, so bitte er Gott, der allen gern gibt und niemanden schilt; so wird sie ihm gegeben werden.",
+    "context": "Jakobus schreibt an bedrängte Christen, die Orientierung brauchen. Weisheit ist hier nicht Spezialwissen, sondern die Fähigkeit, Gottes Willen in konkreten Lebenslagen treu umzusetzen.",
+    "questions": [
+      "Wie unterscheidet sich Weisheit von bloßem Wissen?",
+      "Warum verbindet Jakobus Weisheit mit Gebet?",
+      "Welche Haltung Gottes wird in diesem Vers sichtbar?",
+      "Wie hilft Weisheit in Prüfungen und Spannungen?",
+      "Wo brauche ich heute Gottes Weisheit besonders?"
     ],
     "published": true
   },
@@ -64,7 +79,7 @@
     "date": "2026-04-09",
     "verse": "Psalm 46,2",
     "text": "Gott ist unsere Zuflucht und Stärke, eine Hilfe in den großen Nöten, die uns getroffen haben.",
-    "context": "Psalm 46 entstand möglicherweise im Kontext einer konkreten Bedrohung Jerusalems. Das Bild der 'Zuflucht' (hebr. machse) bezeichnet nicht Weltflucht, sondern einen Ort der Sicherheit inmitten des Sturms. Gott ist nicht jenseits der Not, sondern mitten in ihr als Fels.",
+    "context": "Psalm 46 entstand möglicherweise im Kontext einer konkreten Bedrohung Jerusalems. Das Bild der 'Zuflucht' bezeichnet nicht Weltflucht, sondern einen Ort der Sicherheit inmitten des Sturms. Gott ist nicht jenseits der Not, sondern mitten in ihr als Fels.",
     "questions": [
       "Was ist der historische Kontext von Psalm 46,2?",
       "Welche theologischen Kernaussagen enthält dieser Vers?",
