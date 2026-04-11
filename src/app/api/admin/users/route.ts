@@ -42,7 +42,8 @@ export async function PATCH(req: NextRequest) {
     const userEmail = user.email;
     const userName = user.name;
 
-    // Notify the user while the account record and email address are still available.
+    // Best-effort notification: we try to notify the user while the account record and
+    // email address are still available, but deletion must proceed even if mailing fails.
     try {
       await sendEmail({
         to: userEmail,

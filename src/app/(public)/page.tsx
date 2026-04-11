@@ -45,8 +45,7 @@ export default function HomePage() {
             <Logo size={100} />
           </div>
           <h1
-            className="text-4xl md:text-6xl font-bold mb-3 leading-tight"
-            style={{ fontFamily: 'Georgia, serif', textShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
+            className="text-4xl md:text-6xl font-bold mb-3 leading-tight font-serif drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
           >
             <span style={{ color: '#fbbf24' }}>Der Fluss</span>
             <span className="text-white"> des Lebens</span>
@@ -72,7 +71,7 @@ export default function HomePage() {
         </div>
 
         {/* Wave transition to body */}
-        <div className="absolute bottom-0 left-0 w-full overflow-hidden" style={{ lineHeight: 0 }}>
+        <div className="absolute bottom-0 left-0 w-full overflow-hidden [line-height:0]">
           <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full h-16 md:h-20 block">
             <path d="M0,40 C180,80 360,0 540,40 C720,80 900,0 1080,40 C1260,80 1380,20 1440,40 L1440,80 L0,80 Z" fill="#e8f4fd" />
           </svg>
@@ -108,7 +107,7 @@ export default function HomePage() {
               className="w-36 h-36 rounded-xl border border-blue-100 bg-blue-50 p-2"
             />
             <div className="flex-1 text-center md:text-left">
-              <h2 className="text-xl font-bold text-blue-800 mb-2" style={{ fontFamily: 'Georgia, serif' }}>
+              <h2 className="text-xl font-bold text-blue-800 mb-2 font-serif">
                 Freunde zur Webseite einladen
               </h2>
               <p className="text-gray-600 text-sm leading-relaxed mb-4">
@@ -130,8 +129,7 @@ export default function HomePage() {
 
         <div className="mb-6">
           <h2
-            className="text-2xl md:text-3xl font-bold text-center mb-2"
-            style={{ color: '#0d47a1', fontFamily: 'Georgia, serif' }}
+            className="text-2xl md:text-3xl font-bold text-center mb-2 text-blue-800 font-serif"
           >
             Impulse für heute
           </h2>
@@ -167,7 +165,7 @@ export default function HomePage() {
         style={{ background: 'linear-gradient(180deg, #e3f2fd 0%, #f0f7ff 100%)' }}
       >
         {/* Top wave */}
-        <div className="absolute top-0 left-0 w-full overflow-hidden rotate-180" style={{ lineHeight: 0 }}>
+        <div className="absolute top-0 left-0 w-full overflow-hidden rotate-180 [line-height:0]">
           <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full h-10 block">
             <path d="M0,30 C360,60 720,0 1080,30 C1260,45 1380,15 1440,30 L1440,60 L0,60 Z" fill="#e3f2fd" />
           </svg>
@@ -175,8 +173,7 @@ export default function HomePage() {
 
         <div className="max-w-6xl mx-auto">
           <h2
-            className="text-2xl md:text-3xl font-bold text-center mb-2 heading-gold-line"
-            style={{ color: '#0d47a1', fontFamily: 'Georgia, serif' }}
+            className="text-2xl md:text-3xl font-bold text-center mb-2 heading-gold-line text-blue-800 font-serif"
           >
             Bereiche der Plattform
           </h2>
@@ -202,8 +199,7 @@ export default function HomePage() {
               >
                 <div className="text-3xl mb-3">{item.icon}</div>
                 <h3
-                  className="font-semibold mb-2 group-hover:text-blue-700 transition-colors"
-                  style={{ color: '#0d47a1' }}
+                  className="font-semibold mb-2 text-blue-800 group-hover:text-blue-700 transition-colors"
                 >
                   {item.title}
                 </h3>
@@ -225,8 +221,7 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-4 py-12">
           <div className="flex items-center justify-between mb-6">
             <h2
-              className="text-2xl font-bold"
-              style={{ color: '#0d47a1', fontFamily: 'Georgia, serif' }}
+              className="text-2xl font-bold text-blue-800 font-serif"
             >
               Aktuelle Thesen
             </h2>
@@ -260,14 +255,14 @@ export default function HomePage() {
           }}
         >
           {/* Decorative waves */}
-          <div className="absolute bottom-0 left-0 w-full opacity-20" style={{ lineHeight: 0 }}>
+          <div className="absolute bottom-0 left-0 w-full opacity-20 [line-height:0]">
             <svg viewBox="0 0 1440 80" preserveAspectRatio="none" className="w-full h-12">
               <path d="M0,40 C240,80 480,0 720,40 C960,80 1200,0 1440,40 L1440,80 L0,80 Z" fill="#64b5f6" />
             </svg>
           </div>
           <div className="relative z-10">
             <Logo size={64} />
-            <h2 className="text-2xl md:text-3xl font-bold mt-4 mb-3" style={{ fontFamily: 'Georgia, serif' }}>
+            <h2 className="text-2xl md:text-3xl font-bold mt-4 mb-3 font-serif">
               Mitmachen und forschen
             </h2>
             <p className="text-blue-100 mb-7 max-w-xl mx-auto">

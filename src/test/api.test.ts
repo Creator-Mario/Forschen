@@ -225,6 +225,9 @@ describe('POST /api/thesen', () => {
     const saved = saveThese.mock.calls[0][0];
     expect(saved.title).toBe('My Thesis');
     expect(saved.userId).toBe('u1');
+    expect(saved.authorName).toBe('Alice');
+    expect(saved.content).toBe('Body');
+    expect(saved.bibleReference).toBe('John 1:1');
     expect(saved.status).toBe('created');
   });
 });
