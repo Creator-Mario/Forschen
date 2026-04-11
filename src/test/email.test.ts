@@ -189,6 +189,7 @@ describe('sendAdminApprovalEmail', () => {
     mockEmailSend.mockResolvedValue({ data: { id: 'ap-1' }, error: null });
     const result = await sendAdminApprovalEmail('alice@example.com', 'Alice', true, 'Willkommen!');
     expect(result).toBe(true);
+    expect(mockEmailSend).toHaveBeenCalledOnce();
     const callArgs = mockEmailSend.mock.calls[0][0] as { html: string; text: string };
     expect(callArgs.html).toContain('https://flussdeslebens.live/login');
     expect(callArgs.text).toContain('https://flussdeslebens.live/login');

@@ -74,8 +74,8 @@ export async function POST(req: NextRequest) {
                 </tr>
               </table>
               <a href="${adminReviewUrl}"
-                  style="display:inline-block;margin:16px 0;background:#1e40af;color:#fff;
-                         text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:600;">
+                 style="display:inline-block;margin:16px 0;background:#1e40af;color:#fff;
+                        text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:600;">
                 Vorstellungen prüfen
               </a>
               <p style="color:#9ca3af;font-size:12px;margin-top:24px;">${siteName} · ${siteDomain}</p>
