@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import BibleVerseCard from '@/components/BibleVerseCard';
 import WeeklyThemeCard from '@/components/WeeklyThemeCard';
 import PsalmThemeCard from '@/components/PsalmThemeCard';
@@ -99,9 +100,11 @@ export default function HomePage() {
 
         <div className="mb-14">
           <div className="bg-white rounded-2xl shadow-md border border-blue-100 p-6 md:p-7 flex flex-col md:flex-row items-center gap-6">
-            <img
+            <Image
               src="/api/share-qr"
               alt="QR-Code zum Teilen der Website"
+              width={144}
+              height={144}
               className="w-36 h-36 rounded-xl border border-blue-100 bg-blue-50 p-2"
             />
             <div className="flex-1 text-center md:text-left">

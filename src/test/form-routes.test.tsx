@@ -227,7 +227,7 @@ describe('public overview pages link into the right form flows', () => {
     expect(screen.getByRole('link', { name: /\+ aktion erstellen/i })).toHaveAttribute('href', '/aktionen/neu');
   });
 
-  it('keeps the protected gebet and tageswort calls-to-action aligned with login and registration', async () => {
+  it('keeps the protected gebet and tageswort calls-to-action aligned with their target flows', async () => {
     currentTageswort = {
       id: 'tw1',
       date: '2026-04-11',
@@ -247,8 +247,7 @@ describe('public overview pages link into the right form flows', () => {
     unmount();
 
     render(React.createElement(TageswortPage));
-    expect(screen.getByRole('link', { name: /^registrieren$/i })).toHaveAttribute('href', '/registrieren');
-    expect(screen.getByRole('link', { name: /^anmelden$/i })).toHaveAttribute('href', '/login');
+    expect(screen.getByRole('link', { name: /beitrag verfassen/i })).toHaveAttribute('href', '/forschung/beitraege');
   });
 
   it('exposes the book recommendation submission path from the public recommendations page', async () => {

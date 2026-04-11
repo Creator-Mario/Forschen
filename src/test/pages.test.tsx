@@ -545,7 +545,7 @@ describe('HomePage', () => {
     const { default: HomePage } = await import('@/app/(public)/page');
     render(React.createElement(HomePage));
     expect(screen.getByRole('heading', { name: /Der Fluss/i, level: 1 })).toBeInTheDocument();
-    expect(screen.getByAltText(/qr-code zum teilen der website/i)).toHaveAttribute('src', '/api/share-qr');
+    expect(screen.getByAltText(/qr-code zum teilen der website/i).getAttribute('src')).toContain('share-qr');
     expect(screen.getByText('Der Fluss des Lebens')).toBeInTheDocument();
     expect(screen.getByText('https://flussdeslebens.live')).toBeInTheDocument();
   });
