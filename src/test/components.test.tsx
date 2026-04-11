@@ -71,7 +71,7 @@ describe('BookRecommendationsCard', () => {
     fireEvent.click(screen.getByRole('button', { name: /Weitere Empfehlungen anzeigen/i }));
 
     expect(screen.getByText('Zweites Buch')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Weniger anzeigen/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Weniger Empfehlungen anzeigen/i })).toBeInTheDocument();
   });
 
   it('shows the relevance text in the full card view', async () => {
