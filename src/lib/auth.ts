@@ -2,6 +2,7 @@ import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import { getUserByEmail } from './db';
+import { normalizeEmail } from './utils';
 
 declare module 'next-auth' {
   interface Session {
@@ -35,7 +36,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
-        const user = getUserByEmail(credentials.email);
+        const user = getUserByEmail(normalizeEmail(credentials.email));
         if (!user) return null;
         // Admin may always log in regardless of status field
         if (user.role !== 'ADMIN' && (user.status !== 'active' || !user.active)) return null;

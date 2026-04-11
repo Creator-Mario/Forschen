@@ -74,6 +74,51 @@ describe('POST /api/register', () => {
     expect(savedUser.role).toBe('USER');
     expect(savedUser.active).toBe(false);
   });
+
+  it('normalizes the email address before saving and sending', async () => {
+    const saveUser = vi.fn().mockResolvedValue(undefined);
+    const sendVerificationEmail = vi.fn().mockResolvedValue(true);
+    vi.doMock('@/lib/db', () => ({ getUserByEmail: vi.fn().mockReturnValue(undefined), saveUser }));
+    vi.doMock('@/lib/email', () => ({ sendVerificationEmail }));
+    const { POST } = await import('@/app/api/register/route');
+    const req = makeJsonRequest('http://localhost/api/register', { name: ' Alice ', email: ' Alice@Example.COM ', password: 'securePass1' });
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+    expect(saveUser.mock.calls[0][0].email).toBe('alice@example.com');
+    expect(saveUser.mock.calls[0][0].name).toBe('Alice');
+    expect(sendVerificationEmail).toHaveBeenCalledWith('alice@example.com', expect.any(String));
+  });
+
+  it('returns 503 when the initial verification email cannot be sent', async () => {
+    const saveUser = vi.fn().mockResolvedValue(undefined);
+    vi.doMock('@/lib/db', () => ({ getUserByEmail: vi.fn().mockReturnValue(undefined), saveUser }));
+    vi.doMock('@/lib/email', () => ({ sendVerificationEmail: vi.fn().mockResolvedValue(false) }));
+    const { POST } = await import('@/app/api/register/route');
+    const req = makeJsonRequest('http://localhost/api/register', { name: 'Alice', email: 'new@example.com', password: 'securePass1' });
+    const res = await POST(req);
+    expect(res.status).toBe(503);
+  });
+
+  it('restores the previous token when resending the verification email fails', async () => {
+    const saveUser = vi.fn().mockResolvedValue(undefined);
+    vi.doMock('@/lib/db', () => ({
+      getUserByEmail: vi.fn().mockReturnValue({
+        id: 'u1',
+        email: 'alice@example.com',
+        name: 'Alice',
+        status: 'pending_email',
+        emailToken: 'old-token',
+      }),
+      saveUser,
+    }));
+    vi.doMock('@/lib/email', () => ({ sendVerificationEmail: vi.fn().mockResolvedValue(false) }));
+    const { POST } = await import('@/app/api/register/route');
+    const req = makeJsonRequest('http://localhost/api/register', { name: 'Alice', email: 'alice@example.com', password: 'securePass1' });
+    const res = await POST(req);
+    expect(res.status).toBe(503);
+    expect(saveUser).toHaveBeenCalledTimes(2);
+    expect(saveUser.mock.calls[1][0].emailToken).toBe('old-token');
+  });
 });
 
 // ─── /api/gebet ──────────────────────────────────────────────────────────────
@@ -309,6 +354,42 @@ describe('GET /api/auth/verify-email', () => {
     const updatedUser = saveUser.mock.calls[0][0];
     expect(updatedUser.emailToken).toBeUndefined();
     expect(['email_verified', 'awaiting_admin_review']).toContain(updatedUser.status);
+  });
+});
+
+// ─── /api/auth/forgot-password ────────────────────────────────────────────────
+
+describe('POST /api/auth/forgot-password', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('returns 400 when email is missing', async () => {
+    vi.doMock('@/lib/db', () => ({ getUserByEmail: vi.fn(), saveUser: vi.fn() }));
+    vi.doMock('@/lib/email', () => ({ sendPasswordResetEmail: vi.fn().mockResolvedValue(true) }));
+    const { POST } = await import('@/app/api/auth/forgot-password/route');
+    const res = await POST(makeJsonRequest('http://localhost/api/auth/forgot-password', { email: '   ' }));
+    expect(res.status).toBe(400);
+  });
+
+  it('returns 503 and restores the previous reset token when email sending fails', async () => {
+    const saveUser = vi.fn().mockResolvedValue(undefined);
+    vi.doMock('@/lib/db', () => ({
+      getUserByEmail: vi.fn().mockReturnValue({
+        id: 'u1',
+        email: 'alice@example.com',
+        name: 'Alice',
+        status: 'active',
+        passwordResetToken: 'old-token',
+        passwordResetExpiry: '2026-04-11T05:00:00.000Z',
+      }),
+      saveUser,
+    }));
+    vi.doMock('@/lib/email', () => ({ sendPasswordResetEmail: vi.fn().mockResolvedValue(false) }));
+    const { POST } = await import('@/app/api/auth/forgot-password/route');
+    const res = await POST(makeJsonRequest('http://localhost/api/auth/forgot-password', { email: ' Alice@Example.com ' }));
+    expect(res.status).toBe(503);
+    expect(saveUser).toHaveBeenCalledTimes(2);
+    expect(saveUser.mock.calls[1][0].passwordResetToken).toBe('old-token');
+    expect(saveUser.mock.calls[1][0].passwordResetExpiry).toBe('2026-04-11T05:00:00.000Z');
   });
 });
 

@@ -3,9 +3,14 @@ import { siteName as SITE_NAME, siteDomain as SITE_DOMAIN } from '@/lib/config';
 
 /** Returns the canonical base URL (no trailing slash). Throws at call time if unset. */
 function getBaseUrl(): string {
-  const url = process.env.NEXTAUTH_URL;
-  if (!url) throw new Error('[email] NEXTAUTH_URL is not set in environment variables');
-  return url.replace(/\/$/, '');
+  const configuredUrl = process.env.NEXTAUTH_URL?.trim();
+  if (configuredUrl) {
+    const withProtocol = /^https?:\/\//i.test(configuredUrl)
+      ? configuredUrl
+      : `https://${configuredUrl}`;
+    return withProtocol.replace(/\/$/, '');
+  }
+  return `https://${SITE_DOMAIN}`;
 }
 
 let _resend: Resend | null = null;
