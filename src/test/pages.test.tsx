@@ -6,7 +6,7 @@
  * render in jsdom without a real server.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 
 // ─── Global mocks (applied before any test) ──────────────────────────────────
@@ -352,6 +352,52 @@ describe('MitgliederVorstellungenPage', () => {
     render(React.createElement(MitgliederPage));
     expect(screen.getByRole('heading', { name: /Mitglieder/i })).toBeInTheDocument();
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/mitglieder'));
+  });
+});
+
+describe('AdminNutzerPage', () => {
+  beforeEach(() => vi.resetModules());
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('updates the visible user row immediately after a lock action and reloads the list', async () => {
+    const initialUsers = [
+      { id: 'u1', name: 'Alice', email: 'alice@example.com', role: 'USER', active: true, status: 'active', createdAt: '2024-01-01T00:00:00Z' },
+    ];
+    const refreshedUsers = [
+      { id: 'u1', name: 'Alice', email: 'alice@example.com', role: 'USER', active: false, status: 'deleted', createdAt: '2024-01-01T00:00:00Z' },
+    ];
+    let getCount = 0;
+    const fetchMock = vi.fn().mockImplementation((_input: string, init?: RequestInit) => {
+      if (init?.method === 'PATCH') {
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({ success: true }) });
+      }
+
+      getCount += 1;
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(getCount === 1 ? initialUsers : refreshedUsers),
+      });
+    });
+
+    vi.stubGlobal('fetch', fetchMock);
+    vi.stubGlobal('confirm', vi.fn().mockReturnValue(true));
+    vi.doMock('next-auth/react', () => ({
+      useSession: () => ({ data: { user: { id: 'admin-1', role: 'ADMIN', name: 'Admin' } }, status: 'authenticated' }),
+      signIn: vi.fn(),
+      signOut: vi.fn(),
+      SessionProvider: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
+    }));
+
+    const { default: AdminNutzerPage } = await import('@/app/(admin)/admin/nutzer/page');
+    render(React.createElement(AdminNutzerPage));
+
+    await screen.findByText('Alice');
+    const lockButton = await screen.findByRole('button', { name: 'Sperren' });
+    fireEvent.click(lockButton);
+
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Reaktivieren' })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('Inaktiv')).toBeInTheDocument());
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
   });
 });
 

@@ -11,13 +11,30 @@ export default function AdminNutzerPage() {
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
 
-  function load() {
-    fetch('/api/admin/users').then(r => r.json()).then(data => {
-      if (Array.isArray(data)) setUsers(data);
+  async function load() {
+    const res = await fetch('/api/admin/users', { cache: 'no-store' });
+    const data = await res.json();
+    if (Array.isArray(data)) setUsers(data);
+  }
+
+  function updateVisibleUsers(id: string, action: 'lock' | 'unlock' | 'hard_delete') {
+    setUsers(current => {
+      if (action === 'hard_delete') {
+        return current.filter(user => user.id !== id);
+      }
+
+      return current.map(user => {
+        if (user.id !== id) return user;
+        return {
+          ...user,
+          active: action === 'unlock',
+          status: action === 'unlock' ? 'active' : 'deleted',
+        };
+      });
     });
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { void load(); }, []);
 
   async function handleAction(id: string, action: 'lock' | 'unlock' | 'hard_delete') {
     const confirmMsg =
@@ -38,7 +55,9 @@ export default function AdminNutzerPage() {
           unlock: 'Nutzer reaktiviert.',
           hard_delete: 'Nutzer endgültig gelöscht.',
         };
+        updateVisibleUsers(id, action);
         setFeedback({ type: 'success', msg: labels[action] ?? 'Aktion ausgeführt.' });
+        await load();
       } else {
         const d = await res.json().catch(() => ({}));
         setFeedback({ type: 'error', msg: d.error ?? `Aktion fehlgeschlagen (${res.status}).` });
@@ -47,7 +66,6 @@ export default function AdminNutzerPage() {
       setFeedback({ type: 'error', msg: 'Netzwerkfehler. Bitte erneut versuchen.' });
     } finally {
       setLoading(false);
-      load();
     }
   }
 
