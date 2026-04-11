@@ -398,6 +398,8 @@ describe('AdminNutzerPage', () => {
     await waitFor(() => expect(screen.getByRole('button', { name: 'Reaktivieren' })).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('Inaktiv')).toBeInTheDocument());
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
+    expect(fetchMock).toHaveBeenNthCalledWith(1, '/api/admin/users', { cache: 'no-store' });
+    expect(fetchMock).toHaveBeenNthCalledWith(3, '/api/admin/users', { cache: 'no-store' });
   });
 });
 

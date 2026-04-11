@@ -12,9 +12,13 @@ export default function AdminNutzerPage() {
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
 
   async function load() {
-    const res = await fetch('/api/admin/users', { cache: 'no-store' });
-    const data = await res.json();
-    if (Array.isArray(data)) setUsers(data);
+    try {
+      const res = await fetch('/api/admin/users', { cache: 'no-store' });
+      const data = await res.json();
+      if (Array.isArray(data)) setUsers(data);
+    } catch {
+      setFeedback(current => current ?? { type: 'error', msg: 'Nutzerliste konnte nicht geladen werden.' });
+    }
   }
 
   function updateVisibleUsers(id: string, action: 'lock' | 'unlock' | 'hard_delete') {
