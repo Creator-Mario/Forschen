@@ -358,10 +358,12 @@ describe('admin form routes and their entry links', () => {
     const { default: AdminTageswortPage } = await import('@/app/(admin)/admin/tageswort/page');
     const { default: AdminWochenthemaPage } = await import('@/app/(admin)/admin/wochenthema/page');
 
-    const { unmount } = render(React.createElement(AdminTageswortPage));
+    const { container, unmount } = render(React.createElement(AdminTageswortPage));
     await user.click(screen.getByRole('button', { name: /\+ neu erstellen/i }));
     expect(screen.getByRole('heading', { name: /neues tageswort/i })).toBeInTheDocument();
-    expect(screen.getByDisplayValue(/\d{4}-\d{2}-\d{2}/)).toBeInTheDocument();
+    const dateInput = container.querySelector('input[type="date"]');
+    expect(dateInput).not.toBeNull();
+    expect(dateInput).toHaveValue(new Date().toISOString().split('T')[0]);
     expect(screen.getByRole('button', { name: /^erstellen$/i })).toBeInTheDocument();
     unmount();
 
