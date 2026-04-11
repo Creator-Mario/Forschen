@@ -124,6 +124,7 @@ export interface Video {
   description: string;
   url: string;
   thumbnail?: string;
+  wochenthemaId?: string;
   status: ContentStatus;
   createdAt: string;
   updatedAt?: string;

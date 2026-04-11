@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserById, saveUser } from '@/lib/db';
 import { sendEmail, sendRegistrationPendingEmail, escHtml } from '@/lib/email';
-import { operatorEmail, siteDomain, siteName } from '@/lib/config';
+import { operatorEmail, canonicalSiteUrl, siteDomain, siteName } from '@/lib/config';
 
 const MIN_LENGTH = 300;
 
@@ -51,7 +51,6 @@ export async function POST(req: NextRequest) {
 
     // Notify admin that a new user is awaiting review.
     if (operatorEmail) {
-      const baseUrl = process.env.NEXTAUTH_URL ?? `https://${siteDomain}`;
       try {
         await sendEmail({
           to: operatorEmail,
@@ -72,7 +71,7 @@ export async function POST(req: NextRequest) {
                   <td style="padding:6px 8px;">${escHtml(user.email)}</td>
                 </tr>
               </table>
-              <a href="${baseUrl}/admin"
+              <a href="${canonicalSiteUrl}/admin"
                  style="display:inline-block;margin:16px 0;background:#1e40af;color:#fff;
                         text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:600;">
                 Zum Admin-Bereich
@@ -80,7 +79,7 @@ export async function POST(req: NextRequest) {
               <p style="color:#9ca3af;font-size:12px;margin-top:24px;">${siteName} · ${siteDomain}</p>
             </div>
           `,
-          text: `Neue Vorstellung zur Prüfung\n\nName: ${user.name}\nE-Mail: ${user.email}\n\nBitte melde dich im Admin-Bereich: ${baseUrl}/admin`,
+          text: `Neue Vorstellung zur Prüfung\n\nName: ${user.name}\nE-Mail: ${user.email}\n\nBitte melde dich im Admin-Bereich: ${canonicalSiteUrl}/admin`,
         });
       } catch (err) {
         console.error('[intro] Admin notification email could not be sent:', err);

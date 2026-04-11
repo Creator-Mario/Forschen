@@ -6,7 +6,7 @@
  * render in jsdom without a real server.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 
 // ─── Global mocks (applied before any test) ──────────────────────────────────
@@ -267,7 +267,8 @@ describe('MitgliederVorstellungenPage', () => {
 
   it('renders the page heading', async () => {
     // Mock fetch so the useEffect doesn't fail with invalid URL in jsdom
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ json: () => Promise.resolve([]), ok: true }));
+    const fetchMock = vi.fn().mockResolvedValue({ json: () => Promise.resolve([]), ok: true });
+    vi.stubGlobal('fetch', fetchMock);
     vi.doMock('next-auth/react', () => ({
       useSession: () => ({ data: { user: { id: 'u1', role: 'USER', name: 'Alice' } }, status: 'authenticated' }),
       signOut: vi.fn(),
@@ -275,6 +276,7 @@ describe('MitgliederVorstellungenPage', () => {
     const { default: MitgliederPage } = await import('@/app/(public)/mitglieder/vorstellungen/page');
     render(React.createElement(MitgliederPage));
     expect(screen.getByRole('heading', { name: /Mitglieder/i })).toBeInTheDocument();
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/mitglieder'));
   });
 });
 

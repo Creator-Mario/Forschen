@@ -94,7 +94,7 @@ export default function AdminSystemPage() {
             <h2 className="font-semibold text-amber-800 mb-2">Erforderliche Umgebungsvariablen (Vercel)</h2>
             <ul className="mt-2 text-sm text-gray-700 space-y-1">
               <li><code className="bg-white px-1 rounded">NEXTAUTH_SECRET</code> – ein langer zufälliger String</li>
-              <li><code className="bg-white px-1 rounded">NEXTAUTH_URL</code> – deine Vercel-URL</li>
+              <li><code className="bg-white px-1 rounded">NEXTAUTH_URL</code> – echte Live-URL der Webseite</li>
               <li><code className="bg-white px-1 rounded">GITHUB_TOKEN</code> – Personal Access Token (repo-Zugriff) für Datenpersistenz</li>
               <li><code className="bg-white px-1 rounded">GITHUB_OWNER</code> – Creator-Mario</li>
               <li><code className="bg-white px-1 rounded">GITHUB_REPO</code> – Forschen</li>
@@ -102,7 +102,8 @@ export default function AdminSystemPage() {
               <li><code className="bg-white px-1 rounded">RESEND_API_KEY</code> – API-Key von{' '}
                 <a href="https://resend.com/api-keys" className="underline text-blue-700" target="_blank" rel="noopener noreferrer">resend.com</a>
               </li>
-              <li><code className="bg-white px-1 rounded">EMAIL_FROM</code> – Absenderadresse mit verifizierter Resend-Domain (z.B. noreply@flussdeslebens.live)</li>
+              <li><code className="bg-white px-1 rounded">EMAIL_FROM</code> – echte Absenderadresse mit verifizierter Resend-Domain (z.B. kontakt@flussdeslebens.live, nicht no-reply)</li>
+              <li><code className="bg-white px-1 rounded">EMAIL_LINK_BASE_URL</code> – optionale feste Basis-URL für Mail-Links, falls nötig (sonst wird automatisch die Live-Domain verwendet)</li>
               <li><code className="bg-white px-1 rounded">OPERATOR_EMAIL</code> – Kontaktadresse des Betreibers für Admin-Benachrichtigungen</li>
             </ul>
           </div>

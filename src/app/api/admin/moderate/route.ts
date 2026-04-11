@@ -35,7 +35,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { type, id, status, moderatorNote, adminMessage } = await req.json();
+  const { type, id, status, moderatorNote, adminMessage, wochenthemaId } = await req.json();
+
+  console.info('[moderate] POST', { type, id, status, wochenthemaId: wochenthemaId ?? null });
 
   // Hard delete: physically remove the item from the database.
   if (status === 'hard_delete') {
@@ -100,7 +102,11 @@ export async function POST(req: NextRequest) {
         const item = list.find(v => v.id === id);
         if (!item) return NextResponse.json({ error: 'Not found' }, { status: 404 });
         affectedUserId = item.userId;
-        await saveVideo({ ...item, status, adminMessage, updatedAt: new Date().toISOString() });
+        const videoUpdate: typeof item = { ...item, status, adminMessage, updatedAt: new Date().toISOString() };
+        if (wochenthemaId && typeof wochenthemaId === 'string') {
+          videoUpdate.wochenthemaId = wochenthemaId;
+        }
+        await saveVideo(videoUpdate);
         break;
       }
       case 'aktion': {

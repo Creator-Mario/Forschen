@@ -1,11 +1,38 @@
 import { Resend } from 'resend';
-import { siteName as SITE_NAME, siteDomain as SITE_DOMAIN } from '@/lib/config';
+import {
+  siteName as SITE_NAME,
+  siteDomain as SITE_DOMAIN,
+  canonicalSiteUrl as CANONICAL_SITE_URL,
+  emailFromAddress as FROM_EMAIL,
+} from '@/lib/config';
 
-/** Returns the canonical base URL (no trailing slash). Throws at call time if unset. */
+/**
+ * Returns true when the string looks like a deliverable e-mail address.
+ * We deliberately keep this lightweight – full RFC 5322 parsing is not
+ * needed here; we only want to catch obviously broken values (empty string,
+ * the legacy soft-delete placeholder `deleted-xxx@deleted`, pure local
+ * parts without a domain, etc.) before they reach Resend and create a
+ * validation_error that would otherwise be hard to trace.
+ */
+function isDeliverableEmail(address: string): boolean {
+  if (!address || typeof address !== 'string') return false;
+  const trimmed = address.trim();
+  if (!trimmed) return false;
+  // Must have exactly one @ separating a non-empty local part and a domain
+  const atIdx = trimmed.lastIndexOf('@');
+  if (atIdx < 1) return false;
+  const domain = trimmed.slice(atIdx + 1);
+  // Domain must look like a normal public hostname such as:
+  //   example.com
+  //   mail.example.co.uk
+  // We intentionally reject bare hostnames like `localhost` or `user@nodot`.
+  if (!/^[^.]+\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})*$/.test(domain)) return false;
+  return true;
+}
+
+/** Returns the canonical live URL used inside outbound e-mails. */
 function getBaseUrl(): string {
-  const url = process.env.NEXTAUTH_URL;
-  if (!url) throw new Error('[email] NEXTAUTH_URL is not set in environment variables');
-  return url.replace(/\/$/, '');
+  return CANONICAL_SITE_URL;
 }
 
 let _resend: Resend | null = null;
@@ -18,8 +45,6 @@ function getResend(): Resend {
   }
   return _resend;
 }
-const FROM_EMAIL = process.env.EMAIL_FROM ?? `noreply@${SITE_DOMAIN}`;
-
 /** Escapes HTML special characters to prevent injection in email templates. */
 export function escHtml(str: string): string {
   return str
@@ -28,6 +53,10 @@ export function escHtml(str: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+}
+
+function escapeEmailDisplayName(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 }
 
 /**
@@ -44,9 +73,20 @@ export async function sendEmail({
   html: string;
   text?: string;
 }): Promise<boolean> {
+  // Guard: reject obviously undeliverable addresses before hitting Resend.
+  // This prevents validation_error entries in the Resend dashboard caused by
+  // legacy soft-deleted accounts or empty/undefined values.
+  if (!isDeliverableEmail(to)) {
+    console.error('[email] Skipping send – invalid or undeliverable address:', JSON.stringify({ to, subject }));
+    return false;
+  }
+
   try {
+    // RFC 5322: display names containing spaces must be double-quoted.
+    const fromHeader = `"${escapeEmailDisplayName(SITE_NAME)}" <${FROM_EMAIL}>`;
+
     const { data, error } = await getResend().emails.send({
-      from: `${SITE_NAME} <${FROM_EMAIL}>`,
+      from: fromHeader,
       to,
       subject,
       html,
@@ -54,14 +94,29 @@ export async function sendEmail({
     });
 
     if (error) {
-      console.error('[email] Resend error:', error);
+      const resendErr = error as { name?: string; message?: string; statusCode?: number };
+      console.error('[email] Resend error:', JSON.stringify({
+        name: resendErr.name,
+        message: resendErr.message,
+        statusCode: resendErr.statusCode,
+        subject,
+        to,
+        from: fromHeader,
+      }));
       return false;
     }
 
     console.info('[email] Sent:', subject, '→', to, '| id:', data?.id);
     return true;
   } catch (err) {
-    console.error('[email] Failed to send:', subject, '→', to, err);
+    const caught = err as { name?: string; message?: string; statusCode?: number };
+    console.error('[email] Failed to send:', JSON.stringify({
+      name: caught.name,
+      message: caught.message,
+      statusCode: caught.statusCode,
+      subject,
+      to,
+    }));
     return false;
   }
 }

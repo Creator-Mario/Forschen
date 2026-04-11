@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { normalizeEmail } from '@/lib/utils';
 import type {
   User, Tageswort, Wochenthema, These, ForschungsBeitrag,
   Gebet, Video, Aktion, SpendenRecord, AdminLog, ChatMessage
@@ -95,7 +96,8 @@ export function getUserById(id: string): User | undefined {
   return getUsers().find(u => u.id === id);
 }
 export function getUserByEmail(email: string): User | undefined {
-  return getUsers().find(u => u.email === email);
+  const normalizedEmail = normalizeEmail(email);
+  return getUsers().find(u => normalizeEmail(u.email) === normalizedEmail);
 }
 export function getUserByEmailToken(token: string): User | undefined {
   return getUsers().find(u => u.emailToken === token);
@@ -388,4 +390,3 @@ export async function deleteConversation(userId1: string, userId2: string): Prom
   );
   await writeJson('messages.json', messages);
 }
-

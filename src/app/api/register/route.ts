@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { getUserByEmail, saveUser } from '@/lib/db';
-import { generateId } from '@/lib/utils';
+import { generateId, normalizeEmail } from '@/lib/utils';
 import { sendVerificationEmail } from '@/lib/email';
 import crypto from 'crypto';
 
 export async function POST(req: NextRequest) {
   try {
     const { name, email, password } = await req.json();
+    const normalizedEmail = typeof email === 'string' ? normalizeEmail(email) : '';
+    const normalizedName = typeof name === 'string' ? name.trim() : '';
 
-    if (!name || !email || !password) {
+    if (!normalizedName || !normalizedEmail || !password) {
       return NextResponse.json({ error: 'Alle Felder sind erforderlich.' }, { status: 400 });
     }
 
@@ -18,12 +20,13 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if user exists
-    const existing = getUserByEmail(email);
+    const existing = getUserByEmail(normalizedEmail);
     if (existing) {
       // If the user registered but never confirmed their email, resend the verification.
       // For any other status (already verified, active, etc.) silently return success
       // to avoid leaking whether an account exists.
       if (existing.status === 'pending_email') {
+        const previousToken = existing.emailToken;
         const newEmailToken = crypto.randomBytes(32).toString('hex');
         try {
           await saveUser({ ...existing, emailToken: newEmailToken });
@@ -31,12 +34,22 @@ export async function POST(req: NextRequest) {
           console.error('[register] resend saveUser failed:', err);
           return NextResponse.json({ error: err instanceof Error ? err.message : 'Registrierung fehlgeschlagen.' }, { status: 500 });
         }
-        const emailSent = await sendVerificationEmail(email, newEmailToken);
-        if (emailSent) {
-          console.info('[register] Verification email resent to pending user.');
-        } else {
+        const emailSent = await sendVerificationEmail(normalizedEmail, newEmailToken);
+        if (!emailSent) {
+          if (previousToken) {
+            try {
+              await saveUser({ ...existing, emailToken: previousToken });
+            } catch (restoreErr) {
+              console.error('[register] failed to restore previous email token:', restoreErr);
+            }
+          }
           console.error('[register] Could not resend verification email to pending user.');
+          return NextResponse.json(
+            { error: 'Bestätigungs-E-Mail konnte nicht versendet werden. Bitte versuche es erneut.' },
+            { status: 503 },
+          );
         }
+        console.info('[register] Verification email resent to pending user.');
       }
       return NextResponse.json({ success: true });
     }
@@ -47,9 +60,9 @@ export async function POST(req: NextRequest) {
     try {
       await saveUser({
         id: `user-${generateId()}`,
-        email,
+        email: normalizedEmail,
         password: hashed,
-        name,
+        name: normalizedName,
         role: 'USER',
         status: 'pending_email',
         createdAt: new Date().toISOString(),
@@ -61,12 +74,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: err instanceof Error ? err.message : 'Registrierung fehlgeschlagen.' }, { status: 500 });
     }
 
-    const emailSent = await sendVerificationEmail(email, emailToken);
+    const emailSent = await sendVerificationEmail(normalizedEmail, emailToken);
 
     if (emailSent) {
       console.info('[register] Verification email sent successfully.');
     } else {
       console.error('[register] Verification email could not be sent.');
+      return NextResponse.json(
+        { error: 'Bestätigungs-E-Mail konnte nicht versendet werden. Bitte versuche es erneut.' },
+        { status: 503 },
+      );
     }
 
     // Never expose the token in the response – email is the only delivery channel.

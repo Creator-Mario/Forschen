@@ -264,3 +264,149 @@ describe('db – getCurrentWochenthema', () => {
     expect(getCurrentWochenthema()).toBeUndefined();
   });
 });
+
+// ── deleteContentItem ─────────────────────────────────────────────────────────
+
+describe('db – deleteContentItem', () => {
+  beforeEach(() => {
+    vi.resetModules();
+    delete process.env.GITHUB_TOKEN;
+    vi.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
+  });
+  afterEach(() => vi.restoreAllMocks());
+
+  it('removes a these by id and returns true', async () => {
+    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify([{ id: 'th1', userId: 'u1' }, { id: 'th2', userId: 'u2' }]));
+    const { deleteContentItem } = await import('@/lib/db');
+    const result = await deleteContentItem('these', 'th1');
+    expect(result).toBe(true);
+    const written = JSON.parse((fs.writeFileSync as ReturnType<typeof vi.fn>).mock.calls[0][1] as string);
+    expect(written).toHaveLength(1);
+    expect(written[0].id).toBe('th2');
+  });
+
+  it('returns false when the item does not exist', async () => {
+    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify([{ id: 'th1', userId: 'u1' }]));
+    const { deleteContentItem } = await import('@/lib/db');
+    const result = await deleteContentItem('these', 'not-there');
+    expect(result).toBe(false);
+    expect(fs.writeFileSync).not.toHaveBeenCalled();
+  });
+
+  it('removes a video by id', async () => {
+    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify([{ id: 'v1', userId: 'u1', status: 'published' }]));
+    const { deleteContentItem } = await import('@/lib/db');
+    const result = await deleteContentItem('video', 'v1');
+    expect(result).toBe(true);
+  });
+});
+
+// ── deleteUserAccount ─────────────────────────────────────────────────────────
+
+describe('db – deleteUserAccount', () => {
+  const user = { id: 'u1', email: 'a@b.de', name: 'Alice', role: 'USER', status: 'active', active: true, createdAt: '2024-01-01', password: 'h' };
+  const these = [{ id: 'th1', userId: 'u1' }, { id: 'th2', userId: 'u2' }];
+  const messages = [
+    { id: 'm1', fromUserId: 'u1', toUserId: 'u2', content: 'hi', createdAt: '2024-01-01T10:00:00Z' },
+    { id: 'm2', fromUserId: 'u3', toUserId: 'u4', content: 'other', createdAt: '2024-01-01T11:00:00Z' },
+  ];
+
+  beforeEach(() => {
+    vi.resetModules();
+    delete process.env.GITHUB_TOKEN;
+    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
+    vi.spyOn(fs, 'readFileSync').mockImplementation((p) => {
+      const file = String(p);
+      if (file.endsWith('users.json')) return JSON.stringify([user]);
+      if (file.endsWith('thesen.json')) return JSON.stringify(these);
+      if (file.endsWith('messages.json')) return JSON.stringify(messages);
+      return JSON.stringify([]);
+    });
+  });
+  afterEach(() => vi.restoreAllMocks());
+
+  it('removes the user and their content from all collections', async () => {
+    const { deleteUserAccount } = await import('@/lib/db');
+    await deleteUserAccount('u1');
+
+    // Find the call that wrote users.json and check the user was removed
+    const writeCalls = (fs.writeFileSync as ReturnType<typeof vi.fn>).mock.calls;
+    const usersWrite = writeCalls.find((c: unknown[]) => String(c[0]).endsWith('users.json'));
+    expect(usersWrite).toBeDefined();
+    const writtenUsers = JSON.parse(usersWrite![1] as string);
+    expect(writtenUsers.find((u: { id: string }) => u.id === 'u1')).toBeUndefined();
+
+    // Thesen of u1 should be removed
+    const thesenWrite = writeCalls.find((c: unknown[]) => String(c[0]).endsWith('thesen.json'));
+    const writtenThesen = JSON.parse(thesenWrite![1] as string);
+    expect(writtenThesen).toHaveLength(1);
+    expect(writtenThesen[0].id).toBe('th2');
+
+    // Messages involving u1 should be removed
+    const msgWrite = writeCalls.find((c: unknown[]) => String(c[0]).endsWith('messages.json'));
+    const writtenMsgs = JSON.parse(msgWrite![1] as string);
+    expect(writtenMsgs).toHaveLength(1);
+    expect(writtenMsgs[0].id).toBe('m2');
+  });
+});
+
+// ── markMessagesAsRead ────────────────────────────────────────────────────────
+
+describe('db – markMessagesAsRead', () => {
+  const messages = [
+    { id: 'm1', fromUserId: 'u2', toUserId: 'u1', content: 'Hi', createdAt: '2024-01-01T10:00:00Z', readAt: undefined },
+    { id: 'm2', fromUserId: 'u2', toUserId: 'u1', content: 'Hey', createdAt: '2024-01-01T10:01:00Z', readAt: undefined },
+    { id: 'm3', fromUserId: 'u1', toUserId: 'u2', content: 'Hello', createdAt: '2024-01-01T11:00:00Z', readAt: undefined },
+  ];
+
+  beforeEach(() => {
+    vi.resetModules();
+    delete process.env.GITHUB_TOKEN;
+    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(messages));
+    vi.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
+  });
+  afterEach(() => vi.restoreAllMocks());
+
+  it('marks all matching unread messages as read', async () => {
+    const { markMessagesAsRead } = await import('@/lib/db');
+    await markMessagesAsRead('u1', 'u2');
+    const written = JSON.parse((fs.writeFileSync as ReturnType<typeof vi.fn>).mock.calls[0][1] as string);
+    // m1 and m2 are from u2 to u1 – should be read now
+    expect(written.find((m: { id: string }) => m.id === 'm1').readAt).toBeTruthy();
+    expect(written.find((m: { id: string }) => m.id === 'm2').readAt).toBeTruthy();
+    // m3 is from u1 to u2 – should not be marked
+    expect(written.find((m: { id: string }) => m.id === 'm3').readAt).toBeUndefined();
+  });
+});
+
+// ── deleteConversation ────────────────────────────────────────────────────────
+
+describe('db – deleteConversation', () => {
+  const messages = [
+    { id: 'm1', fromUserId: 'u1', toUserId: 'u2', content: 'Hi', createdAt: '2024-01-01T10:00:00Z' },
+    { id: 'm2', fromUserId: 'u2', toUserId: 'u1', content: 'Hey', createdAt: '2024-01-01T10:01:00Z' },
+    { id: 'm3', fromUserId: 'u1', toUserId: 'u3', content: 'Hello', createdAt: '2024-01-01T11:00:00Z' },
+  ];
+
+  beforeEach(() => {
+    vi.resetModules();
+    delete process.env.GITHUB_TOKEN;
+    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(messages));
+    vi.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
+  });
+  afterEach(() => vi.restoreAllMocks());
+
+  it('removes all messages between two users and preserves others', async () => {
+    const { deleteConversation } = await import('@/lib/db');
+    await deleteConversation('u1', 'u2');
+    const written = JSON.parse((fs.writeFileSync as ReturnType<typeof vi.fn>).mock.calls[0][1] as string);
+    expect(written).toHaveLength(1);
+    expect(written[0].id).toBe('m3');
+  });
+});

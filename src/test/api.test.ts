@@ -74,6 +74,51 @@ describe('POST /api/register', () => {
     expect(savedUser.role).toBe('USER');
     expect(savedUser.active).toBe(false);
   });
+
+  it('normalizes the email address before saving and sending', async () => {
+    const saveUser = vi.fn().mockResolvedValue(undefined);
+    const sendVerificationEmail = vi.fn().mockResolvedValue(true);
+    vi.doMock('@/lib/db', () => ({ getUserByEmail: vi.fn().mockReturnValue(undefined), saveUser }));
+    vi.doMock('@/lib/email', () => ({ sendVerificationEmail }));
+    const { POST } = await import('@/app/api/register/route');
+    const req = makeJsonRequest('http://localhost/api/register', { name: ' Alice ', email: ' Alice@Example.COM ', password: 'securePass1' });
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+    expect(saveUser.mock.calls[0][0].email).toBe('alice@example.com');
+    expect(saveUser.mock.calls[0][0].name).toBe('Alice');
+    expect(sendVerificationEmail).toHaveBeenCalledWith('alice@example.com', expect.any(String));
+  });
+
+  it('returns 503 when the initial verification email cannot be sent', async () => {
+    const saveUser = vi.fn().mockResolvedValue(undefined);
+    vi.doMock('@/lib/db', () => ({ getUserByEmail: vi.fn().mockReturnValue(undefined), saveUser }));
+    vi.doMock('@/lib/email', () => ({ sendVerificationEmail: vi.fn().mockResolvedValue(false) }));
+    const { POST } = await import('@/app/api/register/route');
+    const req = makeJsonRequest('http://localhost/api/register', { name: 'Alice', email: 'new@example.com', password: 'securePass1' });
+    const res = await POST(req);
+    expect(res.status).toBe(503);
+  });
+
+  it('restores the previous token when resending the verification email fails', async () => {
+    const saveUser = vi.fn().mockResolvedValue(undefined);
+    vi.doMock('@/lib/db', () => ({
+      getUserByEmail: vi.fn().mockReturnValue({
+        id: 'u1',
+        email: 'alice@example.com',
+        name: 'Alice',
+        status: 'pending_email',
+        emailToken: 'old-token',
+      }),
+      saveUser,
+    }));
+    vi.doMock('@/lib/email', () => ({ sendVerificationEmail: vi.fn().mockResolvedValue(false) }));
+    const { POST } = await import('@/app/api/register/route');
+    const req = makeJsonRequest('http://localhost/api/register', { name: 'Alice', email: 'alice@example.com', password: 'securePass1' });
+    const res = await POST(req);
+    expect(res.status).toBe(503);
+    expect(saveUser).toHaveBeenCalledTimes(2);
+    expect(saveUser.mock.calls[1][0].emailToken).toBe('old-token');
+  });
 });
 
 // ─── /api/gebet ──────────────────────────────────────────────────────────────
@@ -276,6 +321,31 @@ describe('POST /api/videos', () => {
     expect(saveVideo).toHaveBeenCalledOnce();
     expect(saveVideo.mock.calls[0][0].url).toBe('https://youtube.com/watch?v=abc');
   });
+
+  it('saves video with wochenthemaId when provided', async () => {
+    const saveVideo = vi.fn().mockResolvedValue(undefined);
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', name: 'Alice', role: 'USER' } }) }));
+    vi.doMock('@/lib/db', () => ({ saveVideo }));
+    const { POST } = await import('@/app/api/videos/route');
+    const res = await POST(makeJsonRequest('http://localhost/api/videos', { title: 'My Video', url: 'https://youtube.com/watch?v=abc', description: 'Desc', wochenthemaId: 'wt-1' }));
+    expect(res.status).toBe(200);
+    expect(saveVideo.mock.calls[0][0].wochenthemaId).toBe('wt-1');
+  });
+
+  it('filters videos by wochenthemaId when query param is set', async () => {
+    const videos = [
+      { id: 'v1', status: 'published', url: 'https://a.com', wochenthemaId: 'wt-1' },
+      { id: 'v2', status: 'published', url: 'https://b.com', wochenthemaId: 'wt-2' },
+    ];
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
+    vi.doMock('@/lib/db', () => ({ getApprovedVideos: vi.fn().mockReturnValue(videos), getVideos: vi.fn().mockReturnValue(videos) }));
+    const { GET } = await import('@/app/api/videos/route');
+    const res = await GET(makeRequest('http://localhost/api/videos?wochenthemaId=wt-1'));
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json).toHaveLength(1);
+    expect(json[0].id).toBe('v1');
+  });
 });
 
 // ─── /api/auth/verify-email ───────────────────────────────────────────────────
@@ -309,6 +379,42 @@ describe('GET /api/auth/verify-email', () => {
     const updatedUser = saveUser.mock.calls[0][0];
     expect(updatedUser.emailToken).toBeUndefined();
     expect(['email_verified', 'awaiting_admin_review']).toContain(updatedUser.status);
+  });
+});
+
+// ─── /api/auth/forgot-password ────────────────────────────────────────────────
+
+describe('POST /api/auth/forgot-password', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('returns 400 when email is missing', async () => {
+    vi.doMock('@/lib/db', () => ({ getUserByEmail: vi.fn(), saveUser: vi.fn() }));
+    vi.doMock('@/lib/email', () => ({ sendPasswordResetEmail: vi.fn().mockResolvedValue(true) }));
+    const { POST } = await import('@/app/api/auth/forgot-password/route');
+    const res = await POST(makeJsonRequest('http://localhost/api/auth/forgot-password', { email: '   ' }));
+    expect(res.status).toBe(400);
+  });
+
+  it('returns 503 and restores the previous reset token when email sending fails', async () => {
+    const saveUser = vi.fn().mockResolvedValue(undefined);
+    vi.doMock('@/lib/db', () => ({
+      getUserByEmail: vi.fn().mockReturnValue({
+        id: 'u1',
+        email: 'alice@example.com',
+        name: 'Alice',
+        status: 'active',
+        passwordResetToken: 'old-token',
+        passwordResetExpiry: '2026-04-11T05:00:00.000Z',
+      }),
+      saveUser,
+    }));
+    vi.doMock('@/lib/email', () => ({ sendPasswordResetEmail: vi.fn().mockResolvedValue(false) }));
+    const { POST } = await import('@/app/api/auth/forgot-password/route');
+    const res = await POST(makeJsonRequest('http://localhost/api/auth/forgot-password', { email: ' Alice@Example.com ' }));
+    expect(res.status).toBe(503);
+    expect(saveUser).toHaveBeenCalledTimes(2);
+    expect(saveUser.mock.calls[1][0].passwordResetToken).toBe('old-token');
+    expect(saveUser.mock.calls[1][0].passwordResetExpiry).toBe('2026-04-11T05:00:00.000Z');
   });
 });
 
@@ -370,5 +476,78 @@ describe('POST /api/user/password', () => {
     const { POST } = await import('@/app/api/user/password/route');
     const res = await POST(makeJsonRequest('http://localhost/api/user/password', { currentPassword: 'a', newPassword: 'b' }));
     expect(res.status).toBe(401);
+  });
+});
+
+// ─── /api/admin/users – action validation / hard delete ─────────────────────
+
+describe('PATCH /api/admin/users', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('returns 400 for legacy delete action', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'admin1', role: 'ADMIN' } }) }));
+    vi.doMock('@/lib/db', () => ({
+      getUsers: vi.fn().mockReturnValue([]),
+      saveUser: vi.fn(),
+      deleteUserAccount: vi.fn(),
+      saveAdminLog: vi.fn(),
+    }));
+    vi.doMock('@/lib/email', () => ({ sendEmail: vi.fn().mockResolvedValue(true), escHtml: (s: string) => s }));
+    vi.doMock('@/lib/config', () => ({ siteName: 'Site', siteDomain: 'example.com' }));
+    const { PATCH } = await import('@/app/api/admin/users/route');
+    const res = await PATCH(makeJsonRequest('http://localhost/api/admin/users', { id: 'u2', action: 'delete' }, 'PATCH'));
+    expect(res.status).toBe(400);
+  });
+
+  it('calls deleteUserAccount for hard_delete action', async () => {
+    const deleteUserAccount = vi.fn().mockResolvedValue(undefined);
+    const saveAdminLog = vi.fn().mockResolvedValue(undefined);
+    const user = { id: 'u3', email: 'carol@example.com', name: 'Carol', status: 'active', active: true };
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'admin1', role: 'ADMIN' } }) }));
+    vi.doMock('@/lib/db', () => ({
+      getUsers: vi.fn().mockReturnValue([user]),
+      saveUser: vi.fn(),
+      deleteUserAccount,
+      saveAdminLog,
+    }));
+    vi.doMock('@/lib/email', () => ({ sendEmail: vi.fn().mockResolvedValue(true), escHtml: (s: string) => s }));
+    vi.doMock('@/lib/config', () => ({ siteName: 'Site', siteDomain: 'example.com' }));
+    const { PATCH } = await import('@/app/api/admin/users/route');
+    const res = await PATCH(makeJsonRequest('http://localhost/api/admin/users', { id: 'u3', action: 'hard_delete' }, 'PATCH'));
+    expect(res.status).toBe(200);
+    expect(deleteUserAccount).toHaveBeenCalledWith('u3');
+    expect(saveAdminLog).toHaveBeenCalledOnce();
+    expect(saveAdminLog.mock.calls[0][0].action).toBe('user_hard_delete');
+  });
+});
+
+// ─── /api/admin/vorstellungen – hard delete ───────────────────────────────────
+
+describe('PATCH /api/admin/vorstellungen (reject action)', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('calls deleteUserAccount for reject action and returns 200', async () => {
+    const deleteUserAccount = vi.fn().mockResolvedValue(undefined);
+    const saveAdminLog = vi.fn().mockResolvedValue(undefined);
+    const user = { id: 'u4', email: 'dave@example.com', name: 'Dave', status: 'awaiting_admin_review' };
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'admin1', role: 'ADMIN' } }) }));
+    vi.doMock('@/lib/db', () => ({
+      getAwaitingReviewUsers: vi.fn().mockReturnValue([user]),
+      getUserById: vi.fn().mockReturnValue(user),
+      saveUser: vi.fn(),
+      deleteUserAccount,
+      saveAdminLog,
+    }));
+    vi.doMock('@/lib/email', () => ({
+      sendAdminApprovalEmail: vi.fn().mockResolvedValue(true),
+      sendEmail: vi.fn().mockResolvedValue(true),
+      escHtml: (s: string) => s,
+    }));
+    vi.doMock('@/lib/config', () => ({ siteName: 'Site', siteDomain: 'example.com' }));
+    const { PATCH } = await import('@/app/api/admin/vorstellungen/route');
+    const res = await PATCH(makeJsonRequest('http://localhost/api/admin/vorstellungen', { userId: 'u4', action: 'reject', note: '' }, 'PATCH'));
+    expect(res.status).toBe(200);
+    expect(deleteUserAccount).toHaveBeenCalledWith('u4');
+    expect(saveAdminLog.mock.calls[0][0].action).toBe('vorstellung_reject');
   });
 });
