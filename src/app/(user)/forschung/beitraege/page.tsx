@@ -26,7 +26,7 @@ export default function ForschungBeitraegePage() {
     if (!res.ok) {
       setError(data.error || 'Fehler beim Speichern.');
     } else {
-      router.push('/forschung');
+      router.push('/meine-forschung');
     }
   }
 

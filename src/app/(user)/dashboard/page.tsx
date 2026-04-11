@@ -48,13 +48,14 @@ export default function DashboardPage() {
             { href: '/mein-tageswort', icon: '📖', title: 'Mein Tageswort', desc: 'Deine Notizen und Antworten auf das tägliche Bibelwort.' },
             { href: '/meine-thesen', icon: '💡', title: 'Meine Thesen', desc: 'Verwalte deine theologischen Thesen.' },
             { href: '/thesen/neu', icon: '✍️', title: 'These schreiben', desc: 'Eine neue theologische These verfassen.' },
-            { href: '/forschung/beitraege', icon: '📚', title: 'Meine Forschung', desc: 'Deine Forschungsbeiträge verwalten.' },
+            { href: '/meine-forschung', icon: '📚', title: 'Meine Forschung', desc: 'Deine Forschungsbeiträge verwalten.' },
             { href: '/meine-gebete', icon: '🙏', title: 'Meine Gebete', desc: 'Deine eingereichten Gebete.' },
             { href: '/gebet/neu', icon: '✨', title: 'Gebet einreichen', desc: 'Ein neues Gebet für die Gemeinschaft.' },
             { href: '/chat', icon: '💬', title: 'Nachrichten', desc: 'Private 1-zu-1-Chats mit Mitgliedern.' },
             { href: '/mitglieder/vorstellungen', icon: '🧑‍🤝‍🧑', title: 'Mitglieder', desc: 'Vorstellungen der Gemeinschaftsmitglieder.' },
             { href: '/aktionen/neu', icon: '🤝', title: 'Aktion erstellen', desc: 'Eine Gemeinschaftsaktion organisieren.' },
             { href: '/videos/hochladen', icon: '🎥', title: 'Video teilen', desc: 'Ein Video mit der Gemeinschaft teilen.' },
+            { href: '/meine-videos', icon: '📹', title: 'Meine Videos', desc: 'Deine eingereichten Videos und deren Status.' },
             { href: '/profil', icon: '👤', title: 'Mein Profil', desc: 'Deine persönlichen Daten verwalten.' },
           ].map(item => (
             <Link key={item.href} href={item.href} className="bg-white rounded-xl shadow-md p-5 hover:shadow-lg transition-shadow group">
