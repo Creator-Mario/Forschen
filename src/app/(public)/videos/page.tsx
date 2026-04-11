@@ -3,8 +3,14 @@ export const dynamic = 'force-dynamic';
 import { getApprovedVideos } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
-export default function VideosPage() {
+export default async function VideosPage() {
+  const session = await getServerSession(authOptions);
+  if (!session) redirect('/login');
+
   const videos = getApprovedVideos();
 
   return (

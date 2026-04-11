@@ -197,9 +197,12 @@ describe('VideosPage', () => {
   beforeEach(() => vi.resetModules());
 
   it('renders the Videos heading', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', name: 'Test', role: 'USER' } }) }));
+    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
     vi.doMock('@/lib/db', () => ({ getApprovedVideos: vi.fn().mockReturnValue([]) }));
     const { default: VideosPage } = await import('@/app/(public)/videos/page');
-    render(React.createElement(VideosPage));
+    const jsx = await VideosPage();
+    render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByRole('heading', { name: /Videos/i, level: 1 })).toBeInTheDocument();
   });
 });
@@ -223,9 +226,12 @@ describe('ForschungPage', () => {
   beforeEach(() => vi.resetModules());
 
   it('renders the Forschung heading', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', name: 'Test', role: 'USER' } }) }));
+    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
     vi.doMock('@/lib/db', () => ({ getApprovedForschung: vi.fn().mockReturnValue([]), getWochenthemaList: vi.fn().mockReturnValue([]) }));
     const { default: ForschungPage } = await import('@/app/(public)/forschung/page');
-    render(React.createElement(ForschungPage));
+    const jsx = await ForschungPage();
+    render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByRole('heading', { name: /Forschung/i, level: 1 })).toBeInTheDocument();
   });
 });

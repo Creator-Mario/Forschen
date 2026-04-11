@@ -4,8 +4,14 @@ import { getApprovedForschung, getWochenthemaList } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
-export default function ForschungPage() {
+export default async function ForschungPage() {
+  const session = await getServerSession(authOptions);
+  if (!session) redirect('/login');
+
   const beitraege = getApprovedForschung();
   const themen = getWochenthemaList().filter(t => t.status === 'published');
 
