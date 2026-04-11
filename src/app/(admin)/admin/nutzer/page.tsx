@@ -42,6 +42,7 @@ export default function AdminNutzerPage() {
   useEffect(() => {
     load().catch(err => {
       console.error('[admin/nutzer] initial load failed:', err);
+      setFeedback(current => current ?? { type: 'error', msg: 'Nutzerliste konnte nicht geladen werden.' });
     });
   }, []);
 

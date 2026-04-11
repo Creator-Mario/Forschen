@@ -5,6 +5,8 @@ import type {
   BuchempfehlungsSammlung,
 } from '@/types';
 
+const MS_PER_DAY = 86400000;
+// Business rule: generated daily archives stay browsable for 90 days.
 const GENERATED_ARCHIVE_DAYS = 90;
 
 const psalmSeeds = [
@@ -303,7 +305,7 @@ function toIsoDate(date: Date): string {
 }
 
 function daysSinceEpoch(date: string): number {
-  return Math.floor(parseIsoDate(date).getTime() / 86400000);
+  return Math.floor(parseIsoDate(date).getTime() / MS_PER_DAY);
 }
 
 function getSeedIndex(date: string, length: number): number {
