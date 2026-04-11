@@ -295,7 +295,7 @@ describe('PsalmenPage', () => {
     }));
     const { default: PsalmenPage } = await import('@/app/(public)/psalmen/page');
     render(React.createElement(PsalmenPage));
-    expect(screen.getByRole('heading', { name: /Psalmen des Tages/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Psalm des Tages/i })).toBeInTheDocument();
     expect(screen.getByText('Frage 1')).toBeInTheDocument();
   });
 });

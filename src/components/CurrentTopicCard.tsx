@@ -8,11 +8,11 @@ interface CurrentTopicCardProps {
 
 export default function CurrentTopicCard({ item, compact = false }: CurrentTopicCardProps) {
   return (
-    <div className="bg-white rounded-xl shadow-md p-6">
+    <div className={`bg-white rounded-xl shadow-md ${compact ? 'p-4' : 'p-6'}`}>
       <div className="text-blue-500 text-xs font-medium uppercase tracking-wide mb-2">Glauben heute</div>
-      <h2 className="text-gray-800 font-bold text-xl mb-2 leading-snug">{item.title}</h2>
-      <p className="text-amber-700 font-medium mb-4">{item.headline}</p>
-      <p className="text-gray-600 text-sm leading-relaxed mb-4">{item.worldFocus}</p>
+      <h2 className={`text-gray-800 font-bold leading-snug ${compact ? 'text-lg mb-2' : 'text-xl mb-2'}`}>{item.title}</h2>
+      <p className={`text-amber-700 font-medium ${compact ? 'mb-2 text-sm' : 'mb-4'}`}>{item.headline}</p>
+      <p className={`text-gray-600 text-sm leading-relaxed ${compact ? 'line-clamp-4' : 'mb-4'}`}>{item.worldFocus}</p>
       {!compact && (
         <>
           <div className="bg-blue-50 rounded-lg p-4 mb-4">

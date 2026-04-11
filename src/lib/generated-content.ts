@@ -5,7 +5,7 @@ import type {
   BuchempfehlungsSammlung,
 } from '@/types';
 
-const GENERATED_ARCHIVE_DAYS = 8;
+const GENERATED_ARCHIVE_DAYS = 90;
 
 const psalmSeeds = [
   {

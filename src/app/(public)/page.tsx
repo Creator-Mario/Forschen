@@ -101,28 +101,28 @@ export default function HomePage() {
             className="text-2xl md:text-3xl font-bold text-center mb-2"
             style={{ color: '#0d47a1', fontFamily: 'Georgia, serif' }}
           >
-            Täglich neu entdecken
+            Impulse für heute
           </h2>
           <p className="text-center text-blue-400 text-sm mb-8">
-            Psalmenforschung, aktuelle Glaubensthemen und passende Buchempfehlungen
+            Psalm, Tagesthema und passende Literatur – kompakt auf einen Blick
           </p>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="space-y-3">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="space-y-2">
               <PsalmThemeCard item={psalmThema} compact />
               <Link href="/psalmen" className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors">
-                Psalmen öffnen →
+                Zum Psalm des Tages →
               </Link>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-2">
               <CurrentTopicCard item={glaubenHeute} compact />
               <Link href="/glauben-heute" className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors">
-                Glauben heute öffnen →
+                Zum Tagesthema →
               </Link>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-2">
               <BookRecommendationsCard collection={buchempfehlungen} compact />
               <Link href="/buchempfehlungen" className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors">
-                Empfehlungen öffnen →
+                Zu den Empfehlungen →
               </Link>
             </div>
           </div>
@@ -153,10 +153,10 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
                { href: '/tageswort', icon: '📖', title: 'Tageswort', desc: 'Täglich ein Bibelvers mit fünf Forschungsfragen zur Vertiefung.' },
-               { href: '/psalmen', icon: '🎼', title: 'Psalmen', desc: 'Jeden Tag ein neuer Psalmimpuls zur Erforschung von Trost, Klage und Hoffnung.' },
+               { href: '/psalmen', icon: '🎼', title: 'Psalmen', desc: 'Täglich ein Psalmimpuls zur Erforschung von Trost, Klage und Hoffnung.' },
                { href: '/wochenthema', icon: '🔍', title: 'Wochenthema', desc: 'Ein theologisches Thema pro Woche mit Schriftbelegen und offenen Fragen.' },
-               { href: '/glauben-heute', icon: '🕊️', title: 'Glauben heute', desc: 'Ein täglich neuer KI-inspirierter Impuls zu aktuellen Fragen von Glaube und Nachfolge.' },
-               { href: '/buchempfehlungen', icon: '📚', title: 'Buchempfehlungen', desc: 'Passende Literatur zum aktuellen Tagesthema – mit fortlaufendem Archiv.' },
+               { href: '/glauben-heute', icon: '🕊️', title: 'Glauben heute', desc: 'Täglich ein aktueller Impuls zu Fragen von Glaube, Weltgeschehen und Nachfolge.' },
+               { href: '/buchempfehlungen', icon: '📚', title: 'Buchempfehlungen', desc: 'Passende Literatur zu aktuellen Themen und freigegebene Empfehlungen aus der Gemeinschaft.' },
                { href: '/thesen', icon: '💡', title: 'Thesen', desc: 'Theologische Kernaussagen aus der Gemeinschaft zur Diskussion.' },
                { href: '/forschung', icon: '📝', title: 'Bibelforschung', desc: 'Tiefgehende Beiträge zur Exegese und Hermeneutik.' },
                { href: '/gebet', icon: '🙏', title: 'Gebetsraum', desc: 'Ein geschützter Raum für persönliche und gemeinsame Gebete.' },

@@ -23,7 +23,7 @@ export default function GlaubenHeutePage() {
       <CurrentTopicCard item={item} />
 
       <div className="mt-8 bg-white rounded-xl shadow-md p-6">
-        <h2 className="font-semibold text-gray-800 mb-4">Fragen zum Weiterdenken</h2>
+        <h2 className="font-semibold text-gray-800 mb-4">Fragen zur Vertiefung</h2>
         <ol className="space-y-3">
           {item.questions.map((question, index) => (
             <li key={question} className="flex gap-3 text-gray-700">

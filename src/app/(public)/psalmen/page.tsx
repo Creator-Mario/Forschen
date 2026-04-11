@@ -12,7 +12,7 @@ export default function PsalmenPage() {
     <div className="max-w-3xl mx-auto px-4 py-12">
       <div className="flex items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-blue-800 mb-2">Psalmen des Tages</h1>
+          <h1 className="text-3xl font-bold text-blue-800 mb-2">Psalm des Tages</h1>
           <p className="text-gray-500">{formatDate(item.date)}</p>
         </div>
         <Link href="/psalmen/archiv" className="text-blue-600 hover:text-blue-800 text-sm transition-colors">
