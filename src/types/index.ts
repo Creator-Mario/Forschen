@@ -8,7 +8,7 @@ export type UserStatus =
   | 'question_to_user'     // admin sent a question back
   | 'postponed'            // admin postponed decision
   | 'active'               // fully approved, may log in
-  | 'deleted';             // soft-deleted
+  | 'deleted';             // legacy deactivated/locked state; account record still exists
 
 // New canonical status values; legacy 'pending' | 'approved' | 'rejected' kept for backward compat.
 export type ContentStatus =

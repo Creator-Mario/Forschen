@@ -83,6 +83,7 @@ export async function PATCH(req: NextRequest) {
   const userEmail = user.email;
   const userName = user.name;
   if (action === 'lock') {
+    // Legacy "deleted" status means deactivated/locked here — not physically removed.
     user.active = false;
     user.status = 'deleted';
   } else if (action === 'unlock') {

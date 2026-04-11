@@ -354,6 +354,11 @@ describe('db – deleteContentItem', () => {
 describe('db – deleteUserAccount', () => {
   const user = { id: 'u1', email: 'a@b.de', name: 'Alice', role: 'USER', status: 'active', active: true, createdAt: '2024-01-01', password: 'h' };
   const these = [{ id: 'th1', userId: 'u1' }, { id: 'th2', userId: 'u2' }];
+  const forschung = [{ id: 'f1', userId: 'u1' }, { id: 'f2', userId: 'u2' }];
+  const gebete = [{ id: 'g1', userId: 'u1' }, { id: 'g2', userId: 'u2' }];
+  const videos = [{ id: 'v1', userId: 'u1' }, { id: 'v2', userId: 'u2' }];
+  const aktionen = [{ id: 'a1', userId: 'u1' }, { id: 'a2', userId: 'u2' }];
+  const buchempfehlungen = [{ id: 'b1', userId: 'u1' }, { id: 'b2', userId: 'u2' }];
   const messages = [
     { id: 'm1', fromUserId: 'u1', toUserId: 'u2', content: 'hi', createdAt: '2024-01-01T10:00:00Z' },
     { id: 'm2', fromUserId: 'u3', toUserId: 'u4', content: 'other', createdAt: '2024-01-01T11:00:00Z' },
@@ -368,6 +373,11 @@ describe('db – deleteUserAccount', () => {
       const file = String(p);
       if (file.endsWith('users.json')) return JSON.stringify([user]);
       if (file.endsWith('thesen.json')) return JSON.stringify(these);
+      if (file.endsWith('forschung.json')) return JSON.stringify(forschung);
+      if (file.endsWith('gebete.json')) return JSON.stringify(gebete);
+      if (file.endsWith('videos.json')) return JSON.stringify(videos);
+      if (file.endsWith('aktionen.json')) return JSON.stringify(aktionen);
+      if (file.endsWith('buchempfehlungen.json')) return JSON.stringify(buchempfehlungen);
       if (file.endsWith('messages.json')) return JSON.stringify(messages);
       return JSON.stringify([]);
     });
@@ -390,6 +400,21 @@ describe('db – deleteUserAccount', () => {
     const writtenThesen = JSON.parse(thesenWrite![1] as string);
     expect(writtenThesen).toHaveLength(1);
     expect(writtenThesen[0].id).toBe('th2');
+
+    const forschungWrite = writeCalls.find((c: unknown[]) => String(c[0]).endsWith('forschung.json'));
+    expect(JSON.parse(forschungWrite![1] as string)).toEqual([{ id: 'f2', userId: 'u2' }]);
+
+    const gebeteWrite = writeCalls.find((c: unknown[]) => String(c[0]).endsWith('gebete.json'));
+    expect(JSON.parse(gebeteWrite![1] as string)).toEqual([{ id: 'g2', userId: 'u2' }]);
+
+    const videosWrite = writeCalls.find((c: unknown[]) => String(c[0]).endsWith('videos.json'));
+    expect(JSON.parse(videosWrite![1] as string)).toEqual([{ id: 'v2', userId: 'u2' }]);
+
+    const aktionenWrite = writeCalls.find((c: unknown[]) => String(c[0]).endsWith('aktionen.json'));
+    expect(JSON.parse(aktionenWrite![1] as string)).toEqual([{ id: 'a2', userId: 'u2' }]);
+
+    const buchempfehlungenWrite = writeCalls.find((c: unknown[]) => String(c[0]).endsWith('buchempfehlungen.json'));
+    expect(JSON.parse(buchempfehlungenWrite![1] as string)).toEqual([{ id: 'b2', userId: 'u2' }]);
 
     // Messages involving u1 should be removed
     const msgWrite = writeCalls.find((c: unknown[]) => String(c[0]).endsWith('messages.json'));

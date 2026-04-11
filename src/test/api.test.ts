@@ -565,12 +565,13 @@ describe('PATCH /api/admin/users', () => {
 
   it('calls deleteUserAccount for hard_delete action', async () => {
     const deleteUserAccount = vi.fn().mockResolvedValue(undefined);
+    const saveUser = vi.fn();
     const saveAdminLog = vi.fn().mockResolvedValue(undefined);
     const user = { id: 'u3', email: 'carol@example.com', name: 'Carol', status: 'active', active: true };
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'admin1', role: 'ADMIN' } }) }));
     vi.doMock('@/lib/db', () => ({
       getUsers: vi.fn().mockReturnValue([user]),
-      saveUser: vi.fn(),
+      saveUser,
       deleteUserAccount,
       saveAdminLog,
     }));
@@ -580,6 +581,7 @@ describe('PATCH /api/admin/users', () => {
     const res = await PATCH(makeJsonRequest('http://localhost/api/admin/users', { id: 'u3', action: 'hard_delete' }, 'PATCH'));
     expect(res.status).toBe(200);
     expect(deleteUserAccount).toHaveBeenCalledWith('u3');
+    expect(saveUser).not.toHaveBeenCalled();
     expect(saveAdminLog).toHaveBeenCalledOnce();
     expect(saveAdminLog.mock.calls[0][0].action).toBe('user_hard_delete');
   });
@@ -592,13 +594,14 @@ describe('PATCH /api/admin/vorstellungen (reject action)', () => {
 
   it('calls deleteUserAccount for reject action and returns 200', async () => {
     const deleteUserAccount = vi.fn().mockResolvedValue(undefined);
+    const saveUser = vi.fn();
     const saveAdminLog = vi.fn().mockResolvedValue(undefined);
     const user = { id: 'u4', email: 'dave@example.com', name: 'Dave', status: 'awaiting_admin_review' };
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'admin1', role: 'ADMIN' } }) }));
     vi.doMock('@/lib/db', () => ({
       getAwaitingReviewUsers: vi.fn().mockReturnValue([user]),
       getUserById: vi.fn().mockReturnValue(user),
-      saveUser: vi.fn(),
+      saveUser,
       deleteUserAccount,
       saveAdminLog,
     }));
@@ -612,6 +615,7 @@ describe('PATCH /api/admin/vorstellungen (reject action)', () => {
     const res = await PATCH(makeJsonRequest('http://localhost/api/admin/vorstellungen', { userId: 'u4', action: 'reject', note: '' }, 'PATCH'));
     expect(res.status).toBe(200);
     expect(deleteUserAccount).toHaveBeenCalledWith('u4');
+    expect(saveUser).not.toHaveBeenCalled();
     expect(saveAdminLog.mock.calls[0][0].action).toBe('vorstellung_reject');
   });
 
