@@ -27,6 +27,8 @@
     "role": "USER",
     "status": "active",
     "createdAt": "2026-04-08T00:53:39.026Z",
-    "active": true
+    "active": true,
+    "weeklyFaithEmailEnabled": true,
+    "weeklyFaithEmailUpdatedAt": "2026-04-11T23:43:39.348Z"
   }
 ]
