@@ -443,6 +443,9 @@ describe('POST /api/user/intro', () => {
     expect(res.status).toBe(200);
     expect(saveUser).toHaveBeenCalledOnce();
     expect(saveUser.mock.calls[0][0].status).toBe('awaiting_admin_review');
+    expect(sendEmail).toHaveBeenCalledOnce();
+    expect(sendEmail.mock.calls[0][0].html).toContain('https://flussdeslebens.live/admin/vorstellungen');
+    expect(sendEmail.mock.calls[0][0].text).toContain('https://flussdeslebens.live/admin/vorstellungen');
     expect(sendRegistrationPendingEmail).toHaveBeenCalledWith('alice@example.com', 'Alice');
   });
 });
