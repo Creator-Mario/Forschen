@@ -17,9 +17,11 @@ export const config = {
   matcher: [
     '/dashboard/:path*',
     '/mein-tageswort/:path*',
+    '/meine-buchempfehlungen/:path*',
     '/meine-thesen/:path*',
     '/meine-gebete/:path*',
     '/thesen/neu',
+    '/buchempfehlungen/neu',
     '/forschung/beitraege',
     '/gebet/neu',
     '/chat/:path*',

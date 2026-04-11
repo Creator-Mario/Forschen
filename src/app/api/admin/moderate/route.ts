@@ -7,6 +7,7 @@ import {
   getGebete, saveGebet,
   getVideos, saveVideo,
   getAktionen, saveAktion,
+  getBuchempfehlungen, saveBuchempfehlung,
   getUserById,
   deleteContentItem,
   saveAdminLog,
@@ -27,6 +28,7 @@ const CONTENT_TYPE_LABELS: Record<string, string> = {
   gebet: 'Gebet',
   video: 'Video',
   aktion: 'Aktion',
+  buchempfehlung: 'Buchempfehlung',
 };
 
 export async function POST(req: NextRequest) {
@@ -41,7 +43,7 @@ export async function POST(req: NextRequest) {
 
   // Hard delete: physically remove the item from the database.
   if (status === 'hard_delete') {
-    const validTypes = ['these', 'forschung', 'gebet', 'video', 'aktion'] as const;
+    const validTypes = ['these', 'forschung', 'gebet', 'video', 'aktion', 'buchempfehlung'] as const;
     if (!validTypes.includes(type)) {
       return NextResponse.json({ error: 'Unknown type' }, { status: 400 });
     }
@@ -117,6 +119,14 @@ export async function POST(req: NextRequest) {
         await saveAktion({ ...item, status, adminMessage, updatedAt: new Date().toISOString() });
         break;
       }
+      case 'buchempfehlung': {
+        const list = getBuchempfehlungen();
+        const item = list.find(b => b.id === id);
+        if (!item) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+        affectedUserId = item.userId;
+        await saveBuchempfehlung({ ...item, status, adminMessage, updatedAt: new Date().toISOString() });
+        break;
+      }
       default:
         return NextResponse.json({ error: 'Unknown type' }, { status: 400 });
     }
@@ -154,4 +164,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Moderation failed' }, { status: 500 });
   }
 }
-

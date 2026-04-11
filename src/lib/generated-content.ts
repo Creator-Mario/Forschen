@@ -5,7 +5,7 @@ import type {
   BuchempfehlungsSammlung,
 } from '@/types';
 
-const GENERATED_ARCHIVE_START = '2026-01-01';
+const GENERATED_ARCHIVE_DAYS = 90;
 
 const psalmSeeds = [
   {
@@ -314,9 +314,7 @@ function getSeedIndex(date: string, length: number): number {
 function buildDateList(endDate: string): string[] {
   const dates: string[] = [];
   const cursor = parseIsoDate(endDate);
-  const start = parseIsoDate(GENERATED_ARCHIVE_START);
-
-  while (cursor.getTime() >= start.getTime()) {
+  for (let index = 0; index < GENERATED_ARCHIVE_DAYS; index += 1) {
     dates.push(toIsoDate(cursor));
     cursor.setUTCDate(cursor.getUTCDate() - 1);
   }

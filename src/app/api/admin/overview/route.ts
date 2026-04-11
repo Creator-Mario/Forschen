@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import {
-  getThesen, getForschung, getGebete, getVideos, getAktionen, getUsers,
+  getThesen, getForschung, getGebete, getVideos, getAktionen, getBuchempfehlungen, getUsers,
 } from '@/lib/db';
 
 export async function GET(req: NextRequest) {
@@ -37,8 +37,11 @@ export async function GET(req: NextRequest) {
   const aktionen = getAktionen().map(a => ({
     ...a, contentType: 'aktion' as const, displayTitle: a.title, ...enrichUser(a.userId),
   }));
+  const buchempfehlungen = getBuchempfehlungen().map(b => ({
+    ...b, contentType: 'buchempfehlung' as const, displayTitle: `${b.title} (${b.themeReference})`, ...enrichUser(b.userId),
+  }));
 
-  let all = [...thesen, ...forschung, ...gebete, ...videos, ...aktionen]
+  let all = [...thesen, ...forschung, ...gebete, ...videos, ...aktionen, ...buchempfehlungen]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   if (userIdParam) {

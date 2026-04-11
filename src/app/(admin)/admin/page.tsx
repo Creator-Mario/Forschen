@@ -15,6 +15,7 @@ const adminLinks = [
   { href: '/admin/gebet', icon: '🙏', title: 'Gebete moderieren', desc: 'Eingereichte Gebete prüfen' },
   { href: '/admin/videos', icon: '🎥', title: 'Videos moderieren', desc: 'Eingereichte Videos prüfen' },
   { href: '/admin/aktionen', icon: '🤝', title: 'Aktionen moderieren', desc: 'Eingereichte Aktionen prüfen' },
+  { href: '/admin/buchempfehlungen', icon: '📚', title: 'Buchempfehlungen moderieren', desc: 'Eingereichte Buchempfehlungen prüfen' },
   { href: '/admin/tageswort', icon: '📖', title: 'Tageswort verwalten', desc: 'Tagesbibelverse verwalten' },
   { href: '/admin/wochenthema', icon: '🔍', title: 'Wochenthema verwalten', desc: 'Wöchentliche Themen verwalten' },
   { href: '/admin/spenden', icon: '💰', title: 'Spenden', desc: 'Spendenübersicht' },
@@ -28,6 +29,7 @@ const CONTENT_TYPE_LABELS: Record<string, string> = {
   gebet: 'Gebet',
   video: 'Video',
   aktion: 'Aktion',
+  buchempfehlung: 'Buchempfehlung',
 };
 
 const CONTENT_TYPE_TO_ROUTE: Record<string, string> = {
@@ -36,6 +38,7 @@ const CONTENT_TYPE_TO_ROUTE: Record<string, string> = {
   gebet: 'gebet',
   video: 'videos',
   aktion: 'aktionen',
+  buchempfehlung: 'buchempfehlungen',
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -66,7 +69,7 @@ function AdminPageInner() {
       .then(data => { if (Array.isArray(data)) setPendingVorstellungen(data.length); });
   }, [userIdFilter]);
 
-  const typeOptions = ['all', 'these', 'forschung', 'gebet', 'video', 'aktion'];
+  const typeOptions = ['all', 'these', 'forschung', 'gebet', 'video', 'aktion', 'buchempfehlung'];
   const statusOptions = ['all', 'created', 'pending', 'review', 'published', 'approved', 'question_to_user', 'postponed', 'deleted', 'rejected'];
 
   const filtered = items
