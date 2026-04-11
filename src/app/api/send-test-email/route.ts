@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sendEmail } from '@/lib/email';
+import { emailFromAddress, siteDomain, canonicalSiteUrl } from '@/lib/config';
 
 /**
  * GET /api/send-test-email
@@ -13,7 +14,7 @@ import { sendEmail } from '@/lib/email';
  * The test e-mail is sent to the currently logged-in admin's address.
  *
  * Example usage (curl):
- *   curl -X GET https://your-domain.vercel.app/api/send-test-email \
+ *   curl -X GET https://flussdeslebens.live/api/send-test-email \
  *     -H "Cookie: next-auth.session-token=..."
  */
 export async function GET() {
@@ -24,9 +25,6 @@ export async function GET() {
   }
 
   const to = session.user.email;
-  const siteDomain = process.env.SITE_DOMAIN ?? 'flussdeslebens.live';
-  const fromEmail = process.env.EMAIL_FROM ?? `noreply@${siteDomain}`;
-
   const ok = await sendEmail({
     to,
     subject: `[Test] Resend-Verbindung erfolgreich – ${siteDomain}`,
@@ -44,15 +42,15 @@ export async function GET() {
           </tr>
           <tr style="background:#f9fafb;">
             <td style="padding:4px 8px;font-weight:600;">EMAIL_FROM</td>
-            <td style="padding:4px 8px;">${fromEmail}</td>
+            <td style="padding:4px 8px;">${emailFromAddress}</td>
           </tr>
           <tr>
             <td style="padding:4px 8px;font-weight:600;">SITE_DOMAIN</td>
             <td style="padding:4px 8px;">${siteDomain}</td>
           </tr>
           <tr style="background:#f9fafb;">
-            <td style="padding:4px 8px;font-weight:600;">NEXTAUTH_URL</td>
-            <td style="padding:4px 8px;">${process.env.NEXTAUTH_URL ?? '–'}</td>
+            <td style="padding:4px 8px;font-weight:600;">MAIL_LINK_BASE</td>
+            <td style="padding:4px 8px;">${canonicalSiteUrl}</td>
           </tr>
         </table>
         <p style="color:#9ca3af;font-size:12px;margin-top:24px;">
@@ -60,7 +58,7 @@ export async function GET() {
         </p>
       </div>
     `,
-    text: `Resend-Test erfolgreich. From: ${fromEmail}, Domain: ${siteDomain}, RESEND_API_KEY: ${process.env.RESEND_API_KEY ? 'gesetzt' : 'fehlt'}`,
+    text: `Resend-Test erfolgreich. From: ${emailFromAddress}, Domain: ${siteDomain}, Mail-Link-Basis: ${canonicalSiteUrl}, RESEND_API_KEY: ${process.env.RESEND_API_KEY ? 'gesetzt' : 'fehlt'}`,
   });
 
   if (!ok) {

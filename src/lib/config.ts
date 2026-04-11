@@ -12,7 +12,7 @@
  */
 
 export const operatorName =
-  process.env.OPERATOR_NAME ?? 'HIER_DEN_ECHTEN_BETREIBERNAMEN_EINTRAGEN_VOR_DEPLOY';
+  process.env.OPERATOR_NAME ?? 'Mario Reiner';
 
 export const operatorEmail =
   process.env.OPERATOR_EMAIL ?? 'kontakt@flussdeslebens.live';
@@ -25,8 +25,28 @@ export const siteDomain =
 
 export const siteName = 'Der Fluss des Lebens';
 
+/**
+ * Canonical public URL used in outbound e-mails.
+ * We intentionally prefer the real live domain over NEXTAUTH_URL so that
+ * Resend sees matching link URLs and sending domain.
+ */
+export const canonicalSiteUrl =
+  (process.env.EMAIL_LINK_BASE_URL ?? process.env.SITE_URL ?? `https://${siteDomain}`)
+    .trim()
+    .replace(/\/$/, '');
+
 export const adminSeedEmail =
   process.env.ADMIN_SEED_EMAIL ?? 'kontakt@flussdeslebens.live';
+
+/**
+ * Canonical sender address for Resend e-mails.
+ * We never fall back to no-reply because Resend flags that pattern.
+ */
+export const emailFromAddress = (() => {
+  const configured = process.env.EMAIL_FROM?.trim();
+  if (configured && !/no-?reply/i.test(configured)) return configured;
+  return operatorEmail;
+})();
 
 /**
  * PayPal account e-mail used for donations.

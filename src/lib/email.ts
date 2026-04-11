@@ -1,5 +1,10 @@
 import { Resend } from 'resend';
-import { siteName as SITE_NAME, siteDomain as SITE_DOMAIN } from '@/lib/config';
+import {
+  siteName as SITE_NAME,
+  siteDomain as SITE_DOMAIN,
+  canonicalSiteUrl as CANONICAL_SITE_URL,
+  emailFromAddress as FROM_EMAIL,
+} from '@/lib/config';
 
 /**
  * Returns true when the string looks like a deliverable e-mail address.
@@ -22,16 +27,9 @@ function isDeliverableEmail(address: string): boolean {
   return true;
 }
 
-/** Returns the canonical base URL (no trailing slash). Throws at call time if unset. */
+/** Returns the canonical live URL used inside outbound e-mails. */
 function getBaseUrl(): string {
-  const configuredUrl = process.env.NEXTAUTH_URL?.trim();
-  if (configuredUrl) {
-    const withProtocol = /^https?:\/\//i.test(configuredUrl)
-      ? configuredUrl
-      : `https://${configuredUrl}`;
-    return withProtocol.replace(/\/$/, '');
-  }
-  return `https://${SITE_DOMAIN}`;
+  return CANONICAL_SITE_URL;
 }
 
 let _resend: Resend | null = null;
@@ -44,8 +42,6 @@ function getResend(): Resend {
   }
   return _resend;
 }
-const FROM_EMAIL = process.env.EMAIL_FROM ?? `noreply@${SITE_DOMAIN}`;
-
 /** Escapes HTML special characters to prevent injection in email templates. */
 export function escHtml(str: string): string {
   return str

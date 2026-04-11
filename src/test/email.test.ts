@@ -28,6 +28,8 @@ vi.mock('resend', () => ({
 vi.mock('@/lib/config', () => ({
   siteName: 'Der Fluss des Lebens',
   siteDomain: 'flussdeslebens.live',
+  canonicalSiteUrl: 'https://flussdeslebens.live',
+  emailFromAddress: 'kontakt@flussdeslebens.live',
 }));
 
 // Set env vars before the module is imported for the first time.
@@ -71,10 +73,6 @@ describe('escHtml', () => {
 });
 
 // ─── sendEmail – address validation ──────────────────────────────────────────
-
-// Pre-created error for throw tests - prevents Vitest zone tracking from
-// associating the error with the test and failing it even after it's caught.
-const SIMULATED_NETWORK_ERROR = new Error('Network failure');
 
 describe('sendEmail – address validation', () => {
   beforeEach(() => mockEmailSend.mockReset());
@@ -120,6 +118,7 @@ describe('sendEmail – address validation', () => {
     const callArgs = mockEmailSend.mock.calls[0][0] as { from: string };
     // Must be: "Display Name" <addr@domain>
     expect(callArgs.from).toMatch(/^"[^"]+" <[^>]+>$/);
+    expect(callArgs.from).toContain('kontakt@flussdeslebens.live');
   });
 
   it('returns false and does not throw when Resend returns a validation error', async () => {
@@ -140,12 +139,14 @@ describe('sendVerificationEmail', () => {
     expect(result).toBe(true);
   });
 
-  it('includes the verification URL and token in html and text', async () => {
+  it('uses the live domain for verification links and ignores mismatching NEXTAUTH_URL', async () => {
     mockEmailSend.mockResolvedValue({ data: { id: 'id-2' }, error: null });
     await sendVerificationEmail('alice@example.com', 'mytoken42');
     const callArgs = mockEmailSend.mock.calls[0][0] as { html: string; text: string };
     expect(callArgs.html).toContain('mytoken42');
     expect(callArgs.html).toContain('/api/auth/verify-email');
+    expect(callArgs.html).toContain('https://flussdeslebens.live/api/auth/verify-email?token=mytoken42');
+    expect(callArgs.html).not.toContain('https://example.com');
     expect(callArgs.text).toContain('mytoken42');
   });
 
@@ -161,13 +162,15 @@ describe('sendVerificationEmail', () => {
 describe('sendPasswordResetEmail', () => {
   beforeEach(() => mockEmailSend.mockReset());
 
-  it('returns true on success and includes reset URL in html and text', async () => {
+  it('returns true on success and uses the live domain in reset links', async () => {
     mockEmailSend.mockResolvedValue({ data: { id: 'pr-1' }, error: null });
     const result = await sendPasswordResetEmail('alice@example.com', 'Alice', 'reset-token-xyz');
     expect(result).toBe(true);
     const callArgs = mockEmailSend.mock.calls[0][0] as { html: string; text: string };
     expect(callArgs.html).toContain('reset-token-xyz');
     expect(callArgs.html).toContain('/passwort-zuruecksetzen');
+    expect(callArgs.html).toContain('https://flussdeslebens.live/passwort-zuruecksetzen?token=reset-token-xyz');
+    expect(callArgs.html).not.toContain('https://example.com');
     expect(callArgs.text).toContain('reset-token-xyz');
   });
 
