@@ -22,13 +22,11 @@
   {
     "id": "user-1775609619026-3fb7xzayj",
     "email": "marioreinerdenzer@gmail.com",
-    "password": "$2b$12$WNVL.oCgyZNJR7/q5ouTXOw8.4U7sLZf2iRKl4J7a/3ZahfDaa1E.",
+    "password": "$2b$12$73Inwivp3evH99t4gXyjxOAtz8p5JEEAa9ORcZuoWsU19jxYq6sl6",
     "name": "Mario Reiner",
     "role": "USER",
     "status": "active",
     "createdAt": "2026-04-08T00:53:39.026Z",
-    "active": true,
-    "passwordResetToken": "df20b68ec99b68fbf6d291b6bb98b1fe99f1bc1ee3595c320f67249c4c0c7533",
-    "passwordResetExpiry": "2026-04-11T11:50:05.421Z"
+    "active": true
   }
 ]
