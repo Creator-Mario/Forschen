@@ -7,6 +7,20 @@ import BibleLink from '@/components/BibleLink';
 import SubmissionCta from '@/components/SubmissionCta';
 import { formatDate } from '@/lib/utils';
 
+function getSafeVideoUrl(url: string | undefined): string | null {
+  if (!url) return null;
+
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+      return null;
+    }
+    return parsed.toString();
+  } catch {
+    return null;
+  }
+}
+
 export default function WochenthemaPage() {
   const theme = getCurrentWochenthema();
   const currentDate = formatDate(new Date().toISOString());
@@ -113,32 +127,27 @@ export default function WochenthemaPage() {
               </div>
               {videos.length > 0 ? (
                 <div className="space-y-4">
-                  {videos.map(item => (
-                    (() => {
-                      const safeHref =
-                        item.url && (item.url.startsWith('https://') || item.url.startsWith('http://'))
-                          ? item.url
-                          : null;
-                      return (
-                        <article key={item.id} className="border border-gray-100 rounded-lg p-4">
-                          <h4 className="font-medium text-gray-800">{item.title}</h4>
-                          <p className="text-sm text-gray-600 mt-2 line-clamp-4">{item.description}</p>
-                          {safeHref ? (
-                            <a
-                              href={safeHref}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-block mt-3 text-sm text-blue-600 hover:text-blue-800"
-                            >
-                              Video ansehen →
-                            </a>
-                          ) : (
-                            <span className="inline-block mt-3 text-sm text-gray-400">Link nicht verfügbar</span>
-                          )}
-                        </article>
-                      );
-                    })()
-                  ))}
+                  {videos.map(item => {
+                    const safeHref = getSafeVideoUrl(item.url);
+                    return (
+                      <article key={item.id} className="border border-gray-100 rounded-lg p-4">
+                        <h4 className="font-medium text-gray-800">{item.title}</h4>
+                        <p className="text-sm text-gray-600 mt-2 line-clamp-4">{item.description}</p>
+                        {safeHref ? (
+                          <a
+                            href={safeHref}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block mt-3 text-sm text-blue-600 hover:text-blue-800"
+                          >
+                            Video ansehen →
+                          </a>
+                        ) : (
+                          <span className="inline-block mt-3 text-sm text-gray-400">Link nicht verfügbar</span>
+                        )}
+                      </article>
+                    );
+                  })}
                 </div>
               ) : (
                 <p className="text-sm text-gray-500">Noch keine freigegebenen Videos zu diesem Wochenthema.</p>
