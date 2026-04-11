@@ -9,6 +9,7 @@ on:
 jobs:
   send-weekly-faith-email:
     runs-on: ubuntu-latest
+    permissions: {}
 
     steps:
       - name: Trigger weekly faith email delivery

@@ -6,7 +6,12 @@ import bcrypt from 'bcryptjs';
 import { normalizeEmail } from '@/lib/utils';
 
 function looksLikeEmail(value: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  if (!value || value.includes(' ')) return false;
+  const atIndex = value.indexOf('@');
+  if (atIndex <= 0 || atIndex !== value.lastIndexOf('@')) return false;
+  const domain = value.slice(atIndex + 1);
+  const dotIndex = domain.indexOf('.');
+  return dotIndex > 0 && dotIndex < domain.length - 1;
 }
 
 export async function GET() {
@@ -52,7 +57,10 @@ export async function PATCH(req: NextRequest) {
     name: normalizedName,
     email: normalizedEmail,
     weeklyFaithEmailEnabled: weeklyFaithEmailEnabled === true,
-    weeklyFaithEmailUpdatedAt: new Date().toISOString(),
+    weeklyFaithEmailUpdatedAt:
+      user.weeklyFaithEmailEnabled === (weeklyFaithEmailEnabled === true)
+        ? user.weeklyFaithEmailUpdatedAt
+        : new Date().toISOString(),
   };
 
   await saveUser(updatedUser);

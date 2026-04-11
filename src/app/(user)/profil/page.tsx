@@ -26,12 +26,6 @@ export default function ProfilPage() {
 
   useEffect(() => {
     if (!session?.user) return;
-    setName(session.user.name ?? '');
-    setEmail(session.user.email ?? '');
-  }, [session]);
-
-  useEffect(() => {
-    if (!session?.user) return;
 
     let cancelled = false;
 
