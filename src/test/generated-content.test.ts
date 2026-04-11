@@ -43,4 +43,13 @@ describe('generated-content', () => {
     expect(secondTopic.date).toBe('2026-04-12');
     expect(firstTopic.id).not.toBe(secondTopic.id);
   });
+
+  it('uses a neutral introduction for book recommendations', async () => {
+    const { getTodayBuchempfehlungen } = await import('@/lib/generated-content');
+
+    const books = getTodayBuchempfehlungen('2026-04-11');
+
+    expect(books.introduction).toContain('Diese Buchempfehlungen');
+    expect(books.introduction).not.toContain('KI-inspirierten');
+  });
 });

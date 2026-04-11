@@ -48,6 +48,40 @@ describe('Card', () => {
   });
 });
 
+describe('BookRecommendationsCard', () => {
+  const collection = {
+    id: 'bk-1',
+    date: '2026-04-11',
+    topicTitle: 'Digitale Überforderung',
+    introduction: 'Einführung',
+    recommendations: [
+      { title: 'Erstes Buch', author: 'Autor 1', description: 'Beschreibung 1', relevance: 'Relevanz 1' },
+      { title: 'Zweites Buch', author: 'Autor 2', description: 'Beschreibung 2', relevance: 'Relevanz 2' },
+    ],
+  };
+
+  it('reveals hidden compact recommendations when the footer button is clicked', async () => {
+    const { default: BookRecommendationsCard } = await import('@/components/BookRecommendationsCard');
+    render(React.createElement(BookRecommendationsCard, { collection, compact: true }));
+
+    expect(screen.getByText('Erstes Buch')).toBeInTheDocument();
+    expect(screen.queryByText('Zweites Buch')).toBeNull();
+
+    fireEvent.click(screen.getByRole('button', { name: /\+ 1 weitere Empfehlung/i }));
+
+    expect(screen.getByText('Zweites Buch')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Weniger anzeigen/i })).toBeInTheDocument();
+  });
+
+  it('shows the relevance text in the full card view', async () => {
+    const { default: BookRecommendationsCard } = await import('@/components/BookRecommendationsCard');
+    render(React.createElement(BookRecommendationsCard, { collection }));
+
+    expect(screen.getByText('Relevanz 1')).toBeInTheDocument();
+    expect(screen.getByText('Relevanz 2')).toBeInTheDocument();
+  });
+});
+
 // ─── BibleLink ────────────────────────────────────────────────────────────────
 
 describe('BibleLink', () => {
