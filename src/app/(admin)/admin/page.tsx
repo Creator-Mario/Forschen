@@ -214,7 +214,7 @@ function AdminPageInner() {
         </div>
 
         <div className="mt-4">
-          <Link href="/" className="text-gray-400 hover:text-gray-600 text-sm transition-colors">← Zurück zur Plattform</Link>
+          <Link href="/dashboard" className="text-gray-400 hover:text-gray-600 text-sm transition-colors">← Zum Mitgliederbereich</Link>
         </div>
       </div>
     </ProtectedRoute>

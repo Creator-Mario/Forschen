@@ -9,10 +9,14 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { formatDate } from '@/lib/utils';
 
+const routerPush = vi.fn();
+const routerReplace = vi.fn();
+let currentPathname = '/';
+
 // ─── Mock next/navigation (used by ProtectedRoute's router.push) ──────────────
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
-  usePathname: () => '/',
+  useRouter: () => ({ push: routerPush, replace: routerReplace }),
+  usePathname: () => currentPathname,
   useSearchParams: () => new URLSearchParams(),
 }));
 
@@ -271,6 +275,8 @@ describe('AdminModerationTable', () => {
 describe('ProtectedRoute', () => {
   beforeEach(() => {
     vi.resetModules();
+    vi.clearAllMocks();
+    currentPathname = '/';
   });
 
   it('shows loading indicator while session is loading', async () => {
@@ -299,6 +305,16 @@ describe('ProtectedRoute', () => {
     const { container } = render(React.createElement(ProtectedRoute, null, React.createElement('div', null, 'Protected Content')));
     expect(screen.queryByText('Protected Content')).toBeNull();
     expect(container.firstChild).toBeNull();
+  });
+
+  it('redirects unauthenticated users back to the requested member page after login', async () => {
+    currentPathname = '/mitglieder/vorstellungen';
+    vi.doMock('next-auth/react', () => ({
+      useSession: () => ({ data: null, status: 'unauthenticated' }),
+    }));
+    const { default: ProtectedRoute } = await import('@/components/ProtectedRoute');
+    render(React.createElement(ProtectedRoute, null, React.createElement('div', null, 'Protected Content')));
+    expect(routerReplace).toHaveBeenCalledWith('/login?callbackUrl=%2Fmitglieder%2Fvorstellungen');
   });
 
   it('renders nothing for non-admin user when requireAdmin=true', async () => {

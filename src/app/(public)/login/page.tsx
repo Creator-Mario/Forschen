@@ -1,16 +1,17 @@
 'use client';
 
 import { signIn, getSession } from 'next-auth/react';
-import { useState, FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, FormEvent, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function LoginPage() {
+function LoginPageContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -26,10 +27,14 @@ export default function LoginPage() {
       setError('Anmeldung fehlgeschlagen. Bitte überprüfe deine Zugangsdaten.');
     } else {
       const session = await getSession();
+      const callbackUrl = searchParams.get('callbackUrl');
+      const safeCallbackUrl = callbackUrl && callbackUrl.startsWith('/') && !callbackUrl.startsWith('//')
+        ? callbackUrl
+        : null;
       if (session?.user?.role === 'ADMIN') {
         router.push('/admin');
       } else {
-        router.push('/dashboard');
+        router.push(safeCallbackUrl || '/dashboard');
       }
     }
   }
@@ -106,5 +111,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-[70vh] flex items-center justify-center px-4 py-12"><div className="text-gray-500">Laden...</div></div>}>
+      <LoginPageContent />
+    </Suspense>
   );
 }
