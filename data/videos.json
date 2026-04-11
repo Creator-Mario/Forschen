@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "id": "video-1775879678127-k2h3q3gre",
+    "userId": "admin-001",
+    "authorName": "Administrator",
+    "title": "Das Johannesevangelium (Bibelfilm)",
+    "description": "Diese Verfilmung des Johannes-Evangeliums aus dem Lumo Project stellt das Leben und Wirken Jesu Christi wortgetreu auf der Grundlage des biblischen Textes dar. Die Produktion kombiniert eine dokumentarische Narration mit historisch authentisch nachgestellten Szenen, um die biblischen Berichte visuell zugänglich zu machen.",
+    "url": "https://youtu.be/vrPealvpuRY?si=wjfStB0Ufdf4z0KJ",
+    "status": "published",
+    "createdAt": "2026-04-11T03:54:38.127Z"
+  }
+]
