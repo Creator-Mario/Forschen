@@ -30,5 +30,15 @@
     "url": "https://youtu.be/-yjVASjSc4w?si=YDV2SC20JXnDn7Sn",
     "status": "published",
     "createdAt": "2026-04-11T13:06:50.121Z"
+  },
+  {
+    "id": "video-1775913014378-0vaz7opn1",
+    "userId": "admin-001",
+    "authorName": "Administrator",
+    "title": "Das Markusevangelium (Bibelfilm)",
+    "description": "Das Markusevangelium wird vom Bibelprojekt als ein dramatischer Bericht in drei Akten dargestellt, der Jesus als leidenden, unerwarteten messianischen König präsentiert. Der Bericht strukturiert sich von Jesu Wirken in Galiläa über den Weg nach Jerusalem bis hin zur Kreuzigung, wobei der Fokus auf seiner Identität und dem Reich Gottes liegt.",
+    "url": "https://youtu.be/zQNQn30PMPs?si=eL9xRFZ7qlPO1VcV",
+    "status": "published",
+    "createdAt": "2026-04-11T13:10:14.378Z"
   }
 ]
