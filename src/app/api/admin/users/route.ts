@@ -42,7 +42,7 @@ export async function PATCH(req: NextRequest) {
     const userEmail = user.email;
     const userName = user.name;
 
-    // Notify the user before deletion so email is still accessible.
+    // Notify the user while the account record and email address are still available.
     try {
       await sendEmail({
         to: userEmail,

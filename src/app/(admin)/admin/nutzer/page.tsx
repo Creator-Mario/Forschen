@@ -16,7 +16,8 @@ export default function AdminNutzerPage() {
       const res = await fetch('/api/admin/users', { cache: 'no-store' });
       const data = await res.json();
       if (Array.isArray(data)) setUsers(data);
-    } catch {
+    } catch (err) {
+      console.error('[admin/nutzer] load failed:', err);
       setFeedback(current => current ?? { type: 'error', msg: 'Nutzerliste konnte nicht geladen werden.' });
     }
   }
@@ -38,7 +39,11 @@ export default function AdminNutzerPage() {
     });
   }
 
-  useEffect(() => { void load(); }, []);
+  useEffect(() => {
+    load().catch(err => {
+      console.error('[admin/nutzer] initial load failed:', err);
+    });
+  }, []);
 
   async function handleAction(id: string, action: 'lock' | 'unlock' | 'hard_delete') {
     const confirmMsg =
