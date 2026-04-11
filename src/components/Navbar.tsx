@@ -51,7 +51,10 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-5 text-sm">
             {[
               { href: '/tageswort', label: 'Tageswort' },
+              { href: '/psalmen', label: 'Psalmen' },
               { href: '/wochenthema', label: 'Wochenthema' },
+              { href: '/glauben-heute', label: 'Glauben heute' },
+              { href: '/buchempfehlungen', label: 'Bücher' },
               { href: '/thesen', label: 'Thesen' },
               { href: '/forschung', label: 'Forschung' },
               { href: '/gebet', label: 'Gebet' },
@@ -133,7 +136,10 @@ export default function Navbar() {
           <div className="md:hidden pb-4 pt-2 flex flex-col gap-1 text-sm border-t border-blue-700">
             {[
               { href: '/tageswort', label: 'Tageswort' },
+              { href: '/psalmen', label: 'Psalmen' },
               { href: '/wochenthema', label: 'Wochenthema' },
+              { href: '/glauben-heute', label: 'Glauben heute' },
+              { href: '/buchempfehlungen', label: 'Bücher' },
               { href: '/thesen', label: 'Thesen' },
               { href: '/forschung', label: 'Forschung' },
               { href: '/gebet', label: 'Gebet' },

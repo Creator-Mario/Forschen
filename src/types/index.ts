@@ -8,7 +8,7 @@ export type UserStatus =
   | 'question_to_user'     // admin sent a question back
   | 'postponed'            // admin postponed decision
   | 'active'               // fully approved, may log in
-  | 'deleted';             // soft-deleted
+  | 'deleted';             // legacy deactivated/locked state; account record still exists
 
 // New canonical status values; legacy 'pending' | 'approved' | 'rejected' kept for backward compat.
 export type ContentStatus =
@@ -74,6 +74,59 @@ export interface Wochenthema {
   researchQuestions: string[];
   status: 'draft' | 'published' | 'archived';
   createdAt?: string;
+}
+
+export interface PsalmThema {
+  id: string;
+  date: string;
+  psalmReference: string;
+  title: string;
+  excerpt: string;
+  summary: string;
+  significance: string;
+  practice: string;
+  questions: string[];
+}
+
+export interface GlaubenHeuteThema {
+  id: string;
+  date: string;
+  title: string;
+  headline: string;
+  worldFocus: string;
+  faithPerspective: string;
+  discipleshipImpulse: string;
+  bibleVerses: string[];
+  questions: string[];
+}
+
+export interface Buchempfehlung {
+  title: string;
+  author: string;
+  description: string;
+  relevance: string;
+}
+
+export interface BuchempfehlungsSammlung {
+  id: string;
+  date: string;
+  topicTitle: string;
+  introduction: string;
+  recommendations: Buchempfehlung[];
+}
+
+export interface NutzerBuchempfehlung {
+  id: string;
+  userId: string;
+  recommenderName: string;
+  title: string;
+  author: string;
+  description: string;
+  themeReference: string;
+  status: ContentStatus;
+  createdAt: string;
+  updatedAt?: string;
+  adminMessage?: string;
 }
 
 export interface These {

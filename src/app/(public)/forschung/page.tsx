@@ -14,6 +14,7 @@ export default async function ForschungPage() {
 
   const beitraege = getApprovedForschung();
   const themen = getWochenthemaList().filter(t => t.status === 'published');
+  const themenById = new Map(themen.map(theme => [theme.id, theme]));
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
@@ -32,6 +33,11 @@ export default async function ForschungPage() {
           {beitraege.length > 0 ? beitraege.map(b => (
             <div key={b.id} className="bg-white rounded-xl shadow-md p-6">
               <h2 className="font-bold text-gray-800 text-lg mb-2">{b.title}</h2>
+              {b.wochenthemaId && themenById.get(b.wochenthemaId) && (
+                <p className="text-xs text-blue-600 font-medium mb-2">
+                  Thema: {themenById.get(b.wochenthemaId)?.title}
+                </p>
+              )}
               <p className="text-gray-600 text-sm leading-relaxed mb-3">{b.content}</p>
               <div className="flex items-center justify-between text-xs text-gray-400">
                 <div className="flex items-center gap-2">

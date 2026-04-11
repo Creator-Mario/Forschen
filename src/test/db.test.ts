@@ -114,20 +114,24 @@ describe('db – getAwaitingReviewUsers', () => {
 // ── Tageswort lookups ─────────────────────────────────────────────────────────
 
 describe('db – getTodayTageswort', () => {
-  const today = new Date().toISOString().split('T')[0];
   const tageswortList = [
-    { id: 't1', date: '2000-01-01', published: true, verse: 'old', text: 'old text', context: '', questions: [] },
-    { id: 't2', date: today, published: true, verse: 'John 3:16', text: 'For God…', context: '', questions: [] },
-    { id: 't3', date: today, published: false, verse: 'Draft', text: 'draft', context: '', questions: [] },
+    { id: 't1', date: '2026-04-10', published: true, verse: 'old', text: 'old text', context: '', questions: [] },
+    { id: 't2', date: '2026-04-11', published: true, verse: 'John 3:16', text: 'For God…', context: '', questions: [] },
+    { id: 't3', date: '2026-04-11', published: false, verse: 'Draft', text: 'draft', context: '', questions: [] },
   ];
 
   beforeEach(() => {
     vi.resetModules();
     delete process.env.GITHUB_TOKEN;
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-04-11T10:00:00Z'));
     vi.spyOn(fs, 'existsSync').mockReturnValue(true);
     vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(tageswortList));
   });
-  afterEach(() => vi.restoreAllMocks());
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
 
   it("returns today's published tageswort", async () => {
     const { getTodayTageswort } = await import('@/lib/db');
@@ -137,6 +141,12 @@ describe('db – getTodayTageswort', () => {
   it('does not return unpublished entries', async () => {
     const { getTodayTageswort } = await import('@/lib/db');
     expect(getTodayTageswort()?.id).not.toBe('t3');
+  });
+
+  it('uses the previous day before 03:00 Europe/Berlin', async () => {
+    vi.setSystemTime(new Date('2026-04-11T00:30:00Z'));
+    const { getTodayTageswort } = await import('@/lib/db');
+    expect(getTodayTageswort()?.id).toBe('t1');
   });
 });
 
@@ -162,6 +172,30 @@ describe('db – getApprovedThesen', () => {
     const { getApprovedThesen } = await import('@/lib/db');
     const result = getApprovedThesen();
     expect(result.map(t => t.id).sort()).toEqual(['th2', 'th3']);
+  });
+});
+
+describe('db – getBuchempfehlungen', () => {
+  beforeEach(() => {
+    vi.resetModules();
+    delete process.env.GITHUB_TOKEN;
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-04-11T12:00:00Z'));
+    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify([
+      { id: 'b1', createdAt: '2026-04-11T00:00:00Z', status: 'published' },
+      { id: 'b2', createdAt: '2025-12-01T00:00:00Z', status: 'published' },
+    ]));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
+
+  it('returns stored entries without deleting older archive items', async () => {
+    const { getBuchempfehlungen } = await import('@/lib/db');
+    expect(getBuchempfehlungen().map(item => item.id)).toEqual(['b1', 'b2']);
   });
 });
 
@@ -240,20 +274,25 @@ describe('db – saveUser (local fs write)', () => {
 
 describe('db – getCurrentWochenthema', () => {
   const themes = [
-    { id: 'w1', week: '2024-W01', status: 'published', title: 'First', introduction: '', bibleVerses: [], problemStatement: '', researchQuestions: [] },
-    { id: 'w2', week: '2024-W02', status: 'draft', title: 'Draft', introduction: '', bibleVerses: [], problemStatement: '', researchQuestions: [] },
-    { id: 'w3', week: '2024-W03', status: 'published', title: 'Latest', introduction: '', bibleVerses: [], problemStatement: '', researchQuestions: [] },
+    { id: 'w1', week: '2026-W15', status: 'published', title: 'Week 15', introduction: '', bibleVerses: [], problemStatement: '', researchQuestions: [] },
+    { id: 'w2', week: '2026-W16', status: 'draft', title: 'Draft', introduction: '', bibleVerses: [], problemStatement: '', researchQuestions: [] },
+    { id: 'w3', week: '2026-W16', status: 'published', title: 'Week 16', introduction: '', bibleVerses: [], problemStatement: '', researchQuestions: [] },
   ];
 
   beforeEach(() => {
     vi.resetModules();
     delete process.env.GITHUB_TOKEN;
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-04-12T01:30:00Z'));
     vi.spyOn(fs, 'existsSync').mockReturnValue(true);
     vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(themes));
   });
-  afterEach(() => vi.restoreAllMocks());
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
 
-  it('returns the last published theme', async () => {
+  it('returns the theme matching the effective publication week', async () => {
     const { getCurrentWochenthema } = await import('@/lib/db');
     expect(getCurrentWochenthema()?.id).toBe('w3');
   });
@@ -262,6 +301,12 @@ describe('db – getCurrentWochenthema', () => {
     vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify([themes[1]]));
     const { getCurrentWochenthema } = await import('@/lib/db');
     expect(getCurrentWochenthema()).toBeUndefined();
+  });
+
+  it('keeps the previous week before the Sunday 03:00 Europe/Berlin switch', async () => {
+    vi.setSystemTime(new Date('2026-04-12T00:30:00Z'));
+    const { getCurrentWochenthema } = await import('@/lib/db');
+    expect(getCurrentWochenthema()?.id).toBe('w1');
   });
 });
 
@@ -309,6 +354,11 @@ describe('db – deleteContentItem', () => {
 describe('db – deleteUserAccount', () => {
   const user = { id: 'u1', email: 'a@b.de', name: 'Alice', role: 'USER', status: 'active', active: true, createdAt: '2024-01-01', password: 'h' };
   const these = [{ id: 'th1', userId: 'u1' }, { id: 'th2', userId: 'u2' }];
+  const forschung = [{ id: 'f1', userId: 'u1' }, { id: 'f2', userId: 'u2' }];
+  const gebete = [{ id: 'g1', userId: 'u1' }, { id: 'g2', userId: 'u2' }];
+  const videos = [{ id: 'v1', userId: 'u1' }, { id: 'v2', userId: 'u2' }];
+  const aktionen = [{ id: 'a1', userId: 'u1' }, { id: 'a2', userId: 'u2' }];
+  const buchempfehlungen = [{ id: 'b1', userId: 'u1' }, { id: 'b2', userId: 'u2' }];
   const messages = [
     { id: 'm1', fromUserId: 'u1', toUserId: 'u2', content: 'hi', createdAt: '2024-01-01T10:00:00Z' },
     { id: 'm2', fromUserId: 'u3', toUserId: 'u4', content: 'other', createdAt: '2024-01-01T11:00:00Z' },
@@ -323,6 +373,11 @@ describe('db – deleteUserAccount', () => {
       const file = String(p);
       if (file.endsWith('users.json')) return JSON.stringify([user]);
       if (file.endsWith('thesen.json')) return JSON.stringify(these);
+      if (file.endsWith('forschung.json')) return JSON.stringify(forschung);
+      if (file.endsWith('gebete.json')) return JSON.stringify(gebete);
+      if (file.endsWith('videos.json')) return JSON.stringify(videos);
+      if (file.endsWith('aktionen.json')) return JSON.stringify(aktionen);
+      if (file.endsWith('buchempfehlungen.json')) return JSON.stringify(buchempfehlungen);
       if (file.endsWith('messages.json')) return JSON.stringify(messages);
       return JSON.stringify([]);
     });
@@ -345,6 +400,21 @@ describe('db – deleteUserAccount', () => {
     const writtenThesen = JSON.parse(thesenWrite![1] as string);
     expect(writtenThesen).toHaveLength(1);
     expect(writtenThesen[0].id).toBe('th2');
+
+    const forschungWrite = writeCalls.find((c: unknown[]) => String(c[0]).endsWith('forschung.json'));
+    expect(JSON.parse(forschungWrite![1] as string)).toEqual([{ id: 'f2', userId: 'u2' }]);
+
+    const gebeteWrite = writeCalls.find((c: unknown[]) => String(c[0]).endsWith('gebete.json'));
+    expect(JSON.parse(gebeteWrite![1] as string)).toEqual([{ id: 'g2', userId: 'u2' }]);
+
+    const videosWrite = writeCalls.find((c: unknown[]) => String(c[0]).endsWith('videos.json'));
+    expect(JSON.parse(videosWrite![1] as string)).toEqual([{ id: 'v2', userId: 'u2' }]);
+
+    const aktionenWrite = writeCalls.find((c: unknown[]) => String(c[0]).endsWith('aktionen.json'));
+    expect(JSON.parse(aktionenWrite![1] as string)).toEqual([{ id: 'a2', userId: 'u2' }]);
+
+    const buchempfehlungenWrite = writeCalls.find((c: unknown[]) => String(c[0]).endsWith('buchempfehlungen.json'));
+    expect(JSON.parse(buchempfehlungenWrite![1] as string)).toEqual([{ id: 'b2', userId: 'u2' }]);
 
     // Messages involving u1 should be removed
     const msgWrite = writeCalls.find((c: unknown[]) => String(c[0]).endsWith('messages.json'));

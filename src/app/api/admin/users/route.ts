@@ -49,6 +49,8 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Nutzer konnte nicht gelöscht werden.' }, { status: 500 });
     }
 
+    // Best-effort follow-up tasks: the deletion itself already succeeded and must not
+    // be rolled back just because email delivery or admin-log persistence fails.
     const followUpTasks = await Promise.allSettled([
       sendEmail({
         to: userEmail,
@@ -89,6 +91,7 @@ export async function PATCH(req: NextRequest) {
   const userEmail = user.email;
   const userName = user.name;
   if (action === 'lock') {
+    // Legacy "deleted" status means deactivated/locked here — not physically removed.
     user.active = false;
     user.status = 'deleted';
   } else if (action === 'unlock') {

@@ -6,7 +6,7 @@
  * render in jsdom without a real server.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 
 // ─── Global mocks (applied before any test) ──────────────────────────────────
@@ -144,6 +144,27 @@ describe('TageswortPage', () => {
     const { default: TageswortPage } = await import('@/app/(public)/tageswort/page');
     render(React.createElement(TageswortPage));
     expect(screen.getByText('Denn also hat Gott')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /beitrag verfassen/i })).toHaveAttribute('href', '/forschung/beitraege');
+  });
+});
+
+describe('TageswortArchivPage', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('renders published archived daily words', async () => {
+    const items = [
+      { id: 'tw1', date: '2024-01-02', verse: 'Psalm 1,1', text: 'Text 1', context: '', questions: [], published: true },
+      { id: 'tw2', date: '2024-01-01', verse: 'Psalm 2,1', text: 'Text 2', context: '', questions: [], published: false },
+    ];
+    vi.doMock('@/lib/db', () => ({ getTageswortList: vi.fn().mockReturnValue(items) }));
+    vi.doMock('@/components/BibleVerseCard', () => ({
+      default: ({ tageswort }: { tageswort: { verse: string } }) => React.createElement('div', null, tageswort.verse),
+    }));
+    const { default: TageswortArchivPage } = await import('@/app/(public)/tageswort/archiv/page');
+    render(React.createElement(TageswortArchivPage));
+    expect(screen.getByRole('heading', { name: /Archiv – Tageswörter/i })).toBeInTheDocument();
+    expect(screen.getByText('Psalm 1,1')).toBeInTheDocument();
+    expect(screen.queryByText('Psalm 2,1')).not.toBeInTheDocument();
   });
 });
 
@@ -178,6 +199,25 @@ describe('ThesenPage', () => {
   });
 });
 
+describe('ThesenArchivPage', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('renders published theses in the member archive', async () => {
+    const these = { id: 'th1', userId: 'u1', authorName: 'Alice', title: 'Archiv-These', content: 'Body', bibleReference: '', status: 'published', createdAt: '2024-01-01T00:00:00Z' };
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', name: 'Test', role: 'USER' } }) }));
+    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
+    vi.doMock('@/lib/db', () => ({ getApprovedThesen: vi.fn().mockReturnValue([these]) }));
+    vi.doMock('@/components/ThesisCard', () => ({
+      default: ({ these }: { these: { title: string } }) => React.createElement('div', null, these.title),
+    }));
+    const { default: ThesenArchivPage } = await import('@/app/(user)/thesen/archiv/page');
+    const jsx = await ThesenArchivPage();
+    render(React.createElement(React.Fragment, null, jsx));
+    expect(screen.getByRole('heading', { name: /Archiv – Thesen/i, level: 1 })).toBeInTheDocument();
+    expect(screen.getByText('Archiv-These')).toBeInTheDocument();
+  });
+});
+
 // ─── Gebet page ──────────────────────────────────────────────────────────────
 
 describe('GebetPage', () => {
@@ -199,11 +239,28 @@ describe('VideosPage', () => {
   it('renders the Videos heading', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', name: 'Test', role: 'USER' } }) }));
     vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
-    vi.doMock('@/lib/db', () => ({ getApprovedVideos: vi.fn().mockReturnValue([]) }));
+    vi.doMock('@/lib/db', () => ({ getApprovedVideos: vi.fn().mockReturnValue([]), getWochenthemaList: vi.fn().mockReturnValue([]) }));
     const { default: VideosPage } = await import('@/app/(public)/videos/page');
     const jsx = await VideosPage();
     render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByRole('heading', { name: /Videos/i, level: 1 })).toBeInTheDocument();
+  });
+
+  it('shows the linked theme title for videos', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', name: 'Test', role: 'USER' } }) }));
+    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
+    vi.doMock('@/lib/db', () => ({
+      getApprovedVideos: vi.fn().mockReturnValue([
+        { id: 'v1', title: 'Video', description: 'Beschreibung', url: 'https://example.com', authorName: 'Anna', createdAt: '2026-04-11T00:00:00Z', wochenthemaId: 'w1', status: 'published' },
+      ]),
+      getWochenthemaList: vi.fn().mockReturnValue([
+        { id: 'w1', week: '2026-W15', title: 'Treue', introduction: '', bibleVerses: [], problemStatement: '', researchQuestions: [], status: 'published', createdAt: '2026-04-11T00:00:00Z' },
+      ]),
+    }));
+    const { default: VideosPage } = await import('@/app/(public)/videos/page');
+    const jsx = await VideosPage();
+    render(React.createElement(React.Fragment, null, jsx));
+    expect(screen.getByText(/Thema: Treue/i)).toBeInTheDocument();
   });
 });
 
@@ -213,10 +270,152 @@ describe('WochenthemaPage', () => {
   beforeEach(() => vi.resetModules());
 
   it('renders the Wochenthema heading', async () => {
-    vi.doMock('@/lib/db', () => ({ getCurrentWochenthema: vi.fn().mockReturnValue(undefined), getWochenthemaList: vi.fn().mockReturnValue([]) }));
+    vi.doMock('@/lib/db', () => ({
+      getCurrentWochenthema: vi.fn().mockReturnValue({
+        id: 'w1',
+        week: '2026-W16',
+        title: 'Wochenthema',
+        introduction: 'Einführung',
+        bibleVerses: [],
+        problemStatement: 'Frage',
+        researchQuestions: ['RQ1'],
+        status: 'published',
+      }),
+      getApprovedForschung: vi.fn().mockReturnValue([]),
+      getApprovedVideos: vi.fn().mockReturnValue([]),
+      getWochenthemaList: vi.fn().mockReturnValue([]),
+    }));
     const { default: WochenthemaPage } = await import('@/app/(public)/wochenthema/page');
     render(React.createElement(WochenthemaPage));
     expect(screen.getByRole('heading', { name: /Wochenthema/i, level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /beitrag verfassen/i })).toHaveAttribute('href', '/forschung/beitraege');
+  });
+
+  it('renders approved research and videos for the current theme', async () => {
+    vi.doMock('@/lib/db', () => ({
+      getCurrentWochenthema: vi.fn().mockReturnValue({
+        id: 'w1',
+        week: '2026-W16',
+        title: 'Wochenthema',
+        introduction: 'Einführung',
+        bibleVerses: [],
+        problemStatement: 'Frage',
+        researchQuestions: ['RQ1'],
+        status: 'published',
+      }),
+      getApprovedForschung: vi.fn().mockReturnValue([
+        { id: 'f1', title: 'Passender Beitrag', content: 'Inhalt', authorName: 'Anna', createdAt: '2026-04-11T00:00:00Z', wochenthemaId: 'w1', status: 'published' },
+        { id: 'f2', title: 'Falsches Thema', content: 'Inhalt', authorName: 'Ben', createdAt: '2026-04-11T00:00:00Z', wochenthemaId: 'w2', status: 'published' },
+      ]),
+      getApprovedVideos: vi.fn().mockReturnValue([
+        { id: 'v1', title: 'Passendes Video', description: 'Beschreibung', url: 'https://example.com/video', authorName: 'Anna', createdAt: '2026-04-11T00:00:00Z', wochenthemaId: 'w1', status: 'published' },
+        { id: 'v2', title: 'Falsches Video', description: 'Beschreibung', url: 'https://example.com/other', authorName: 'Ben', createdAt: '2026-04-11T00:00:00Z', wochenthemaId: 'w2', status: 'published' },
+      ]),
+      getWochenthemaList: vi.fn().mockReturnValue([]),
+    }));
+    const { default: WochenthemaPage } = await import('@/app/(public)/wochenthema/page');
+    render(React.createElement(WochenthemaPage));
+    expect(screen.getByText('Passender Beitrag')).toBeInTheDocument();
+    expect(screen.getByText('Passendes Video')).toBeInTheDocument();
+    expect(screen.queryByText('Falsches Thema')).not.toBeInTheDocument();
+    expect(screen.queryByText('Falsches Video')).not.toBeInTheDocument();
+  });
+});
+
+describe('WochenthemaArchivPage', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('renders archived themes in the archive view', async () => {
+    vi.doMock('@/lib/db', () => ({
+      getWochenthemaList: vi.fn().mockReturnValue([
+        { id: 'w1', week: '2024-W02', title: 'Archiviertes Thema', introduction: 'Einführung', bibleVerses: [], problemStatement: '', researchQuestions: [], status: 'archived' },
+        { id: 'w2', week: '2024-W03', title: 'Aktuelles Thema', introduction: 'Einführung', bibleVerses: [], problemStatement: '', researchQuestions: [], status: 'published' },
+      ]),
+    }));
+    const { default: WochenthemaArchivPage } = await import('@/app/(public)/wochenthema/archiv/page');
+    render(React.createElement(WochenthemaArchivPage));
+    expect(screen.getByText('Archiviertes Thema')).toBeInTheDocument();
+    expect(screen.getAllByText(/Archiviert/i).length).toBeGreaterThan(0);
+  });
+});
+
+describe('PsalmenPage', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('renders the Psalmen heading', async () => {
+    vi.doMock('@/lib/generated-content', () => ({
+      getTodayPsalmThema: vi.fn().mockReturnValue({
+        id: 'ps-1',
+        date: '2026-04-11',
+        psalmReference: 'Psalm 1,1-3',
+        title: 'Verwurzelt leben',
+        excerpt: 'Auszug',
+        summary: 'Zusammenfassung',
+        significance: 'Bedeutung',
+        practice: 'Praxis',
+        questions: ['Frage 1'],
+      }),
+    }));
+    const { default: PsalmenPage } = await import('@/app/(public)/psalmen/page');
+    render(React.createElement(PsalmenPage));
+    expect(screen.getByRole('heading', { name: /Psalm des Tages/i })).toBeInTheDocument();
+    expect(screen.getByText('Frage 1')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /psalm-beitrag verfassen/i })).toHaveAttribute('href', '/forschung/beitraege');
+  });
+});
+
+describe('GlaubenHeutePage', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('renders the Glauben heute heading', async () => {
+    vi.doMock('@/lib/generated-content', () => ({
+      getTodayGlaubenHeuteThema: vi.fn().mockReturnValue({
+        id: 'gh-1',
+        date: '2026-04-11',
+        title: 'Digitale Überforderung',
+        headline: 'Zwischen Dauerrauschen',
+        worldFocus: 'Weltfokus',
+        faithPerspective: 'Glaubensperspektive',
+        discipleshipImpulse: 'Impuls',
+        bibleVerses: ['Psalm 46,11'],
+        questions: ['Frage A'],
+      }),
+    }));
+    const { default: GlaubenHeutePage } = await import('@/app/(public)/glauben-heute/page');
+    render(React.createElement(GlaubenHeutePage));
+    expect(screen.getByRole('heading', { name: /Glauben heute/i })).toBeInTheDocument();
+    expect(screen.getByText('Frage A')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /gedankenbeitrag verfassen/i })).toHaveAttribute('href', '/forschung/beitraege');
+  });
+});
+
+describe('BuchempfehlungenPage', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('renders generated and community book recommendations', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-04-11T12:00:00Z'));
+    vi.doMock('@/lib/generated-content', () => ({
+      getTodayBuchempfehlungen: vi.fn().mockReturnValue({
+        id: 'bk-1',
+        date: '2026-04-11',
+        topicTitle: 'Digitale Überforderung',
+        introduction: 'Intro',
+        recommendations: [{ title: 'Nachfolge', author: 'Bonhoeffer', description: 'Desc', relevance: 'Fit' }],
+      }),
+    }));
+    vi.doMock('@/lib/db', () => ({
+      getApprovedBuchempfehlungen: vi.fn().mockReturnValue([
+        { id: 'u1', userId: 'u1', recommenderName: 'Alice', title: 'Gemeinschaftsbuch', author: 'Autor', description: 'Beschreibung', themeReference: 'Psalmen', status: 'published', createdAt: '2026-04-11T00:00:00Z' },
+        { id: 'u2', userId: 'u2', recommenderName: 'Bob', title: 'Altes Buch', author: 'Autor', description: 'Alt', themeReference: 'Archiv', status: 'published', createdAt: '2025-12-01T00:00:00Z' },
+      ]),
+    }));
+    const { default: BuchempfehlungenPage } = await import('@/app/(public)/buchempfehlungen/page');
+    render(React.createElement(BuchempfehlungenPage));
+    expect(screen.getByRole('heading', { name: /Buchempfehlungen des Tages/i })).toBeInTheDocument();
+    expect(screen.getByText('Gemeinschaftsbuch')).toBeInTheDocument();
+    expect(screen.queryByText('Altes Buch')).toBeNull();
+    vi.useRealTimers();
   });
 });
 
@@ -233,6 +432,42 @@ describe('ForschungPage', () => {
     const jsx = await ForschungPage();
     render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByRole('heading', { name: /Forschung/i, level: 1 })).toBeInTheDocument();
+  });
+
+  it('shows the linked theme title for research contributions', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', name: 'Test', role: 'USER' } }) }));
+    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
+    vi.doMock('@/lib/db', () => ({
+      getApprovedForschung: vi.fn().mockReturnValue([
+        { id: 'f1', userId: 'u1', authorName: 'Alice', title: 'Beitrag', content: 'Inhalt', bibleReference: '', wochenthemaId: 'w1', status: 'published', createdAt: '2026-04-11T00:00:00Z' },
+      ]),
+      getWochenthemaList: vi.fn().mockReturnValue([
+        { id: 'w1', week: '2026-W15', title: 'Treue', introduction: '', bibleVerses: [], problemStatement: '', researchQuestions: [], status: 'published', createdAt: '2026-04-11T00:00:00Z' },
+      ]),
+    }));
+    const { default: ForschungPage } = await import('@/app/(public)/forschung/page');
+    const jsx = await ForschungPage();
+    render(React.createElement(React.Fragment, null, jsx));
+    expect(screen.getByText(/Thema: Treue/i)).toBeInTheDocument();
+  });
+});
+
+describe('ForschungArchivPage', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('renders published research contributions in the member archive', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', name: 'Test', role: 'USER' } }) }));
+    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
+    vi.doMock('@/lib/db', () => ({
+      getApprovedForschung: vi.fn().mockReturnValue([
+        { id: 'f1', userId: 'u1', authorName: 'Alice', title: 'Archiv-Beitrag', content: 'Inhalt', bibleReference: '', status: 'published', createdAt: '2024-01-01T00:00:00Z' },
+      ]),
+    }));
+    const { default: ForschungArchivPage } = await import('@/app/(user)/forschung/archiv/page');
+    const jsx = await ForschungArchivPage();
+    render(React.createElement(React.Fragment, null, jsx));
+    expect(screen.getByRole('heading', { name: /Archiv – Forschungsbeiträge/i, level: 1 })).toBeInTheDocument();
+    expect(screen.getByText('Archiv-Beitrag')).toBeInTheDocument();
   });
 });
 
@@ -280,6 +515,54 @@ describe('MitgliederVorstellungenPage', () => {
   });
 });
 
+describe('AdminNutzerPage', () => {
+  beforeEach(() => vi.resetModules());
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('updates the visible user row immediately after a lock action and reloads the list', async () => {
+    const initialUsers = [
+      { id: 'u1', name: 'Alice', email: 'alice@example.com', role: 'USER', active: true, status: 'active', createdAt: '2024-01-01T00:00:00Z' },
+    ];
+    const refreshedUsers = [
+      { id: 'u1', name: 'Alice', email: 'alice@example.com', role: 'USER', active: false, status: 'deleted', createdAt: '2024-01-01T00:00:00Z' },
+    ];
+    let getCount = 0;
+    const fetchMock = vi.fn().mockImplementation((_input: string, init?: RequestInit) => {
+      if (init?.method === 'PATCH') {
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({ success: true }) });
+      }
+
+      getCount += 1;
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(getCount === 1 ? initialUsers : refreshedUsers),
+      });
+    });
+
+    vi.stubGlobal('fetch', fetchMock);
+    vi.stubGlobal('confirm', vi.fn().mockReturnValue(true));
+    vi.doMock('next-auth/react', () => ({
+      useSession: () => ({ data: { user: { id: 'admin-1', role: 'ADMIN', name: 'Admin' } }, status: 'authenticated' }),
+      signIn: vi.fn(),
+      signOut: vi.fn(),
+      SessionProvider: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
+    }));
+
+    const { default: AdminNutzerPage } = await import('@/app/(admin)/admin/nutzer/page');
+    render(React.createElement(AdminNutzerPage));
+
+    await screen.findByText('Alice');
+    const lockButton = await screen.findByRole('button', { name: 'Sperren' });
+    fireEvent.click(lockButton);
+
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Reaktivieren' })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('Inaktiv')).toBeInTheDocument());
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
+    expect(fetchMock).toHaveBeenNthCalledWith(1, '/api/admin/users', { cache: 'no-store' });
+    expect(fetchMock).toHaveBeenNthCalledWith(3, '/api/admin/users', { cache: 'no-store' });
+  });
+});
+
 describe('ChatPage', () => {
   beforeEach(() => vi.resetModules());
   afterEach(() => vi.unstubAllGlobals());
@@ -318,11 +601,45 @@ describe('HomePage', () => {
       getCurrentWochenthema: vi.fn().mockReturnValue(undefined),
       getApprovedThesen: vi.fn().mockReturnValue([]),
     }));
+    vi.doMock('@/lib/generated-content', () => ({
+      getTodayPsalmThema: vi.fn().mockReturnValue({
+        id: 'ps-1',
+        date: '2026-04-11',
+        psalmReference: 'Psalm 1,1-3',
+        title: 'Verwurzelt leben',
+        excerpt: 'Auszug',
+        summary: 'Zusammenfassung',
+        significance: 'Bedeutung',
+        practice: 'Praxis',
+        questions: [],
+      }),
+      getTodayGlaubenHeuteThema: vi.fn().mockReturnValue({
+        id: 'gh-1',
+        date: '2026-04-11',
+        title: 'Digitale Überforderung',
+        headline: 'Zwischen Dauerrauschen',
+        worldFocus: 'Weltfokus',
+        faithPerspective: 'Perspektive',
+        discipleshipImpulse: 'Impuls',
+        bibleVerses: [],
+        questions: [],
+      }),
+      getTodayBuchempfehlungen: vi.fn().mockReturnValue({
+        id: 'bk-1',
+        date: '2026-04-11',
+        topicTitle: 'Digitale Überforderung',
+        introduction: 'Intro',
+        recommendations: [],
+      }),
+    }));
     vi.doMock('@/components/BibleVerseCard', () => ({ default: () => null }));
     vi.doMock('@/components/WeeklyThemeCard', () => ({ default: () => null }));
     vi.doMock('@/components/Logo', () => ({ default: () => React.createElement('div', null, 'Logo') }));
     const { default: HomePage } = await import('@/app/(public)/page');
     render(React.createElement(HomePage));
     expect(screen.getByRole('heading', { name: /Der Fluss/i, level: 1 })).toBeInTheDocument();
+    expect(screen.getByAltText(/qr-code zum teilen der website/i).getAttribute('src')).toContain('share-qr');
+    expect(screen.getByText('Der Fluss des Lebens')).toBeInTheDocument();
+    expect(screen.getByText('https://flussdeslebens.live')).toBeInTheDocument();
   });
 });

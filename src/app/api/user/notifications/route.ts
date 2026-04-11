@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { getThesen, getForschung, getGebete, getVideos, getAktionen, getUserById } from '@/lib/db';
+import { getThesen, getForschung, getGebete, getVideos, getAktionen, getBuchempfehlungen, getUserById } from '@/lib/db';
 import type { AdminNotification } from '@/types';
 
 const TYPE_LABELS: Record<string, string> = {
@@ -10,6 +10,7 @@ const TYPE_LABELS: Record<string, string> = {
   gebet: 'Gebet',
   video: 'Video',
   aktion: 'Aktion',
+  buchempfehlung: 'Buchempfehlung',
 };
 
 export async function GET() {
@@ -43,6 +44,7 @@ export async function GET() {
     { type: 'gebet', items: getGebete().map(g => ({ ...g, title: g.content?.substring(0, 60) ?? '' })) },
     { type: 'video', items: getVideos() },
     { type: 'aktion', items: getAktionen() },
+    { type: 'buchempfehlung', items: getBuchempfehlungen() },
   ];
 
   for (const { type, items } of collectors) {

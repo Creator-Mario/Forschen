@@ -7,6 +7,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { formatDate } from '@/lib/utils';
 
 // ─── Mock next/navigation (used by ProtectedRoute's router.push) ──────────────
 vi.mock('next/navigation', () => ({
@@ -231,6 +232,13 @@ describe('WeeklyThemeCard', () => {
     const link = screen.getByRole('link', { name: /Zum Wochenthema/ });
     expect(link).toHaveAttribute('href', '/wochenthema');
   });
+
+  it('shows week number and current date', async () => {
+    const { default: WeeklyThemeCard } = await import('@/components/WeeklyThemeCard');
+    render(React.createElement(WeeklyThemeCard, { theme }));
+    expect(screen.getByText(new RegExp(`Woche ${theme.week}`))).toBeInTheDocument();
+    expect(screen.getByText(new RegExp(formatDate(new Date().toISOString())))).toBeInTheDocument();
+  });
 });
 
 // ─── ProtectedRoute ────────────────────────────────────────────────────────────
@@ -300,6 +308,8 @@ describe('Navbar', () => {
     const { default: Navbar } = await import('@/components/Navbar');
     render(React.createElement(Navbar));
     expect(screen.getAllByText('Tageswort').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Psalmen').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Glauben heute').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Thesen').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Gebet').length).toBeGreaterThan(0);
   });

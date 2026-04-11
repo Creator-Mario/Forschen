@@ -1,18 +1,42 @@
 export const dynamic = 'force-dynamic';
 
 import { getCurrentWochenthema } from '@/lib/db';
+import { getApprovedForschung, getApprovedVideos } from '@/lib/db';
 import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
+import SubmissionCta from '@/components/SubmissionCta';
+import { formatDate } from '@/lib/utils';
+
+function getSafeVideoUrl(url: string | undefined): string | null {
+  if (!url) return null;
+
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+      return null;
+    }
+    return parsed.toString();
+  } catch {
+    return null;
+  }
+}
 
 export default function WochenthemaPage() {
   const theme = getCurrentWochenthema();
+  const currentDate = formatDate(new Date().toISOString());
+  const research = theme
+    ? getApprovedForschung().filter(item => item.wochenthemaId === theme.id)
+    : [];
+  const videos = theme
+    ? getApprovedVideos().filter(item => item.wochenthemaId === theme.id)
+    : [];
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-blue-800 mb-1">Wochenthema</h1>
-          {theme && <p className="text-gray-500">Woche {theme.week}</p>}
+          {theme && <p className="text-gray-500">Woche {theme.week} · {currentDate}</p>}
         </div>
         <Link href="/wochenthema/archiv" className="text-blue-600 hover:text-blue-800 text-sm transition-colors">
           Archiv →
@@ -55,12 +79,80 @@ export default function WochenthemaPage() {
             </ol>
           </div>
 
-          <div className="bg-blue-50 rounded-xl p-6 text-center">
-            <h3 className="font-semibold text-blue-800 mb-2">Deine Forschung beitragen</h3>
-            <p className="text-sm text-gray-600 mb-4">Teile deine Erkenntnisse zu diesem Wochenthema mit der Gemeinschaft.</p>
-            <Link href="/forschung/beitraege" className="bg-blue-800 text-white px-5 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
-              Beitrag verfassen
-            </Link>
+          <SubmissionCta
+            title="Deine Forschung beitragen"
+            description="Teile deine Erkenntnisse zu diesem Wochenthema mit der Gemeinschaft."
+            href="/forschung/beitraege"
+            actionLabel="Beitrag verfassen"
+          />
+
+          <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <section className="bg-white rounded-xl shadow-md p-6">
+              <div className="flex items-center justify-between gap-3 mb-4">
+                <div>
+                  <h3 className="font-semibold text-gray-800">Beiträge zu diesem Thema</h3>
+                  <p className="text-sm text-gray-500">Freigegebene Forschungsbeiträge</p>
+                </div>
+                <Link href="/forschung" className="text-blue-600 hover:text-blue-800 text-sm transition-colors">
+                  Alle Beiträge →
+                </Link>
+              </div>
+              {research.length > 0 ? (
+                <div className="space-y-4">
+                  {research.map(item => (
+                    <article key={item.id} className="border border-gray-100 rounded-lg p-4">
+                      <h4 className="font-medium text-gray-800">{item.title}</h4>
+                      <p className="text-sm text-gray-600 mt-2 line-clamp-4">{item.content}</p>
+                      <div className="mt-3 text-xs text-gray-400 flex items-center justify-between gap-3">
+                        <span>{item.authorName}</span>
+                        <span>{formatDate(item.createdAt)}</span>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">Noch keine freigegebenen Beiträge zu diesem Wochenthema.</p>
+              )}
+            </section>
+
+            <section className="bg-white rounded-xl shadow-md p-6">
+              <div className="flex items-center justify-between gap-3 mb-4">
+                <div>
+                  <h3 className="font-semibold text-gray-800">Videos zu diesem Thema</h3>
+                  <p className="text-sm text-gray-500">Freigegebene Videos</p>
+                </div>
+                <Link href="/videos" className="text-blue-600 hover:text-blue-800 text-sm transition-colors">
+                  Alle Videos →
+                </Link>
+              </div>
+              {videos.length > 0 ? (
+                <div className="space-y-4">
+                  {videos.map(item => {
+                    const safeHref = getSafeVideoUrl(item.url);
+                    return (
+                      <article key={item.id} className="border border-gray-100 rounded-lg p-4">
+                        <h4 className="font-medium text-gray-800">{item.title}</h4>
+                        <p className="text-sm text-gray-600 mt-2 line-clamp-4">{item.description}</p>
+                        {safeHref ? (
+                          <a
+                            href={safeHref}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block mt-3 text-sm text-blue-600 hover:text-blue-800"
+                          >
+                            Video ansehen →
+                          </a>
+                        ) : (
+                          <span className="inline-block mt-3 text-sm text-gray-400">Link nicht verfügbar</span>
+                        )}
+                      </article>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">Noch keine freigegebenen Videos zu diesem Wochenthema.</p>
+              )}
+            </section>
           </div>
         </article>
       ) : (

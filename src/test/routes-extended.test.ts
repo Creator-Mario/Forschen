@@ -277,6 +277,15 @@ describe('DELETE /api/wochenthema', () => {
 describe('GET /api/mitglieder', () => {
   beforeEach(() => vi.resetModules());
 
+  it('returns 401 when unauthenticated', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
+    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
+    vi.doMock('@/lib/db', () => ({ getUsers: vi.fn().mockReturnValue([]) }));
+    const { GET } = await import('@/app/api/mitglieder/route');
+    const res = await GET();
+    expect(res.status).toBe(401);
+  });
+
   it('returns only active members with intro', async () => {
     const users = [
       { id: 'u1', name: 'Alice', role: 'USER', status: 'active', createdAt: '2024-01-01', intro: { vorstellung: 'Ich bin Alice', motivation: 'm', submittedAt: '2024-01-01' } },
@@ -284,6 +293,8 @@ describe('GET /api/mitglieder', () => {
       { id: 'u3', name: 'Carol', role: 'USER', status: 'awaiting_admin_review', createdAt: '2024-01-03', intro: { vorstellung: 'Ich bin Carol', motivation: 'm', submittedAt: '2024-01-03' } },
       { id: 'adm', name: 'Admin', role: 'ADMIN', status: 'active', createdAt: '2024-01-04', intro: { vorstellung: 'Admin', motivation: 'm', submittedAt: '2024-01-04' } },
     ];
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(USER_SESSION) }));
+    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
     vi.doMock('@/lib/db', () => ({ getUsers: vi.fn().mockReturnValue(users) }));
     const { GET } = await import('@/app/api/mitglieder/route');
     const res = await GET();
@@ -303,7 +314,7 @@ describe('GET /api/user/notifications', () => {
 
   it('returns 401 when unauthenticated', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
-    vi.doMock('@/lib/db', () => ({ getUserById: vi.fn(), getThesen: vi.fn().mockReturnValue([]), getForschung: vi.fn().mockReturnValue([]), getGebete: vi.fn().mockReturnValue([]), getVideos: vi.fn().mockReturnValue([]), getAktionen: vi.fn().mockReturnValue([]) }));
+    vi.doMock('@/lib/db', () => ({ getUserById: vi.fn(), getThesen: vi.fn().mockReturnValue([]), getForschung: vi.fn().mockReturnValue([]), getGebete: vi.fn().mockReturnValue([]), getVideos: vi.fn().mockReturnValue([]), getAktionen: vi.fn().mockReturnValue([]), getBuchempfehlungen: vi.fn().mockReturnValue([]) }));
     const { GET } = await import('@/app/api/user/notifications/route');
     const res = await GET();
     expect(res.status).toBe(401);
@@ -321,6 +332,7 @@ describe('GET /api/user/notifications', () => {
       getGebete: vi.fn().mockReturnValue([]),
       getVideos: vi.fn().mockReturnValue([]),
       getAktionen: vi.fn().mockReturnValue([]),
+      getBuchempfehlungen: vi.fn().mockReturnValue([]),
     }));
     const { GET } = await import('@/app/api/user/notifications/route');
     const res = await GET();
@@ -340,6 +352,7 @@ describe('GET /api/user/notifications', () => {
       getGebete: vi.fn().mockReturnValue([]),
       getVideos: vi.fn().mockReturnValue([]),
       getAktionen: vi.fn().mockReturnValue([]),
+      getBuchempfehlungen: vi.fn().mockReturnValue([]),
     }));
     const { GET } = await import('@/app/api/user/notifications/route');
     const res = await GET();
@@ -475,13 +488,15 @@ describe('POST /api/admin/moderate', () => {
       saveForschung: vi.fn(),
       getGebete: vi.fn().mockReturnValue([]),
       saveGebet: vi.fn(),
-      getVideos: vi.fn().mockReturnValue([]),
-      saveVideo: vi.fn(),
-      getAktionen: vi.fn().mockReturnValue([]),
-      saveAktion: vi.fn(),
-      getUserById: vi.fn().mockReturnValue(null),
-      deleteContentItem: vi.fn(),
-      saveAdminLog,
+        getVideos: vi.fn().mockReturnValue([]),
+        saveVideo: vi.fn(),
+        getAktionen: vi.fn().mockReturnValue([]),
+        saveAktion: vi.fn(),
+        getBuchempfehlungen: vi.fn().mockReturnValue([]),
+        saveBuchempfehlung: vi.fn(),
+        getUserById: vi.fn().mockReturnValue(null),
+        deleteContentItem: vi.fn(),
+        saveAdminLog,
     }));
     vi.doMock('@/lib/email', () => ({ sendAdminMessageEmail: vi.fn().mockResolvedValue(true) }));
     const { POST } = await import('@/app/api/admin/moderate/route');
@@ -503,13 +518,15 @@ describe('POST /api/admin/moderate', () => {
       saveForschung: vi.fn(),
       getGebete: vi.fn().mockReturnValue([]),
       saveGebet: vi.fn(),
-      getVideos: vi.fn().mockReturnValue([]),
-      saveVideo: vi.fn(),
-      getAktionen: vi.fn().mockReturnValue([]),
-      saveAktion: vi.fn(),
-      getUserById: vi.fn().mockReturnValue(null),
-      deleteContentItem,
-      saveAdminLog,
+        getVideos: vi.fn().mockReturnValue([]),
+        saveVideo: vi.fn(),
+        getAktionen: vi.fn().mockReturnValue([]),
+        saveAktion: vi.fn(),
+        getBuchempfehlungen: vi.fn().mockReturnValue([]),
+        saveBuchempfehlung: vi.fn(),
+        getUserById: vi.fn().mockReturnValue(null),
+        deleteContentItem,
+        saveAdminLog,
     }));
     vi.doMock('@/lib/email', () => ({ sendAdminMessageEmail: vi.fn() }));
     const { POST } = await import('@/app/api/admin/moderate/route');
@@ -530,13 +547,15 @@ describe('POST /api/admin/moderate', () => {
       saveForschung: vi.fn(),
       getGebete: vi.fn().mockReturnValue([]),
       saveGebet: vi.fn(),
-      getVideos: vi.fn().mockReturnValue([{ id: 'v1', userId: 'u1', title: 'Vid', status: 'review' }]),
-      saveVideo,
-      getAktionen: vi.fn().mockReturnValue([]),
-      saveAktion: vi.fn(),
-      getUserById: vi.fn().mockReturnValue(null),
-      deleteContentItem: vi.fn(),
-      saveAdminLog,
+        getVideos: vi.fn().mockReturnValue([{ id: 'v1', userId: 'u1', title: 'Vid', status: 'review' }]),
+        saveVideo,
+        getAktionen: vi.fn().mockReturnValue([]),
+        saveAktion: vi.fn(),
+        getBuchempfehlungen: vi.fn().mockReturnValue([]),
+        saveBuchempfehlung: vi.fn(),
+        getUserById: vi.fn().mockReturnValue(null),
+        deleteContentItem: vi.fn(),
+        saveAdminLog,
     }));
     vi.doMock('@/lib/email', () => ({ sendAdminMessageEmail: vi.fn() }));
     const { POST } = await import('@/app/api/admin/moderate/route');
@@ -544,6 +563,60 @@ describe('POST /api/admin/moderate', () => {
     expect(res.status).toBe(200);
     expect(saveVideo.mock.calls[0][0].wochenthemaId).toBe('wt-42');
     expect(saveVideo.mock.calls[0][0].status).toBe('published');
+  });
+
+  it('sets wochenthemaId when publishing research', async () => {
+    const saveForschung = vi.fn().mockResolvedValue(undefined);
+    const saveAdminLog = vi.fn().mockResolvedValue(undefined);
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(ADMIN_SESSION) }));
+    vi.doMock('@/lib/db', () => ({
+      getThesen: vi.fn().mockReturnValue([]),
+      saveThese: vi.fn(),
+      getForschung: vi.fn().mockReturnValue([{ id: 'f1', userId: 'u1', title: 'Res', status: 'review' }]),
+      saveForschung,
+      getGebete: vi.fn().mockReturnValue([]),
+      saveGebet: vi.fn(),
+      getVideos: vi.fn().mockReturnValue([]),
+      saveVideo: vi.fn(),
+      getAktionen: vi.fn().mockReturnValue([]),
+      saveAktion: vi.fn(),
+      getBuchempfehlungen: vi.fn().mockReturnValue([]),
+      saveBuchempfehlung: vi.fn(),
+      getUserById: vi.fn().mockReturnValue(null),
+      deleteContentItem: vi.fn(),
+      saveAdminLog,
+    }));
+    vi.doMock('@/lib/email', () => ({ sendAdminMessageEmail: vi.fn() }));
+    const { POST } = await import('@/app/api/admin/moderate/route');
+    const res = await POST(makeJsonRequest('http://localhost/api/admin/moderate', { type: 'forschung', id: 'f1', status: 'published', wochenthemaId: 'wt-42' }));
+    expect(res.status).toBe(200);
+    expect(saveForschung.mock.calls[0][0].wochenthemaId).toBe('wt-42');
+    expect(saveForschung.mock.calls[0][0].status).toBe('published');
+  });
+
+  it('rejects publishing videos without a wochenthema', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(ADMIN_SESSION) }));
+    vi.doMock('@/lib/db', () => ({
+      getThesen: vi.fn().mockReturnValue([]),
+      saveThese: vi.fn(),
+      getForschung: vi.fn().mockReturnValue([]),
+      saveForschung: vi.fn(),
+      getGebete: vi.fn().mockReturnValue([]),
+      saveGebet: vi.fn(),
+      getVideos: vi.fn().mockReturnValue([{ id: 'v1', userId: 'u1', title: 'Vid', status: 'review' }]),
+      saveVideo: vi.fn(),
+      getAktionen: vi.fn().mockReturnValue([]),
+      saveAktion: vi.fn(),
+      getBuchempfehlungen: vi.fn().mockReturnValue([]),
+      saveBuchempfehlung: vi.fn(),
+      getUserById: vi.fn().mockReturnValue(null),
+      deleteContentItem: vi.fn(),
+      saveAdminLog: vi.fn(),
+    }));
+    vi.doMock('@/lib/email', () => ({ sendAdminMessageEmail: vi.fn() }));
+    const { POST } = await import('@/app/api/admin/moderate/route');
+    const res = await POST(makeJsonRequest('http://localhost/api/admin/moderate', { type: 'video', id: 'v1', status: 'published' }));
+    expect(res.status).toBe(400);
   });
 
   it('sends question_to_user email when applicable', async () => {
@@ -557,13 +630,15 @@ describe('POST /api/admin/moderate', () => {
       saveForschung: vi.fn(),
       getGebete: vi.fn().mockReturnValue([]),
       saveGebet: vi.fn(),
-      getVideos: vi.fn().mockReturnValue([]),
-      saveVideo: vi.fn(),
-      getAktionen: vi.fn().mockReturnValue([]),
-      saveAktion: vi.fn(),
-      getUserById: vi.fn().mockReturnValue({ id: 'u1', email: 'alice@example.com', name: 'Alice' }),
-      deleteContentItem: vi.fn(),
-      saveAdminLog,
+        getVideos: vi.fn().mockReturnValue([]),
+        saveVideo: vi.fn(),
+        getAktionen: vi.fn().mockReturnValue([]),
+        saveAktion: vi.fn(),
+        getBuchempfehlungen: vi.fn().mockReturnValue([]),
+        saveBuchempfehlung: vi.fn(),
+        getUserById: vi.fn().mockReturnValue({ id: 'u1', email: 'alice@example.com', name: 'Alice' }),
+        deleteContentItem: vi.fn(),
+        saveAdminLog,
     }));
     vi.doMock('@/lib/email', () => ({ sendAdminMessageEmail }));
     const { POST } = await import('@/app/api/admin/moderate/route');
@@ -581,13 +656,15 @@ describe('POST /api/admin/moderate', () => {
       saveForschung: vi.fn(),
       getGebete: vi.fn().mockReturnValue([]),
       saveGebet: vi.fn(),
-      getVideos: vi.fn().mockReturnValue([]),
-      saveVideo: vi.fn(),
-      getAktionen: vi.fn().mockReturnValue([]),
-      saveAktion: vi.fn(),
-      getUserById: vi.fn(),
-      deleteContentItem: vi.fn(),
-      saveAdminLog: vi.fn(),
+        getVideos: vi.fn().mockReturnValue([]),
+        saveVideo: vi.fn(),
+        getAktionen: vi.fn().mockReturnValue([]),
+        saveAktion: vi.fn(),
+        getBuchempfehlungen: vi.fn().mockReturnValue([]),
+        saveBuchempfehlung: vi.fn(),
+        getUserById: vi.fn(),
+        deleteContentItem: vi.fn(),
+        saveAdminLog: vi.fn(),
     }));
     vi.doMock('@/lib/email', () => ({ sendAdminMessageEmail: vi.fn() }));
     const { POST } = await import('@/app/api/admin/moderate/route');
@@ -627,7 +704,7 @@ describe('GET /api/admin/overview', () => {
 
   it('returns 401 for non-admin', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
-    vi.doMock('@/lib/db', () => ({ getThesen: vi.fn().mockReturnValue([]), getForschung: vi.fn().mockReturnValue([]), getGebete: vi.fn().mockReturnValue([]), getVideos: vi.fn().mockReturnValue([]), getAktionen: vi.fn().mockReturnValue([]), getUserById: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ getThesen: vi.fn().mockReturnValue([]), getForschung: vi.fn().mockReturnValue([]), getGebete: vi.fn().mockReturnValue([]), getVideos: vi.fn().mockReturnValue([]), getAktionen: vi.fn().mockReturnValue([]), getBuchempfehlungen: vi.fn().mockReturnValue([]), getUserById: vi.fn() }));
     const { GET } = await import('@/app/api/admin/overview/route');
     const res = await GET(makeRequest('http://localhost/api/admin/overview'));
     expect(res.status).toBe(401);
@@ -642,15 +719,16 @@ describe('GET /api/admin/overview', () => {
       getGebete: vi.fn().mockReturnValue([]),
       getVideos: vi.fn().mockReturnValue([]),
       getAktionen: vi.fn().mockReturnValue([]),
+      getBuchempfehlungen: vi.fn().mockReturnValue([{ id: 'book1', userId: 'u1', title: 'Nachfolge', themeReference: 'Psalmen', status: 'published', createdAt: '2026-04-11T00:00:00Z' }]),
       getUserById: vi.fn().mockReturnValue({ id: 'u1', name: 'Alice', email: 'alice@example.com' }),
     }));
     const { GET } = await import('@/app/api/admin/overview/route');
     const res = await GET(makeRequest('http://localhost/api/admin/overview'));
     expect(res.status).toBe(200);
     const json = await res.json();
-    expect(json).toHaveLength(1);
-    expect(json[0].id).toBe('th1');
-    expect(json[0].userName).toBe('Alice');
+    expect(json).toHaveLength(2);
+    expect(json.some((item: { id: string }) => item.id === 'th1')).toBe(true);
+    expect(json.some((item: { id: string; userName: string }) => item.id === 'book1' && item.userName === 'Alice')).toBe(true);
   });
 });
 

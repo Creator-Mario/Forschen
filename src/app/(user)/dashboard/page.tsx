@@ -47,8 +47,12 @@ export default function DashboardPage() {
           {[
             { href: '/mein-tageswort', icon: '📖', title: 'Mein Tageswort', desc: 'Deine Notizen und Antworten auf das tägliche Bibelwort.' },
             { href: '/meine-thesen', icon: '💡', title: 'Meine Thesen', desc: 'Verwalte deine theologischen Thesen.' },
+            { href: '/thesen/archiv', icon: '🗂️', title: 'Thesen-Archiv', desc: 'Alle veröffentlichten Thesen der Gemeinschaft im Überblick.' },
             { href: '/thesen/neu', icon: '✍️', title: 'These schreiben', desc: 'Eine neue theologische These verfassen.' },
             { href: '/meine-forschung', icon: '📚', title: 'Meine Forschung', desc: 'Deine Forschungsbeiträge verwalten.' },
+            { href: '/forschung/archiv', icon: '📜', title: 'Forschungsarchiv', desc: 'Frühere Forschungsbeiträge der Gemeinschaft weiterlesen.' },
+            { href: '/meine-buchempfehlungen', icon: '📘', title: 'Meine Buchempfehlungen', desc: 'Deine Buchhinweise und deren Freigabestatus.' },
+            { href: '/buchempfehlungen/neu', icon: '➕', title: 'Buchempfehlung hinzufügen', desc: 'Empfiehl ein Buch zu einem konkreten Thema.' },
             { href: '/meine-gebete', icon: '🙏', title: 'Meine Gebete', desc: 'Deine eingereichten Gebete.' },
             { href: '/gebet/neu', icon: '✨', title: 'Gebet einreichen', desc: 'Ein neues Gebet für die Gemeinschaft.' },
             { href: '/chat', icon: '💬', title: 'Nachrichten', desc: 'Private 1-zu-1-Chats mit Mitgliedern.' },

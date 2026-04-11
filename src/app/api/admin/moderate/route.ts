@@ -7,6 +7,7 @@ import {
   getGebete, saveGebet,
   getVideos, saveVideo,
   getAktionen, saveAktion,
+  getBuchempfehlungen, saveBuchempfehlung,
   getUserById,
   deleteContentItem,
   saveAdminLog,
@@ -27,6 +28,7 @@ const CONTENT_TYPE_LABELS: Record<string, string> = {
   gebet: 'Gebet',
   video: 'Video',
   aktion: 'Aktion',
+  buchempfehlung: 'Buchempfehlung',
 };
 
 export async function POST(req: NextRequest) {
@@ -41,7 +43,7 @@ export async function POST(req: NextRequest) {
 
   // Hard delete: physically remove the item from the database.
   if (status === 'hard_delete') {
-    const validTypes = ['these', 'forschung', 'gebet', 'video', 'aktion'] as const;
+    const validTypes = ['these', 'forschung', 'gebet', 'video', 'aktion', 'buchempfehlung'] as const;
     if (!validTypes.includes(type)) {
       return NextResponse.json({ error: 'Unknown type' }, { status: 400 });
     }
@@ -69,6 +71,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
   }
 
+  if (
+    status === 'published' &&
+    (type === 'video' || type === 'forschung') &&
+    (typeof wochenthemaId !== 'string' || !wochenthemaId.trim())
+  ) {
+    return NextResponse.json({ error: 'Wochenthema is required for publishing this content' }, { status: 400 });
+  }
+
   try {
     let affectedUserId: string | undefined;
 
@@ -86,7 +96,13 @@ export async function POST(req: NextRequest) {
         const item = list.find(f => f.id === id);
         if (!item) return NextResponse.json({ error: 'Not found' }, { status: 404 });
         affectedUserId = item.userId;
-        await saveForschung({ ...item, status, adminMessage, updatedAt: new Date().toISOString() });
+        await saveForschung({
+          ...item,
+          status,
+          adminMessage,
+          updatedAt: new Date().toISOString(),
+          ...(wochenthemaId ? { wochenthemaId } : {}),
+        });
         break;
       }
       case 'gebet': {
@@ -115,6 +131,14 @@ export async function POST(req: NextRequest) {
         if (!item) return NextResponse.json({ error: 'Not found' }, { status: 404 });
         affectedUserId = item.userId;
         await saveAktion({ ...item, status, adminMessage, updatedAt: new Date().toISOString() });
+        break;
+      }
+      case 'buchempfehlung': {
+        const list = getBuchempfehlungen();
+        const item = list.find(b => b.id === id);
+        if (!item) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+        affectedUserId = item.userId;
+        await saveBuchempfehlung({ ...item, status, adminMessage, updatedAt: new Date().toISOString() });
         break;
       }
       default:
@@ -154,4 +178,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Moderation failed' }, { status: 500 });
   }
 }
-

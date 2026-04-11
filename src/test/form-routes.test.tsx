@@ -20,6 +20,7 @@ let currentTageswort: { id: string; date: string; verse: string; text: string; c
 let approvedThesen: Array<{ id: string; title: string; content: string; authorName: string; createdAt: string }> = [];
 let approvedAktionen: Array<{ id: string; title: string; description: string; authorName: string; createdAt: string }> = [];
 let communityGebete: Array<{ id: string; content: string; authorName: string; status: string; createdAt: string; anonymous?: boolean }> = [];
+let approvedBuchempfehlungen: Array<{ id: string; userId: string; recommenderName: string; title: string; author: string; description: string; themeReference: string; status: string; createdAt: string }> = [];
 let userThesen: Array<{ id: string; userId: string; title: string; content: string; status: string; createdAt: string }> = [];
 let userBeitraege: Array<{ id: string; userId: string; title: string; content: string; status: string; createdAt: string }> = [];
 let userVideos: Array<{ id: string; userId: string; title: string; description: string; status: string; createdAt: string; url?: string }> = [];
@@ -50,6 +51,7 @@ vi.mock('@/lib/db', () => ({
   getApprovedThesen: () => approvedThesen,
   getApprovedAktionen: () => approvedAktionen,
   getApprovedGebete: () => communityGebete,
+  getApprovedBuchempfehlungen: () => approvedBuchempfehlungen,
   getThesen: () => userThesen,
   getForschung: () => userBeitraege,
   getVideos: () => userVideos,
@@ -116,6 +118,7 @@ beforeEach(() => {
   approvedThesen = [];
   approvedAktionen = [];
   communityGebete = [];
+  approvedBuchempfehlungen = [];
   userThesen = [];
   userBeitraege = [];
   userVideos = [];
@@ -224,7 +227,7 @@ describe('public overview pages link into the right form flows', () => {
     expect(screen.getByRole('link', { name: /\+ aktion erstellen/i })).toHaveAttribute('href', '/aktionen/neu');
   });
 
-  it('keeps the protected gebet and tageswort calls-to-action aligned with login and registration', async () => {
+  it('keeps the protected gebet and tageswort calls-to-action aligned with their target flows', async () => {
     currentTageswort = {
       id: 'tw1',
       date: '2026-04-11',
@@ -244,8 +247,17 @@ describe('public overview pages link into the right form flows', () => {
     unmount();
 
     render(React.createElement(TageswortPage));
-    expect(screen.getByRole('link', { name: /^registrieren$/i })).toHaveAttribute('href', '/registrieren');
-    expect(screen.getByRole('link', { name: /^anmelden$/i })).toHaveAttribute('href', '/login');
+    expect(screen.getByRole('link', { name: /beitrag verfassen/i })).toHaveAttribute('href', '/forschung/beitraege');
+  });
+
+  it('exposes the book recommendation submission path from the public recommendations page', async () => {
+    approvedBuchempfehlungen = [
+      { id: 'b1', userId: 'u1', recommenderName: 'Alice', title: 'Nachfolge', author: 'Bonhoeffer', description: 'Hilfreich.', themeReference: 'Psalmen', status: 'published', createdAt: '2026-04-11T00:00:00Z' },
+    ];
+    const { default: BuchempfehlungenPage } = await import('@/app/(public)/buchempfehlungen/page');
+
+    render(React.createElement(BuchempfehlungenPage));
+    expect(screen.getByRole('link', { name: /\+ empfehlung einreichen/i })).toHaveAttribute('href', '/buchempfehlungen/neu');
   });
 });
 
@@ -264,6 +276,8 @@ describe('protected user form routes and their entry links', () => {
     expect(screen.getByRole('link', { name: /gebet einreichen/i })).toHaveAttribute('href', '/gebet/neu');
     expect(screen.getByRole('link', { name: /aktion erstellen/i })).toHaveAttribute('href', '/aktionen/neu');
     expect(screen.getByRole('link', { name: /video teilen/i })).toHaveAttribute('href', '/videos/hochladen');
+    expect(screen.getByRole('link', { name: /buchempfehlung hinzufügen/i })).toHaveAttribute('href', '/buchempfehlungen/neu');
+    expect(screen.getByRole('link', { name: /meine buchempfehlungen/i })).toHaveAttribute('href', '/meine-buchempfehlungen');
     expect(screen.getByRole('link', { name: /mein profil/i })).toHaveAttribute('href', '/profil');
     await waitFor(() => expect(fetchMock).toHaveBeenCalled());
     unmount();
@@ -302,6 +316,7 @@ describe('protected user form routes and their entry links', () => {
     setUserSession();
     const { default: NeueThesePage } = await import('@/app/(user)/thesen/neu/page');
     const { default: ForschungBeitraegePage } = await import('@/app/(user)/forschung/beitraege/page');
+    const { default: NeueBuchempfehlungPage } = await import('@/app/(user)/buchempfehlungen/neu/page');
     const { default: NeuesGebetPage } = await import('@/app/(user)/gebet/neu/page');
     const { default: VideoHochladenPage } = await import('@/app/(user)/videos/hochladen/page');
     const { default: NeueAktionPage } = await import('@/app/(user)/aktionen/neu/page');
@@ -315,6 +330,11 @@ describe('protected user form routes and their entry links', () => {
     render(React.createElement(ForschungBeitraegePage));
     expect(screen.getByRole('heading', { name: /forschungsbeitrag verfassen/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /beitrag einreichen/i })).toBeInTheDocument();
+    unmount();
+
+    render(React.createElement(NeueBuchempfehlungPage));
+    expect(screen.getByRole('heading', { name: /buchempfehlung hinzufügen/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /buchempfehlung einreichen/i })).toBeInTheDocument();
     unmount();
 
     render(React.createElement(NeuesGebetPage));
@@ -348,6 +368,7 @@ describe('admin form routes and their entry links', () => {
     render(React.createElement(AdminPage));
     expect(screen.getByRole('link', { name: /tageswort verwalten/i })).toHaveAttribute('href', '/admin/tageswort');
     expect(screen.getByRole('link', { name: /wochenthema verwalten/i })).toHaveAttribute('href', '/admin/wochenthema');
+    expect(screen.getByRole('link', { name: /buchempfehlungen moderieren/i })).toHaveAttribute('href', '/admin/buchempfehlungen');
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/admin/overview'));
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/admin/vorstellungen'));
   });

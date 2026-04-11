@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic';
 
-import { getApprovedVideos } from '@/lib/db';
+import { getApprovedVideos, getWochenthemaList } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import { getServerSession } from 'next-auth';
@@ -12,6 +12,8 @@ export default async function VideosPage() {
   if (!session) redirect('/login');
 
   const videos = getApprovedVideos();
+  const themen = getWochenthemaList().filter(t => t.status === 'published');
+  const themenById = new Map(themen.map(theme => [theme.id, theme]));
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
@@ -36,6 +38,11 @@ export default async function VideosPage() {
             return (
               <div key={v.id} className="bg-white rounded-xl shadow-md p-6">
                 <h2 className="font-bold text-gray-800 mb-2">{v.title}</h2>
+                {v.wochenthemaId && themenById.get(v.wochenthemaId) && (
+                  <p className="text-xs text-blue-600 font-medium mb-2">
+                    Thema: {themenById.get(v.wochenthemaId)?.title}
+                  </p>
+                )}
                 <p className="text-gray-600 text-sm leading-relaxed mb-4">{v.description}</p>
                 {safeHref ? (
                   <a
