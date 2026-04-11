@@ -95,7 +95,7 @@ describe('RegistrierenPage', () => {
     const { default: RegistrierenPage } = await import('@/app/(public)/registrieren/page');
     render(React.createElement(RegistrierenPage));
     expect(screen.getByLabelText(/Name/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/E-Mail/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/E-Mail-Adresse/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Passwort/i)).toBeInTheDocument();
   });
 
