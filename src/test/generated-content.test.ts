@@ -49,7 +49,9 @@ describe('generated-content', () => {
 
     const books = getTodayBuchempfehlungen('2026-04-11');
 
-    expect(books.introduction).toContain('Diese Buchempfehlungen');
+    expect(books.introduction).toBe(
+      `Diese Buchempfehlungen greifen das Tagesthema „${books.topicTitle}“ auf und helfen dabei, biblische Orientierung zu vertiefen.`
+    );
     expect(books.introduction).not.toContain('KI-inspirierten');
   });
 });
