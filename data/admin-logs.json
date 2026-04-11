@@ -217,11 +217,11 @@
     "createdAt": "2026-04-11T10:39:40.961Z"
   },
   {
-    "id": "log-1775911879669-e5th235xh",
+    "id": "log-1775912013455-92w9s5y16",
     "adminId": "admin-001",
     "action": "hard_delete",
     "targetType": "aktion",
     "targetId": "aktion-001",
-    "createdAt": "2026-04-11T12:51:19.669Z"
+    "createdAt": "2026-04-11T12:53:33.455Z"
   }
 ]
