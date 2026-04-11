@@ -30,5 +30,16 @@
     "active": true,
     "passwordResetToken": "207f3d32177fb349e79e16a0173a133387ba4ef81e405ee36e81a808e8b6b4dd",
     "passwordResetExpiry": "2026-04-10T16:58:57.263Z"
+  },
+  {
+    "id": "user-1775898260048-th41dfuje",
+    "email": "denzer97@gmail.com",
+    "password": "$2b$12$fTwhQSdGeyZlzypxI2mk0umJZNR.i39OaIdk1OG0lQD9OOZc0Rzd.",
+    "name": "Test login",
+    "role": "USER",
+    "status": "pending_email",
+    "createdAt": "2026-04-11T09:04:20.048Z",
+    "active": false,
+    "emailToken": "0d0af69651872e5e6c87d3f5b3427d3763132b739d7efa44e4c6a0fb54efe852"
   }
 ]
