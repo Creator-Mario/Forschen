@@ -53,7 +53,7 @@ export default function VorstellungenPage() {
                     {session?.user.id && session.user.id !== m.id && (
                       <Link
                         href={`/chat/${m.id}`}
-                        className="text-xs bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 px-3 py-1 rounded-full transition-colors font-medium"
+                        className="inline-flex items-center gap-2 rounded-full border border-blue-300 bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-blue-700"
                       >
                         💬 Nachricht senden
                       </Link>

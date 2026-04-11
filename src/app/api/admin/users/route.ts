@@ -42,11 +42,17 @@ export async function PATCH(req: NextRequest) {
     const userEmail = user.email;
     const userName = user.name;
 
-    // Best-effort notification: we try to notify the user while the account record and
-    // email address are still available, but deletion must proceed even if mailing fails
-    // so the admin action completes cleanly and the account/content are not left behind.
     try {
-      await sendEmail({
+      await deleteUserAccount(id);
+    } catch (err) {
+      console.error('[admin/users] Hard delete failed:', err);
+      return NextResponse.json({ error: 'Nutzer konnte nicht gelöscht werden.' }, { status: 500 });
+    }
+
+    // Best-effort follow-up tasks: the deletion itself already succeeded and must not
+    // be rolled back just because email delivery or admin-log persistence fails.
+    const followUpTasks = await Promise.allSettled([
+      sendEmail({
         to: userEmail,
         subject: `Dein Konto wurde gelöscht – ${siteName}`,
         html: `
@@ -61,21 +67,23 @@ export async function PATCH(req: NextRequest) {
           </div>
         `,
         text: `Hallo ${userName},\n\ndein Konto bei „${siteName}" wurde vom Administrator gelöscht. Falls du Fragen hast, wende dich bitte direkt an uns.\n\n${siteName}`,
-      });
-    } catch (err) {
-      console.error('[admin/users] Delete notification email could not be sent:', err);
+      }),
+      saveAdminLog({
+        id: `log-${generateId()}`,
+        adminId: session.user.id,
+        action: 'user_hard_delete',
+        targetType: 'user',
+        targetId: id,
+        createdAt: new Date().toISOString(),
+      }),
+    ]);
+
+    if (followUpTasks[0].status === 'rejected') {
+      console.error('[admin/users] Delete notification email could not be sent:', followUpTasks[0].reason);
     }
-
-    await deleteUserAccount(id);
-
-    await saveAdminLog({
-      id: `log-${generateId()}`,
-      adminId: session.user.id,
-      action: 'user_hard_delete',
-      targetType: 'user',
-      targetId: id,
-      createdAt: new Date().toISOString(),
-    });
+    if (followUpTasks[1].status === 'rejected') {
+      console.error('[admin/users] Hard delete log could not be written:', followUpTasks[1].reason);
+    }
 
     return NextResponse.json({ success: true });
   }

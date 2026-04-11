@@ -215,5 +215,37 @@
     "targetId": "user-1775898260048-th41dfuje",
     "note": "Herzlich Willkommen! \nBei Anregungen und Fragen kannst du dich jederzeit an mich wenden über WhatsApp oder E-Mail ",
     "createdAt": "2026-04-11T10:39:40.961Z"
+  },
+  {
+    "id": "log-1775913033152-q2bmslq9h",
+    "adminId": "admin-001",
+    "action": "published",
+    "targetType": "video",
+    "targetId": "video-1775889800906-hslxewrhn",
+    "createdAt": "2026-04-11T13:10:33.152Z"
+  },
+  {
+    "id": "log-1775913038435-6d9h6ajie",
+    "adminId": "admin-001",
+    "action": "published",
+    "targetType": "video",
+    "targetId": "video-1775887204193-1eqb2vqjx",
+    "createdAt": "2026-04-11T13:10:38.435Z"
+  },
+  {
+    "id": "log-1775913076906-ynprwcrl4",
+    "adminId": "admin-001",
+    "action": "published",
+    "targetType": "video",
+    "targetId": "video-1775887204193-1eqb2vqjx",
+    "createdAt": "2026-04-11T13:11:16.906Z"
+  },
+  {
+    "id": "log-1775913083836-kt459cnud",
+    "adminId": "admin-001",
+    "action": "published",
+    "targetType": "video",
+    "targetId": "video-1775889800906-hslxewrhn",
+    "createdAt": "2026-04-11T13:11:23.836Z"
   }
 ]
