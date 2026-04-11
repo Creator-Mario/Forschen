@@ -1,0 +1,374 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import React from 'react';
+
+type SessionState =
+  | { data: null; status: 'unauthenticated' | 'loading' }
+  | {
+      data: { user: { id: string; name: string; email: string; role: 'USER' | 'ADMIN' } };
+      status: 'authenticated';
+    };
+
+const routerPush = vi.fn();
+const signInMock = vi.fn();
+const signOutMock = vi.fn();
+
+let currentSearchParams = new URLSearchParams();
+let currentSession: SessionState = { data: null, status: 'unauthenticated' };
+let currentTageswort: { id: string; date: string; verse: string; text: string; context: string; questions: string[]; published: boolean } | undefined;
+let approvedThesen: Array<{ id: string; title: string; content: string; authorName: string; createdAt: string }> = [];
+let approvedAktionen: Array<{ id: string; title: string; description: string; authorName: string; createdAt: string }> = [];
+let communityGebete: Array<{ id: string; content: string; authorName: string; status: string; createdAt: string; anonymous?: boolean }> = [];
+let userThesen: Array<{ id: string; userId: string; title: string; content: string; status: string; createdAt: string }> = [];
+let userBeitraege: Array<{ id: string; userId: string; title: string; content: string; status: string; createdAt: string }> = [];
+let userVideos: Array<{ id: string; userId: string; title: string; description: string; status: string; createdAt: string; url?: string }> = [];
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: routerPush, replace: vi.fn(), back: vi.fn() }),
+  usePathname: () => '/',
+  useSearchParams: () => currentSearchParams,
+  redirect: vi.fn(),
+}));
+
+vi.mock('next/link', () => ({
+  default: ({ children, href, ...props }: { children: React.ReactNode; href: string }) =>
+    React.createElement('a', { href, ...props }, children),
+}));
+
+vi.mock('next-auth/react', () => ({
+  useSession: () => currentSession,
+  signIn: signInMock,
+  signOut: signOutMock,
+  getSession: vi.fn().mockResolvedValue({ user: { role: 'USER' } }),
+  SessionProvider: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
+}));
+
+vi.mock('@/lib/db', () => ({
+  getTodayTageswort: () => currentTageswort,
+  getCurrentWochenthema: () => undefined,
+  getApprovedThesen: () => approvedThesen,
+  getApprovedAktionen: () => approvedAktionen,
+  getApprovedGebete: () => communityGebete,
+  getThesen: () => userThesen,
+  getForschung: () => userBeitraege,
+  getVideos: () => userVideos,
+}));
+
+vi.mock('@/components/BibleVerseCard', () => ({
+  default: () => React.createElement('div', null, 'BibleVerseCard'),
+}));
+
+vi.mock('@/components/WeeklyThemeCard', () => ({
+  default: () => React.createElement('div', null, 'WeeklyThemeCard'),
+}));
+
+vi.mock('@/components/Logo', () => ({
+  default: () => React.createElement('div', null, 'Logo'),
+}));
+
+vi.mock('@/components/BibleLink', () => ({
+  default: ({ text }: { text: string }) => React.createElement('span', null, text),
+}));
+
+vi.mock('@/components/ThesisCard', () => ({
+  default: ({ these }: { these: { title: string } }) => React.createElement('div', null, these.title),
+}));
+
+vi.mock('@/components/PrayerCard', () => ({
+  default: ({ gebet }: { gebet: { content: string } }) => React.createElement('div', null, gebet.content),
+}));
+
+function setUserSession() {
+  currentSession = {
+    data: {
+      user: {
+        id: 'u1',
+        name: 'Alice',
+        email: 'alice@example.com',
+        role: 'USER',
+      },
+    },
+    status: 'authenticated',
+  };
+}
+
+function setAdminSession() {
+  currentSession = {
+    data: {
+      user: {
+        id: 'admin1',
+        name: 'Admin',
+        email: 'admin@example.com',
+        role: 'ADMIN',
+      },
+    },
+    status: 'authenticated',
+  };
+}
+
+beforeEach(() => {
+  vi.resetModules();
+  vi.clearAllMocks();
+  currentSearchParams = new URLSearchParams();
+  currentSession = { data: null, status: 'unauthenticated' };
+  currentTageswort = undefined;
+  approvedThesen = [];
+  approvedAktionen = [];
+  communityGebete = [];
+  userThesen = [];
+  userBeitraege = [];
+  userVideos = [];
+  vi.stubGlobal(
+    'fetch',
+    vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [],
+    }),
+  );
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
+
+describe('public form entry routes', () => {
+  it('exposes registration entry points on home and vision pages', async () => {
+    const { default: HomePage } = await import('@/app/(public)/page');
+    const { default: VisionPage } = await import('@/app/(public)/vision/page');
+
+    const { unmount } = render(React.createElement(HomePage));
+    expect(screen.getByRole('link', { name: /jetzt kostenlos registrieren/i })).toHaveAttribute('href', '/registrieren');
+    unmount();
+
+    render(React.createElement(VisionPage));
+    expect(screen.getByRole('link', { name: /jetzt registrieren/i })).toHaveAttribute('href', '/registrieren');
+  });
+
+  it('connects login, forgot-password and registration routes correctly', async () => {
+    const { default: LoginPage } = await import('@/app/(public)/login/page');
+    render(React.createElement(LoginPage));
+
+    expect(screen.getByRole('heading', { name: /anmelden/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /passwort vergessen/i })).toHaveAttribute('href', '/passwort-vergessen');
+    expect(screen.getByRole('link', { name: /kostenlos registrieren/i })).toHaveAttribute('href', '/registrieren');
+    expect(screen.getByRole('button', { name: /^anmelden$/i })).toBeInTheDocument();
+  });
+
+  it('connects registration page to privacy policy and login', async () => {
+    const { default: RegistrierenPage } = await import('@/app/(public)/registrieren/page');
+    render(React.createElement(RegistrierenPage));
+
+    expect(screen.getByRole('heading', { name: /konto erstellen/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /datenschutzerklärung/i })).toHaveAttribute('href', '/datenschutz');
+    expect(screen.getByRole('link', { name: /^anmelden$/i })).toHaveAttribute('href', '/login');
+    expect(screen.getByRole('button', { name: /konto erstellen/i })).toBeInTheDocument();
+  });
+
+  it('connects forgot-password page back to login', async () => {
+    const { default: PasswortVergessenPage } = await import('@/app/(public)/passwort-vergessen/page');
+    render(React.createElement(PasswortVergessenPage));
+
+    expect(screen.getByRole('heading', { name: /passwort vergessen/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /reset-link anfordern/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /zurück zur anmeldung/i })).toHaveAttribute('href', '/login');
+  });
+
+  it('shows the reset fallback path without token and the real form with token', async () => {
+    const { default: PasswortZuruecksetzenPage } = await import('@/app/(public)/passwort-zuruecksetzen/page');
+
+    const { unmount } = render(React.createElement(PasswortZuruecksetzenPage));
+    expect(await screen.findByRole('heading', { name: /ungültiger link/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /neuen link anfordern/i })).toHaveAttribute('href', '/passwort-vergessen');
+    unmount();
+
+    currentSearchParams = new URLSearchParams('token=reset-123');
+    render(React.createElement(PasswortZuruecksetzenPage));
+    expect(await screen.findByRole('heading', { name: /neues passwort vergeben/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/neues passwort/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/passwort bestätigen/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /passwort speichern/i })).toBeInTheDocument();
+  });
+
+  it('connects admin login and admin reset routes', async () => {
+    const { default: AdminLoginPage } = await import('@/app/(admin)/admin-login/page');
+    const { default: AdminResetPage } = await import('@/app/(admin)/admin-reset/page');
+
+    const { unmount } = render(React.createElement(AdminLoginPage));
+    expect(screen.getByRole('heading', { name: /administratorzugang/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /passwort vergessen/i })).toHaveAttribute('href', '/admin-reset');
+    expect(screen.getByRole('button', { name: /^anmelden$/i })).toBeInTheDocument();
+    unmount();
+
+    render(React.createElement(AdminResetPage));
+    expect(screen.getByRole('heading', { name: /passwort zurücksetzen/i })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/admin_reset_token eingeben/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /passwort zurücksetzen/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /zurück zum admin-login/i })).toHaveAttribute('href', '/admin-login');
+  });
+});
+
+describe('public overview pages link into the right form flows', () => {
+  it('keeps thesen and aktionen entry labels aligned with their target routes', async () => {
+    approvedThesen = [{ id: 'th1', title: 'These', content: 'Inhalt', authorName: 'Alice', createdAt: '2024-01-01' }];
+    approvedAktionen = [{ id: 'a1', title: 'Aktion', description: 'Beschreibung', authorName: 'Alice', createdAt: '2024-01-01' }];
+
+    const { default: ThesenPage } = await import('@/app/(public)/thesen/page');
+    const { default: AktionenPage } = await import('@/app/(public)/aktionen/page');
+
+    const { unmount } = render(React.createElement(ThesenPage));
+    expect(screen.getByRole('link', { name: /\+ these verfassen/i })).toHaveAttribute('href', '/thesen/neu');
+    unmount();
+
+    render(React.createElement(AktionenPage));
+    expect(screen.getByRole('link', { name: /\+ aktion erstellen/i })).toHaveAttribute('href', '/aktionen/neu');
+  });
+
+  it('keeps the protected gebet and tageswort calls-to-action aligned with login and registration', async () => {
+    currentTageswort = {
+      id: 'tw1',
+      date: '2026-04-11',
+      verse: 'Johannes 3,16',
+      text: 'Denn also hat Gott die Welt geliebt',
+      context: '',
+      questions: [],
+      published: true,
+    };
+
+    const { default: GebetPage } = await import('@/app/(public)/gebet/page');
+    const { default: TageswortPage } = await import('@/app/(public)/tageswort/page');
+
+    const { unmount } = render(React.createElement(GebetPage));
+    expect(screen.getByRole('link', { name: /^anmelden$/i })).toHaveAttribute('href', '/login');
+    expect(screen.getByRole('link', { name: /kostenlos registrieren/i })).toHaveAttribute('href', '/registrieren');
+    unmount();
+
+    render(React.createElement(TageswortPage));
+    expect(screen.getByRole('link', { name: /^registrieren$/i })).toHaveAttribute('href', '/registrieren');
+    expect(screen.getByRole('link', { name: /^anmelden$/i })).toHaveAttribute('href', '/login');
+  });
+});
+
+describe('protected user form routes and their entry links', () => {
+  it('keeps dashboard and personal pages wired to the right form routes', async () => {
+    setUserSession();
+    const fetchMock = global.fetch as unknown as ReturnType<typeof vi.fn>;
+    const { default: DashboardPage } = await import('@/app/(user)/dashboard/page');
+    const { default: MeineThesenPage } = await import('@/app/(user)/meine-thesen/page');
+    const { default: MeineForschungPage } = await import('@/app/(user)/meine-forschung/page');
+    const { default: MeineGebetePage } = await import('@/app/(user)/meine-gebete/page');
+    const { default: MeineVideosPage } = await import('@/app/(user)/meine-videos/page');
+
+    const { unmount } = render(React.createElement(DashboardPage));
+    expect(screen.getByRole('link', { name: /these schreiben/i })).toHaveAttribute('href', '/thesen/neu');
+    expect(screen.getByRole('link', { name: /gebet einreichen/i })).toHaveAttribute('href', '/gebet/neu');
+    expect(screen.getByRole('link', { name: /aktion erstellen/i })).toHaveAttribute('href', '/aktionen/neu');
+    expect(screen.getByRole('link', { name: /video teilen/i })).toHaveAttribute('href', '/videos/hochladen');
+    expect(screen.getByRole('link', { name: /mein profil/i })).toHaveAttribute('href', '/profil');
+    await waitFor(() => expect(fetchMock).toHaveBeenCalled());
+    unmount();
+
+    render(React.createElement(MeineThesenPage));
+    expect(screen.getByRole('link', { name: /\+ neue these/i })).toHaveAttribute('href', '/thesen/neu');
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/thesen?all=1'));
+    unmount();
+
+    render(React.createElement(MeineForschungPage));
+    expect(screen.getByRole('link', { name: /\+ beitrag verfassen/i })).toHaveAttribute('href', '/forschung/beitraege');
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/forschung?all=1'));
+    unmount();
+
+    render(React.createElement(MeineGebetePage));
+    expect(screen.getByRole('link', { name: /\+ gebet einreichen/i })).toHaveAttribute('href', '/gebet/neu');
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/gebet'));
+    unmount();
+
+    render(React.createElement(MeineVideosPage));
+    expect(screen.getByRole('link', { name: /\+ video teilen/i })).toHaveAttribute('href', '/videos/hochladen');
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/videos?all=1'));
+  });
+
+  it('renders the intro form only for the verified click path with userId', async () => {
+    setUserSession();
+    currentSearchParams = new URLSearchParams('userId=u1');
+    const { default: VorstellungPage } = await import('@/app/(user)/vorstellung/page');
+
+    render(React.createElement(VorstellungPage));
+    expect(await screen.findByRole('heading', { name: /willkommen bei der fluss des lebens/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /vorstellung einreichen/i })).toBeDisabled();
+  });
+
+  it('renders the thesis, research, prayer, video, action and profile forms with matching submit labels', async () => {
+    setUserSession();
+    const { default: NeueThesePage } = await import('@/app/(user)/thesen/neu/page');
+    const { default: ForschungBeitraegePage } = await import('@/app/(user)/forschung/beitraege/page');
+    const { default: NeuesGebetPage } = await import('@/app/(user)/gebet/neu/page');
+    const { default: VideoHochladenPage } = await import('@/app/(user)/videos/hochladen/page');
+    const { default: NeueAktionPage } = await import('@/app/(user)/aktionen/neu/page');
+    const { default: ProfilPage } = await import('@/app/(user)/profil/page');
+
+    const { unmount } = render(React.createElement(NeueThesePage));
+    expect(screen.getByRole('heading', { name: /these verfassen/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /these einreichen/i })).toBeInTheDocument();
+    unmount();
+
+    render(React.createElement(ForschungBeitraegePage));
+    expect(screen.getByRole('heading', { name: /forschungsbeitrag verfassen/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /beitrag einreichen/i })).toBeInTheDocument();
+    unmount();
+
+    render(React.createElement(NeuesGebetPage));
+    expect(screen.getByRole('heading', { name: /gebet einreichen/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^gebet einreichen$/i })).toBeInTheDocument();
+    unmount();
+
+    render(React.createElement(VideoHochladenPage));
+    expect(screen.getByRole('heading', { name: /video teilen/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /video einreichen/i })).toBeInTheDocument();
+    unmount();
+
+    render(React.createElement(NeueAktionPage));
+    expect(screen.getByRole('heading', { name: /aktion erstellen/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /aktion einreichen/i })).toBeInTheDocument();
+    unmount();
+
+    render(React.createElement(ProfilPage));
+    expect(screen.getByRole('heading', { name: /mein profil/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /passwort ändern/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /konto unwiderruflich löschen/i })).toBeInTheDocument();
+  });
+});
+
+describe('admin form routes and their entry links', () => {
+  it('keeps the admin dashboard wired to tageswort and wochenthema management', async () => {
+    setAdminSession();
+    const fetchMock = global.fetch as unknown as ReturnType<typeof vi.fn>;
+    const { default: AdminPage } = await import('@/app/(admin)/admin/page');
+
+    render(React.createElement(AdminPage));
+    expect(screen.getByRole('link', { name: /tageswort verwalten/i })).toHaveAttribute('href', '/admin/tageswort');
+    expect(screen.getByRole('link', { name: /wochenthema verwalten/i })).toHaveAttribute('href', '/admin/wochenthema');
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/admin/overview'));
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/admin/vorstellungen'));
+  });
+
+  it('opens the admin tageswort and wochenthema forms with stable labels', async () => {
+    setAdminSession();
+    const user = userEvent.setup();
+    const { default: AdminTageswortPage } = await import('@/app/(admin)/admin/tageswort/page');
+    const { default: AdminWochenthemaPage } = await import('@/app/(admin)/admin/wochenthema/page');
+
+    const { unmount } = render(React.createElement(AdminTageswortPage));
+    await user.click(screen.getByRole('button', { name: /\+ neu erstellen/i }));
+    expect(screen.getByRole('heading', { name: /neues tageswort/i })).toBeInTheDocument();
+    expect(screen.getByDisplayValue(/\d{4}-\d{2}-\d{2}/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^erstellen$/i })).toBeInTheDocument();
+    unmount();
+
+    render(React.createElement(AdminWochenthemaPage));
+    await user.click(screen.getByRole('button', { name: /\+ neu erstellen/i }));
+    expect(screen.getByRole('heading', { name: /neues wochenthema erstellen/i })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/2025-w20/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^erstellen$/i })).toBeInTheDocument();
+  });
+});
