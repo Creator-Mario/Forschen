@@ -3,13 +3,20 @@ export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import BibleVerseCard from '@/components/BibleVerseCard';
 import WeeklyThemeCard from '@/components/WeeklyThemeCard';
+import PsalmThemeCard from '@/components/PsalmThemeCard';
+import CurrentTopicCard from '@/components/CurrentTopicCard';
+import BookRecommendationsCard from '@/components/BookRecommendationsCard';
 import Logo from '@/components/Logo';
 import { getTodayTageswort, getCurrentWochenthema, getApprovedThesen } from '@/lib/db';
+import { getTodayPsalmThema, getTodayGlaubenHeuteThema, getTodayBuchempfehlungen } from '@/lib/generated-content';
 
 export default function HomePage() {
   const tageswort = getTodayTageswort();
   const wochenthema = getCurrentWochenthema();
   const thesen = getApprovedThesen().slice(0, 2);
+  const psalmThema = getTodayPsalmThema();
+  const glaubenHeute = getTodayGlaubenHeuteThema();
+  const buchempfehlungen = getTodayBuchempfehlungen();
 
   return (
     <div>
@@ -88,6 +95,38 @@ export default function HomePage() {
             )}
           </div>
         </div>
+
+        <div className="mb-6">
+          <h2
+            className="text-2xl md:text-3xl font-bold text-center mb-2"
+            style={{ color: '#0d47a1', fontFamily: 'Georgia, serif' }}
+          >
+            Täglich neu entdecken
+          </h2>
+          <p className="text-center text-blue-400 text-sm mb-8">
+            Psalmenforschung, aktuelle Glaubensthemen und passende Buchempfehlungen
+          </p>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="space-y-3">
+              <PsalmThemeCard item={psalmThema} compact />
+              <Link href="/psalmen" className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors">
+                Psalmen öffnen →
+              </Link>
+            </div>
+            <div className="space-y-3">
+              <CurrentTopicCard item={glaubenHeute} compact />
+              <Link href="/glauben-heute" className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors">
+                Glauben heute öffnen →
+              </Link>
+            </div>
+            <div className="space-y-3">
+              <BookRecommendationsCard collection={buchempfehlungen} compact />
+              <Link href="/buchempfehlungen" className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors">
+                Empfehlungen öffnen →
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* ── Features wave section ── */}
@@ -113,12 +152,15 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
-              { href: '/tageswort', icon: '📖', title: 'Tageswort', desc: 'Täglich ein Bibelvers mit fünf Forschungsfragen zur Vertiefung.' },
-              { href: '/wochenthema', icon: '🔍', title: 'Wochenthema', desc: 'Ein theologisches Thema pro Woche mit Schriftbelegen und offenen Fragen.' },
-              { href: '/thesen', icon: '💡', title: 'Thesen', desc: 'Theologische Kernaussagen aus der Gemeinschaft zur Diskussion.' },
-              { href: '/forschung', icon: '📚', title: 'Bibelforschung', desc: 'Tiefgehende Beiträge zur Exegese und Hermeneutik.' },
-              { href: '/gebet', icon: '🙏', title: 'Gebetsraum', desc: 'Ein geschützter Raum für persönliche und gemeinsame Gebete.' },
-              { href: '/aktionen', icon: '🤝', title: 'Aktionen', desc: 'Gemeinschaftliche Aktivitäten und Treffen in der Realen Welt.' },
+               { href: '/tageswort', icon: '📖', title: 'Tageswort', desc: 'Täglich ein Bibelvers mit fünf Forschungsfragen zur Vertiefung.' },
+               { href: '/psalmen', icon: '🎼', title: 'Psalmen', desc: 'Jeden Tag ein neuer Psalmimpuls zur Erforschung von Trost, Klage und Hoffnung.' },
+               { href: '/wochenthema', icon: '🔍', title: 'Wochenthema', desc: 'Ein theologisches Thema pro Woche mit Schriftbelegen und offenen Fragen.' },
+               { href: '/glauben-heute', icon: '🕊️', title: 'Glauben heute', desc: 'Ein täglich neuer KI-inspirierter Impuls zu aktuellen Fragen von Glaube und Nachfolge.' },
+               { href: '/buchempfehlungen', icon: '📚', title: 'Buchempfehlungen', desc: 'Passende Literatur zum aktuellen Tagesthema – mit fortlaufendem Archiv.' },
+               { href: '/thesen', icon: '💡', title: 'Thesen', desc: 'Theologische Kernaussagen aus der Gemeinschaft zur Diskussion.' },
+               { href: '/forschung', icon: '📝', title: 'Bibelforschung', desc: 'Tiefgehende Beiträge zur Exegese und Hermeneutik.' },
+               { href: '/gebet', icon: '🙏', title: 'Gebetsraum', desc: 'Ein geschützter Raum für persönliche und gemeinsame Gebete.' },
+               { href: '/aktionen', icon: '🤝', title: 'Aktionen', desc: 'Gemeinschaftliche Aktivitäten und Treffen in der Realen Welt.' },
             ].map(item => (
               <Link
                 key={item.href}

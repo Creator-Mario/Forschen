@@ -76,6 +76,45 @@ export interface Wochenthema {
   createdAt?: string;
 }
 
+export interface PsalmThema {
+  id: string;
+  date: string;
+  psalmReference: string;
+  title: string;
+  excerpt: string;
+  summary: string;
+  significance: string;
+  practice: string;
+  questions: string[];
+}
+
+export interface GlaubenHeuteThema {
+  id: string;
+  date: string;
+  title: string;
+  headline: string;
+  worldFocus: string;
+  faithPerspective: string;
+  discipleshipImpulse: string;
+  bibleVerses: string[];
+  questions: string[];
+}
+
+export interface Buchempfehlung {
+  title: string;
+  author: string;
+  description: string;
+  relevance: string;
+}
+
+export interface BuchempfehlungsSammlung {
+  id: string;
+  date: string;
+  topicTitle: string;
+  introduction: string;
+  recommendations: Buchempfehlung[];
+}
+
 export interface These {
   id: string;
   userId: string;
