@@ -190,5 +190,13 @@
     "targetType": "forschung",
     "targetId": "forschung-001",
     "createdAt": "2026-04-11T06:47:27.877Z"
+  },
+  {
+    "id": "log-1775898120571-72eb5xlpx",
+    "adminId": "admin-001",
+    "action": "published",
+    "targetType": "video",
+    "targetId": "video-1775887204193-1eqb2vqjx",
+    "createdAt": "2026-04-11T09:02:00.571Z"
   }
 ]
