@@ -77,6 +77,7 @@ export default function RegistrierenPage() {
                 type="text"
                 value={name}
                 onChange={e => setName(e.target.value)}
+                autoComplete="name"
                 required
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Max Mustermann"
@@ -92,6 +93,7 @@ export default function RegistrierenPage() {
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
+                autoComplete="email"
                 required
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="deine@email.de"
@@ -107,6 +109,7 @@ export default function RegistrierenPage() {
                 type="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
+                autoComplete="new-password"
                 required
                 minLength={8}
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
