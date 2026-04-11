@@ -41,27 +41,5 @@
     "createdAt": "2026-04-08T14:48:45.056Z",
     "active": false,
     "emailToken": "ea614236acde7a0da6e7149f8e0e7ebf9bf1885df6769cdb20b91186fbb961d7"
-  },
-  {
-    "id": "user-1775705470355-b0ayftesr",
-    "email": "denzer97@gmail.com",
-    "password": "$2b$12$CaOLz5Ijxt3bag.nUml4feyniKBESK/0KmV.CtCUWsqe5PWelxdBu",
-    "name": "Mario Reiner",
-    "role": "USER",
-    "status": "pending_email",
-    "createdAt": "2026-04-09T03:31:10.355Z",
-    "active": false,
-    "emailToken": "3ab3b28a6e5b25f9e268680339c855d50d097a5591dde6c2be0f7977e306114a"
-  },
-  {
-    "id": "user-1775805949950-m42gnzzxx",
-    "email": "test-1775805948865@example.com",
-    "password": "$2b$12$xujIKxiJEyBznYuNx.A/suI1HaptNM9qoPeEDs6D1lTsJzrhOsApK",
-    "name": "TestUser",
-    "role": "USER",
-    "status": "pending_email",
-    "createdAt": "2026-04-10T07:25:49.950Z",
-    "active": false,
-    "emailToken": "5b7f4e97ae41f0bb0bcb5b7082fa828c9814852028db7cf6aa117b86034142da"
   }
 ]
