@@ -241,6 +241,31 @@ describe('WeeklyThemeCard', () => {
   });
 });
 
+// ─── AdminModerationTable ──────────────────────────────────────────────────────
+
+describe('AdminModerationTable', () => {
+  it('shows only items that are still in the moderation queue', async () => {
+    const { default: AdminModerationTable } = await import('@/components/AdminModerationTable');
+    render(React.createElement(AdminModerationTable, {
+      items: [
+        { id: 'v1', title: 'Neu eingereicht', authorName: 'Alice', status: 'created', createdAt: '2024-01-01T00:00:00Z' },
+        { id: 'v2', title: 'Rückfrage offen', authorName: 'Bob', status: 'question_to_user', createdAt: '2024-01-02T00:00:00Z' },
+        { id: 'v3', title: 'Bereits veröffentlicht', authorName: 'Carol', status: 'published', createdAt: '2024-01-03T00:00:00Z' },
+        { id: 'v4', title: 'Schon genehmigt', authorName: 'Dave', status: 'approved', createdAt: '2024-01-04T00:00:00Z' },
+      ],
+      titleField: 'title',
+      authorField: 'authorName',
+      contentType: 'Video',
+      onAction: vi.fn(),
+    }));
+
+    expect(screen.getByText('Neu eingereicht')).toBeInTheDocument();
+    expect(screen.getByText('Rückfrage offen')).toBeInTheDocument();
+    expect(screen.queryByText('Bereits veröffentlicht')).toBeNull();
+    expect(screen.queryByText('Schon genehmigt')).toBeNull();
+  });
+});
+
 // ─── ProtectedRoute ────────────────────────────────────────────────────────────
 
 describe('ProtectedRoute', () => {

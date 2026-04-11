@@ -8,6 +8,7 @@ import {
   truncate,
   getStatusLabel,
   getStatusColor,
+  isModerationQueueStatus,
 } from '@/lib/utils';
 
 describe('generateId', () => {
@@ -176,5 +177,22 @@ describe('getStatusColor', () => {
 
   it('falls back to gray for unknown status', () => {
     expect(getStatusColor('nonexistent')).toBe('bg-gray-100 text-gray-800');
+  });
+});
+
+describe('isModerationQueueStatus', () => {
+  it('returns true for statuses that still require moderation attention', () => {
+    expect(isModerationQueueStatus('created')).toBe(true);
+    expect(isModerationQueueStatus('pending')).toBe(true);
+    expect(isModerationQueueStatus('review')).toBe(true);
+    expect(isModerationQueueStatus('question_to_user')).toBe(true);
+    expect(isModerationQueueStatus('postponed')).toBe(true);
+  });
+
+  it('returns false for terminal or public statuses', () => {
+    expect(isModerationQueueStatus('approved')).toBe(false);
+    expect(isModerationQueueStatus('published')).toBe(false);
+    expect(isModerationQueueStatus('rejected')).toBe(false);
+    expect(isModerationQueueStatus('deleted')).toBe(false);
   });
 });

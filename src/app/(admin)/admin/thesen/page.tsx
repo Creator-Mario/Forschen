@@ -4,6 +4,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import AdminModerationTable from '@/components/AdminModerationTable';
 import { useEffect, useState } from 'react';
 import type { These, User } from '@/types';
+import { isModerationQueueStatus } from '@/lib/utils';
 
 export default function AdminThesenPage() {
   const [thesen, setThesen] = useState<These[]>([]);
@@ -30,6 +31,8 @@ export default function AdminThesenPage() {
 
   useEffect(() => { load(); }, []);
 
+  const moderationItems = thesen.filter(item => isModerationQueueStatus(item.status));
+
   async function onAction(id: string, status: string, message?: string) {
     await fetch('/api/admin/moderate', {
       method: 'POST',
@@ -44,7 +47,7 @@ export default function AdminThesenPage() {
       <div className="max-w-4xl mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Thesen moderieren</h1>
         <p className="text-gray-500 mb-8">
-          {thesen.filter(t => t.status === 'pending' || t.status === 'created').length} ausstehend
+          {moderationItems.length} ausstehend
         </p>
         {loadError && (
           <div className="mb-4 rounded-lg px-4 py-3 text-sm font-medium bg-red-50 text-red-800 border border-red-200">
@@ -52,7 +55,7 @@ export default function AdminThesenPage() {
           </div>
         )}
         <AdminModerationTable
-          items={thesen}
+          items={moderationItems}
           contentType="Thesen"
           users={users}
           titleField="title"

@@ -373,6 +373,39 @@ describe('admin form routes and their entry links', () => {
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/admin/vorstellungen'));
   });
 
+  it('shows only moderation queue items on the admin videos page', async () => {
+    setAdminSession();
+    const fetchMock = global.fetch as unknown as ReturnType<typeof vi.fn>;
+    fetchMock.mockImplementation((input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url === '/api/videos?all=1') {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ([
+            { id: 'v1', title: 'Zur Prüfung', description: 'Bitte prüfen', authorName: 'Alice', status: 'created', createdAt: '2024-01-01T00:00:00Z', url: 'https://example.com/a' },
+            { id: 'v2', title: 'Rückfrage läuft', description: 'Wartet', authorName: 'Bob', status: 'question_to_user', createdAt: '2024-01-02T00:00:00Z', url: 'https://example.com/b' },
+            { id: 'v3', title: 'Bereits veröffentlicht', description: 'Sichtbar', authorName: 'Carol', status: 'published', createdAt: '2024-01-03T00:00:00Z', url: 'https://example.com/c' },
+          ]),
+        } as Response);
+      }
+      if (url === '/api/admin/users') {
+        return Promise.resolve({ ok: true, json: async () => [] } as Response);
+      }
+      if (url === '/api/wochenthema?all=1') {
+        return Promise.resolve({ ok: true, json: async () => [] } as Response);
+      }
+      return Promise.resolve({ ok: true, json: async () => [] } as Response);
+    });
+
+    const { default: AdminVideosPage } = await import('@/app/(admin)/admin/videos/page');
+    render(React.createElement(AdminVideosPage));
+
+    await waitFor(() => expect(screen.getByText('2 ausstehend')).toBeInTheDocument());
+    expect(screen.getByText('Zur Prüfung')).toBeInTheDocument();
+    expect(screen.getByText('Rückfrage läuft')).toBeInTheDocument();
+    expect(screen.queryByText('Bereits veröffentlicht')).toBeNull();
+  });
+
   it('opens the admin tageswort and wochenthema forms with stable labels', async () => {
     setAdminSession();
     const user = userEvent.setup();
