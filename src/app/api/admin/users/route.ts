@@ -42,9 +42,15 @@ export async function PATCH(req: NextRequest) {
     const userEmail = user.email;
     const userName = user.name;
 
-    // Notify the user before deletion so email is still accessible.
     try {
-      await sendEmail({
+      await deleteUserAccount(id);
+    } catch (err) {
+      console.error('[admin/users] Hard delete failed:', err);
+      return NextResponse.json({ error: 'Nutzer konnte nicht gelöscht werden.' }, { status: 500 });
+    }
+
+    const followUpTasks = await Promise.allSettled([
+      sendEmail({
         to: userEmail,
         subject: `Dein Konto wurde gelöscht – ${siteName}`,
         html: `
@@ -59,21 +65,23 @@ export async function PATCH(req: NextRequest) {
           </div>
         `,
         text: `Hallo ${userName},\n\ndein Konto bei „${siteName}" wurde vom Administrator gelöscht. Falls du Fragen hast, wende dich bitte direkt an uns.\n\n${siteName}`,
-      });
-    } catch (err) {
-      console.error('[admin/users] Delete notification email could not be sent:', err);
-    }
-
-    await deleteUserAccount(id);
-
-    await saveAdminLog({
-      id: `log-${generateId()}`,
-      adminId: session.user.id,
+      }),
+      saveAdminLog({
+        id: `log-${generateId()}`,
+        adminId: session.user.id,
         action: 'user_hard_delete',
-      targetType: 'user',
-      targetId: id,
-      createdAt: new Date().toISOString(),
-    });
+        targetType: 'user',
+        targetId: id,
+        createdAt: new Date().toISOString(),
+      }),
+    ]);
+
+    if (followUpTasks[0].status === 'rejected') {
+      console.error('[admin/users] Delete notification email could not be sent:', followUpTasks[0].reason);
+    }
+    if (followUpTasks[1].status === 'rejected') {
+      console.error('[admin/users] Hard delete log could not be written:', followUpTasks[1].reason);
+    }
 
     return NextResponse.json({ success: true });
   }
