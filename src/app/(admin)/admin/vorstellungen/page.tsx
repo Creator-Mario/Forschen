@@ -51,7 +51,7 @@ export default function AdminVorstellungenPage() {
           approve: 'Nutzer freigeschaltet.',
           question: 'Rückfrage gesendet.',
           postpone: 'Zurückgestellt.',
-          delete: 'Abgelehnt.',
+          reject: 'Registrierung abgelehnt.',
         };
         setFeedback({ type: 'success', msg: labels[action] ?? 'Aktion ausgeführt.' });
       } else {
@@ -173,14 +173,14 @@ export default function AdminVorstellungenPage() {
                   </button>
                   <button
                     onClick={() => {
-                      if (confirm('Konto wirklich ablehnen und deaktivieren?')) {
-                        handleAction(u.id, 'delete');
+                      if (confirm('Registrierung wirklich ablehnen und das Konto endgültig löschen?')) {
+                        handleAction(u.id, 'reject');
                       }
                     }}
                     disabled={loading}
                     className="flex items-center gap-1.5 px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-500 disabled:opacity-50 transition-colors"
                   >
-                    🗑️ Ablehnen / Löschen
+                    🗑️ Ablehnen
                   </button>
                 </div>
               </div>

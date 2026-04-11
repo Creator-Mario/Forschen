@@ -31,8 +31,8 @@ export async function PATCH(req: NextRequest) {
     const user = getUserById(userId);
     if (!user) return NextResponse.json({ error: 'Nutzer nicht gefunden.' }, { status: 404 });
 
-    // 'delete' permanently removes the user and all their data from the database.
-    if (action === 'delete') {
+    // `reject` declines the registration and permanently removes the pending account.
+    if (action === 'reject') {
       // Notify the user before deletion so email is still accessible.
       try {
         await sendEmail({
@@ -64,7 +64,7 @@ export async function PATCH(req: NextRequest) {
       await saveAdminLog({
         id: `log-${generateId()}`,
         adminId: session.user.id,
-        action: 'vorstellung_delete',
+        action: 'vorstellung_reject',
         targetType: 'user',
         targetId: userId,
         note: note || '',

@@ -19,10 +19,9 @@ export default function AdminNutzerPage() {
 
   useEffect(() => { load(); }, []);
 
-  async function handleAction(id: string, action: 'lock' | 'unlock' | 'delete' | 'hard_delete') {
+  async function handleAction(id: string, action: 'lock' | 'unlock' | 'hard_delete') {
     const confirmMsg =
       action === 'hard_delete' ? 'ACHTUNG: Nutzer und ALLE zugehörigen Inhalte unwiderruflich löschen?' :
-      action === 'delete' ? 'Nutzer deaktivieren (Soft-Delete)?' :
       action === 'lock' ? 'Nutzer sperren?' : 'Nutzer reaktivieren?';
     if (!confirm(confirmMsg)) return;
     setLoading(true);
@@ -37,7 +36,6 @@ export default function AdminNutzerPage() {
         const labels: Record<string, string> = {
           lock: 'Nutzer gesperrt.',
           unlock: 'Nutzer reaktiviert.',
-          delete: 'Nutzer deaktiviert.',
           hard_delete: 'Nutzer endgültig gelöscht.',
         };
         setFeedback({ type: 'success', msg: labels[action] ?? 'Aktion ausgeführt.' });
@@ -125,18 +123,11 @@ export default function AdminNutzerPage() {
                             </button>
                           )}
                           <button
-                            onClick={() => handleAction(u.id, 'delete')}
-                            disabled={loading}
-                            className="text-xs bg-red-100 text-red-700 hover:bg-red-200 px-2 py-1 rounded transition-colors disabled:opacity-50"
-                          >
-                            🗑️ Deaktivieren
-                          </button>
-                          <button
                             onClick={() => handleAction(u.id, 'hard_delete')}
                             disabled={loading}
                             className="text-xs bg-red-600 text-white hover:bg-red-700 px-2 py-1 rounded transition-colors disabled:opacity-50"
                           >
-                            💥 Hart löschen
+                            💥 Endgültig löschen
                           </button>
                         </>
                       )}

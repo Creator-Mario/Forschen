@@ -479,30 +479,24 @@ describe('POST /api/user/password', () => {
   });
 });
 
-// ─── /api/admin/users – hard delete ──────────────────────────────────────────
+// ─── /api/admin/users – action validation / hard delete ─────────────────────
 
-describe('PATCH /api/admin/users (delete action)', () => {
+describe('PATCH /api/admin/users', () => {
   beforeEach(() => vi.resetModules());
 
-  it('calls deleteUserAccount for delete action (hard delete, no soft delete)', async () => {
-    const deleteUserAccount = vi.fn().mockResolvedValue(undefined);
-    const saveAdminLog = vi.fn().mockResolvedValue(undefined);
-    const user = { id: 'u2', email: 'bob@example.com', name: 'Bob', status: 'active', active: true };
+  it('returns 400 for legacy delete action', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'admin1', role: 'ADMIN' } }) }));
     vi.doMock('@/lib/db', () => ({
-      getUsers: vi.fn().mockReturnValue([user]),
+      getUsers: vi.fn().mockReturnValue([]),
       saveUser: vi.fn(),
-      deleteUserAccount,
-      saveAdminLog,
+      deleteUserAccount: vi.fn(),
+      saveAdminLog: vi.fn(),
     }));
     vi.doMock('@/lib/email', () => ({ sendEmail: vi.fn().mockResolvedValue(true), escHtml: (s: string) => s }));
     vi.doMock('@/lib/config', () => ({ siteName: 'Site', siteDomain: 'example.com' }));
     const { PATCH } = await import('@/app/api/admin/users/route');
     const res = await PATCH(makeJsonRequest('http://localhost/api/admin/users', { id: 'u2', action: 'delete' }, 'PATCH'));
-    expect(res.status).toBe(200);
-    expect(deleteUserAccount).toHaveBeenCalledWith('u2');
-    expect(saveAdminLog).toHaveBeenCalledOnce();
-    expect(saveAdminLog.mock.calls[0][0].action).toBe('user_delete');
+    expect(res.status).toBe(400);
   });
 
   it('calls deleteUserAccount for hard_delete action', async () => {
@@ -522,15 +516,17 @@ describe('PATCH /api/admin/users (delete action)', () => {
     const res = await PATCH(makeJsonRequest('http://localhost/api/admin/users', { id: 'u3', action: 'hard_delete' }, 'PATCH'));
     expect(res.status).toBe(200);
     expect(deleteUserAccount).toHaveBeenCalledWith('u3');
+    expect(saveAdminLog).toHaveBeenCalledOnce();
+    expect(saveAdminLog.mock.calls[0][0].action).toBe('user_hard_delete');
   });
 });
 
 // ─── /api/admin/vorstellungen – hard delete ───────────────────────────────────
 
-describe('PATCH /api/admin/vorstellungen (delete action)', () => {
+describe('PATCH /api/admin/vorstellungen (reject action)', () => {
   beforeEach(() => vi.resetModules());
 
-  it('calls deleteUserAccount for delete action and returns 200', async () => {
+  it('calls deleteUserAccount for reject action and returns 200', async () => {
     const deleteUserAccount = vi.fn().mockResolvedValue(undefined);
     const saveAdminLog = vi.fn().mockResolvedValue(undefined);
     const user = { id: 'u4', email: 'dave@example.com', name: 'Dave', status: 'awaiting_admin_review' };
@@ -549,9 +545,9 @@ describe('PATCH /api/admin/vorstellungen (delete action)', () => {
     }));
     vi.doMock('@/lib/config', () => ({ siteName: 'Site', siteDomain: 'example.com' }));
     const { PATCH } = await import('@/app/api/admin/vorstellungen/route');
-    const res = await PATCH(makeJsonRequest('http://localhost/api/admin/vorstellungen', { userId: 'u4', action: 'delete', note: '' }, 'PATCH'));
+    const res = await PATCH(makeJsonRequest('http://localhost/api/admin/vorstellungen', { userId: 'u4', action: 'reject', note: '' }, 'PATCH'));
     expect(res.status).toBe(200);
     expect(deleteUserAccount).toHaveBeenCalledWith('u4');
-    expect(saveAdminLog.mock.calls[0][0].action).toBe('vorstellung_delete');
+    expect(saveAdminLog.mock.calls[0][0].action).toBe('vorstellung_reject');
   });
 });

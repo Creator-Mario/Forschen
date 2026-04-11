@@ -22,7 +22,7 @@ export async function PATCH(req: NextRequest) {
   }
 
   const { id, action } = await req.json();
-  if (!id || !['lock', 'unlock', 'delete', 'hard_delete'].includes(action)) {
+  if (!id || !['lock', 'unlock', 'hard_delete'].includes(action)) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 
@@ -37,8 +37,8 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'Cannot modify your own account' }, { status: 400 });
   }
 
-  // Both 'delete' and 'hard_delete' permanently remove the user and all their content.
-  if (action === 'delete' || action === 'hard_delete') {
+  // `hard_delete` permanently removes the user and all their content.
+  if (action === 'hard_delete') {
     const userEmail = user.email;
     const userName = user.name;
 
@@ -69,7 +69,7 @@ export async function PATCH(req: NextRequest) {
     await saveAdminLog({
       id: `log-${generateId()}`,
       adminId: session.user.id,
-      action: 'user_delete',
+        action: 'user_hard_delete',
       targetType: 'user',
       targetId: id,
       createdAt: new Date().toISOString(),
