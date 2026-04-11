@@ -6,6 +6,43 @@ import { useEffect, useState } from 'react';
 import type { Video, User, Wochenthema } from '@/types';
 import { isModerationQueueStatus } from '@/lib/utils';
 
+const REQUEST_TIMEOUT_MS = 12000;
+
+async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(url, {
+      ...init,
+      cache: 'no-store',
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      let message = `Fehler beim Laden (${response.status})`;
+      try {
+        const data = await response.json();
+        if (typeof data?.error === 'string' && data.error.trim()) {
+          message = data.error;
+        }
+      } catch {
+        // ignore malformed error payloads
+      }
+      throw new Error(message);
+    }
+
+    return response.json() as Promise<T>;
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error('Zeitüberschreitung beim Laden. Bitte erneut versuchen.');
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 export default function AdminVideosPage() {
   const [items, setItems] = useState<Video[]>([]);
   const [users, setUsers] = useState<User[]>([]);
@@ -15,18 +52,30 @@ export default function AdminVideosPage() {
   async function load() {
     setLoadError(null);
     try {
-      const [r, u, t] = await Promise.all([
-        fetch('/api/videos?all=1'),
-        fetch('/api/admin/users'),
-        fetch('/api/wochenthema?all=1'),
+      const [videoResult, userResult, themeResult] = await Promise.allSettled([
+        fetchJson<Video[]>('/api/videos?all=1'),
+        fetchJson<User[]>('/api/admin/users'),
+        fetchJson<Wochenthema[]>('/api/wochenthema?all=1'),
       ]);
-      const data = await r.json();
-      if (Array.isArray(data)) setItems(data);
-      else setLoadError('Fehler beim Laden der Videos.');
-      const userData = await u.json();
-      if (Array.isArray(userData)) setUsers(userData);
-      const themeData = await t.json();
-      if (Array.isArray(themeData)) setThemes(themeData.filter(theme => theme.status === 'published'));
+
+      if (videoResult.status === 'fulfilled' && Array.isArray(videoResult.value)) {
+        setItems(videoResult.value);
+      } else {
+        setItems([]);
+        setLoadError('Fehler beim Laden der Videos. Bitte Seite neu laden.');
+      }
+
+      if (userResult.status === 'fulfilled' && Array.isArray(userResult.value)) {
+        setUsers(userResult.value);
+      } else {
+        setUsers([]);
+      }
+
+      if (themeResult.status === 'fulfilled' && Array.isArray(themeResult.value)) {
+        setThemes(themeResult.value.filter(theme => theme.status === 'published'));
+      } else {
+        setThemes([]);
+      }
     } catch (err) {
       console.error('[admin/videos] load failed:', err);
       setLoadError('Fehler beim Laden der Daten. Bitte Seite neu laden.');
@@ -38,16 +87,12 @@ export default function AdminVideosPage() {
   const moderationItems = items.filter(item => isModerationQueueStatus(item.status));
 
   async function onAction(id: string, status: string, message?: string, wochenthemaId?: string) {
-    const res = await fetch('/api/admin/moderate', {
+    await fetchJson<{ success: boolean }>('/api/admin/moderate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'video', id, status, adminMessage: message, wochenthemaId }),
     });
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.error || `Fehler beim Moderieren (${res.status})`);
-    }
-    load();
+    await load();
   }
 
   return (

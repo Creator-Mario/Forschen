@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { ReactNode } from 'react';
 
@@ -13,17 +13,22 @@ interface ProtectedRouteProps {
 export default function ProtectedRoute({ children, requireAdmin = false }: ProtectedRouteProps) {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (status === 'loading') return;
     if (!session) {
-      router.push(requireAdmin ? '/admin-login' : '/login');
+      const basePath = requireAdmin ? '/admin-login' : '/login';
+      const target = pathname && pathname !== '/'
+        ? `${basePath}?callbackUrl=${encodeURIComponent(pathname)}`
+        : basePath;
+      router.replace(target);
       return;
     }
     if (requireAdmin && session.user.role !== 'ADMIN') {
-      router.push('/admin-login');
+      router.replace('/admin-login');
     }
-  }, [session, status, router, requireAdmin]);
+  }, [session, status, router, requireAdmin, pathname]);
 
   if (status === 'loading') {
     return (

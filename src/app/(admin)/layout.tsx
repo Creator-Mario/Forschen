@@ -112,10 +112,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         {/* Sidebar footer */}
         <div className="px-4 py-3 border-t border-slate-700 flex-shrink-0">
           <Link
-            href="/"
+            href="/dashboard"
             className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-200 transition-colors"
           >
-            ← Zur Plattform
+            ← Zum Mitgliederbereich
           </Link>
         </div>
       </aside>

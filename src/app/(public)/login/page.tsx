@@ -2,7 +2,7 @@
 
 import { signIn, getSession } from 'next-auth/react';
 import { useState, FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 export default function LoginPage() {
@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -26,10 +27,14 @@ export default function LoginPage() {
       setError('Anmeldung fehlgeschlagen. Bitte überprüfe deine Zugangsdaten.');
     } else {
       const session = await getSession();
+      const callbackUrl = searchParams.get('callbackUrl');
+      const safeCallbackUrl = callbackUrl && callbackUrl.startsWith('/') && !callbackUrl.startsWith('//')
+        ? callbackUrl
+        : null;
       if (session?.user?.role === 'ADMIN') {
         router.push('/admin');
       } else {
-        router.push('/dashboard');
+        router.push(safeCallbackUrl || '/dashboard');
       }
     }
   }

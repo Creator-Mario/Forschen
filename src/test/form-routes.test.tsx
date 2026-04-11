@@ -16,6 +16,7 @@ const signOutMock = vi.fn();
 
 let currentSearchParams = new URLSearchParams();
 let currentSession: SessionState = { data: null, status: 'unauthenticated' };
+let currentGetSessionResult: { user: { role: 'USER' | 'ADMIN' } } | null = { user: { role: 'USER' } };
 let currentTageswort: { id: string; date: string; verse: string; text: string; context: string; questions: string[]; published: boolean } | undefined;
 let approvedThesen: Array<{ id: string; title: string; content: string; authorName: string; createdAt: string }> = [];
 let approvedAktionen: Array<{ id: string; title: string; description: string; authorName: string; createdAt: string }> = [];
@@ -41,7 +42,7 @@ vi.mock('next-auth/react', () => ({
   useSession: () => currentSession,
   signIn: signInMock,
   signOut: signOutMock,
-  getSession: vi.fn().mockResolvedValue({ user: { role: 'USER' } }),
+  getSession: vi.fn().mockImplementation(async () => currentGetSessionResult),
   SessionProvider: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
 }));
 
@@ -114,6 +115,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   currentSearchParams = new URLSearchParams();
   currentSession = { data: null, status: 'unauthenticated' };
+  currentGetSessionResult = { user: { role: 'USER' } };
   currentTageswort = undefined;
   approvedThesen = [];
   approvedAktionen = [];
@@ -156,6 +158,21 @@ describe('public form entry routes', () => {
     expect(screen.getByRole('link', { name: /passwort vergessen/i })).toHaveAttribute('href', '/passwort-vergessen');
     expect(screen.getByRole('link', { name: /kostenlos registrieren/i })).toHaveAttribute('href', '/registrieren');
     expect(screen.getByRole('button', { name: /^anmelden$/i })).toBeInTheDocument();
+  });
+
+  it('returns members to the requested protected page after a successful login', async () => {
+    currentSearchParams = new URLSearchParams('callbackUrl=%2Fmitglieder%2Fvorstellungen');
+    signInMock.mockResolvedValue({ error: undefined });
+    currentGetSessionResult = { user: { role: 'USER' } };
+
+    const { default: LoginPage } = await import('@/app/(public)/login/page');
+    render(React.createElement(LoginPage));
+
+    await userEvent.type(screen.getByLabelText(/e-mail/i), 'alice@example.com');
+    await userEvent.type(screen.getByLabelText(/passwort/i), 'secret123');
+    await userEvent.click(screen.getByRole('button', { name: /^anmelden$/i }));
+
+    await waitFor(() => expect(routerPush).toHaveBeenCalledWith('/mitglieder/vorstellungen'));
   });
 
   it('connects registration page to privacy policy and login', async () => {
@@ -369,11 +386,12 @@ describe('admin form routes and their entry links', () => {
     expect(screen.getByRole('link', { name: /tageswort verwalten/i })).toHaveAttribute('href', '/admin/tageswort');
     expect(screen.getByRole('link', { name: /wochenthema verwalten/i })).toHaveAttribute('href', '/admin/wochenthema');
     expect(screen.getByRole('link', { name: /buchempfehlungen moderieren/i })).toHaveAttribute('href', '/admin/buchempfehlungen');
+    expect(screen.getByRole('link', { name: /mitgliederbereich/i })).toHaveAttribute('href', '/dashboard');
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/admin/overview'));
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/admin/vorstellungen'));
   });
 
-  it('shows only moderation queue items on the admin videos page', async () => {
+  it('shows only moderation queue items on the admin videos page even when side data fails', async () => {
     setAdminSession();
     const fetchMock = global.fetch as unknown as ReturnType<typeof vi.fn>;
     fetchMock.mockImplementation((input: RequestInfo | URL) => {
@@ -389,7 +407,7 @@ describe('admin form routes and their entry links', () => {
         } as Response);
       }
       if (url === '/api/admin/users') {
-        return Promise.resolve({ ok: true, json: async () => [] } as Response);
+        return Promise.reject(new Error('users endpoint unavailable'));
       }
       if (url === '/api/wochenthema?all=1') {
         return Promise.resolve({ ok: true, json: async () => [] } as Response);
