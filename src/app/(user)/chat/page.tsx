@@ -8,6 +8,7 @@ interface Partner {
   id: string;
   name: string;
   email?: string;
+  unreadCount: number;
 }
 
 export default function ChatPage() {
@@ -33,7 +34,11 @@ export default function ChatPage() {
           <div className="text-center py-12 text-gray-400">Laden…</div>
         ) : partners.length === 0 ? (
           <div className="bg-white rounded-xl shadow-md p-10 text-center text-gray-400">
-            Noch keine Gespräche vorhanden. Besuche das Profil eines Mitglieds, um eine Nachricht zu senden.
+            Noch keine Gespräche vorhanden. Besuche die{' '}
+            <Link href="/mitglieder/vorstellungen" className="text-blue-600 hover:underline">
+              Mitglieder-Vorstellungen
+            </Link>
+            , um eine Nachricht zu senden.
           </div>
         ) : (
           <div className="bg-white rounded-xl shadow-md divide-y">
@@ -50,7 +55,14 @@ export default function ChatPage() {
                   <p className="font-medium text-gray-800">{p.name}</p>
                   {p.email && <p className="text-xs text-gray-400">{p.email}</p>}
                 </div>
-                <span className="ml-auto text-blue-500 text-sm">→</span>
+                <div className="ml-auto flex items-center gap-2">
+                  {p.unreadCount > 0 && (
+                    <span className="bg-blue-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                      {p.unreadCount > 9 ? '9+' : p.unreadCount}
+                    </span>
+                  )}
+                  <span className="text-blue-500 text-sm">→</span>
+                </div>
               </Link>
             ))}
           </div>

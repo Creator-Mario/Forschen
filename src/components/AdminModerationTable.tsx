@@ -48,7 +48,6 @@ export default function AdminModerationTable({
         published: 'Veröffentlicht.',
         postponed: 'Zurückgestellt.',
         question_to_user: 'Rückfrage gesendet.',
-        deleted: 'Zurückgezogen.',
         hard_delete: 'Endgültig gelöscht.',
       };
       setFeedback({ type: 'success', msg: labels[status] ?? 'Aktion ausgeführt.' });
@@ -160,25 +159,16 @@ export default function AdminModerationTable({
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleAction(item.id, 'deleted')}
-                  disabled={loadingId === item.id}
-                  className="bg-red-200 text-red-800 px-3 py-1.5 rounded-lg text-sm hover:bg-red-300 transition-colors disabled:opacity-50"
-                  title="Soft-Delete: Status auf gelöscht setzen (Daten bleiben erhalten)"
-                >
-                  🗑️ Zurückziehen
-                </button>
-                <button
-                  type="button"
                   onClick={() => {
-                    if (confirm('ACHTUNG: Diesen Eintrag unwiderruflich aus der Datenbank löschen?')) {
+                    if (confirm(`„${String(item[titleField] || (contentField ? item[contentField]?.substring?.(0, 40) : '') || item.id)}" endgültig löschen? Diese Aktion kann nicht rückgängig gemacht werden.`)) {
                       handleAction(item.id, 'hard_delete');
                     }
                   }}
                   disabled={loadingId === item.id}
                   className="bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-red-700 transition-colors disabled:opacity-50"
-                  title="Hard-Delete: Eintrag endgültig aus der Datenbank entfernen"
+                  title="Endgültig löschen – Eintrag wird dauerhaft entfernt"
                 >
-                  💥 Endgültig löschen
+                  🗑 Löschen
                 </button>
                 {contentField && item[contentField] && (
                   <button

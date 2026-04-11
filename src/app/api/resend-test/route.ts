@@ -1,10 +1,17 @@
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 import { sendEmail } from '@/lib/email';
 import { siteName as SITE_NAME } from '@/lib/config';
 
 const TEST_RECIPIENT = process.env.RESEND_TEST_EMAIL ?? process.env.EMAIL_FROM ?? 'delivered@resend.dev';
 
 export async function GET() {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user.role !== 'ADMIN') {
+    return NextResponse.json({ error: 'Nicht autorisiert.' }, { status: 403 });
+  }
+
   console.log('[resend-test] Sending test email to', TEST_RECIPIENT);
 
   const result = await sendEmail({

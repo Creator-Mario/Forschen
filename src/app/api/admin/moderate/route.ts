@@ -15,8 +15,9 @@ import { sendAdminMessageEmail } from '@/lib/email';
 import { generateId } from '@/lib/utils';
 import type { ContentStatus } from '@/types';
 
+// 'deleted' is intentionally excluded: admins must use hard_delete to remove content permanently.
 const ALLOWED_STATUSES: ContentStatus[] = [
-  'created', 'review', 'published', 'question_to_user', 'postponed', 'deleted',
+  'created', 'review', 'published', 'question_to_user', 'postponed',
   'approved', 'rejected', 'pending',
 ];
 
