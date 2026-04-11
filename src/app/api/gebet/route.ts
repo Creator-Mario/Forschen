@@ -3,6 +3,7 @@ import { getApprovedGebete, getGebete, saveGebet } from '@/lib/db';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { generateId } from '@/lib/utils';
+import type { ContentStatus } from '@/types';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
     authorName: body.anonymous ? undefined : session.user.name,
     content: body.content,
     anonymous: !!body.anonymous,
-    status: 'created' as const,
+    status: (session.user.role === 'ADMIN' ? 'published' : 'created') as ContentStatus,
     createdAt: new Date().toISOString(),
   };
   await saveGebet(gebet);

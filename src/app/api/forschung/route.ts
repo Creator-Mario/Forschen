@@ -3,6 +3,7 @@ import { getApprovedForschung, getForschung, saveForschung } from '@/lib/db';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { generateId } from '@/lib/utils';
+import type { ContentStatus } from '@/types';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
     content: body.content,
     bibleReference: body.bibleReference || '',
     wochenthemaId: body.wochenthemaId || '',
-    status: 'created' as const,
+    status: (session.user.role === 'ADMIN' ? 'published' : 'created') as ContentStatus,
     createdAt: new Date().toISOString(),
   };
   await saveForschung(beitrag);

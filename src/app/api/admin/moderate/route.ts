@@ -114,19 +114,6 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Unknown type' }, { status: 400 });
     }
 
-    // Send email notification when admin asks the user a question.
-    if (status === 'question_to_user' && adminMessage && affectedUserId) {
-      const user = getUserById(affectedUserId);
-      if (user?.email) {
-        await sendAdminMessageEmail(
-          user.email,
-          user.name,
-          CONTENT_TYPE_LABELS[type] ?? type,
-          adminMessage,
-        );
-      }
-    }
-
     // Mandatory admin action log
     await saveAdminLog({
       id: `log-${generateId()}`,
@@ -137,6 +124,23 @@ export async function POST(req: NextRequest) {
       note: moderatorNote || adminMessage || undefined,
       createdAt: new Date().toISOString(),
     });
+
+    // Send email notification when admin asks the user a question (non-fatal).
+    if (status === 'question_to_user' && adminMessage && affectedUserId) {
+      const user = getUserById(affectedUserId);
+      if (user?.email) {
+        try {
+          await sendAdminMessageEmail(
+            user.email,
+            user.name,
+            CONTENT_TYPE_LABELS[type] ?? type,
+            adminMessage,
+          );
+        } catch (err) {
+          console.error('[moderate] Email notification could not be sent:', err);
+        }
+      }
+    }
 
     return NextResponse.json({ success: true });
   } catch {

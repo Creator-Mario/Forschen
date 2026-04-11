@@ -19,7 +19,7 @@ interface AdminModerationTableProps {
   contentField?: string;
   contentType: string;
   users?: User[];
-  onAction: (id: string, status: string, message?: string) => void;
+  onAction: (id: string, status: string, message?: string) => void | Promise<void>;
   /** @deprecated use onAction instead */
   onModerate?: (id: string, status: 'approved' | 'rejected') => void;
 }
@@ -30,15 +30,34 @@ export default function AdminModerationTable({
   const [questionModal, setQuestionModal] = useState<{ id: string } | null>(null);
   const [questionText, setQuestionText] = useState('');
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
 
   function getUserEmail(userId: string): string {
     if (!users) return '';
     return users.find(u => u.id === userId)?.email || '';
   }
 
-  function handleAction(id: string, status: string, message?: string) {
-    if (onAction) onAction(id, status, message);
-    else if (onModerate && (status === 'approved' || status === 'rejected')) onModerate(id, status);
+  async function handleAction(id: string, status: string, message?: string) {
+    setLoadingId(id);
+    setFeedback(null);
+    try {
+      if (onAction) await onAction(id, status, message);
+      else if (onModerate && (status === 'approved' || status === 'rejected')) onModerate(id, status);
+      const labels: Record<string, string> = {
+        published: 'Veröffentlicht.',
+        postponed: 'Zurückgestellt.',
+        question_to_user: 'Rückfrage gesendet.',
+        deleted: 'Zurückgezogen.',
+        hard_delete: 'Endgültig gelöscht.',
+      };
+      setFeedback({ type: 'success', msg: labels[status] ?? 'Aktion ausgeführt.' });
+    } catch (err) {
+      console.error('[AdminModerationTable] Action failed:', err);
+      setFeedback({ type: 'error', msg: 'Aktion fehlgeschlagen. Bitte Seite neu laden und erneut versuchen.' });
+    } finally {
+      setLoadingId(null);
+    }
   }
 
   function openQuestionModal(id: string) {
@@ -63,6 +82,11 @@ export default function AdminModerationTable({
 
   return (
     <>
+      {feedback && (
+        <div className={`mb-4 rounded-lg px-4 py-3 text-sm font-medium ${feedback.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
+          {feedback.type === 'success' ? '✅ ' : '❌ '}{feedback.msg}
+        </div>
+      )}
       <div className="space-y-4">
         {items.map(item => {
           const isExpanded = expandedIds.has(item.id);
@@ -108,46 +132,57 @@ export default function AdminModerationTable({
 
               <div className="flex flex-wrap gap-2 mt-3">
                 <button
+                  type="button"
                   onClick={() => handleAction(item.id, 'published')}
-                  className="bg-green-600 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-green-700 transition-colors"
+                  disabled={loadingId === item.id}
+                  className="bg-green-600 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-green-700 transition-colors disabled:opacity-50"
                   title="Veröffentlichen / Genehmigen"
                 >
                   ✅ Veröffentlichen
                 </button>
                 <button
+                  type="button"
                   onClick={() => handleAction(item.id, 'postponed')}
-                  className="bg-slate-500 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-slate-600 transition-colors"
+                  disabled={loadingId === item.id}
+                  className="bg-slate-500 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-slate-600 transition-colors disabled:opacity-50"
                   title="Zurückstellen"
                 >
                   ⏸ Zurückstellen
                 </button>
                 <button
+                  type="button"
                   onClick={() => openQuestionModal(item.id)}
-                  className="bg-orange-500 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-orange-600 transition-colors"
+                  disabled={loadingId === item.id}
+                  className="bg-orange-500 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-orange-600 transition-colors disabled:opacity-50"
                   title="Frage an den Nutzer"
                 >
                   ❓ Rückfrage
                 </button>
                 <button
+                  type="button"
                   onClick={() => handleAction(item.id, 'deleted')}
-                  className="bg-red-200 text-red-800 px-3 py-1.5 rounded-lg text-sm hover:bg-red-300 transition-colors"
+                  disabled={loadingId === item.id}
+                  className="bg-red-200 text-red-800 px-3 py-1.5 rounded-lg text-sm hover:bg-red-300 transition-colors disabled:opacity-50"
                   title="Soft-Delete: Status auf gelöscht setzen (Daten bleiben erhalten)"
                 >
                   🗑️ Zurückziehen
                 </button>
                 <button
+                  type="button"
                   onClick={() => {
                     if (confirm('ACHTUNG: Diesen Eintrag unwiderruflich aus der Datenbank löschen?')) {
                       handleAction(item.id, 'hard_delete');
                     }
                   }}
-                  className="bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-red-700 transition-colors"
+                  disabled={loadingId === item.id}
+                  className="bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-red-700 transition-colors disabled:opacity-50"
                   title="Hard-Delete: Eintrag endgültig aus der Datenbank entfernen"
                 >
                   💥 Endgültig löschen
                 </button>
                 {contentField && item[contentField] && (
                   <button
+                    type="button"
                     onClick={() => toggleExpand(item.id)}
                     className="bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-lg text-sm hover:bg-blue-100 transition-colors"
                     title="Vollständigen Inhalt anzeigen"
@@ -176,6 +211,7 @@ export default function AdminModerationTable({
             />
             <div className="flex gap-3 mt-4">
               <button
+                type="button"
                 onClick={submitQuestion}
                 disabled={!questionText.trim()}
                 className="flex-1 bg-orange-500 text-white py-2 rounded-lg text-sm font-medium hover:bg-orange-600 transition-colors disabled:opacity-50"
@@ -183,6 +219,7 @@ export default function AdminModerationTable({
                 Nachricht senden
               </button>
               <button
+                type="button"
                 onClick={() => setQuestionModal(null)}
                 className="px-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100 transition-colors"
               >

@@ -22,6 +22,7 @@ export default function AdminVorstellungenPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [noteMap, setNoteMap] = useState<Record<string, string>>({});
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
 
   function load() {
     fetch('/api/admin/vorstellungen')
@@ -38,13 +39,31 @@ export default function AdminVorstellungenPage() {
       return;
     }
     setLoading(true);
-    await fetch('/api/admin/vorstellungen', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, action, note }),
-    });
-    setLoading(false);
-    load();
+    setFeedback(null);
+    try {
+      const res = await fetch('/api/admin/vorstellungen', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, action, note }),
+      });
+      if (res.ok) {
+        const labels: Record<string, string> = {
+          approve: 'Nutzer freigeschaltet.',
+          question: 'Rückfrage gesendet.',
+          postpone: 'Zurückgestellt.',
+          delete: 'Abgelehnt.',
+        };
+        setFeedback({ type: 'success', msg: labels[action] ?? 'Aktion ausgeführt.' });
+      } else {
+        const d = await res.json().catch(() => ({}));
+        setFeedback({ type: 'error', msg: d.error ?? `Aktion fehlgeschlagen (${res.status}).` });
+      }
+    } catch {
+      setFeedback({ type: 'error', msg: 'Netzwerkfehler. Bitte erneut versuchen.' });
+    } finally {
+      setLoading(false);
+      load();
+    }
   }
 
   return (
@@ -59,6 +78,12 @@ export default function AdminVorstellungenPage() {
           </div>
           <Link href="/admin" className="text-sm text-blue-600 hover:underline">← Admin</Link>
         </div>
+
+        {feedback && (
+          <div className={`mb-4 rounded-lg px-4 py-3 text-sm font-medium ${feedback.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
+            {feedback.type === 'success' ? '✅ ' : '❌ '}{feedback.msg}
+          </div>
+        )}
 
         {users.length === 0 ? (
           <div className="bg-white rounded-xl shadow-md p-10 text-center text-gray-400">
