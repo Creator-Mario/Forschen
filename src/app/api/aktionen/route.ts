@@ -39,6 +39,11 @@ export async function POST(req: NextRequest) {
     status: (session.user.role === 'ADMIN' ? 'published' : 'created') as ContentStatus,
     createdAt: new Date().toISOString(),
   };
-  await saveAktion(aktion);
+  try {
+    await saveAktion(aktion);
+  } catch (err) {
+    console.error('[aktionen] saveAktion failed:', err);
+    return NextResponse.json({ error: err instanceof Error ? err.message : 'Aktion konnte nicht gespeichert werden.' }, { status: 500 });
+  }
   return NextResponse.json({ success: true, id: aktion.id });
 }
