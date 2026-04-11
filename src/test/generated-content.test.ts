@@ -23,4 +23,24 @@ describe('generated-content', () => {
     expect(psalmen[0].date).toBe('2026-04-11');
     expect(psalmen.at(-1)?.date).toBe('2026-01-12');
   });
+
+  it('updates Psalm des Tages and Glauben heute when the publication date changes', async () => {
+    const {
+      getTodayPsalmThema,
+      getTodayGlaubenHeuteThema,
+    } = await import('@/lib/generated-content');
+
+    const firstPsalm = getTodayPsalmThema('2026-04-11');
+    const secondPsalm = getTodayPsalmThema('2026-04-12');
+    const firstTopic = getTodayGlaubenHeuteThema('2026-04-11');
+    const secondTopic = getTodayGlaubenHeuteThema('2026-04-12');
+
+    expect(firstPsalm.date).toBe('2026-04-11');
+    expect(secondPsalm.date).toBe('2026-04-12');
+    expect(firstPsalm.id).not.toBe(secondPsalm.id);
+
+    expect(firstTopic.date).toBe('2026-04-11');
+    expect(secondTopic.date).toBe('2026-04-12');
+    expect(firstTopic.id).not.toBe(secondTopic.id);
+  });
 });

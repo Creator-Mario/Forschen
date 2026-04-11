@@ -7,9 +7,10 @@ import crypto from 'crypto';
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, password } = await req.json();
+    const { name, email, password, weeklyFaithEmailEnabled } = await req.json();
     const normalizedEmail = typeof email === 'string' ? normalizeEmail(email) : '';
     const normalizedName = typeof name === 'string' ? name.trim() : '';
+    const wantsWeeklyFaithEmail = weeklyFaithEmailEnabled === true;
 
     if (!normalizedName || !normalizedEmail || !password) {
       return NextResponse.json({ error: 'Alle Felder sind erforderlich.' }, { status: 400 });
@@ -68,6 +69,8 @@ export async function POST(req: NextRequest) {
         createdAt: new Date().toISOString(),
         active: false,
         emailToken,
+        weeklyFaithEmailEnabled: wantsWeeklyFaithEmail,
+        weeklyFaithEmailUpdatedAt: new Date().toISOString(),
       });
     } catch (err) {
       console.error('[register] saveUser failed:', err);

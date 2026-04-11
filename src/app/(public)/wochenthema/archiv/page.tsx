@@ -1,15 +1,16 @@
 export const dynamic = 'force-dynamic';
 
 import { getWochenthemaList } from '@/lib/db';
+import { keepLatestItemsByWeek } from '@/lib/archive-window';
 import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
 import { formatDate } from '@/lib/utils';
 
 export default function WochenthemaArchivPage() {
   const currentDate = formatDate(new Date().toISOString());
-  const themes = getWochenthemaList()
-    .filter(t => t.status === 'published' || t.status === 'archived')
-    .sort((a, b) => b.week.localeCompare(a.week));
+  const themes = keepLatestItemsByWeek(
+    getWochenthemaList().filter(t => t.status === 'published' || t.status === 'archived')
+  );
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">

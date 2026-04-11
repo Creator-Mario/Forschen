@@ -2,8 +2,8 @@ name: Weekly Theme Generation
 
 on:
   schedule:
-    # Runs every Monday at 6:00 AM UTC
-    - cron: '0 6 * * 1'
+    # Runs every Sunday shortly after the new publication week begins in Berlin
+    - cron: '5 2 * * 0'
   workflow_dispatch:
 
 jobs:
@@ -28,6 +28,31 @@ jobs:
           node << 'EOF'
           const fs = require('fs');
           const path = require('path');
+          const BERLIN_TIMEZONE = 'Europe/Berlin';
+          const DAILY_PUBLISH_HOUR = 3;
+          const WEEKLY_ARCHIVE_LIMIT = 13;
+
+          function getBerlinPublicationDate(date = new Date()) {
+            const formatter = new Intl.DateTimeFormat('en-CA', {
+              timeZone: BERLIN_TIMEZONE,
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              hourCycle: 'h23',
+            });
+            const parts = Object.fromEntries(
+              formatter
+                .formatToParts(date)
+                .filter(part => part.type !== 'literal')
+                .map(part => [part.type, part.value])
+            );
+            const berlinDate = `${parts.year}-${parts.month}-${parts.day}`;
+            if (Number(parts.hour) >= DAILY_PUBLISH_HOUR) return berlinDate;
+            const previousDate = new Date(`${berlinDate}T00:00:00Z`);
+            previousDate.setUTCDate(previousDate.getUTCDate() - 1);
+            return previousDate.toISOString().split('T')[0];
+          }
 
           function getISOWeek(date) {
             const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
@@ -36,6 +61,14 @@ jobs:
             const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
             const weekNum = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
             return `${d.getUTCFullYear()}-W${String(weekNum).padStart(2, '0')}`;
+          }
+
+          function getPublicationWeek(date = new Date()) {
+            const publicationDate = new Date(`${getBerlinPublicationDate(date)}T00:00:00Z`);
+            if (publicationDate.getUTCDay() === 0) {
+              publicationDate.setUTCDate(publicationDate.getUTCDate() + 1);
+            }
+            return getISOWeek(publicationDate);
           }
 
           const themes = [
@@ -80,8 +113,7 @@ jobs:
             }
           ];
 
-          const today = new Date();
-          const currentWeek = getISOWeek(today);
+          const currentWeek = getPublicationWeek();
           const dataPath = path.join(process.cwd(), 'data', 'wochenthema.json');
           const existing = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
 
@@ -101,9 +133,23 @@ jobs:
             createdAt: new Date().toISOString()
           };
 
-          existing.push(newTheme);
-          fs.writeFileSync(dataPath, JSON.stringify(existing, null, 2), 'utf-8');
+          const updated = [...existing, newTheme];
+          const publishedOrArchived = updated
+            .filter(entry => entry.status === 'published' || entry.status === 'archived')
+            .sort((a, b) => a.week.localeCompare(b.week));
+          const retainedThemes = publishedOrArchived.slice(-WEEKLY_ARCHIVE_LIMIT);
+          const drafts = updated.filter(entry => entry.status !== 'published' && entry.status !== 'archived');
+          const prunedCount = publishedOrArchived.length - retainedThemes.length;
+
+          fs.writeFileSync(
+            dataPath,
+            JSON.stringify([...retainedThemes, ...drafts], null, 2),
+            'utf-8'
+          );
           console.log(`Generated Wochenthema for ${currentWeek}: ${selectedTheme.title}`);
+          if (prunedCount > 0) {
+            console.log(`Pruned ${prunedCount} archived Wochenthema entr${prunedCount === 1 ? 'y' : 'ies'}.`);
+          }
           EOF
 
       - name: Commit and push changes

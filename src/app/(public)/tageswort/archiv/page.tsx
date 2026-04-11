@@ -3,12 +3,13 @@ export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import BibleVerseCard from '@/components/BibleVerseCard';
 import { getTageswortList } from '@/lib/db';
+import { keepLatestItemsByDate } from '@/lib/archive-window';
 import { formatDate } from '@/lib/utils';
 
 export default function TageswortArchivPage() {
-  const items = getTageswortList()
-    .filter(item => item.published)
-    .sort((a, b) => b.date.localeCompare(a.date));
+  const items = keepLatestItemsByDate(
+    getTageswortList().filter(item => item.published)
+  );
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">

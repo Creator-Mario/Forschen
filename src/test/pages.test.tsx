@@ -95,7 +95,7 @@ describe('RegistrierenPage', () => {
     const { default: RegistrierenPage } = await import('@/app/(public)/registrieren/page');
     render(React.createElement(RegistrierenPage));
     expect(screen.getByLabelText(/Name/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/E-Mail/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/E-Mail-Adresse/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Passwort/i)).toBeInTheDocument();
   });
 
@@ -103,6 +103,14 @@ describe('RegistrierenPage', () => {
     const { default: RegistrierenPage } = await import('@/app/(public)/registrieren/page');
     render(React.createElement(RegistrierenPage));
     expect(screen.getByRole('button', { name: /Konto erstellen/i })).toBeInTheDocument();
+  });
+
+  it('renders the registration explanations and weekly faith email option', async () => {
+    const { default: RegistrierenPage } = await import('@/app/(public)/registrieren/page');
+    render(React.createElement(RegistrierenPage));
+    expect(screen.getByText(/Wir geben deine Daten nicht an Dritte weiter/i)).toBeInTheDocument();
+    expect(screen.getByText(/Im Vorstellungsbereich können alle freigeschalteten Mitglieder sehen/i)).toBeInTheDocument();
+    expect(screen.getByRole('checkbox')).toBeInTheDocument();
   });
 });
 

@@ -88,6 +88,7 @@ describe('POST /api/register', () => {
     expect(savedUser.status).toBe('pending_email');
     expect(savedUser.role).toBe('USER');
     expect(savedUser.active).toBe(false);
+    expect(savedUser.weeklyFaithEmailEnabled).toBe(false);
   });
 
   it('normalizes the email address before saving and sending', async () => {
@@ -112,6 +113,23 @@ describe('POST /api/register', () => {
     const req = makeJsonRequest('http://localhost/api/register', { name: 'Alice', email: 'new@example.com', password: 'securePass1' });
     const res = await POST(req);
     expect(res.status).toBe(503);
+  });
+
+  it('stores the weekly faith email choice during registration', async () => {
+    const saveUser = vi.fn().mockResolvedValue(undefined);
+    vi.doMock('@/lib/db', () => ({ getUserByEmail: vi.fn().mockReturnValue(undefined), saveUser }));
+    vi.doMock('@/lib/email', () => ({ sendVerificationEmail: vi.fn().mockResolvedValue(true) }));
+    const { POST } = await import('@/app/api/register/route');
+    const req = makeJsonRequest('http://localhost/api/register', {
+      name: 'Alice',
+      email: 'alice@example.com',
+      password: 'securePass1',
+      weeklyFaithEmailEnabled: true,
+    });
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+    expect(saveUser.mock.calls[0][0].weeklyFaithEmailEnabled).toBe(true);
+    expect(saveUser.mock.calls[0][0].weeklyFaithEmailUpdatedAt).toEqual(expect.any(String));
   });
 
   it('restores the previous token when resending the verification email fails', async () => {
@@ -540,6 +558,147 @@ describe('POST /api/user/password', () => {
     const { POST } = await import('@/app/api/user/password/route');
     const res = await POST(makeJsonRequest('http://localhost/api/user/password', { currentPassword: 'a', newPassword: 'b' }));
     expect(res.status).toBe(401);
+  });
+});
+
+describe('GET /api/user/account', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('returns the current private account data', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1' } }) }));
+    vi.doMock('@/lib/db', () => ({
+      getUserById: vi.fn().mockReturnValue({
+        id: 'u1',
+        name: 'Alice',
+        email: 'alice@example.com',
+        weeklyFaithEmailEnabled: true,
+      }),
+      getUserByEmail: vi.fn(),
+      saveUser: vi.fn(),
+      deleteUserAccount: vi.fn(),
+    }));
+    const { GET } = await import('@/app/api/user/account/route');
+    const res = await GET();
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({
+      name: 'Alice',
+      email: 'alice@example.com',
+      weeklyFaithEmailEnabled: true,
+    });
+  });
+});
+
+describe('PATCH /api/user/account', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('updates name, email and weekly email preference', async () => {
+    const saveUser = vi.fn().mockResolvedValue(undefined);
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1' } }) }));
+    vi.doMock('@/lib/db', () => ({
+      getUserById: vi.fn().mockReturnValue({
+        id: 'u1',
+        name: 'Alice',
+        email: 'alice@example.com',
+        role: 'USER',
+        weeklyFaithEmailEnabled: false,
+      }),
+      getUserByEmail: vi.fn().mockReturnValue(undefined),
+      saveUser,
+      deleteUserAccount: vi.fn(),
+    }));
+    const { PATCH } = await import('@/app/api/user/account/route');
+    const res = await PATCH(makeJsonRequest('http://localhost/api/user/account', {
+      name: ' Alice Example ',
+      email: ' Alice.New@Example.com ',
+      weeklyFaithEmailEnabled: true,
+    }, 'PATCH'));
+    expect(res.status).toBe(200);
+    expect(saveUser).toHaveBeenCalledOnce();
+    expect(saveUser.mock.calls[0][0]).toMatchObject({
+      name: 'Alice Example',
+      email: 'alice.new@example.com',
+      weeklyFaithEmailEnabled: true,
+    });
+  });
+
+  it('returns 409 when another user already uses the email address', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1' } }) }));
+    vi.doMock('@/lib/db', () => ({
+      getUserById: vi.fn().mockReturnValue({
+        id: 'u1',
+        name: 'Alice',
+        email: 'alice@example.com',
+      }),
+      getUserByEmail: vi.fn().mockReturnValue({ id: 'u2', email: 'taken@example.com' }),
+      saveUser: vi.fn(),
+      deleteUserAccount: vi.fn(),
+    }));
+    const { PATCH } = await import('@/app/api/user/account/route');
+    const res = await PATCH(makeJsonRequest('http://localhost/api/user/account', {
+      name: 'Alice',
+      email: 'taken@example.com',
+      weeklyFaithEmailEnabled: false,
+    }, 'PATCH'));
+    expect(res.status).toBe(409);
+  });
+});
+
+describe('POST /api/internal/weekly-faith-email', () => {
+  beforeEach(() => {
+    vi.resetModules();
+    process.env.WEEKLY_FAITH_EMAIL_CRON_SECRET = 'secret-123';
+  });
+
+  it('sends the weekly faith email to subscribed active users once per week', async () => {
+    const saveUser = vi.fn().mockResolvedValue(undefined);
+    const sendWeeklyFaithEmail = vi.fn().mockResolvedValue(true);
+    vi.doMock('@/lib/db', () => ({
+      getCurrentWochenthema: vi.fn().mockReturnValue({
+        id: '2026-W15',
+        week: '2026-W15',
+        title: 'Die Nachfolge',
+        introduction: 'Einführung',
+        bibleVerses: ['Markus 1,16-20'],
+        problemStatement: 'Vertiefung',
+        researchQuestions: ['Frage 1', 'Frage 2'],
+        status: 'published',
+      }),
+      getUsers: vi.fn().mockReturnValue([
+        {
+          id: 'u1',
+          role: 'USER',
+          status: 'active',
+          active: true,
+          email: 'alice@example.com',
+          name: 'Alice',
+          weeklyFaithEmailEnabled: true,
+        },
+        {
+          id: 'u2',
+          role: 'USER',
+          status: 'active',
+          active: true,
+          email: 'bob@example.com',
+          name: 'Bob',
+          weeklyFaithEmailEnabled: true,
+          lastWeeklyFaithEmailWeek: '2026-W15',
+        },
+      ]),
+      saveUser,
+    }));
+    vi.doMock('@/lib/email', () => ({ sendWeeklyFaithEmail }));
+    const { POST } = await import('@/app/api/internal/weekly-faith-email/route');
+    const res = await POST(new Request('http://localhost/api/internal/weekly-faith-email', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer secret-123' },
+    }));
+    expect(res.status).toBe(200);
+    expect(sendWeeklyFaithEmail).toHaveBeenCalledTimes(1);
+    expect(sendWeeklyFaithEmail).toHaveBeenCalledWith('alice@example.com', 'Alice', expect.objectContaining({ week: '2026-W15' }));
+    expect(saveUser).toHaveBeenCalledWith(expect.objectContaining({
+      id: 'u1',
+      lastWeeklyFaithEmailWeek: '2026-W15',
+    }));
   });
 });
 

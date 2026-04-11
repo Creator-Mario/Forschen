@@ -5,6 +5,8 @@ import {
   canonicalSiteUrl as CANONICAL_SITE_URL,
   emailFromAddress as FROM_EMAIL,
 } from '@/lib/config';
+import { buildWeeklyFaithEmailContent } from '@/lib/weekly-faith-email';
+import type { Wochenthema } from '@/types';
 
 /**
  * Returns true when the string looks like a deliverable e-mail address.
@@ -346,6 +348,26 @@ export async function sendPasswordResetEmail(
     });
   } catch (err) {
     console.error('[email] sendPasswordResetEmail failed:', err);
+    return false;
+  }
+}
+
+export async function sendWeeklyFaithEmail(
+  toEmail: string,
+  userName: string,
+  theme: Wochenthema,
+): Promise<boolean> {
+  try {
+    const content = buildWeeklyFaithEmailContent(userName, theme);
+
+    return await sendEmail({
+      to: toEmail,
+      subject: content.subject,
+      text: content.text,
+      html: content.html,
+    });
+  } catch (err) {
+    console.error('[email] sendWeeklyFaithEmail failed:', err);
     return false;
   }
 }

@@ -43,6 +43,9 @@ export interface User {
   passwordResetExpiry?: string;  // ISO timestamp – token expires after this
   intro?: UserIntro;       // mandatory intro/motivation form
   adminNote?: string;      // admin's internal note or question
+  weeklyFaithEmailEnabled?: boolean;
+  weeklyFaithEmailUpdatedAt?: string;
+  lastWeeklyFaithEmailWeek?: string;
 }
 
 export interface ChatMessage {
