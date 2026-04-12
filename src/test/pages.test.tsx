@@ -62,6 +62,18 @@ describe('VisionPage', () => {
     render(React.createElement(VisionPage));
     expect(screen.getByRole('heading', { name: /Vision/i, level: 1 })).toBeInTheDocument();
   });
+
+  it('renders the about me section with the linked Amazon book', async () => {
+    const { default: VisionPage } = await import('@/app/(public)/vision/page');
+    render(React.createElement(VisionPage));
+
+    expect(screen.getByRole('heading', { name: /Mario Reiner Denzer/i })).toBeInTheDocument();
+    expect(screen.getByText(/Der Schmale Pfad der Mündigkeit/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Auf Amazon ansehen/i })).toHaveAttribute(
+      'href',
+      'https://www.amazon.de/dp/B0GW8FW5GM',
+    );
+  });
 });
 
 // ─── Login page ───────────────────────────────────────────────────────────────
