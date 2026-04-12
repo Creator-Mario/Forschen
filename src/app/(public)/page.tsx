@@ -56,7 +56,7 @@ export default function HomePage() {
             </span>
           </h1>
           <p className="text-blue-100 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-8">
-            Ein freier Raum für sorgfältige Bibelforschung – ohne Gamification, ohne Rankings, nur echte Fragen und ehrliche Suche.
+            Ein freier Raum für sorgfältige Bibelforschung – ohne Punktesysteme, ohne Rankings, nur echte Fragen und ehrliche Suche.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
