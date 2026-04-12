@@ -82,7 +82,7 @@ export default function HomePage() {
 
       <div className="relative z-10 -mt-8 px-4 pb-4 md:-mt-12">
         <div className="max-w-6xl mx-auto">
-          <section className="overflow-hidden rounded-[2rem] border border-blue-100 bg-white shadow-[0_24px_60px_rgba(13,71,161,0.14)]">
+          <section className="overflow-hidden rounded-[2rem] border border-blue-100 bg-white shadow-xl">
             <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr]">
               <div className="p-8 md:p-10">
                 <p className="mb-3 text-sm font-semibold uppercase tracking-[0.22em] text-blue-500">
@@ -123,7 +123,7 @@ export default function HomePage() {
               <div className="border-t border-blue-100 bg-gradient-to-br from-blue-50 via-white to-amber-50 p-8 lg:border-l lg:border-t-0">
                 <div className="mx-auto max-w-[320px]">
                   <p className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-blue-500">
-                    Buch des Gründers
+                    Mein Buch
                   </p>
                   <div className="rounded-[1.5rem] border border-blue-100 bg-white p-4 shadow-md">
                     <Image
