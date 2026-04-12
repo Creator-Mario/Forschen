@@ -38,7 +38,7 @@ export default function BookRecommendationsCard({ collection, compact = false }:
           type="button"
           onClick={() => setShowAllRecommendations(current => !current)}
           aria-label={showAllRecommendations ? 'Weniger Empfehlungen anzeigen' : 'Weitere Empfehlungen anzeigen'}
-          className="mt-3 text-xs font-medium text-blue-700 hover:text-blue-800 transition-colors"
+          className="mt-3 text-xs font-medium text-blue-700 hover:text-blue-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
         >
           {showAllRecommendations
             ? 'Weniger anzeigen'
