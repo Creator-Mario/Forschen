@@ -69,10 +69,11 @@ describe('VisionPage', () => {
 
     expect(screen.getByRole('heading', { name: /Mario Reiner Denzer/i })).toBeInTheDocument();
     expect(screen.getAllByText(/Der Schmale Pfad der Mündigkeit/i).length).toBeGreaterThan(0);
-    expect(screen.getByRole('link', { name: /Auf Amazon ansehen/i })).toHaveAttribute(
-      'href',
-      'https://www.amazon.de/dp/B0GW8FW5GM',
-    );
+    expect(
+      screen
+        .getAllByRole('link', { name: /Auf Amazon ansehen/i })
+        .every(link => link.getAttribute('href') === 'https://www.amazon.de/dp/B0GW8FW5GM')
+    ).toBe(true);
   });
 });
 
