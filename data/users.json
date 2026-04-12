@@ -37,13 +37,11 @@
     "password": "$2b$12$y1HoVxFqrcp4B/NpJGFYoOnrW9tyO3SG8CCdi8hnO0rH/bUfpu1jK",
     "name": "Test",
     "role": "USER",
-    "status": "pending_email",
+    "status": "active",
     "createdAt": "2026-04-12T03:52:56.728Z",
-    "active": false,
+    "active": true,
     "emailToken": "7daf13c918ddc0ccf8621cb3bfb867829126a7a3f0024b63862dab2c062c3383",
     "weeklyFaithEmailEnabled": true,
-    "weeklyFaithEmailUpdatedAt": "2026-04-12T03:52:56.728Z",
-    "passwordResetToken": "af32ca91e0429b2103aff00929452b616fc2083efa86199e6c89a2f059aa1cdc",
-    "passwordResetExpiry": "2026-04-12T05:28:12.510Z"
+    "weeklyFaithEmailUpdatedAt": "2026-04-12T03:52:56.728Z"
   }
 ]
