@@ -272,5 +272,13 @@
     "targetId": "user-1775965976728-lyelf7xw5",
     "note": "",
     "createdAt": "2026-04-12T06:01:12.720Z"
+  },
+  {
+    "id": "log-1775981829558-j8sq0jjvf",
+    "adminId": "admin-001",
+    "action": "hard_delete",
+    "targetType": "forschung",
+    "targetId": "forschung-1775981659749-m6q4vhq47",
+    "createdAt": "2026-04-12T08:17:09.558Z"
   }
 ]
