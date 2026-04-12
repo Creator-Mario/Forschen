@@ -6,8 +6,8 @@ import { SessionProvider } from '@/components/SessionProvider';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
-  title: 'Der Fluss des Lebens – Private Christliche Forschungsplattform',
-  description: 'Eine private Plattform für christliche Bibelforschung, Thesen und gemeinsames Gebet.',
+  title: 'Der Fluss des Lebens – Freie christliche Bibelforschung',
+  description: 'Freie christliche Bibelforschung mit Tageswort, Thesen, Forschungsbeiträgen und gemeinschaftlichem Gebet.',
 };
 
 export default function RootLayout({
