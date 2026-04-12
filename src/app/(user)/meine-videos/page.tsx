@@ -27,7 +27,6 @@ function PageLoadingState() {
         className="h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"
       />
       <p className="text-sm font-medium text-gray-600">Videos werden geladen…</p>
-      <span className="sr-only">Bitte warten, die Inhalte werden geladen.</span>
     </div>
   );
 }
