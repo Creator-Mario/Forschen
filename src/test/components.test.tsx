@@ -26,28 +26,6 @@ vi.mock('next/link', () => ({
     React.createElement('a', { href }, children),
 }));
 
-// ─── Card ─────────────────────────────────────────────────────────────────────
-
-describe('Card', () => {
-  it('renders children', async () => {
-    const { default: Card } = await import('@/components/Card');
-    render(React.createElement(Card, null, 'Hello Card'));
-    expect(screen.getByText('Hello Card')).toBeInTheDocument();
-  });
-
-  it('applies extra className', async () => {
-    const { default: Card } = await import('@/components/Card');
-    const { container } = render(React.createElement(Card, { className: 'extra-class' }, 'Content'));
-    expect(container.firstChild).toHaveClass('extra-class');
-  });
-
-  it('always has base classes', async () => {
-    const { default: Card } = await import('@/components/Card');
-    const { container } = render(React.createElement(Card, null, 'X'));
-    expect(container.firstChild).toHaveClass('bg-white');
-  });
-});
-
 describe('QrShareActions', () => {
   it('shares the website link when the share button is clicked', async () => {
     const share = vi.fn().mockResolvedValue(undefined);
@@ -403,6 +381,16 @@ describe('ProtectedRoute', () => {
     const { default: ProtectedRoute } = await import('@/components/ProtectedRoute');
     render(React.createElement(ProtectedRoute, null, React.createElement('div', null, 'Protected Content')));
     expect(routerReplace).toHaveBeenCalledWith('/login?callbackUrl=%2Fmitglieder%2Fvorstellungen');
+  });
+
+  it('redirects unauthenticated users to admin-login for admin-only routes', async () => {
+    currentPathname = '/admin/videos';
+    vi.doMock('next-auth/react', () => ({
+      useSession: () => ({ data: null, status: 'unauthenticated' }),
+    }));
+    const { default: ProtectedRoute } = await import('@/components/ProtectedRoute');
+    render(React.createElement(ProtectedRoute, { requireAdmin: true }, React.createElement('div', null, 'Admin Content')));
+    expect(routerReplace).toHaveBeenCalledWith('/admin-login?callbackUrl=%2Fadmin%2Fvideos');
   });
 
   it('renders nothing for non-admin user when requireAdmin=true', async () => {

@@ -918,6 +918,18 @@ describe('DELETE /api/chat/[userId]', () => {
     expect(deleteConversation).toHaveBeenCalledWith('u2', 'u3');
     expect(saveAdminLog.mock.calls[0][0].action).toBe('chat_delete');
   });
+
+  it('falls back to the admin id when no chat partner is provided', async () => {
+    const deleteConversation = vi.fn().mockResolvedValue(undefined);
+    const saveAdminLog = vi.fn().mockResolvedValue(undefined);
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(ADMIN_SESSION) }));
+    vi.doMock('@/lib/db', () => ({ deleteConversation, saveAdminLog, getConversation: vi.fn().mockReturnValue([]), getUserById: vi.fn(), saveChatMessage: vi.fn(), markMessagesAsRead: vi.fn() }));
+    const { DELETE } = await import('@/app/api/chat/[userId]/route');
+    const res = await DELETE(makeRequest('http://localhost/api/chat/u2'), { params: Promise.resolve({ userId: 'u2' }) });
+    expect(res.status).toBe(200);
+    expect(deleteConversation).toHaveBeenCalledWith('u2', 'admin1');
+    expect(saveAdminLog.mock.calls[0][0].targetId).toBe('u2:admin1');
+  });
 });
 
 describe('PATCH /api/chat/[userId] – mark as read', () => {
