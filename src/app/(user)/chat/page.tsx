@@ -1,6 +1,7 @@
 'use client';
 
 import ProtectedRoute from '@/components/ProtectedRoute';
+import UserAvatar from '@/components/UserAvatar';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
@@ -10,12 +11,14 @@ interface Partner {
   id: string;
   name: string;
   email?: string;
+  profileImage?: string | null;
   unreadCount: number;
 }
 
 interface MemberOption {
   id: string;
   name: string;
+  profileImage?: string | null;
 }
 
 function getValidSelectedMemberId(currentId: string, availableMembers: MemberOption[]) {
@@ -121,9 +124,12 @@ export default function ChatPage() {
                 href={`/chat/${p.id}`}
                 className="flex items-center gap-4 px-5 py-4 hover:bg-slate-50 transition-colors"
               >
-                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold text-sm shrink-0">
-                  {p.name.charAt(0).toUpperCase()}
-                </div>
+                <UserAvatar
+                  name={p.name}
+                  imageSrc={p.profileImage}
+                  className="h-10 w-10 shrink-0 text-sm"
+                  textClassName="text-sm font-semibold"
+                />
                 <div>
                   <p className="font-medium text-gray-800">{p.name}</p>
                   {p.email && <p className="text-xs text-gray-400">{p.email}</p>}

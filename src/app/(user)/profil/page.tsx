@@ -1,13 +1,18 @@
 'use client';
 
 import ProtectedRoute from '@/components/ProtectedRoute';
+import UserAvatar from '@/components/UserAvatar';
 import { useSession, signOut } from 'next-auth/react';
-import { useEffect, useState, FormEvent } from 'react';
+import { useEffect, useState, FormEvent, ChangeEvent } from 'react';
+
+const MAX_PROFILE_IMAGE_FILE_SIZE = 1024 * 1024;
+const ACCEPTED_PROFILE_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
 
 export default function ProfilPage() {
   const { data: session, update } = useSession();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [profileImage, setProfileImage] = useState('');
   const [weeklyFaithEmailEnabled, setWeeklyFaithEmailEnabled] = useState(false);
   const [accountError, setAccountError] = useState('');
   const [accountSuccess, setAccountSuccess] = useState('');
@@ -37,6 +42,7 @@ export default function ProfilPage() {
         if (cancelled) return;
         setName(data.name ?? '');
         setEmail(data.email ?? '');
+        setProfileImage(data.profileImage ?? '');
         setWeeklyFaithEmailEnabled(data.weeklyFaithEmailEnabled === true);
       } catch (err) {
         console.error('Account loading failed:', err);
@@ -60,7 +66,7 @@ export default function ProfilPage() {
       const res = await fetch('/api/user/account', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, weeklyFaithEmailEnabled }),
+        body: JSON.stringify({ name, email, profileImage: profileImage || null, weeklyFaithEmailEnabled }),
       });
 
       const data = await res.json();
@@ -70,6 +76,7 @@ export default function ProfilPage() {
       } else {
         setName(data.user.name);
         setEmail(data.user.email);
+        setProfileImage(data.user.profileImage ?? '');
         setWeeklyFaithEmailEnabled(data.user.weeklyFaithEmailEnabled === true);
         let successMessage = 'Deine Kontoeinstellungen wurden gespeichert.';
         try {
@@ -86,6 +93,43 @@ export default function ProfilPage() {
     } finally {
       setAccountLoading(false);
     }
+  }
+
+  async function handleProfileImageChange(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setAccountError('');
+    setAccountSuccess('');
+
+    if (!ACCEPTED_PROFILE_IMAGE_TYPES.includes(file.type)) {
+      setAccountError('Bitte lade ein PNG-, JPG-, WEBP- oder GIF-Bild hoch.');
+      e.target.value = '';
+      return;
+    }
+
+    if (file.size > MAX_PROFILE_IMAGE_FILE_SIZE) {
+      setAccountError('Das Profilbild darf höchstens 1 MB groß sein.');
+      e.target.value = '';
+      return;
+    }
+
+    const dataUrl = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === 'string') resolve(reader.result);
+        else reject(new Error('Das Bild konnte nicht gelesen werden.'));
+      };
+      reader.onerror = () => reject(new Error('Das Bild konnte nicht gelesen werden.'));
+      reader.readAsDataURL(file);
+    }).catch(error => {
+      setAccountError(error instanceof Error ? error.message : 'Das Bild konnte nicht gelesen werden.');
+      return '';
+    });
+
+    if (!dataUrl) return;
+    setProfileImage(dataUrl);
+    e.target.value = '';
   }
 
   async function handleDeleteAccount(e: FormEvent) {
@@ -145,12 +189,15 @@ export default function ProfilPage() {
 
         <div className="bg-white rounded-xl shadow-md p-8 mb-6">
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-800 font-bold text-2xl">
-              {session?.user.name?.[0]?.toUpperCase() || '?'}
-            </div>
+            <UserAvatar
+              name={name || session?.user.name || ''}
+              imageSrc={profileImage}
+              className="h-16 w-16 text-2xl"
+              textClassName="text-2xl font-bold"
+            />
             <div>
-              <div className="font-semibold text-gray-800 text-lg">{session?.user.name}</div>
-              <div className="text-gray-500 text-sm">{session?.user.email}</div>
+              <div className="font-semibold text-gray-800 text-lg">{name || session?.user.name}</div>
+              <div className="text-gray-500 text-sm">{email || session?.user.email}</div>
               <div className="text-xs mt-1">
                 <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
                   {session?.user.role === 'ADMIN' ? 'Administrator' : 'Mitglied'}
@@ -187,6 +234,44 @@ export default function ProfilPage() {
                   required
                   className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+              </div>
+              <div>
+                <label htmlFor="profileImage" className="block text-sm font-medium text-gray-700 mb-1">
+                  Profilbild
+                </label>
+                <div className="flex flex-col gap-4 rounded-xl border border-gray-200 p-4">
+                  <div className="flex items-center gap-4">
+                    <UserAvatar
+                      name={name || session?.user.name || ''}
+                      imageSrc={profileImage}
+                      className="h-20 w-20 text-3xl"
+                      textClassName="text-3xl font-bold"
+                    />
+                    <div className="text-sm text-gray-500">
+                      <p>Erlaubte Formate: PNG, JPG, WEBP oder GIF.</p>
+                      <p>Maximale Dateigröße: 1 MB.</p>
+                    </div>
+                  </div>
+                  <input
+                    id="profileImage"
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp,image/gif"
+                    onChange={handleProfileImageChange}
+                    className="block w-full text-sm text-gray-600 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-blue-700 hover:file:bg-blue-100"
+                  />
+                  {profileImage && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setProfileImage('');
+                        setAccountSuccess('');
+                      }}
+                      className="self-start text-sm font-medium text-red-600 hover:text-red-700"
+                    >
+                      Profilbild entfernen
+                    </button>
+                  )}
+                </div>
               </div>
               <label className="flex items-start gap-3 rounded-lg border border-gray-200 px-4 py-3 text-sm">
                 <input

@@ -3,12 +3,14 @@
 import { useEffect, useState } from 'react';
 import { formatDate } from '@/lib/utils';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import UserAvatar from '@/components/UserAvatar';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 
 interface Member {
   id: string;
   name: string;
+  profileImage?: string | null;
   vorstellung: string;
   createdAt: string;
 }
@@ -46,8 +48,16 @@ export default function VorstellungenPage() {
           <div className="space-y-5">
             {members.map(m => (
               <div key={m.id} className="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
-                <div className="flex items-center justify-between mb-3">
-                  <h2 className="font-semibold text-gray-800 text-lg">{m.name}</h2>
+                <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-4">
+                    <UserAvatar
+                      name={m.name}
+                      imageSrc={m.profileImage}
+                      className="h-14 w-14 text-xl"
+                      textClassName="text-xl font-bold"
+                    />
+                    <h2 className="font-semibold text-gray-800 text-lg">{m.name}</h2>
+                  </div>
                   <div className="flex items-center gap-3">
                     <span className="text-xs text-gray-400">Mitglied seit {formatDate(m.createdAt)}</span>
                     {session?.user.id && session.user.id !== m.id && (

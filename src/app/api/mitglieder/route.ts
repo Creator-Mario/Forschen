@@ -14,6 +14,7 @@ export async function GET() {
     .map(u => ({
       id: u.id,
       name: u.name,
+      profileImage: u.profileImage ?? null,
       vorstellung: u.intro!.vorstellung,
       createdAt: u.createdAt,
     }));

@@ -403,6 +403,7 @@ describe('protected user form routes and their entry links', () => {
 
     render(React.createElement(ProfilPage));
     expect(screen.getByRole('heading', { name: /mein profil/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/profilbild/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /passwort ändern/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /konto unwiderruflich löschen/i })).toBeInTheDocument();
   });

@@ -594,6 +594,7 @@ describe('GET /api/user/account', () => {
       name: 'Alice',
       email: 'alice@example.com',
       weeklyFaithEmailEnabled: true,
+      profileImage: null,
     });
   });
 });
@@ -601,7 +602,7 @@ describe('GET /api/user/account', () => {
 describe('PATCH /api/user/account', () => {
   beforeEach(() => vi.resetModules());
 
-  it('updates name, email and weekly email preference', async () => {
+  it('updates name, email, profile image and weekly email preference', async () => {
     const saveUser = vi.fn().mockResolvedValue(undefined);
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1' } }) }));
     vi.doMock('@/lib/db', () => ({
@@ -620,6 +621,7 @@ describe('PATCH /api/user/account', () => {
     const res = await PATCH(makeJsonRequest('http://localhost/api/user/account', {
       name: ' Alice Example ',
       email: ' Alice.New@Example.com ',
+      profileImage: 'data:image/png;base64,aGVsbG8=',
       weeklyFaithEmailEnabled: true,
     }, 'PATCH'));
     expect(res.status).toBe(200);
@@ -627,8 +629,31 @@ describe('PATCH /api/user/account', () => {
     expect(saveUser.mock.calls[0][0]).toMatchObject({
       name: 'Alice Example',
       email: 'alice.new@example.com',
+      profileImage: 'data:image/png;base64,aGVsbG8=',
       weeklyFaithEmailEnabled: true,
     });
+  });
+
+  it('rejects unsupported profile image formats', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1' } }) }));
+    vi.doMock('@/lib/db', () => ({
+      getUserById: vi.fn().mockReturnValue({
+        id: 'u1',
+        name: 'Alice',
+        email: 'alice@example.com',
+      }),
+      getUserByEmail: vi.fn().mockReturnValue(undefined),
+      saveUser: vi.fn(),
+      deleteUserAccount: vi.fn(),
+    }));
+    const { PATCH } = await import('@/app/api/user/account/route');
+    const res = await PATCH(makeJsonRequest('http://localhost/api/user/account', {
+      name: 'Alice',
+      email: 'alice@example.com',
+      profileImage: 'data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=',
+      weeklyFaithEmailEnabled: false,
+    }, 'PATCH'));
+    expect(res.status).toBe(400);
   });
 
   it('returns 409 when another user already uses the email address', async () => {
