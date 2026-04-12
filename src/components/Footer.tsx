@@ -44,7 +44,7 @@ export default function Footer() {
                 </div>
               </div>
               <p className="text-sm text-blue-200 leading-relaxed mt-1">
-                Eine private christliche Forschungsplattform für alle, die tiefer in die Heilige Schrift eintauchen möchten.
+                Freie christliche Bibelforschung für alle, die tiefer in die Heilige Schrift eintauchen möchten.
               </p>
             </div>
 
@@ -125,7 +125,7 @@ export default function Footer() {
             </div>
             <p className="text-sm text-blue-300">© {new Date().getFullYear()} {operatorName} · Alle Rechte vorbehalten</p>
             <p className="text-xs text-blue-500">
-              Der Fluss des Lebens – Private Plattform für christliche Forschung
+              Der Fluss des Lebens – Freie christliche Bibelforschung
               <span className="mx-2 text-blue-600">·</span>
               Entwickelt von Mario Reiner Denzer
               <span className="mx-2 text-blue-600">·</span>

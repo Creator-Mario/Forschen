@@ -51,9 +51,12 @@ export default function HomePage() {
           >
             <span style={{ color: '#fbbf24' }}>Der Fluss</span>
             <span className="text-white"> des Lebens</span>
+            <span className="mt-3 block text-2xl font-semibold text-blue-100 md:text-3xl">
+              Freie christliche Bibelforschung
+            </span>
           </h1>
           <p className="text-blue-100 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-8">
-            Eine private Plattform für ernsthafte christliche Bibelforschung – ohne Gamification, ohne Rankings, nur echte Fragen und ehrliche Suche.
+            Ein freier Raum für sorgfältige Bibelforschung – ohne Gamification, ohne Rankings, nur echte Fragen und ehrliche Suche.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
