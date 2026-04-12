@@ -231,8 +231,8 @@ export default function HomePage() {
               </p>
               <div className="space-y-4 text-sm leading-relaxed text-gray-600">
                 <p>{founderProfile.shortBio}</p>
-                {founderProfile.homeSummary.map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
+                {founderProfile.homeSummary.map((paragraph, index) => (
+                  <p key={index}>{paragraph}</p>
                 ))}
               </div>
 

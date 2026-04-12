@@ -113,7 +113,7 @@ export default function VisionPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block"
-                  aria-label="Auf Amazon ansehen"
+                  aria-label={`${founderProfile.book.title} auf Amazon ansehen`}
                 >
                   <Image
                     src={founderProfile.book.imagePath}
