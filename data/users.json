@@ -34,20 +34,16 @@
   {
     "id": "user-1775965976728-lyelf7xw5",
     "email": "denzer97@gmail.com",
-    "password": "$2b$12$b.LG2Ch7L8nNEmklPFDm8OHdsOyMbxIikY4g0dUsu7M5I/hFyxbOe",
+    "password": "$2b$12$y1HoVxFqrcp4B/NpJGFYoOnrW9tyO3SG8CCdi8hnO0rH/bUfpu1jK",
     "name": "Test",
     "role": "USER",
-    "status": "active",
+    "status": "pending_email",
     "createdAt": "2026-04-12T03:52:56.728Z",
-    "active": true,
+    "active": false,
+    "emailToken": "7daf13c918ddc0ccf8621cb3bfb867829126a7a3f0024b63862dab2c062c3383",
     "weeklyFaithEmailEnabled": true,
     "weeklyFaithEmailUpdatedAt": "2026-04-12T03:52:56.728Z",
-    "emailVerifiedAt": "2026-04-12T03:58:44.641Z",
-    "intro": {
-      "motivation": "Bitte diese umgehend bereinigen vorher war alles grün und jetz error Bitte den Code professionell überprüfen und reperieren[11.4., 07:34] Tiara Asmarani: Aku baik baik ajah\n[11.4., 07:34] Tiara Asmarani: Aku mau coba lebih memperbaiki diri ajahTiara, tolong pulang dan istirahatlah hari ini. Ibu dan anak-anakmu sangat khawatir, dan tidak baik jika kamu sendirian saat sedang tidak enak badan. Aku akan mendoakanmu. 🙏 🙏 🙏 🙏 🙏 🙏 🙏",
-      "vorstellung": "Bitte diese umgehend bereinigen vorher war alles grün und jetz error Bitte den Code professionell überprüfen und reperieren[11.4., 07:34] Tiara Asmarani: Aku baik baik ajah\n[11.4., 07:34] Tiara Asmarani: Aku mau coba lebih memperbaiki diri ajahTiara, tolong pulang dan istirahatlah hari ini. Ibu dan anak-anakmu sangat khawatir, dan tidak baik jika kamu sendirian saat sedang tidak enak badan. Aku akan mendoakanmu. 🙏 🙏 🙏 🙏 🙏 🙏 🙏",
-      "submittedAt": "2026-04-12T04:01:44.249Z"
-    },
-    "adminNote": "HERZLICH WILLKOMMEN,\nBei Fragen stehe ich immer gerne zu Verfügung uber WhatsApp oder Email. "
+    "passwordResetToken": "af32ca91e0429b2103aff00929452b616fc2083efa86199e6c89a2f059aa1cdc",
+    "passwordResetExpiry": "2026-04-12T05:28:12.510Z"
   }
 ]
