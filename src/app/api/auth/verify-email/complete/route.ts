@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { getUserByEmailToken, saveUser } from '@/lib/db';
 
+const INTRO_TOKEN_EXPIRY_SECONDS = 60 * 60;
+
 function buildRedirectUrl(req: NextRequest, pathnameWithQuery: string): URL {
   const forwardedProto = req.headers.get('x-forwarded-proto')?.trim();
   const forwardedHost = req.headers.get('x-forwarded-host')?.trim();
@@ -41,7 +43,7 @@ export async function GET(req: NextRequest) {
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',
     path: '/',
-    maxAge: 60 * 60,
+    maxAge: INTRO_TOKEN_EXPIRY_SECONDS,
   });
   return response;
 }

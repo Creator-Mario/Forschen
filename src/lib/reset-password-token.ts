@@ -4,8 +4,6 @@ export function validatePasswordResetToken(rawToken: string) {
   const normalizedToken = rawToken.trim();
   const users = getUsers();
 
-  console.info('[reset-password] Total users loaded:', users.length, '| Users with reset token:', users.filter(u => u.passwordResetToken).length);
-
   const user = users.find(u => u.passwordResetToken === normalizedToken);
   if (!user) {
     console.warn('[reset-password] No user found for the provided token.');

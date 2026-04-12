@@ -820,7 +820,7 @@ describe('POST /api/auth/reset-password/validate', () => {
       getUsers: vi.fn().mockReturnValue([{
         id: 'u1',
         passwordResetToken: 'expired-token',
-      passwordResetExpiry: new Date(Date.now() - 1000).toISOString(),
+      passwordResetExpiry: new Date(Date.now() - 60_000).toISOString(),
       }]),
       saveUser: vi.fn(),
     }));
@@ -881,7 +881,7 @@ describe('POST /api/auth/reset-password', () => {
       getUsers: vi.fn().mockReturnValue([{
         id: 'u1',
         passwordResetToken: expiredToken,
-        passwordResetExpiry: new Date(Date.now() - 1000).toISOString(),
+        passwordResetExpiry: new Date(Date.now() - 60_000).toISOString(),
         password: 'hashed',
       }]),
       saveUser: vi.fn(),

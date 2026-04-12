@@ -8,7 +8,8 @@ export async function POST(req: NextRequest) {
   try {
     const { userId, token, motivation, vorstellung } = await req.json();
     const cookieToken = req.cookies.get('intro_verification_token')?.value?.trim();
-    const effectiveToken = typeof token === 'string' && token.trim() ? token.trim() : cookieToken;
+    const requestToken = typeof token === 'string' ? token.trim() : '';
+    const effectiveToken = requestToken || cookieToken;
 
     if ((!userId && !effectiveToken) || !motivation || !vorstellung) {
       return NextResponse.json({ error: 'Alle Felder sind erforderlich.' }, { status: 400 });
