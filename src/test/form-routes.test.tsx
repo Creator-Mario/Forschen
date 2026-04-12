@@ -359,9 +359,9 @@ describe('protected user form routes and their entry links', () => {
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/videos?mine=1'));
   });
 
-  it('renders the intro form only for the verified click path with userId', async () => {
+  it('renders the intro form only for the verified click path with token', async () => {
     setUserSession();
-    currentSearchParams = new URLSearchParams('userId=u1');
+    currentSearchParams = new URLSearchParams('token=good-token');
     const { default: VorstellungPage } = await import('@/app/(user)/vorstellung/page');
 
     render(React.createElement(VorstellungPage));

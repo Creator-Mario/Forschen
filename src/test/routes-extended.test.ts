@@ -440,26 +440,30 @@ describe('POST /api/user/intro', () => {
     expect(res.status).toBe(400);
   });
 
-  it('saves intro and sends confirmation emails for valid submission', async () => {
+  it('saves intro by verification token and sends confirmation emails for valid submission', async () => {
     const saveUser = vi.fn().mockResolvedValue(undefined);
     const sendRegistrationPendingEmail = vi.fn().mockResolvedValue(true);
     const sendEmail = vi.fn().mockResolvedValue(true);
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(USER_SESSION) }));
     vi.doMock('@/lib/db', () => ({
-      getUserById: vi.fn().mockReturnValue({ id: 'u1', email: 'alice@example.com', name: 'Alice', status: 'email_verified' }),
+      getUserByEmailToken: vi.fn().mockReturnValue({ id: 'u1', email: 'alice@example.com', name: 'Alice', status: 'email_verified', emailToken: 'good-token' }),
+      getUserById: vi.fn(),
       saveUser,
     }));
     vi.doMock('@/lib/email', () => ({ sendEmail, sendRegistrationPendingEmail, escHtml: (s: string) => s }));
     vi.doMock('@/lib/config', () => ({ operatorEmail: 'op@example.com', canonicalSiteUrl: 'https://flussdeslebens.live', siteDomain: 'example.com', siteName: 'Site' }));
-    const longText = 'A'.repeat(310);
+    const longText = 'A'.repeat(180);
     const { POST } = await import('@/app/api/user/intro/route');
-    const res = await POST(makeJsonRequest('http://localhost/api/user/intro', { userId: 'u1', motivation: longText, vorstellung: longText }));
+    const res = await POST(makeJsonRequest('http://localhost/api/user/intro', { token: 'good-token', motivation: longText, vorstellung: longText }));
     expect(res.status).toBe(200);
     expect(saveUser).toHaveBeenCalledOnce();
     expect(saveUser.mock.calls[0][0].status).toBe('awaiting_admin_review');
+    expect(saveUser.mock.calls[0][0].emailToken).toBeUndefined();
     expect(sendEmail).toHaveBeenCalledOnce();
     expect(sendEmail.mock.calls[0][0].html).toContain('https://flussdeslebens.live/admin/vorstellungen');
+    expect(sendEmail.mock.calls[0][0].html).toContain(longText);
     expect(sendEmail.mock.calls[0][0].text).toContain('https://flussdeslebens.live/admin/vorstellungen');
+    expect(sendEmail.mock.calls[0][0].text).toContain(longText);
     expect(sendRegistrationPendingEmail).toHaveBeenCalledWith('alice@example.com', 'Alice');
   });
 });

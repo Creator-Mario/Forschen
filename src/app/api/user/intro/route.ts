@@ -1,33 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserById, saveUser } from '@/lib/db';
+import { getUserByEmailToken, getUserById, saveUser } from '@/lib/db';
 import { sendEmail, sendRegistrationPendingEmail, escHtml } from '@/lib/email';
 import { operatorEmail, canonicalSiteUrl, siteDomain, siteName } from '@/lib/config';
-
-const MIN_LENGTH = 300;
+import { getIntroLengthError } from '@/lib/intro-validation';
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId, motivation, vorstellung } = await req.json();
+    const { userId, token, motivation, vorstellung } = await req.json();
 
-    if (!userId || !motivation || !vorstellung) {
+    if ((!userId && !token) || !motivation || !vorstellung) {
       return NextResponse.json({ error: 'Alle Felder sind erforderlich.' }, { status: 400 });
     }
 
-    if (motivation.trim().length < MIN_LENGTH) {
-      return NextResponse.json(
-        { error: `Das Motivationsfeld muss mindestens ${MIN_LENGTH} Zeichen enthalten.` },
-        { status: 400 }
-      );
-    }
+    const trimmedMotivation = motivation.trim();
+    const trimmedVorstellung = vorstellung.trim();
+    const motivationError = getIntroLengthError('Motivationsfeld', trimmedMotivation);
+    if (motivationError) return NextResponse.json({ error: motivationError }, { status: 400 });
+    const vorstellungError = getIntroLengthError('Vorstellungsfeld', trimmedVorstellung);
+    if (vorstellungError) return NextResponse.json({ error: vorstellungError }, { status: 400 });
 
-    if (vorstellung.trim().length < MIN_LENGTH) {
-      return NextResponse.json(
-        { error: `Das Vorstellungsfeld muss mindestens ${MIN_LENGTH} Zeichen enthalten.` },
-        { status: 400 }
-      );
-    }
-
-    const user = getUserById(userId);
+    const user = typeof token === 'string' && token.trim()
+      ? getUserByEmailToken(token.trim())
+      : getUserById(userId);
     if (!user) {
       return NextResponse.json({ error: 'Nutzer nicht gefunden.' }, { status: 404 });
     }
@@ -42,9 +36,10 @@ export async function POST(req: NextRequest) {
     await saveUser({
       ...user,
       status: 'awaiting_admin_review',
+      emailToken: undefined,
       intro: {
-        motivation: motivation.trim(),
-        vorstellung: vorstellung.trim(),
+        motivation: trimmedMotivation,
+        vorstellung: trimmedVorstellung,
         submittedAt: new Date().toISOString(),
       },
     });
@@ -73,6 +68,18 @@ export async function POST(req: NextRequest) {
                   <td style="padding:6px 8px;">${escHtml(user.email)}</td>
                 </tr>
               </table>
+              <div style="margin:20px 0;">
+                <h3 style="color:#1e3a8a;margin:0 0 8px;">Motivation</h3>
+                <div style="white-space:pre-wrap;background:#f9fafb;border-radius:8px;padding:12px 14px;color:#374151;">
+                  ${escHtml(trimmedMotivation)}
+                </div>
+              </div>
+              <div style="margin:20px 0;">
+                <h3 style="color:#1e3a8a;margin:0 0 8px;">Vorstellung</h3>
+                <div style="white-space:pre-wrap;background:#f9fafb;border-radius:8px;padding:12px 14px;color:#374151;">
+                  ${escHtml(trimmedVorstellung)}
+                </div>
+              </div>
               <a href="${adminReviewUrl}"
                  style="display:inline-block;margin:16px 0;background:#1e40af;color:#fff;
                         text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:600;">
@@ -81,7 +88,7 @@ export async function POST(req: NextRequest) {
               <p style="color:#9ca3af;font-size:12px;margin-top:24px;">${siteName} · ${siteDomain}</p>
             </div>
           `,
-          text: `Neue Vorstellung zur Prüfung\n\nName: ${user.name}\nE-Mail: ${user.email}\n\nBitte prüfe die Vorstellung hier: ${adminReviewUrl}`,
+          text: `Neue Vorstellung zur Prüfung\n\nName: ${user.name}\nE-Mail: ${user.email}\n\nMotivation:\n${trimmedMotivation}\n\nVorstellung:\n${trimmedVorstellung}\n\nBitte prüfe die Vorstellung hier: ${adminReviewUrl}`,
         });
       } catch (err) {
         console.error('[intro] Admin notification email could not be sent:', err);

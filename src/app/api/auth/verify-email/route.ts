@@ -13,19 +13,20 @@ export async function GET(req: NextRequest) {
   }
 
   if (user.status !== 'pending_email') {
-    // Already verified – redirect to intro form or login
-    const dest = user.status === 'email_verified' ? '/vorstellung' : '/login';
+    const dest = user.status === 'email_verified'
+      ? `/vorstellung${token ? `?token=${encodeURIComponent(token)}` : ''}`
+      : '/login';
     return NextResponse.redirect(new URL(dest, req.url));
   }
 
-  // Mark email as verified, remove token, advance status to email_verified
+  // Mark email as verified and keep the token until the intro is submitted so
+  // the e-mail link remains the reliable identifier throughout onboarding.
   await saveUser({
     ...user,
-    emailToken: undefined,
     emailVerifiedAt: new Date().toISOString(),
     status: 'email_verified',
   });
 
   // Redirect to mandatory intro form
-  return NextResponse.redirect(new URL(`/vorstellung?userId=${user.id}`, req.url));
+  return NextResponse.redirect(new URL(`/vorstellung?token=${encodeURIComponent(token)}`, req.url));
 }
