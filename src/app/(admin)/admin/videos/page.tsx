@@ -116,7 +116,6 @@ export default function AdminVideosPage() {
           contentField="description"
           onAction={onAction}
           themeOptions={themes}
-          requireThemeForPublish
         />
       </div>
     </ProtectedRoute>

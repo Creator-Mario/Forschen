@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
     description: body.description,
     url: body.url,
     ...(body.wochenthemaId ? { wochenthemaId: String(body.wochenthemaId) } : {}),
-    status: (session.user.role === 'ADMIN' ? 'published' : 'created') as ContentStatus,
+    status: (session.user.role === 'ADMIN' ? 'published' : 'review') as ContentStatus,
     createdAt: new Date().toISOString(),
   };
   try {

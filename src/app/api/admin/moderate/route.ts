@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
 
   if (
     status === 'published' &&
-    (type === 'video' || type === 'forschung') &&
+    type === 'forschung' &&
     (typeof wochenthemaId !== 'string' || !wochenthemaId.trim())
   ) {
     return NextResponse.json({ error: 'Wochenthema is required for publishing this content' }, { status: 400 });

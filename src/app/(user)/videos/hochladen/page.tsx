@@ -34,7 +34,7 @@ export default function VideoHochladenPage() {
     <ProtectedRoute>
       <div className="max-w-2xl mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold text-blue-800 mb-2">Video teilen</h1>
-        <p className="text-gray-500 mb-8">Teile ein Video aus YouTube oder Vimeo mit der Gemeinschaft.</p>
+        <p className="text-gray-500 mb-8">Teile ein Video aus YouTube oder Vimeo mit der Gemeinschaft. Dein Beitrag geht danach direkt in die Prüfung und wird nach Freigabe im Mitgliederbereich „Videos“ angezeigt.</p>
 
         <div className="bg-white rounded-xl shadow-md p-8">
           <form onSubmit={handleSubmit} className="space-y-5">

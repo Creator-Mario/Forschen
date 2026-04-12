@@ -26,8 +26,8 @@ export default function Navbar() {
         </svg>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="flex items-center justify-between h-18 py-2">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex h-20 items-center justify-between gap-4 py-3">
           {/* Brand / Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <Logo size={52} />
@@ -47,8 +47,21 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-5 text-sm">
+          {/* Mobile menu button */}
+          <button
+            className="xl:hidden p-2 flex flex-col gap-1"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? 'Menü schließen' : 'Menü öffnen'}
+          >
+            <div className={`w-6 h-0.5 bg-white transition-transform duration-200 ${menuOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
+            <div className={`w-6 h-0.5 bg-white transition-opacity duration-200 ${menuOpen ? 'opacity-0' : ''}`} />
+            <div className={`w-6 h-0.5 bg-white transition-transform duration-200 ${menuOpen ? '-rotate-45 -translate-y-1.5' : ''}`} />
+          </button>
+        </div>
+
+        {/* Desktop Nav */}
+        <div className="hidden xl:flex items-center justify-between gap-6 border-t border-blue-700/70 pb-4 pt-3">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
             {[
               { href: '/tageswort', label: 'Tageswort' },
               { href: '/psalmen', label: 'Psalmen' },
@@ -71,69 +84,58 @@ export default function Navbar() {
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-yellow-400 group-hover:w-full transition-all duration-300 rounded" />
               </Link>
             ))}
-
-            {session ? (
-              <div className="flex items-center gap-3">
-                <Link href="/mitglieder/vorstellungen" className="hover:text-yellow-300 transition-colors font-medium">Mitglieder</Link>
-                <Link
-                  href="/chat"
-                  className="inline-flex items-center gap-2 rounded-full border border-cyan-300 bg-cyan-400/15 px-4 py-2 text-sm font-semibold text-cyan-100 shadow-md shadow-cyan-950/20 transition-all hover:-translate-y-0.5 hover:bg-cyan-400/25 hover:text-white"
-                  title="Chat"
-                >
-                  <span className="text-base" aria-hidden="true">💬</span>
-                  <span>Chat</span>
-                </Link>
-                {session.user.role === 'ADMIN' && (
-                  <Link
-                    href="/admin"
-                    className="hover:text-yellow-300 transition-colors font-medium"
-                    title="Admin-Bereich"
-                  >
-                    🛠️ Admin
-                  </Link>
-                )}
-                <Link
-                  href="/dashboard"
-                  className="hover:text-yellow-300 transition-colors font-medium"
-                >
-                  {session.user.name}
-                </Link>
-                <button
-                  onClick={() => signOut({ callbackUrl: '/' })}
-                  className="px-4 py-1.5 rounded-full font-medium text-sm transition-all"
-                  style={{ background: 'rgba(245,166,35,0.2)', border: '1px solid #f5a623', color: '#fbbf24' }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(245,166,35,0.35)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'rgba(245,166,35,0.2)')}
-                >
-                  Abmelden
-                </button>
-              </div>
-            ) : (
-              <Link
-                href="/login"
-                className="px-4 py-1.5 rounded-full font-semibold text-sm transition-all"
-                style={{ background: 'linear-gradient(135deg, #f5a623, #fbbf24)', color: '#072860' }}
-              >
-                Anmelden
-              </Link>
-            )}
           </div>
 
-          {/* Mobile menu button */}
-          <button
-            className="md:hidden p-2 flex flex-col gap-1"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label={menuOpen ? 'Menü schließen' : 'Menü öffnen'}
-          >
-            <div className={`w-6 h-0.5 bg-white transition-transform duration-200 ${menuOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
-            <div className={`w-6 h-0.5 bg-white transition-opacity duration-200 ${menuOpen ? 'opacity-0' : ''}`} />
-            <div className={`w-6 h-0.5 bg-white transition-transform duration-200 ${menuOpen ? '-rotate-45 -translate-y-1.5' : ''}`} />
-          </button>
+          {session ? (
+            <div className="flex flex-wrap items-center justify-end gap-3 text-sm">
+              <Link href="/mitglieder/vorstellungen" className="hover:text-yellow-300 transition-colors font-medium">Mitglieder</Link>
+              <Link
+                href="/chat"
+                className="inline-flex items-center gap-2 rounded-full border border-cyan-300 bg-cyan-400/15 px-4 py-2 text-sm font-semibold text-cyan-100 shadow-md shadow-cyan-950/20 transition-all hover:-translate-y-0.5 hover:bg-cyan-400/25 hover:text-white"
+                title="Chat"
+              >
+                <span className="text-base" aria-hidden="true">💬</span>
+                <span>Chat</span>
+              </Link>
+              {session.user.role === 'ADMIN' && (
+                <Link
+                  href="/admin"
+                  className="hover:text-yellow-300 transition-colors font-medium"
+                  title="Admin-Bereich"
+                >
+                  🛠️ Admin
+                </Link>
+              )}
+              <Link
+                href="/dashboard"
+                className="hover:text-yellow-300 transition-colors font-medium"
+              >
+                {session.user.name}
+              </Link>
+              <button
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="px-4 py-1.5 rounded-full font-medium text-sm transition-all"
+                style={{ background: 'rgba(245,166,35,0.2)', border: '1px solid #f5a623', color: '#fbbf24' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(245,166,35,0.35)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(245,166,35,0.2)')}
+              >
+                Abmelden
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="px-4 py-1.5 rounded-full font-semibold text-sm transition-all"
+              style={{ background: 'linear-gradient(135deg, #f5a623, #fbbf24)', color: '#072860' }}
+            >
+              Anmelden
+            </Link>
+          )}
         </div>
 
         {/* Mobile Nav */}
         {menuOpen && (
-          <div className="md:hidden pb-4 pt-2 flex flex-col gap-1 text-sm border-t border-blue-700">
+          <div className="xl:hidden pb-4 pt-2 flex flex-col gap-1 text-sm border-t border-blue-700">
             {[
               { href: '/tageswort', label: 'Tageswort' },
               { href: '/psalmen', label: 'Psalmen' },

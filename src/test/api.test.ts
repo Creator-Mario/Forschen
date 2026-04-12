@@ -412,6 +412,7 @@ describe('POST /api/videos', () => {
     expect(res.status).toBe(200);
     expect(saveVideo).toHaveBeenCalledOnce();
     expect(saveVideo.mock.calls[0][0].url).toBe('https://youtube.com/watch?v=abc');
+    expect(saveVideo.mock.calls[0][0].status).toBe('review');
   });
 
   it('saves video with wochenthemaId when provided', async () => {
