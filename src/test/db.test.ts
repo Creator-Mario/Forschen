@@ -422,6 +422,35 @@ describe('db – deleteUserAccount', () => {
     expect(writtenMsgs).toHaveLength(1);
     expect(writtenMsgs[0].id).toBe('m2');
   });
+
+  it('writes hard-delete updates sequentially when using GitHub-backed storage', async () => {
+    process.env.GITHUB_TOKEN = 'test-token';
+
+    const getContent = vi.fn().mockResolvedValue({ data: { sha: 'sha-1' } });
+    let activeWrites = 0;
+    let maxActiveWrites = 0;
+    const createOrUpdateFileContents = vi.fn().mockImplementation(async () => {
+      activeWrites += 1;
+      maxActiveWrites = Math.max(maxActiveWrites, activeWrites);
+      await new Promise(resolve => setTimeout(resolve, 0));
+      activeWrites -= 1;
+    });
+
+    vi.doMock('@octokit/rest', () => ({
+      Octokit: vi.fn().mockImplementation(() => ({
+        repos: {
+          getContent,
+          createOrUpdateFileContents,
+        },
+      })),
+    }));
+
+    const { deleteUserAccount } = await import('@/lib/db');
+    await deleteUserAccount('u1');
+
+    expect(createOrUpdateFileContents).toHaveBeenCalledTimes(8);
+    expect(maxActiveWrites).toBe(1);
+  });
 });
 
 // ── markMessagesAsRead ────────────────────────────────────────────────────────

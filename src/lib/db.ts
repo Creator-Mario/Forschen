@@ -132,18 +132,20 @@ export async function deleteUserAccount(userId: string): Promise<void> {
     Promise.resolve(getChatMessages()),
   ]);
 
-  await Promise.all([
-    writeJson('users.json', users.filter(u => u.id !== userId)),
-    writeJson('thesen.json', thesen.filter(t => t.userId !== userId)),
-    writeJson('forschung.json', forschung.filter(f => f.userId !== userId)),
-    writeJson('gebete.json', gebete.filter(g => g.userId !== userId)),
-    writeJson('videos.json', videos.filter(v => v.userId !== userId)),
-    writeJson('aktionen.json', aktionen.filter(a => a.userId !== userId)),
-    writeJson('buchempfehlungen.json', buchempfehlungen.filter(b => b.userId !== userId)),
-    writeJson('messages.json', messages.filter(
-      m => m.fromUserId !== userId && m.toUserId !== userId
-    )),
-  ]);
+  const deletions: Array<[string, unknown[]]> = [
+    ['users.json', users.filter(u => u.id !== userId)],
+    ['thesen.json', thesen.filter(t => t.userId !== userId)],
+    ['forschung.json', forschung.filter(f => f.userId !== userId)],
+    ['gebete.json', gebete.filter(g => g.userId !== userId)],
+    ['videos.json', videos.filter(v => v.userId !== userId)],
+    ['aktionen.json', aktionen.filter(a => a.userId !== userId)],
+    ['buchempfehlungen.json', buchempfehlungen.filter(b => b.userId !== userId)],
+    ['messages.json', messages.filter(m => m.fromUserId !== userId && m.toUserId !== userId)],
+  ];
+
+  for (const [filename, data] of deletions) {
+    await writeJson(filename, data);
+  }
 }
 
 // Admin Logs (append-only, never deleted)
