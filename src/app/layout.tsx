@@ -6,8 +6,14 @@ import Footer from '@/components/Footer';
 import { SessionProvider } from '@/components/SessionProvider';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { canonicalSiteUrl, operatorName, siteName } from '@/lib/config';
+import {
+  defaultOgImage,
+  defaultSeoDescription,
+  defaultSeoKeywords,
+  organizationStructuredData,
+} from '@/lib/seo';
 
-const siteDescription = 'Freie christliche Bibelforschung mit Tageswort, Thesen, Forschungsbeiträgen und gemeinschaftlichem Gebet.';
+const siteDescription = defaultSeoDescription;
 
 export const websiteStructuredData = {
   '@context': 'https://schema.org',
@@ -31,19 +37,29 @@ export const websiteStructuredData = {
 export const metadata: Metadata = {
   metadataBase: new URL(canonicalSiteUrl),
   applicationName: siteName,
+  manifest: '/manifest.webmanifest',
   title: {
     default: 'Der Fluss des Lebens – Freie christliche Bibelforschung',
     template: `%s | ${siteName}`,
   },
   description: siteDescription,
-  keywords: [
-    'christliche Bibelforschung',
-    'Bibelstudium',
-    'Tageswort',
-    'Theologische Thesen',
-    'Gebet',
-    'Christliche Gemeinschaft',
-  ],
+  keywords: defaultSeoKeywords,
+  authors: [{ name: operatorName, url: canonicalSiteUrl }],
+  creator: operatorName,
+  publisher: operatorName,
+  category: 'religion',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  icons: {
+    icon: [
+      { url: '/icon', sizes: '32x32', type: 'image/png' },
+      { url: '/icon', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: [{ url: '/apple-icon', sizes: '180x180', type: 'image/png' }],
+  },
   alternates: {
     canonical: '/',
   },
@@ -54,11 +70,13 @@ export const metadata: Metadata = {
     siteName,
     title: 'Der Fluss des Lebens – Freie christliche Bibelforschung',
     description: siteDescription,
+    images: [defaultOgImage],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'Der Fluss des Lebens – Freie christliche Bibelforschung',
     description: siteDescription,
+    images: [defaultOgImage.url],
   },
   robots: {
     index: true,
@@ -84,7 +102,9 @@ export default function RootLayout({
         <SessionProvider>
           <script
             type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteStructuredData) }}
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify([organizationStructuredData, websiteStructuredData]),
+            }}
           />
           <Navbar />
           <main className="flex-1">

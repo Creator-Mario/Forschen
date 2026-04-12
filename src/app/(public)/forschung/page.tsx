@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import { getApprovedForschung, getWochenthemaList } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
@@ -7,6 +8,13 @@ import BibleLink from '@/components/BibleLink';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
+import { createNoIndexMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = createNoIndexMetadata(
+  'Bibelforschung',
+  'Geschützter Bereich für Forschungsbeiträge aus der Gemeinschaft.',
+  '/forschung',
+);
 
 export default async function ForschungPage() {
   const session = await getServerSession(authOptions);

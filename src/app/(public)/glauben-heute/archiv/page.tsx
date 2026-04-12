@@ -1,9 +1,18 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { formatDate } from '@/lib/utils';
 import { getGlaubenHeuteArchiv } from '@/lib/generated-content';
 import CurrentTopicCard from '@/components/CurrentTopicCard';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Archiv – Glauben heute',
+  description: 'Frühere Themenimpulse aus Glauben heute gesammelt im Archiv.',
+  path: '/glauben-heute/archiv',
+  keywords: ['Glauben heute Archiv', 'Themenimpulse Archiv'],
+});
 
 export default function GlaubenHeuteArchivPage() {
   const items = getGlaubenHeuteArchiv();

@@ -1,10 +1,19 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import BibleVerseCard from '@/components/BibleVerseCard';
 import SubmissionCta from '@/components/SubmissionCta';
 import { getTodayTageswort } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Tageswort',
+  description: 'Entdecke das aktuelle Tageswort mit Bibelvers, Auslegung und Forschungsfragen für den Tag.',
+  path: '/tageswort',
+  keywords: ['Tageswort', 'Bibelvers des Tages', 'Auslegung'],
+});
 
 export default function TageswortPage() {
   const tageswort = getTodayTageswort();

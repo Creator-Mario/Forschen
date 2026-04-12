@@ -1,4 +1,14 @@
+import type { Metadata } from 'next';
+
 import Link from 'next/link';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Gebetsraum',
+  description: 'Informationen zum geschützten Gebetsraum für persönliche und gemeinschaftliche Gebete.',
+  path: '/gebet',
+  keywords: ['Gebet', 'Gebetsraum', 'christliche Gemeinschaft'],
+});
 
 export default function GebetPage() {
   return (

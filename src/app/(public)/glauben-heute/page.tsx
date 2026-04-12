@@ -1,10 +1,19 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { formatDate } from '@/lib/utils';
 import { getTodayGlaubenHeuteThema } from '@/lib/generated-content';
 import CurrentTopicCard from '@/components/CurrentTopicCard';
 import SubmissionCta from '@/components/SubmissionCta';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Glauben heute',
+  description: 'Aktuelle Themenimpulse für den Glauben heute mit Fragen zur Vertiefung und Austausch.',
+  path: '/glauben-heute',
+  keywords: ['Glauben heute', 'christliche Impulse', 'Tagesimpuls'],
+});
 
 export default function GlaubenHeutePage() {
   const item = getTodayGlaubenHeuteThema();
