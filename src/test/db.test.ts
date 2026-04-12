@@ -422,6 +422,43 @@ describe('db – deleteUserAccount', () => {
     expect(writtenMsgs).toHaveLength(1);
     expect(writtenMsgs[0].id).toBe('m2');
   });
+
+  it('writes hard-delete updates sequentially when using GitHub-backed storage', async () => {
+    process.env.GITHUB_TOKEN = 'test-token';
+    // users, thesen, forschung, gebete, videos, aktionen, buchempfehlungen, messages
+    const EXPECTED_DELETION_FILE_COUNT = 8;
+
+    const getContent = vi.fn().mockResolvedValue({ data: { sha: 'sha-1' } });
+    let activeWrites = 0;
+    let maxActiveWrites = 0;
+    const createOrUpdateFileContents = vi.fn().mockImplementation(async () => {
+      activeWrites += 1;
+      maxActiveWrites = Math.max(maxActiveWrites, activeWrites);
+      if (activeWrites > 1) {
+        activeWrites -= 1;
+        throw new Error('deleteUserAccount must not overlap GitHub writes');
+      }
+      await new Promise(resolve => setTimeout(resolve, 5));
+      activeWrites -= 1;
+    });
+    class MockOctokit {
+      repos = {
+        getContent,
+        createOrUpdateFileContents,
+      };
+    }
+
+    vi.doMock('@octokit/rest', () => ({
+      Octokit: MockOctokit,
+    }));
+
+    const { deleteUserAccount } = await import('@/lib/db');
+    await deleteUserAccount('u1');
+
+    expect(getContent).toHaveBeenCalledTimes(EXPECTED_DELETION_FILE_COUNT);
+    expect(createOrUpdateFileContents).toHaveBeenCalledTimes(EXPECTED_DELETION_FILE_COUNT);
+    expect(maxActiveWrites).toBe(1);
+  });
 });
 
 // ── markMessagesAsRead ────────────────────────────────────────────────────────
