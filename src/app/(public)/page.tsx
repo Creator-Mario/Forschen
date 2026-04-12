@@ -7,6 +7,7 @@ import WeeklyThemeCard from '@/components/WeeklyThemeCard';
 import PsalmThemeCard from '@/components/PsalmThemeCard';
 import CurrentTopicCard from '@/components/CurrentTopicCard';
 import BookRecommendationsCard from '@/components/BookRecommendationsCard';
+import QrShareActions from '@/components/QrShareActions';
 import Logo from '@/components/Logo';
 import { canonicalSiteUrl, siteName } from '@/lib/config';
 import { getTodayTageswort, getCurrentWochenthema, getApprovedThesen } from '@/lib/db';
@@ -117,12 +118,7 @@ export default function HomePage() {
                 <p className="text-sm font-semibold text-gray-800">{siteName}</p>
                 <p className="text-xs text-gray-500 break-all">{canonicalSiteUrl}</p>
               </div>
-              <a
-                href={canonicalSiteUrl}
-                className="inline-flex bg-blue-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors"
-              >
-                Webseite öffnen
-              </a>
+              <QrShareActions siteUrl={canonicalSiteUrl} />
             </div>
           </div>
         </div>

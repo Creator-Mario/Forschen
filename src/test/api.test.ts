@@ -28,11 +28,21 @@ describe('GET /api/share-qr', () => {
 
   it('returns an SVG QR code for the canonical website URL', async () => {
     const { GET } = await import('@/app/api/share-qr/route');
-    const res = await GET();
+    const res = await GET(makeRequest('http://localhost/api/share-qr'));
 
     expect(res.status).toBe(200);
     expect(res.headers.get('Content-Type')).toContain('image/svg+xml');
     expect(await res.text()).toContain('<svg');
+  });
+
+  it('supports downloading the QR code as PNG', async () => {
+    const { GET } = await import('@/app/api/share-qr/route');
+    const res = await GET(makeRequest('http://localhost/api/share-qr?format=png&download=1'));
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Content-Type')).toBe('image/png');
+    expect(res.headers.get('Content-Disposition')).toContain('attachment; filename="fluss-des-lebens-qr-code.png"');
+    expect((await res.arrayBuffer()).byteLength).toBeGreaterThan(0);
   });
 });
 

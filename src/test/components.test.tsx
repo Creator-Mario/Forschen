@@ -48,6 +48,36 @@ describe('Card', () => {
   });
 });
 
+describe('QrShareActions', () => {
+  it('shares the website link when the share button is clicked', async () => {
+    const share = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(window.navigator, 'share', {
+      configurable: true,
+      value: share,
+    });
+
+    const { default: QrShareActions } = await import('@/components/QrShareActions');
+    render(React.createElement(QrShareActions, { siteUrl: 'https://flussdeslebens.live' }));
+
+    fireEvent.click(screen.getByRole('button', { name: /Link teilen/i }));
+
+    expect(share).toHaveBeenCalledWith({
+      title: 'Der Fluss des Lebens',
+      text: 'Schau dir diese Webseite an und teile den QR-Code gern weiter.',
+      url: 'https://flussdeslebens.live',
+    });
+  });
+
+  it('renders a direct QR code download link', async () => {
+    const { default: QrShareActions } = await import('@/components/QrShareActions');
+    render(React.createElement(QrShareActions, { siteUrl: 'https://flussdeslebens.live' }));
+
+    const link = screen.getByRole('link', { name: /QR-Code herunterladen/i });
+    expect(link).toHaveAttribute('href', '/api/share-qr?format=png&download=1');
+    expect(link).toHaveAttribute('download', 'fluss-des-lebens-qr-code.png');
+  });
+});
+
 describe('BookRecommendationsCard', () => {
   const collection = {
     id: 'bk-1',

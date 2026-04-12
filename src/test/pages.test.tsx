@@ -649,5 +649,7 @@ describe('HomePage', () => {
     expect(screen.getByAltText(/qr-code zum teilen der website/i).getAttribute('src')).toContain('share-qr');
     expect(screen.getByText('Der Fluss des Lebens')).toBeInTheDocument();
     expect(screen.getByText('https://flussdeslebens.live')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Link teilen/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /QR-Code herunterladen/i })).toHaveAttribute('href', '/api/share-qr?format=png&download=1');
   });
 });
