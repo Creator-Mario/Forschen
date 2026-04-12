@@ -265,12 +265,11 @@
     "createdAt": "2026-04-11T15:07:40.559Z"
   },
   {
-    "id": "log-1775966699633-7h5wbi4xn",
+    "id": "log-1775969204654-9wb4xlthl",
     "adminId": "admin-001",
-    "action": "vorstellung_approve",
+    "action": "user_unlock",
     "targetType": "user",
     "targetId": "user-1775965976728-lyelf7xw5",
-    "note": "HERZLICH WILLKOMMEN,\nBei Fragen stehe ich immer gerne zu Verfügung uber WhatsApp oder Email. ",
-    "createdAt": "2026-04-12T04:04:59.633Z"
+    "createdAt": "2026-04-12T04:46:44.654Z"
   }
 ]
