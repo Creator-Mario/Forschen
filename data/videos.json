@@ -22,5 +22,15 @@
     "createdAt": "2026-04-11T06:43:20.906Z",
     "updatedAt": "2026-04-11T15:07:35.310Z",
     "wochenthemaId": "2026-W14"
+  },
+  {
+    "id": "video-1775969460097-4k1pcw0of",
+    "userId": "admin-001",
+    "authorName": "Administrator",
+    "title": "Das Markus-Evangelium",
+    "description": "Dieses Video vom Lumo Project präsentiert das gesamte Markusevangelium in einer filmischen Darstellung, die den Elberfelder Bibeltext wortgetreu als Sprechertext nutzt. Auf Basis historischer Forschungen visualisiert der Film Jesu Wirken in Galiläa und Jerusalem bis zur Auferstehung.",
+    "url": "https://youtu.be/zQNQn30PMPs?si=xGNlkVrrAxBYHAjs",
+    "status": "published",
+    "createdAt": "2026-04-12T04:51:00.097Z"
   }
 ]
