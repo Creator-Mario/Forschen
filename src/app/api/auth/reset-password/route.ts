@@ -1,44 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import { getUsers, saveUser } from '@/lib/db';
+import { saveUser } from '@/lib/db';
 import { PASSWORD_MIN_LENGTH, PASSWORD_MIN_LENGTH_MESSAGE } from '@/lib/password-policy';
-
-function findUserByResetToken(rawToken: string) {
-  const normalizedToken = rawToken.trim();
-  const users = getUsers();
-
-  console.info('[reset-password] Total users loaded:', users.length, '| Users with reset token:', users.filter(u => u.passwordResetToken).length);
-
-  const user = users.find(u => u.passwordResetToken === normalizedToken);
-  if (!user) {
-    console.warn('[reset-password] No user found for the provided token.');
-    return { error: 'Ungültiger oder abgelaufener Link.' };
-  }
-
-  if (!user.passwordResetExpiry) {
-    console.warn('[reset-password] User found but passwordResetExpiry is missing.');
-    return { error: 'Ungültiger oder abgelaufener Link.' };
-  }
-
-  const expiryDate = new Date(user.passwordResetExpiry);
-  if (isNaN(expiryDate.getTime())) {
-    console.error('[reset-password] passwordResetExpiry is not a valid date.');
-    return { error: 'Ungültiger oder abgelaufener Link.' };
-  }
-
-  const expired = expiryDate < new Date();
-  console.info('[reset-password] Token expiry check – expired:', expired);
-
-  if (expired) {
-    console.warn('[reset-password] Token has expired.');
-    return { error: 'Der Link ist abgelaufen. Bitte fordere einen neuen an.' };
-  }
-
-  return { user };
-}
+import { validatePasswordResetToken } from '@/lib/reset-password-token';
 
 export async function GET() {
-  return NextResponse.json({ error: 'Methode nicht unterstützt.' }, { status: 405 });
+  return NextResponse.json(
+    { error: 'Methode nicht unterstützt.' },
+    { status: 405, headers: { Allow: 'POST' } },
+  );
 }
 
 export async function POST(req: NextRequest) {
@@ -60,7 +30,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Trim to guard against accidental whitespace in the token value.
-    const result = findUserByResetToken(token);
+    const result = validatePasswordResetToken(token);
     if ('error' in result) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }

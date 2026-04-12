@@ -1,23 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { getUsers } from '@/lib/db';
-
-function isValidResetToken(token: string) {
-  const normalizedToken = token.trim();
-  const users = getUsers();
-  const user = users.find(entry => entry.passwordResetToken === normalizedToken);
-
-  if (!user || !user.passwordResetExpiry) {
-    return { error: 'Ungültiger oder abgelaufener Link.' };
-  }
-
-  const expiryDate = new Date(user.passwordResetExpiry);
-  if (isNaN(expiryDate.getTime()) || expiryDate < new Date()) {
-    return { error: 'Der Link ist abgelaufen. Bitte fordere einen neuen an.' };
-  }
-
-  return { success: true };
-}
+import { validatePasswordResetToken } from '@/lib/reset-password-token';
 
 export async function POST(req: NextRequest) {
   try {
@@ -27,7 +10,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Token fehlt.' }, { status: 400 });
     }
 
-    const result = isValidResetToken(token);
+    const result = validatePasswordResetToken(token);
     if ('error' in result) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }

@@ -847,6 +847,13 @@ describe('POST /api/auth/reset-password/validate', () => {
 describe('POST /api/auth/reset-password', () => {
   beforeEach(() => vi.resetModules());
 
+  it('returns 405 for GET requests and advertises POST as allowed', async () => {
+    const { GET } = await import('@/app/api/auth/reset-password/route');
+    const res = await GET();
+    expect(res.status).toBe(405);
+    expect(res.headers.get('allow')).toBe('POST');
+  });
+
   it('returns 400 when token or password is missing', async () => {
     vi.doMock('@/lib/db', () => ({ getUsers: vi.fn().mockReturnValue([]), saveUser: vi.fn() }));
     const { POST } = await import('@/app/api/auth/reset-password/route');
