@@ -2,6 +2,7 @@ import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import { getUserByEmail } from './db';
+import { authSecret } from './auth-secret';
 import { normalizeEmail } from './utils';
 
 declare module 'next-auth' {
@@ -77,5 +78,5 @@ export const authOptions: NextAuthOptions = {
     signIn: '/login',
     error: '/login',
   },
-  secret: process.env.NEXTAUTH_SECRET || 'dev-secret-please-set-in-production',
+  secret: authSecret,
 };
