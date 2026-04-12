@@ -15,6 +15,23 @@ function sortNewestFirst(a: Video, b: Video) {
   return b.createdAt.localeCompare(a.createdAt);
 }
 
+function PageLoadingState() {
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className="flex min-h-64 flex-col items-center justify-center gap-3 px-4 text-center"
+    >
+      <span
+        aria-hidden="true"
+        className="h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"
+      />
+      <p className="text-sm font-medium text-gray-600">Videos werden geladen…</p>
+      <span className="sr-only">Bitte warten, die Inhalte werden geladen.</span>
+    </div>
+  );
+}
+
 function MeineVideosPageContent() {
   const searchParams = useSearchParams();
   const [videos, setVideos] = useState<Video[]>([]);
@@ -107,7 +124,7 @@ function MeineVideosPageContent() {
         <div className="bg-red-50 border border-red-100 text-red-700 text-sm rounded-lg px-3 py-2 mb-6">{error}</div>
       )}
       {loading ? (
-        <p className="text-gray-400 text-center py-12">Wird geladen...</p>
+        <PageLoadingState />
       ) : videos.length > 0 ? (
         <div className="space-y-8">
           <section className="space-y-4">
@@ -153,7 +170,7 @@ function MeineVideosPageContent() {
 export default function MeineVideosPage() {
   return (
     <ProtectedRoute>
-      <Suspense fallback={<div className="flex items-center justify-center min-h-64 text-gray-400">Laden…</div>}>
+      <Suspense fallback={<PageLoadingState />}>
         <MeineVideosPageContent />
       </Suspense>
     </ProtectedRoute>
