@@ -175,6 +175,36 @@ describe('public form entry routes', () => {
     await waitFor(() => expect(routerPush).toHaveBeenCalledWith('/mitglieder/vorstellungen'));
   });
 
+  it('ignores unsafe callback URLs and falls back to the dashboard', async () => {
+    currentSearchParams = new URLSearchParams('callbackUrl=https%3A%2F%2Fevil.example');
+    signInMock.mockResolvedValue({ error: undefined });
+    currentGetSessionResult = { user: { role: 'USER' } };
+
+    const { default: LoginPage } = await import('@/app/(public)/login/page');
+    render(React.createElement(LoginPage));
+
+    await userEvent.type(screen.getByLabelText(/e-mail/i), 'alice@example.com');
+    await userEvent.type(screen.getByLabelText(/passwort/i), 'secret123');
+    await userEvent.click(screen.getByRole('button', { name: /^anmelden$/i }));
+
+    await waitFor(() => expect(routerPush).toHaveBeenCalledWith('/dashboard'));
+  });
+
+  it('always sends admins to the admin dashboard after a successful login', async () => {
+    currentSearchParams = new URLSearchParams('callbackUrl=%2Fmitglieder%2Fvorstellungen');
+    signInMock.mockResolvedValue({ error: undefined });
+    currentGetSessionResult = { user: { role: 'ADMIN' } };
+
+    const { default: LoginPage } = await import('@/app/(public)/login/page');
+    render(React.createElement(LoginPage));
+
+    await userEvent.type(screen.getByLabelText(/e-mail/i), 'admin@example.com');
+    await userEvent.type(screen.getByLabelText(/passwort/i), 'secret123');
+    await userEvent.click(screen.getByRole('button', { name: /^anmelden$/i }));
+
+    await waitFor(() => expect(routerPush).toHaveBeenCalledWith('/admin'));
+  });
+
   it('connects registration page to privacy policy and login', async () => {
     const { default: RegistrierenPage } = await import('@/app/(public)/registrieren/page');
     render(React.createElement(RegistrierenPage));

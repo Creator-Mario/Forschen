@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import type { BuchempfehlungsSammlung } from '@/types';
 
 interface BookRecommendationsCardProps {
@@ -6,7 +9,12 @@ interface BookRecommendationsCardProps {
 }
 
 export default function BookRecommendationsCard({ collection, compact = false }: BookRecommendationsCardProps) {
-  const visibleRecommendations = compact ? collection.recommendations.slice(0, 1) : collection.recommendations;
+  const [showAllRecommendations, setShowAllRecommendations] = useState(false);
+  const hasHiddenRecommendations = compact && collection.recommendations.length > 1;
+  const visibleRecommendations = compact && !showAllRecommendations
+    ? collection.recommendations.slice(0, 1)
+    : collection.recommendations;
+  const hiddenRecommendationsCount = collection.recommendations.length - 1;
 
   return (
     <div className={`bg-white rounded-xl shadow-md ${compact ? 'p-4' : 'p-6'}`}>
@@ -25,10 +33,17 @@ export default function BookRecommendationsCard({ collection, compact = false }:
           </div>
         ))}
       </div>
-      {compact && collection.recommendations.length > 1 && (
-        <p className="mt-3 text-xs font-medium text-blue-700">
-          + {collection.recommendations.length - 1} weitere Empfehlung{collection.recommendations.length - 1 > 1 ? 'en' : ''}
-        </p>
+      {hasHiddenRecommendations && (
+        <button
+          type="button"
+          onClick={() => setShowAllRecommendations(current => !current)}
+          aria-label={showAllRecommendations ? 'Weniger Empfehlungen anzeigen' : 'Weitere Empfehlungen anzeigen'}
+          className="mt-3 text-xs font-medium text-blue-700 hover:text-blue-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
+        >
+          {showAllRecommendations
+            ? 'Weniger anzeigen'
+            : `+ ${hiddenRecommendationsCount} weitere Empfehlung${hiddenRecommendationsCount > 1 ? 'en' : ''}`}
+        </button>
       )}
     </div>
   );

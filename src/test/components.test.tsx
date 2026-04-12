@@ -26,25 +26,91 @@ vi.mock('next/link', () => ({
     React.createElement('a', { href }, children),
 }));
 
-// ─── Card ─────────────────────────────────────────────────────────────────────
+describe('QrShareActions', () => {
+  it('shares the website link when the share button is clicked', async () => {
+    const share = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(window.navigator, 'share', {
+      configurable: true,
+      value: share,
+    });
 
-describe('Card', () => {
-  it('renders children', async () => {
-    const { default: Card } = await import('@/components/Card');
-    render(React.createElement(Card, null, 'Hello Card'));
-    expect(screen.getByText('Hello Card')).toBeInTheDocument();
+    const { default: QrShareActions } = await import('@/components/QrShareActions');
+    render(React.createElement(QrShareActions, { siteUrl: 'https://flussdeslebens.live' }));
+
+    fireEvent.click(screen.getByRole('button', { name: /Link teilen/i }));
+
+    expect(share).toHaveBeenCalledWith({
+      title: 'Der Fluss des Lebens',
+      text: 'Schau dir diese Webseite an und teile den QR-Code gern weiter.',
+      url: 'https://flussdeslebens.live',
+    });
   });
 
-  it('applies extra className', async () => {
-    const { default: Card } = await import('@/components/Card');
-    const { container } = render(React.createElement(Card, { className: 'extra-class' }, 'Content'));
-    expect(container.firstChild).toHaveClass('extra-class');
+  it('renders a direct QR code download link', async () => {
+    const { default: QrShareActions } = await import('@/components/QrShareActions');
+    render(React.createElement(QrShareActions, { siteUrl: 'https://flussdeslebens.live' }));
+
+    const link = screen.getByRole('link', { name: /QR-Code herunterladen/i });
+    expect(link).toHaveAttribute('href', '/api/share-qr?format=png&download=1');
+    expect(link).toHaveAttribute('download', 'fluss-des-lebens-qr-code.png');
   });
 
-  it('always has base classes', async () => {
-    const { default: Card } = await import('@/components/Card');
-    const { container } = render(React.createElement(Card, null, 'X'));
-    expect(container.firstChild).toHaveClass('bg-white');
+  it('renders direct WhatsApp and Facebook share links', async () => {
+    const { default: QrShareActions } = await import('@/components/QrShareActions');
+    render(React.createElement(QrShareActions, { siteUrl: 'https://flussdeslebens.live' }));
+
+    expect(screen.getByRole('link', { name: /Auf WhatsApp teilen/i })).toHaveAttribute(
+      'href',
+      'https://wa.me/?text=Schau%20dir%20diese%20Webseite%20an%20und%20teile%20den%20QR-Code%20gern%20weiter.%20https%3A%2F%2Fflussdeslebens.live',
+    );
+    expect(screen.getByRole('link', { name: /Auf Facebook teilen/i })).toHaveAttribute(
+      'href',
+      'https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fflussdeslebens.live',
+    );
+  });
+});
+
+describe('Footer', () => {
+  it('shows the developer credit in the footer meta line', async () => {
+    const { default: Footer } = await import('@/components/Footer');
+    render(React.createElement(Footer));
+
+    expect(screen.getByText(/Entwickelt von Mario Reiner Denzer/i)).toBeInTheDocument();
+  });
+});
+
+describe('BookRecommendationsCard', () => {
+  const collection = {
+    id: 'bk-1',
+    date: '2026-04-11',
+    topicTitle: 'Digitale Überforderung',
+    introduction: 'Einführung',
+    recommendations: [
+      { title: 'Erstes Buch', author: 'Autor 1', description: 'Beschreibung 1', relevance: 'Relevanz 1' },
+      { title: 'Zweites Buch', author: 'Autor 2', description: 'Beschreibung 2', relevance: 'Relevanz 2' },
+    ],
+  };
+
+  it('reveals hidden compact recommendations when the footer button is clicked', async () => {
+    const { default: BookRecommendationsCard } = await import('@/components/BookRecommendationsCard');
+    render(React.createElement(BookRecommendationsCard, { collection, compact: true }));
+
+    expect(screen.getByText('Erstes Buch')).toBeInTheDocument();
+    expect(screen.queryByText('Zweites Buch')).toBeNull();
+
+    expect(screen.getByText('+ 1 weitere Empfehlung')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Weitere Empfehlungen anzeigen/i }));
+
+    expect(screen.getByText('Zweites Buch')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Weniger Empfehlungen anzeigen/i })).toBeInTheDocument();
+  });
+
+  it('shows the relevance text in the full card view', async () => {
+    const { default: BookRecommendationsCard } = await import('@/components/BookRecommendationsCard');
+    render(React.createElement(BookRecommendationsCard, { collection }));
+
+    expect(screen.getByText('Relevanz 1')).toBeInTheDocument();
+    expect(screen.getByText('Relevanz 2')).toBeInTheDocument();
   });
 });
 
@@ -315,6 +381,16 @@ describe('ProtectedRoute', () => {
     const { default: ProtectedRoute } = await import('@/components/ProtectedRoute');
     render(React.createElement(ProtectedRoute, null, React.createElement('div', null, 'Protected Content')));
     expect(routerReplace).toHaveBeenCalledWith('/login?callbackUrl=%2Fmitglieder%2Fvorstellungen');
+  });
+
+  it('redirects unauthenticated users to admin-login for admin-only routes', async () => {
+    currentPathname = '/admin/videos';
+    vi.doMock('next-auth/react', () => ({
+      useSession: () => ({ data: null, status: 'unauthenticated' }),
+    }));
+    const { default: ProtectedRoute } = await import('@/components/ProtectedRoute');
+    render(React.createElement(ProtectedRoute, { requireAdmin: true }, React.createElement('div', null, 'Admin Content')));
+    expect(routerReplace).toHaveBeenCalledWith('/admin-login?callbackUrl=%2Fadmin%2Fvideos');
   });
 
   it('renders nothing for non-admin user when requireAdmin=true', async () => {

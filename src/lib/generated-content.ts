@@ -358,7 +358,7 @@ function buildBuchempfehlungsSammlung(date: string): BuchempfehlungsSammlung {
     id: `buchliste-${date}`,
     date,
     topicTitle: seed.title,
-    introduction: `Diese KI-inspirierten Buchempfehlungen greifen das Tagesthema „${seed.title}“ auf und helfen dabei, biblische Orientierung zu vertiefen.`,
+    introduction: `Diese Buchempfehlungen greifen das Tagesthema „${seed.title}“ auf und helfen dabei, biblische Orientierung zu vertiefen.`,
     recommendations: seed.books.map((book: Buchempfehlung) => ({ ...book })),
   };
 }
