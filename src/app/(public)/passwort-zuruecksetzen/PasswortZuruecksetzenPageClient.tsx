@@ -3,6 +3,7 @@
 import { useState, FormEvent, Suspense, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { PASSWORD_MIN_LENGTH, PASSWORD_MIN_LENGTH_MESSAGE } from '@/lib/password-policy';
 
 function ResetForm() {
   const searchParams = useSearchParams();
@@ -27,8 +28,8 @@ function ResetForm() {
       return;
     }
 
-    if (password.length < 8 || confirm.length < 8) {
-      setError('Das Passwort muss mindestens 8 Zeichen haben.');
+    if (password.length < PASSWORD_MIN_LENGTH || confirm.length < PASSWORD_MIN_LENGTH) {
+      setError(PASSWORD_MIN_LENGTH_MESSAGE);
       return;
     }
 
@@ -111,7 +112,7 @@ function ResetForm() {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Neues Passwort <span className="text-gray-400 font-normal">(min. 8 Zeichen)</span>
+                Neues Passwort <span className="text-gray-400 font-normal">(min. {PASSWORD_MIN_LENGTH} Zeichen)</span>
               </label>
               <input
                 id="password"

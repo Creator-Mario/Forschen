@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { getUsers, saveUser } from '@/lib/db';
+import { PASSWORD_MIN_LENGTH, PASSWORD_MIN_LENGTH_MESSAGE } from '@/lib/password-policy';
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,9 +14,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Ungültige Anfrage.' }, { status: 400 });
     }
 
-    if (password.length < 8) {
+    if (password.length < PASSWORD_MIN_LENGTH) {
       return NextResponse.json(
-        { error: 'Das Passwort muss mindestens 8 Zeichen haben.' },
+        { error: PASSWORD_MIN_LENGTH_MESSAGE },
         { status: 400 },
       );
     }

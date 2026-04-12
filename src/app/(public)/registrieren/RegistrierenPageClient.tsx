@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
+import { PASSWORD_MIN_LENGTH } from '@/lib/password-policy';
 
 export default function RegistrierenPageClient() {
   const [name, setName] = useState('');
@@ -114,7 +115,7 @@ export default function RegistrierenPageClient() {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Passwort <span className="text-gray-400 font-normal">(min. 8 Zeichen)</span>
+                Passwort <span className="text-gray-400 font-normal">(min. {PASSWORD_MIN_LENGTH} Zeichen)</span>
               </label>
               <input
                 id="password"
@@ -123,7 +124,7 @@ export default function RegistrierenPageClient() {
                 onChange={e => setPassword(e.target.value)}
                 autoComplete="new-password"
                 required
-                minLength={8}
+                minLength={PASSWORD_MIN_LENGTH}
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="••••••••"
               />
