@@ -315,6 +315,7 @@ describe('protected user form routes and their entry links', () => {
     setUserSession();
     const fetchMock = global.fetch as unknown as ReturnType<typeof vi.fn>;
     const { default: DashboardPage } = await import('@/app/(user)/dashboard/page');
+    const { default: FragestellungenPage } = await import('@/app/(user)/fragestellungen/page');
     const { default: MeineThesenPage } = await import('@/app/(user)/meine-thesen/page');
     const { default: MeineForschungPage } = await import('@/app/(user)/meine-forschung/page');
     const { default: MeineGebetePage } = await import('@/app/(user)/meine-gebete/page');
@@ -326,9 +327,16 @@ describe('protected user form routes and their entry links', () => {
     expect(screen.getByRole('link', { name: /aktion erstellen/i })).toHaveAttribute('href', '/aktionen/neu');
     expect(screen.getByRole('link', { name: /video teilen/i })).toHaveAttribute('href', '/videos/hochladen');
     expect(screen.getByRole('link', { name: /buchempfehlung hinzufügen/i })).toHaveAttribute('href', '/buchempfehlungen/neu');
+    expect(screen.getByRole('link', { name: /fragen an die gemeinschaft/i })).toHaveAttribute('href', '/fragestellungen');
+    expect(screen.getByRole('link', { name: /frage stellen/i })).toHaveAttribute('href', '/fragestellungen/neu');
     expect(screen.getByRole('link', { name: /meine buchempfehlungen/i })).toHaveAttribute('href', '/meine-buchempfehlungen');
     expect(screen.getByRole('link', { name: /mein profil/i })).toHaveAttribute('href', '/profil');
     await waitFor(() => expect(fetchMock).toHaveBeenCalled());
+    unmount();
+
+    render(React.createElement(FragestellungenPage));
+    expect(screen.getByRole('link', { name: /\+ frage stellen/i })).toHaveAttribute('href', '/fragestellungen/neu');
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/fragestellungen'));
     unmount();
 
     render(React.createElement(MeineThesenPage));
@@ -361,12 +369,13 @@ describe('protected user form routes and their entry links', () => {
     expect(screen.getByRole('button', { name: /vorstellung einreichen/i })).toBeDisabled();
   });
 
-  it('renders the thesis, research, prayer, video, action and profile forms with matching submit labels', async () => {
+  it('renders the thesis, research, prayer, question, video, action and profile forms with matching submit labels', async () => {
     setUserSession();
     const { default: NeueThesePage } = await import('@/app/(user)/thesen/neu/page');
     const { default: ForschungBeitraegePage } = await import('@/app/(user)/forschung/beitraege/page');
     const { default: NeueBuchempfehlungPage } = await import('@/app/(user)/buchempfehlungen/neu/page');
     const { default: NeuesGebetPage } = await import('@/app/(user)/gebet/neu/page');
+    const { default: NeueFragestellungPage } = await import('@/app/(user)/fragestellungen/neu/page');
     const { default: VideoHochladenPage } = await import('@/app/(user)/videos/hochladen/page');
     const { default: NeueAktionPage } = await import('@/app/(user)/aktionen/neu/page');
     const { default: ProfilPage } = await import('@/app/(user)/profil/page');
@@ -389,6 +398,11 @@ describe('protected user form routes and their entry links', () => {
     render(React.createElement(NeuesGebetPage));
     expect(screen.getByRole('heading', { name: /gebet einreichen/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /^gebet einreichen$/i })).toBeInTheDocument();
+    unmount();
+
+    render(React.createElement(NeueFragestellungPage));
+    expect(screen.getByRole('heading', { name: /frage an die gemeinschaft stellen/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /frage einreichen/i })).toBeInTheDocument();
     unmount();
 
     render(React.createElement(VideoHochladenPage));

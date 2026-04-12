@@ -543,6 +543,110 @@ describe('POST /api/auth/forgot-password', () => {
   });
 });
 
+// ─── /api/fragestellungen ─────────────────────────────────────────────────────
+
+describe('GET /api/fragestellungen', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('returns 401 when unauthenticated', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
+    vi.doMock('@/lib/db', () => ({ getCommunityQuestions: vi.fn().mockReturnValue([]) }));
+    const { GET } = await import('@/app/api/fragestellungen/route');
+    const res = await GET();
+    expect(res.status).toBe(401);
+  });
+
+  it('returns community questions for authenticated users', async () => {
+    const questions = [
+      {
+        id: 'frage-1',
+        userId: 'u1',
+        authorName: 'Alice',
+        title: 'Frage',
+        content: 'Wie ist das gemeint?',
+        createdAt: '2026-04-12T09:00:00Z',
+        answers: [],
+      },
+    ];
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', role: 'USER' } }) }));
+    vi.doMock('@/lib/db', () => ({ getCommunityQuestions: vi.fn().mockReturnValue(questions) }));
+    const { GET } = await import('@/app/api/fragestellungen/route');
+    const res = await GET();
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual(questions);
+  });
+});
+
+describe('POST /api/fragestellungen', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('returns 401 when unauthenticated', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
+    vi.doMock('@/lib/db', () => ({ saveCommunityQuestion: vi.fn() }));
+    const { POST } = await import('@/app/api/fragestellungen/route');
+    const res = await POST(makeJsonRequest('http://localhost/api/fragestellungen', { title: 'T', content: 'C' }));
+    expect(res.status).toBe(401);
+  });
+
+  it('saves a sanitized community question for authenticated users', async () => {
+    const saveCommunityQuestion = vi.fn().mockResolvedValue(undefined);
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', name: 'Alice', role: 'USER' } }) }));
+    vi.doMock('@/lib/db', () => ({ saveCommunityQuestion }));
+    const { POST } = await import('@/app/api/fragestellungen/route');
+    const res = await POST(makeJsonRequest('http://localhost/api/fragestellungen', { title: ' <b>Frage</b> ', content: ' <script>x</script>Was bedeutet das? ' }));
+    expect(res.status).toBe(200);
+    const saved = saveCommunityQuestion.mock.calls[0][0];
+    expect(saved.title).toBe('Frage');
+    expect(saved.content).toBe('xWas bedeutet das?');
+    expect(saved.userId).toBe('u1');
+    expect(saved.authorName).toBe('Alice');
+    expect(saved.answers).toEqual([]);
+  });
+});
+
+describe('POST /api/fragestellungen/[questionId]/antworten', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('returns 404 when the question does not exist', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u2', name: 'Bob', role: 'USER' } }) }));
+    vi.doMock('@/lib/db', () => ({ getCommunityQuestionById: vi.fn().mockReturnValue(undefined), saveCommunityQuestion: vi.fn() }));
+    const { POST } = await import('@/app/api/fragestellungen/[questionId]/antworten/route');
+    const res = await POST(
+      makeJsonRequest('http://localhost/api/fragestellungen/frage-1/antworten', { content: 'Antwort' }),
+      { params: Promise.resolve({ questionId: 'frage-1' }) },
+    );
+    expect(res.status).toBe(404);
+  });
+
+  it('appends a sanitized answer to the existing question', async () => {
+    const saveCommunityQuestion = vi.fn().mockResolvedValue(undefined);
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u2', name: 'Bob', role: 'USER' } }) }));
+    vi.doMock('@/lib/db', () => ({
+      getCommunityQuestionById: vi.fn().mockReturnValue({
+        id: 'frage-1',
+        userId: 'u1',
+        authorName: 'Alice',
+        title: 'Frage',
+        content: 'Wie ist das gemeint?',
+        createdAt: '2026-04-12T09:00:00Z',
+        answers: [],
+      }),
+      saveCommunityQuestion,
+    }));
+    const { POST } = await import('@/app/api/fragestellungen/[questionId]/antworten/route');
+    const res = await POST(
+      makeJsonRequest('http://localhost/api/fragestellungen/frage-1/antworten', { content: ' <b>Antwort</b> ' }),
+      { params: Promise.resolve({ questionId: 'frage-1' }) },
+    );
+    expect(res.status).toBe(200);
+    const saved = saveCommunityQuestion.mock.calls[0][0];
+    expect(saved.answers).toHaveLength(1);
+    expect(saved.answers[0].content).toBe('Antwort');
+    expect(saved.answers[0].authorName).toBe('Bob');
+    expect(saved.answers[0].userId).toBe('u2');
+  });
+});
+
 // ─── /api/forschung ───────────────────────────────────────────────────────────
 
 describe('GET /api/forschung', () => {

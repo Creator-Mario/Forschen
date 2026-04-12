@@ -279,6 +279,7 @@ export default function HomePage() {
               { href: '/forschung', icon: '📝', title: 'Bibelforschung', desc: 'Tiefgehende Beiträge zur Exegese und Hermeneutik.' },
               { href: '/gebet', icon: '🙏', title: 'Gebetsraum', desc: 'Ein geschützter Raum für persönliche und gemeinsame Gebete.' },
               { href: '/aktionen', icon: '🤝', title: 'Aktionen', desc: 'Gemeinschaftliche Aktivitäten und Treffen in der Realen Welt.' },
+              { href: '/fragestellungen', icon: '❓', title: 'Fragestellungen', desc: 'Eigene Fragen an die Gemeinschaft richten und Antworten anderer Mitglieder lesen.' },
             ].map(item => (
               <Link
                 key={item.href}

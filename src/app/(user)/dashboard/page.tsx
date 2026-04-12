@@ -55,6 +55,8 @@ export default function DashboardPage() {
             { href: '/buchempfehlungen/neu', icon: '➕', title: 'Buchempfehlung hinzufügen', desc: 'Empfiehl ein Buch zu einem konkreten Thema.' },
             { href: '/meine-gebete', icon: '🙏', title: 'Meine Gebete', desc: 'Deine eingereichten Gebete.' },
             { href: '/gebet/neu', icon: '✨', title: 'Gebet einreichen', desc: 'Ein neues Gebet für die Gemeinschaft.' },
+            { href: '/fragestellungen', icon: '❓', title: 'Fragen an die Gemeinschaft', desc: 'Fragen lesen, beantworten und gemeinsam weiterdenken.' },
+            { href: '/fragestellungen/neu', icon: '📝', title: 'Frage stellen', desc: 'Eine eigene Fragestellung an die Gemeinschaft richten.' },
             { href: '/chat', icon: '💬', title: 'Nachrichten', desc: 'Private 1-zu-1-Chats mit Mitgliedern.' },
             { href: '/mitglieder/vorstellungen', icon: '🧑‍🤝‍🧑', title: 'Mitglieder', desc: 'Vorstellungen der Gemeinschaftsmitglieder.' },
             { href: '/aktionen/neu', icon: '🤝', title: 'Aktion erstellen', desc: 'Eine Gemeinschaftsaktion organisieren.' },

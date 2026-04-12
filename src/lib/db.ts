@@ -4,7 +4,7 @@ import { normalizeEmail } from '@/lib/utils';
 import { getCurrentPublicationDate, getCurrentPublicationWeek } from '@/lib/publishing';
 import type {
   User, Tageswort, Wochenthema, These, ForschungsBeitrag,
-  Gebet, Video, Aktion, SpendenRecord, AdminLog, ChatMessage, NutzerBuchempfehlung
+  Gebet, Video, Aktion, SpendenRecord, AdminLog, ChatMessage, NutzerBuchempfehlung, CommunityQuestion
 } from '@/types';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
@@ -121,7 +121,7 @@ export async function saveUser(user: User): Promise<void> {
 /** Hard-delete a user and every piece of content they created. */
 export async function deleteUserAccount(userId: string): Promise<void> {
   // Read all collections first, then filter, then write — avoids interleaved reads/writes.
-  const [users, thesen, forschung, gebete, videos, aktionen, buchempfehlungen, messages] = await Promise.all([
+  const [users, thesen, forschung, gebete, videos, aktionen, buchempfehlungen, messages, fragestellungen] = await Promise.all([
     Promise.resolve(getUsers()),
     Promise.resolve(getThesen()),
     Promise.resolve(getForschung()),
@@ -130,6 +130,7 @@ export async function deleteUserAccount(userId: string): Promise<void> {
     Promise.resolve(getAktionen()),
     Promise.resolve(getBuchempfehlungen()),
     Promise.resolve(getChatMessages()),
+    Promise.resolve(getCommunityQuestions()),
   ]);
 
   const deletions: Array<[string, unknown[]]> = [
@@ -141,6 +142,9 @@ export async function deleteUserAccount(userId: string): Promise<void> {
     ['aktionen.json', aktionen.filter(a => a.userId !== userId)],
     ['buchempfehlungen.json', buchempfehlungen.filter(b => b.userId !== userId)],
     ['messages.json', messages.filter(m => m.fromUserId !== userId && m.toUserId !== userId)],
+    ['fragestellungen.json', fragestellungen
+      .filter(q => q.userId !== userId)
+      .map(q => ({ ...q, answers: q.answers.filter(answer => answer.userId !== userId) }))],
   ];
 
   for (const [filename, data] of deletions) {
@@ -361,6 +365,23 @@ export async function deleteContentItem(
     default:
       return false;
   }
+}
+
+// Community questions
+export function getCommunityQuestions(): CommunityQuestion[] {
+  return readJson<CommunityQuestion>('fragestellungen.json');
+}
+
+export function getCommunityQuestionById(id: string): CommunityQuestion | undefined {
+  return getCommunityQuestions().find(question => question.id === id);
+}
+
+export async function saveCommunityQuestion(question: CommunityQuestion): Promise<void> {
+  const list = getCommunityQuestions();
+  const idx = list.findIndex(item => item.id === question.id);
+  if (idx >= 0) list[idx] = question;
+  else list.push(question);
+  await writeJson('fragestellungen.json', list);
 }
 
 // Spenden
