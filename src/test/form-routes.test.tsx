@@ -261,6 +261,10 @@ describe('public form entry routes', () => {
 
     expect(await screen.findByText(/mindestens 8 zeichen/i)).toBeInTheDocument();
     expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledWith('/api/auth/reset-password?token=reset-123', {
+      method: 'GET',
+      cache: 'no-store',
+    });
   });
 
   it('shows the invalid reset-link state immediately when token validation fails', async () => {

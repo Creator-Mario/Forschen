@@ -88,7 +88,9 @@ export default async function EmailBestaetigungPage({ searchParams }: EmailBesta
     });
   }
 
-  if (user.status === 'pending_email' || user.status === 'email_verified') {
+  const effectiveStatus = user.status === 'pending_email' ? 'email_verified' : user.status;
+
+  if (effectiveStatus === 'email_verified') {
     redirect(`/vorstellung?token=${encodeURIComponent(token)}`);
   }
 
