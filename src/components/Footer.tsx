@@ -127,6 +127,8 @@ export default function Footer() {
             <p className="text-xs text-blue-500">
               Der Fluss des Lebens – Private Plattform für christliche Forschung
               <span className="mx-2 text-blue-600">·</span>
+              Entwickelt von Mario Reiner Denzer
+              <span className="mx-2 text-blue-600">·</span>
               <Link href="/admin-login" className="hover:text-blue-300 transition-colors">
                 Admin
               </Link>
@@ -137,4 +139,3 @@ export default function Footer() {
     </footer>
   );
 }
-

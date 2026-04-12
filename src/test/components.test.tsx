@@ -78,6 +78,15 @@ describe('QrShareActions', () => {
   });
 });
 
+describe('Footer', () => {
+  it('shows the developer credit in the footer meta line', async () => {
+    const { default: Footer } = await import('@/components/Footer');
+    render(React.createElement(Footer));
+
+    expect(screen.getByText(/Entwickelt von Mario Reiner Denzer/i)).toBeInTheDocument();
+  });
+});
+
 describe('BookRecommendationsCard', () => {
   const collection = {
     id: 'bk-1',
