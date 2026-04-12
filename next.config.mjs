@@ -3,6 +3,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  htmlLimitedBots: /.*/,
 };
 
 export default nextConfig;

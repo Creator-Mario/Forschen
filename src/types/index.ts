@@ -59,6 +59,26 @@ export interface ChatMessage {
   readAt?: string;
 }
 
+export interface CommunityAnswer {
+  id: string;
+  userId: string;
+  authorName: string;
+  content: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CommunityQuestion {
+  id: string;
+  userId: string;
+  authorName: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt?: string;
+  answers: CommunityAnswer[];
+}
+
 export interface Tageswort {
   id: string;
   date: string;

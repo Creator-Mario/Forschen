@@ -1,9 +1,12 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import BibleLink from '@/components/BibleLink';
 import { founderProfile } from '@/lib/founder-profile';
+import { createPageMetadata } from '@/lib/seo';
 
 const sections = [
   {
@@ -41,6 +44,13 @@ const values = [
   { icon: '💡', label: 'Tiefe' },
   { icon: '❤️', label: 'Liebe' },
 ];
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Vision und Werte',
+  description: 'Lerne die Vision, Werte und geistliche Ausrichtung von Der Fluss des Lebens kennen.',
+  path: '/vision',
+  keywords: ['Vision', 'Werte', 'christliche Plattform'],
+});
 
 export default function VisionPage() {
   return (

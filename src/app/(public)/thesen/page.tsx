@@ -1,8 +1,17 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import ThesisCard from '@/components/ThesisCard';
 import { getApprovedThesen } from '@/lib/db';
 import Link from 'next/link';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Theologische Thesen',
+  description: 'Lies veröffentlichte theologische Thesen aus der Gemeinschaft und beteilige dich an der Diskussion.',
+  path: '/thesen',
+  keywords: ['Thesen', 'Theologie', 'Glaubensfragen'],
+});
 
 export default function ThesenPage() {
   const thesen = getApprovedThesen();

@@ -1,11 +1,19 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import { getApprovedVideos, getWochenthemaList } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
+import { createNoIndexMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = createNoIndexMetadata(
+  'Videos',
+  'Geschützter Bereich für Video-Beiträge aus der Gemeinschaft.',
+  '/videos',
+);
 
 export default async function VideosPage() {
   const session = await getServerSession(authOptions);

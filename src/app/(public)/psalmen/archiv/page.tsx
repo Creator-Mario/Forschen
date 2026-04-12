@@ -1,9 +1,18 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { formatDate } from '@/lib/utils';
 import { getPsalmThemaArchiv } from '@/lib/generated-content';
 import PsalmThemeCard from '@/components/PsalmThemeCard';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Archiv der Psalmen',
+  description: 'Durchsuche frühere Psalm-Impulse und Andachten im Psalmen-Archiv.',
+  path: '/psalmen/archiv',
+  keywords: ['Psalmen Archiv', 'Psalm-Andachten'],
+});
 
 export default function PsalmenArchivPage() {
   const items = getPsalmThemaArchiv();

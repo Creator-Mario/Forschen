@@ -1,4 +1,14 @@
+import type { Metadata } from 'next';
+
 import { operatorName, operatorEmail, operatorAddress } from '@/lib/config';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Datenschutzerklärung',
+  description: 'Datenschutzhinweise zur Nutzung von Der Fluss des Lebens und zur Verarbeitung personenbezogener Daten.',
+  path: '/datenschutz',
+  keywords: ['Datenschutz', 'DSGVO', 'Datenschutzerklärung'],
+});
 
 export default function DatenschutzPage() {
   return (

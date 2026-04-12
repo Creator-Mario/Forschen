@@ -1,8 +1,17 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import { getApprovedAktionen } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Aktionen und Treffen',
+  description: 'Gemeinschaftliche Aktionen, Treffen und Veranstaltungen von Der Fluss des Lebens.',
+  path: '/aktionen',
+  keywords: ['Aktionen', 'christliche Treffen', 'Veranstaltungen'],
+});
 
 export default function AktionenPage() {
   const aktionen = getApprovedAktionen();

@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+
 export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
@@ -13,6 +15,14 @@ import { canonicalSiteUrl, siteName } from '@/lib/config';
 import { getTodayTageswort, getCurrentWochenthema, getApprovedThesen } from '@/lib/db';
 import { getTodayPsalmThema, getTodayGlaubenHeuteThema, getTodayBuchempfehlungen } from '@/lib/generated-content';
 import { founderProfile } from '@/lib/founder-profile';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Freie christliche Bibelforschung',
+  description: 'Freie christliche Bibelforschung mit Tageswort, Psalmen, Wochenthema, Thesen und gemeinsamen Fragen aus der Gemeinschaft.',
+  path: '/',
+  keywords: ['Startseite', 'christliche Forschung', 'Bibelarbeit'],
+});
 
 export default function HomePage() {
   const tageswort = getTodayTageswort();
@@ -56,7 +66,7 @@ export default function HomePage() {
             </span>
           </h1>
           <p className="text-blue-100 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-8">
-            Ein freier Raum für sorgfältige Bibelforschung – ohne Gamification, ohne Rankings, nur echte Fragen und ehrliche Suche.
+            Ein freier Raum für sorgfältige Bibelforschung – ohne Punktesysteme, ohne Rankings, nur echte Fragen und ehrliche Suche.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
@@ -279,6 +289,7 @@ export default function HomePage() {
               { href: '/forschung', icon: '📝', title: 'Bibelforschung', desc: 'Tiefgehende Beiträge zur Exegese und Hermeneutik.' },
               { href: '/gebet', icon: '🙏', title: 'Gebetsraum', desc: 'Ein geschützter Raum für persönliche und gemeinsame Gebete.' },
               { href: '/aktionen', icon: '🤝', title: 'Aktionen', desc: 'Gemeinschaftliche Aktivitäten und Treffen in der Realen Welt.' },
+              { href: '/fragestellungen', icon: '❓', title: 'Fragen an die Gemeinschaft', desc: 'Eigene Fragen einbringen und Antworten aus der Gemeinschaft gesammelt nachlesen.' },
             ].map(item => (
               <Link
                 key={item.href}

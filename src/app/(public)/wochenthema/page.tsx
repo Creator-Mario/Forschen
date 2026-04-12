@@ -1,11 +1,13 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import { getCurrentWochenthema } from '@/lib/db';
 import { getApprovedForschung, getApprovedVideos } from '@/lib/db';
 import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
 import SubmissionCta from '@/components/SubmissionCta';
 import { formatDate } from '@/lib/utils';
+import { createPageMetadata } from '@/lib/seo';
 
 function getSafeVideoUrl(url: string | undefined): string | null {
   if (!url) return null;
@@ -20,6 +22,13 @@ function getSafeVideoUrl(url: string | undefined): string | null {
     return null;
   }
 }
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Wochenthema',
+  description: 'Das aktuelle Wochenthema mit Einführung, Bibelstellen, Forschungsfragen und Beiträgen aus der Gemeinschaft.',
+  path: '/wochenthema',
+  keywords: ['Wochenthema', 'Bibelstudium', 'theologisches Thema'],
+});
 
 export default function WochenthemaPage() {
   const theme = getCurrentWochenthema();

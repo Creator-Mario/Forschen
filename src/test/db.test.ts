@@ -359,6 +359,21 @@ describe('db – deleteUserAccount', () => {
   const videos = [{ id: 'v1', userId: 'u1' }, { id: 'v2', userId: 'u2' }];
   const aktionen = [{ id: 'a1', userId: 'u1' }, { id: 'a2', userId: 'u2' }];
   const buchempfehlungen = [{ id: 'b1', userId: 'u1' }, { id: 'b2', userId: 'u2' }];
+  const fragestellungen = [
+    { id: 'frage1', userId: 'u1', authorName: 'Alice', title: 'Frage 1', content: 'Inhalt 1', createdAt: '2024-01-01T09:00:00Z', answers: [] },
+    {
+      id: 'frage2',
+      userId: 'u2',
+      authorName: 'Bob',
+      title: 'Frage 2',
+      content: 'Inhalt 2',
+      createdAt: '2024-01-01T09:30:00Z',
+      answers: [
+        { id: 'ant1', userId: 'u1', authorName: 'Alice', content: 'Antwort', createdAt: '2024-01-01T09:45:00Z' },
+        { id: 'ant2', userId: 'u2', authorName: 'Bob', content: 'Bleibt', createdAt: '2024-01-01T10:00:00Z' },
+      ],
+    },
+  ];
   const messages = [
     { id: 'm1', fromUserId: 'u1', toUserId: 'u2', content: 'hi', createdAt: '2024-01-01T10:00:00Z' },
     { id: 'm2', fromUserId: 'u3', toUserId: 'u4', content: 'other', createdAt: '2024-01-01T11:00:00Z' },
@@ -378,6 +393,7 @@ describe('db – deleteUserAccount', () => {
       if (file.endsWith('videos.json')) return JSON.stringify(videos);
       if (file.endsWith('aktionen.json')) return JSON.stringify(aktionen);
       if (file.endsWith('buchempfehlungen.json')) return JSON.stringify(buchempfehlungen);
+      if (file.endsWith('fragestellungen.json')) return JSON.stringify(fragestellungen);
       if (file.endsWith('messages.json')) return JSON.stringify(messages);
       return JSON.stringify([]);
     });
@@ -416,6 +432,21 @@ describe('db – deleteUserAccount', () => {
     const buchempfehlungenWrite = writeCalls.find((c: unknown[]) => String(c[0]).endsWith('buchempfehlungen.json'));
     expect(JSON.parse(buchempfehlungenWrite![1] as string)).toEqual([{ id: 'b2', userId: 'u2' }]);
 
+    const fragestellungenWrite = writeCalls.find((c: unknown[]) => String(c[0]).endsWith('fragestellungen.json'));
+    expect(JSON.parse(fragestellungenWrite![1] as string)).toEqual([
+      {
+        id: 'frage2',
+        userId: 'u2',
+        authorName: 'Bob',
+        title: 'Frage 2',
+        content: 'Inhalt 2',
+        createdAt: '2024-01-01T09:30:00Z',
+        answers: [
+          { id: 'ant2', userId: 'u2', authorName: 'Bob', content: 'Bleibt', createdAt: '2024-01-01T10:00:00Z' },
+        ],
+      },
+    ]);
+
     // Messages involving u1 should be removed
     const msgWrite = writeCalls.find((c: unknown[]) => String(c[0]).endsWith('messages.json'));
     const writtenMsgs = JSON.parse(msgWrite![1] as string);
@@ -425,8 +456,8 @@ describe('db – deleteUserAccount', () => {
 
   it('writes hard-delete updates sequentially when using GitHub-backed storage', async () => {
     process.env.GITHUB_TOKEN = 'test-token';
-    // users, thesen, forschung, gebete, videos, aktionen, buchempfehlungen, messages
-    const EXPECTED_DELETION_FILE_COUNT = 8;
+    // users, thesen, forschung, gebete, videos, aktionen, buchempfehlungen, messages, fragestellungen
+    const EXPECTED_DELETION_FILE_COUNT = 9;
 
     const getContent = vi.fn().mockResolvedValue({ data: { sha: 'sha-1' } });
     let activeWrites = 0;

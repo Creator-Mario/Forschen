@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { formatDate } from '@/lib/utils';
 import { getBuchempfehlungenArchiv } from '@/lib/generated-content';
@@ -7,10 +8,18 @@ import BookRecommendationsCard from '@/components/BookRecommendationsCard';
 import UserBookRecommendationCard from '@/components/UserBookRecommendationCard';
 import { getApprovedBuchempfehlungen } from '@/lib/db';
 import { COMMUNITY_ARCHIVE_DAYS, MS_PER_DAY } from '@/lib/archive-window';
+import { createPageMetadata } from '@/lib/seo';
 
 function isWithinArchiveWindow(dateStr: string) {
   return Date.now() - new Date(dateStr).getTime() <= COMMUNITY_ARCHIVE_DAYS * MS_PER_DAY;
 }
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Archiv der Buchempfehlungen',
+  description: 'Archivierte Empfehlungslisten und Beiträge zu christlicher Literatur.',
+  path: '/buchempfehlungen/archiv',
+  keywords: ['Buchempfehlungen Archiv', 'christliche Literatur'],
+});
 
 export default function BuchempfehlungenArchivPage() {
   const items = getBuchempfehlungenArchiv();

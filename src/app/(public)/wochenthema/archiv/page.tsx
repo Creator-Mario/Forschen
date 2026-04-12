@@ -1,10 +1,19 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import { getWochenthemaList } from '@/lib/db';
 import { keepLatestItemsByWeek } from '@/lib/archive-window';
 import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
 import { formatDate } from '@/lib/utils';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Archiv der Wochenthemen',
+  description: 'Sieh dir veröffentlichte Wochenthemen mit Einführungen und Bibelbezügen im Archiv an.',
+  path: '/wochenthema/archiv',
+  keywords: ['Wochenthema Archiv', 'Themenarchiv'],
+});
 
 export default function WochenthemaArchivPage() {
   const currentDate = formatDate(new Date().toISOString());

@@ -1,10 +1,19 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { formatDate } from '@/lib/utils';
 import { getTodayPsalmThema } from '@/lib/generated-content';
 import PsalmThemeCard from '@/components/PsalmThemeCard';
 import SubmissionCta from '@/components/SubmissionCta';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Psalm des Tages',
+  description: 'Der Psalm des Tages mit Impuls, Fragen zur Vertiefung und geistlicher Einordnung.',
+  path: '/psalmen',
+  keywords: ['Psalm des Tages', 'Psalmen', 'Andacht'],
+});
 
 export default function PsalmenPage() {
   const item = getTodayPsalmThema();

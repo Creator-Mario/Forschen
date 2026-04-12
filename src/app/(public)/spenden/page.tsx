@@ -1,4 +1,14 @@
+import type { Metadata } from 'next';
+
 import { paypalBusinessEmail } from '@/lib/config';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Unterstützen',
+  description: 'Unterstütze Der Fluss des Lebens freiwillig und hilf, die Plattform kostenlos zu halten.',
+  path: '/spenden',
+  keywords: ['Spenden', 'Unterstützen', 'PayPal'],
+});
 
 export default function SpendenPage() {
   return (

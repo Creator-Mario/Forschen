@@ -1,10 +1,19 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import BibleVerseCard from '@/components/BibleVerseCard';
 import { getTageswortList } from '@/lib/db';
 import { keepLatestItemsByDate } from '@/lib/archive-window';
 import { formatDate } from '@/lib/utils';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Archiv der Tageswörter',
+  description: 'Durchsuche das Archiv veröffentlichter Tageswörter mit Bibeltexten und Forschungsfragen.',
+  path: '/tageswort/archiv',
+  keywords: ['Tageswort Archiv', 'Bibelarchiv'],
+});
 
 export default function TageswortArchivPage() {
   const items = keepLatestItemsByDate(

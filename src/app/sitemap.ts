@@ -18,17 +18,17 @@ const PUBLIC_ROUTES = [
   { path: '/buchempfehlungen/archiv', changeFrequency: 'weekly', priority: 0.7 },
   { path: '/aktionen', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/gebet', changeFrequency: 'monthly', priority: 0.6 },
-  { path: '/mitglieder/vorstellungen', changeFrequency: 'monthly', priority: 0.7 },
   { path: '/spenden', changeFrequency: 'monthly', priority: 0.6 },
   { path: '/impressum', changeFrequency: 'yearly', priority: 0.3 },
   { path: '/datenschutz', changeFrequency: 'yearly', priority: 0.3 },
-  { path: '/registrieren', changeFrequency: 'monthly', priority: 0.6 },
 ] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const lastModified = new Date();
   return PUBLIC_ROUTES.map((route) => ({
     url: `${canonicalSiteUrl}${route.path}`,
     changeFrequency: route.changeFrequency,
     priority: route.priority,
+    lastModified,
   }));
 }

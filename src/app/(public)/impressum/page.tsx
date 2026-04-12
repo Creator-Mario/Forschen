@@ -1,4 +1,14 @@
+import type { Metadata } from 'next';
+
 import { operatorName, operatorEmail, operatorAddress, operatorPhoneE164 } from '@/lib/config';
+import { createPageMetadata } from '@/lib/seo';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Impressum',
+  description: 'Rechtliche Angaben, Kontaktinformationen und Verantwortliche von Der Fluss des Lebens.',
+  path: '/impressum',
+  keywords: ['Impressum', 'Kontakt', 'rechtliche Angaben'],
+});
 
 export default function ImpressumPage() {
   return (
