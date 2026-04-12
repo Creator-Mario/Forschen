@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { metadata, websiteStructuredData } from '@/app/layout';
+import { metadata as homeMetadata } from '@/app/(public)/page';
 import robots from '@/app/robots';
 import { canonicalSiteUrl, siteName } from '@/lib/config';
 
@@ -30,6 +31,14 @@ describe('SEO metadata', () => {
       },
       sitemap: `${canonicalSiteUrl}/sitemap.xml`,
       host: canonicalSiteUrl,
+    });
+  });
+
+  it('defines route-specific metadata for the public homepage', () => {
+    expect(homeMetadata.description).toContain('Tageswort');
+    expect(homeMetadata.alternates?.canonical).toBe('/');
+    expect(homeMetadata.openGraph).toMatchObject({
+      url: canonicalSiteUrl,
     });
   });
 });

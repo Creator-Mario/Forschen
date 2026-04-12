@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+
 export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
@@ -13,6 +15,23 @@ import { canonicalSiteUrl, siteName } from '@/lib/config';
 import { getTodayTageswort, getCurrentWochenthema, getApprovedThesen } from '@/lib/db';
 import { getTodayPsalmThema, getTodayGlaubenHeuteThema, getTodayBuchempfehlungen } from '@/lib/generated-content';
 import { founderProfile } from '@/lib/founder-profile';
+
+export const metadata: Metadata = {
+  title: 'Der Fluss des Lebens – Freie christliche Bibelforschung',
+  description: 'Freie christliche Bibelforschung mit Tageswort, Psalmen, Wochenthema, Thesen und gemeinsamen Fragen aus der Gemeinschaft.',
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    url: canonicalSiteUrl,
+    title: 'Der Fluss des Lebens – Freie christliche Bibelforschung',
+    description: 'Freie christliche Bibelforschung mit Tageswort, Psalmen, Wochenthema, Thesen und gemeinsamen Fragen aus der Gemeinschaft.',
+  },
+  twitter: {
+    title: 'Der Fluss des Lebens – Freie christliche Bibelforschung',
+    description: 'Freie christliche Bibelforschung mit Tageswort, Psalmen, Wochenthema, Thesen und gemeinsamen Fragen aus der Gemeinschaft.',
+  },
+};
 
 export default function HomePage() {
   const tageswort = getTodayTageswort();
