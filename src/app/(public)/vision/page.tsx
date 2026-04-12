@@ -98,18 +98,11 @@ export default function VisionPage() {
               <h2 className="text-3xl font-bold text-blue-800 mb-2">{founderProfile.name}</h2>
               <p className="text-sm font-semibold text-amber-600 mb-4">{founderProfile.role}</p>
               <div className="space-y-4 text-gray-600 leading-relaxed">
-                {founderProfile.visionParagraphs.map((paragraph) => (
-                  <p key={paragraph}>
-                    {paragraph.includes(founderProfile.book.title) ? (
-                      <>
-                        In meinem Buch <strong>{founderProfile.book.title}</strong>
-                        {paragraph.replace(`In meinem Buch ${founderProfile.book.title}`, '')}
-                      </>
-                    ) : (
-                      paragraph
-                    )}
-                  </p>
-                ))}
+                <p>{founderProfile.visionParagraphs.intro}</p>
+                <p>
+                  In meinem Buch <strong>{founderProfile.book.title}</strong> {founderProfile.visionParagraphs.book}
+                </p>
+                <p>{founderProfile.visionParagraphs.calling}</p>
               </div>
             </div>
 
@@ -133,7 +126,7 @@ export default function VisionPage() {
                 <h3 className="text-lg font-semibold text-blue-900">{founderProfile.book.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-gray-600">{founderProfile.book.subtitle}</p>
                 <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-900">
-                  Das Buchcover wird lokal ausgeliefert und dadurch stabil auf der Webseite angezeigt.
+                  {founderProfile.visionAside}
                 </p>
                 <a
                   href={founderProfile.book.amazonUrl}

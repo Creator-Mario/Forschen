@@ -272,8 +272,7 @@ export default function HomePage() {
                     {founderProfile.book.subtitle}
                   </p>
                   <p className="mt-4 rounded-xl bg-blue-50 px-4 py-3 text-sm leading-relaxed text-blue-800">
-                    Öffentlich positioniert: klare geistliche Haltung, schriftnahe Forschung und eine
-                    Plattform, die Vertrauen durch Inhalt statt durch Lautstärke gewinnt.
+                    {founderProfile.publicPositioning}
                   </p>
                 </div>
               </div>
