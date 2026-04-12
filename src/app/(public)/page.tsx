@@ -84,7 +84,7 @@ export default function HomePage() {
         <div className="max-w-6xl mx-auto px-4 py-16 md:py-20">
           <div className="mb-10 max-w-3xl">
             <p className="mb-3 text-sm font-semibold uppercase tracking-[0.22em] text-blue-500">
-              Vorstellung des Administrators
+              Vorstellung des Gründers
             </p>
             <h2 className="text-3xl font-bold text-blue-900 font-serif md:text-4xl">
               {founderProfile.name}
@@ -139,7 +139,7 @@ export default function HomePage() {
             <aside className="lg:border-l lg:border-blue-100 lg:pl-10">
               <div className="mx-auto max-w-[340px]">
                 <p className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-blue-500">
-                  Publikation des Administrators
+                  Publikation des Gründers
                 </p>
                 <div className="overflow-hidden rounded-[1.75rem] border border-blue-100 bg-white">
                   <div className="bg-gradient-to-br from-blue-50 via-white to-amber-50 p-5">

@@ -1,11 +1,11 @@
 export const founderProfile = {
   name: 'Mario Reiner Denzer',
-  role: 'Administrator und Gründer von Der Fluss des Lebens',
+  role: 'Gründer von Der Fluss des Lebens',
   tagline: 'Ein Ort für sorgfältige Bibelforschung, geistliche Reife und eine verantwortete Nachfolge Jesu.',
   shortBio:
     'Der Fluss des Lebens entstand aus dem Anliegen, einen verlässlichen Raum zu schaffen, in dem geistliche Fragen ernst genommen, biblische Texte gewissenhaft geprüft und Gespräche nicht von Selbstdarstellung bestimmt werden.',
   homeSummary: [
-    'Als Administrator und Gründer steht Mario Reiner Denzer für eine Plattform, die sich bewusst von oberflächlichen Debatten absetzt: schriftnah, ruhig und auf echte Prüfung ausgerichtet.',
+    'Als Gründer steht Mario Reiner Denzer für eine Plattform, die sich bewusst von oberflächlichen Debatten absetzt: schriftnah, ruhig und auf echte Prüfung ausgerichtet.',
     'Im Mittelpunkt steht nicht die Person des Leiters, sondern die Einladung, die Heilige Schrift eigenständig zu prüfen, Verantwortung im Glauben zu übernehmen und in geistlicher Mündigkeit zu wachsen.',
   ],
   visionParagraphs: {
@@ -27,6 +27,6 @@ export const founderProfile = {
     amazonUrl: 'https://www.amazon.de/dp/B0GW8FW5GM',
     imagePath: '/mario-reiner-denzer-book.svg',
     alt: 'Buchcover von Der Schmale Pfad der Mündigkeit von Mario Reiner Denzer',
-    ctaLabel: 'Zur Vision des Administrators',
+    ctaLabel: 'Zur Vision des Gründers',
   },
 } as const;

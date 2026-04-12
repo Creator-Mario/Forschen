@@ -659,7 +659,7 @@ describe('HomePage', () => {
     const { default: HomePage } = await import('@/app/(public)/page');
     render(React.createElement(HomePage));
     expect(screen.getByRole('heading', { name: /Der Fluss/i, level: 1 })).toBeInTheDocument();
-    expect(screen.getByText(/Vorstellung des Administrators/i)).toBeInTheDocument();
+    expect(screen.getByText(/Vorstellung des Gründers/i)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /Mario Reiner Denzer/i })).toBeInTheDocument();
     expect(screen.getByAltText(/qr-code zum teilen der website/i).getAttribute('src')).toContain('share-qr');
     expect(screen.getByText('Der Fluss des Lebens')).toBeInTheDocument();
@@ -668,6 +668,6 @@ describe('HomePage', () => {
     expect(screen.getByRole('link', { name: /QR-Code herunterladen/i })).toHaveAttribute('href', '/api/share-qr?format=png&download=1');
     expect(screen.getByRole('link', { name: /Auf WhatsApp teilen/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Auf Facebook teilen/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Zur Vision des Administrators/i })).toHaveAttribute('href', '/vision');
+    expect(screen.getByRole('link', { name: /Zur Vision des Gründers/i })).toHaveAttribute('href', '/vision');
   });
 });
