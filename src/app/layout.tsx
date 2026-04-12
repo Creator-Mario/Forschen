@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Script from 'next/script';
 
 import './globals.css';
 import Navbar from '@/components/Navbar';
@@ -83,8 +82,7 @@ export default function RootLayout({
     <html lang="de">
       <body className="font-sans flex flex-col min-h-screen text-gray-800">
         <SessionProvider>
-          <Script
-            id="website-structured-data"
+          <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteStructuredData) }}
           />
