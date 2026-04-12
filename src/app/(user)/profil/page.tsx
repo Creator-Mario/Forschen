@@ -2,6 +2,7 @@
 
 import ProtectedRoute from '@/components/ProtectedRoute';
 import UserAvatar from '@/components/UserAvatar';
+import { PASSWORD_MIN_LENGTH } from '@/lib/password-policy';
 import { useSession, signOut } from 'next-auth/react';
 import { useEffect, useState, FormEvent, ChangeEvent } from 'react';
 
@@ -337,7 +338,7 @@ export default function ProfilPage() {
                 value={newPassword}
                 onChange={e => setNewPassword(e.target.value)}
                 required
-                minLength={8}
+                minLength={PASSWORD_MIN_LENGTH}
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -351,7 +352,7 @@ export default function ProfilPage() {
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
                 required
-                minLength={8}
+                minLength={PASSWORD_MIN_LENGTH}
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>

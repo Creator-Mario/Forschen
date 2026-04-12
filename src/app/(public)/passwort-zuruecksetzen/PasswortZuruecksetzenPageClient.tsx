@@ -3,6 +3,7 @@
 import { useState, FormEvent, Suspense, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { PASSWORD_MIN_LENGTH, PASSWORD_MIN_LENGTH_MESSAGE } from '@/lib/password-policy';
 
 function ResetForm() {
   const searchParams = useSearchParams();
@@ -24,6 +25,11 @@ function ResetForm() {
 
     if (password !== confirm) {
       setError('Die Passwörter stimmen nicht überein.');
+      return;
+    }
+
+    if (password.length < PASSWORD_MIN_LENGTH || confirm.length < PASSWORD_MIN_LENGTH) {
+      setError(PASSWORD_MIN_LENGTH_MESSAGE);
       return;
     }
 
@@ -106,15 +112,15 @@ function ResetForm() {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Neues Passwort <span className="text-gray-400 font-normal">(min. 8 Zeichen)</span>
+                Neues Passwort <span className="text-gray-400 font-normal">(min. {PASSWORD_MIN_LENGTH} Zeichen)</span>
               </label>
               <input
                 id="password"
                 type="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
+                autoComplete="new-password"
                 required
-                minLength={8}
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="••••••••"
               />
@@ -129,8 +135,8 @@ function ResetForm() {
                 type="password"
                 value={confirm}
                 onChange={e => setConfirm(e.target.value)}
+                autoComplete="new-password"
                 required
-                minLength={8}
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="••••••••"
               />

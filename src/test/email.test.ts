@@ -13,6 +13,7 @@
  * in beforeEach, allowing per-test configuration without module cache issues.
  */
 import { describe, it, expect, vi, beforeAll, beforeEach, afterAll } from 'vitest';
+import fs from 'fs';
 
 // ─── Module-level Resend mock ─────────────────────────────────────────────────
 // Must be defined before any import so the hoisted vi.mock can close over it.
@@ -127,6 +128,21 @@ describe('sendEmail – address validation', () => {
     mockEmailSend.mockResolvedValue({ data: null, error: { name: 'validation_error', message: 'Invalid address', statusCode: 422 } });
     const result = await sendEmail({ to: 'user@example.com', subject: 'S', html: '<p>H</p>' });
     expect(result).toBe(false);
+  });
+
+  it('writes to the local dev outbox when RESEND_API_KEY is missing outside Vercel', async () => {
+    delete process.env.RESEND_API_KEY;
+    delete process.env.VERCEL;
+    vi.spyOn(fs, 'existsSync').mockReturnValue(false);
+    vi.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
+
+    const result = await sendEmail({ to: 'user@example.com', subject: 'Lokaler Test', html: '<p>Hi</p>' });
+
+    expect(result).toBe(true);
+    expect(mockEmailSend).not.toHaveBeenCalled();
+    expect(fs.writeFileSync).toHaveBeenCalledOnce();
+
+    process.env.RESEND_API_KEY = 'test-resend-key';
   });
 });
 

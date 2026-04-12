@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { getUserById, saveUser } from '@/lib/db';
+import { PASSWORD_MIN_LENGTH, PASSWORD_MIN_LENGTH_MESSAGE } from '@/lib/password-policy';
 import bcrypt from 'bcryptjs';
 
 export async function POST(req: NextRequest) {
@@ -13,8 +14,8 @@ export async function POST(req: NextRequest) {
   if (!currentPassword || !newPassword) {
     return NextResponse.json({ error: 'Alle Felder sind erforderlich.' }, { status: 400 });
   }
-  if (newPassword.length < 8) {
-    return NextResponse.json({ error: 'Das neue Passwort muss mindestens 8 Zeichen haben.' }, { status: 400 });
+  if (newPassword.length < PASSWORD_MIN_LENGTH) {
+    return NextResponse.json({ error: PASSWORD_MIN_LENGTH_MESSAGE.replace('Das Passwort', 'Das neue Passwort') }, { status: 400 });
   }
 
   const user = getUserById(session.user.id);

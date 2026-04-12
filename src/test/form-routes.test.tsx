@@ -242,6 +242,19 @@ describe('public form entry routes', () => {
     expect(screen.getByRole('button', { name: /passwort speichern/i })).toBeInTheDocument();
   });
 
+  it('shows a clear minimum-length error before submitting the reset form', async () => {
+    currentSearchParams = new URLSearchParams('token=reset-123');
+    const { default: PasswortZuruecksetzenPage } = await import('@/app/(public)/passwort-zuruecksetzen/page');
+    render(React.createElement(PasswortZuruecksetzenPage));
+
+    await userEvent.type(await screen.findByLabelText(/neues passwort/i), 'kurz12');
+    await userEvent.type(screen.getByLabelText(/passwort bestätigen/i), 'kurz12');
+    await userEvent.click(screen.getByRole('button', { name: /passwort speichern/i }));
+
+    expect(await screen.findByText(/mindestens 8 zeichen/i)).toBeInTheDocument();
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
   it('connects admin login and admin reset routes', async () => {
     const { default: AdminLoginPage } = await import('@/app/(admin)/admin-login/page');
     const { default: AdminResetPage } = await import('@/app/(admin)/admin-reset/page');
@@ -359,9 +372,9 @@ describe('protected user form routes and their entry links', () => {
     await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/videos?mine=1'));
   });
 
-  it('renders the intro form only for the verified click path with userId', async () => {
+  it('renders the intro form only for the verified click path with token', async () => {
     setUserSession();
-    currentSearchParams = new URLSearchParams('userId=u1');
+    currentSearchParams = new URLSearchParams('token=good-token');
     const { default: VorstellungPage } = await import('@/app/(user)/vorstellung/page');
 
     render(React.createElement(VorstellungPage));

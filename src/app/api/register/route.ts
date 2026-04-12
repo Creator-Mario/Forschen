@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { getUserByEmail, saveUser } from '@/lib/db';
 import { generateId, normalizeEmail } from '@/lib/utils';
 import { sendVerificationEmail } from '@/lib/email';
+import { PASSWORD_MIN_LENGTH, PASSWORD_MIN_LENGTH_MESSAGE } from '@/lib/password-policy';
 import crypto from 'crypto';
 
 export async function POST(req: NextRequest) {
@@ -16,8 +17,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Alle Felder sind erforderlich.' }, { status: 400 });
     }
 
-    if (password.length < 8) {
-      return NextResponse.json({ error: 'Das Passwort muss mindestens 8 Zeichen haben.' }, { status: 400 });
+    if (password.length < PASSWORD_MIN_LENGTH) {
+      return NextResponse.json({ error: PASSWORD_MIN_LENGTH_MESSAGE }, { status: 400 });
     }
 
     // Check if user exists

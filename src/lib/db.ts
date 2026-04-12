@@ -24,11 +24,25 @@ function readJson<T>(filename: string): T[] {
   return JSON.parse(content) as T[];
 }
 
+function writeJsonToLocalFile<T>(filename: string, data: T[]): void {
+  const filePath = path.join(DATA_DIR, filename);
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
+}
+
+function shouldUseGithubBackedStorage(): boolean {
+  if (!process.env.GITHUB_TOKEN) return false;
+  // Local shells (including CI/sandbox environments) often expose GITHUB_TOKEN
+  // for repository APIs, but app data should still be written to the checked-out
+  // JSON files there. Restrict GitHub-backed persistence to real Vercel runtime
+  // or an explicit opt-in override.
+  return process.env.VERCEL === '1' || process.env.ENABLE_GITHUB_DATA_SYNC === 'true';
+}
+
 async function writeJson<T>(filename: string, data: T[]): Promise<void> {
   // Update in-memory cache so this process instance sees the change immediately.
   memoryCache.set(filename, data as unknown[]);
 
-  if (process.env.GITHUB_TOKEN) {
+  if (shouldUseGithubBackedStorage()) {
     // Production (Vercel): commit data changes back to the GitHub repo via the API.
     // This way the JSON files in the repo are the persistent store across deployments.
     const { Octokit } = await import('@octokit/rest');
@@ -84,8 +98,7 @@ async function writeJson<T>(filename: string, data: T[]): Promise<void> {
     );
   } else {
     // Development: write directly to local filesystem.
-    const filePath = path.join(DATA_DIR, filename);
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
+    writeJsonToLocalFile(filename, data);
   }
 }
 

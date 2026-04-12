@@ -498,12 +498,27 @@ describe('GET /api/auth/verify-email', () => {
     vi.doMock('@/lib/db', () => ({ getUserByEmailToken: vi.fn().mockReturnValue(user), saveUser }));
     const { GET } = await import('@/app/api/auth/verify-email/route');
     const res = await GET(makeRequest('http://localhost/api/auth/verify-email?token=good-token'));
-    // Should redirect (3xx) to the login/intro page
-    expect(res.status).toBeGreaterThanOrEqual(200);
+    expect(res.status).toBe(307);
+    expect(res.headers.get('location')).toBe('http://localhost/vorstellung?token=good-token');
     expect(saveUser).toHaveBeenCalledOnce();
     const updatedUser = saveUser.mock.calls[0][0];
-    expect(updatedUser.emailToken).toBeUndefined();
-    expect(['email_verified', 'awaiting_admin_review']).toContain(updatedUser.status);
+    expect(updatedUser.emailToken).toBe('good-token');
+    expect(updatedUser.status).toBe('email_verified');
+  });
+
+  it('preserves the forwarded host when redirecting after verification', async () => {
+    const user = { id: 'u1', email: 'a@a.de', emailToken: 'good-token', status: 'pending_email', intro: null };
+    const saveUser = vi.fn().mockResolvedValue(undefined);
+    vi.doMock('@/lib/db', () => ({ getUserByEmailToken: vi.fn().mockReturnValue(user), saveUser }));
+    const { GET } = await import('@/app/api/auth/verify-email/route');
+    const res = await GET(makeRequest('http://localhost/api/auth/verify-email?token=good-token', {
+      headers: {
+        host: '127.0.0.1:3000',
+        'x-forwarded-host': '127.0.0.1:3000',
+        'x-forwarded-proto': 'http',
+      },
+    }));
+    expect(res.headers.get('location')).toBe('http://127.0.0.1:3000/vorstellung?token=good-token');
   });
 });
 

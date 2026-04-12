@@ -1,7 +1,9 @@
 import { withAuth } from 'next-auth/middleware';
+import { authSecret } from '@/lib/auth-secret';
 
 export default withAuth({
   pages: { signIn: '/login' },
+  secret: authSecret,
 });
 
 export const config = {

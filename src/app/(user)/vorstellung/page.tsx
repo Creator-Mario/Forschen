@@ -2,12 +2,13 @@
 
 import { useState, FormEvent, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-
-const MIN_LENGTH = 300;
+import { INTRO_MAX_LENGTH, INTRO_MIN_LENGTH, getIntroLengthError } from '@/lib/intro-validation';
 
 function VorstellungForm() {
   const searchParams = useSearchParams();
+  const token = searchParams.get('token') || '';
   const userId = searchParams.get('userId') || '';
+  const introIdentity = token || userId;
 
   const [motivation, setMotivation] = useState('');
   const [vorstellung, setVorstellung] = useState('');
@@ -19,20 +20,16 @@ function VorstellungForm() {
     e.preventDefault();
     setError('');
 
-    if (motivation.trim().length < MIN_LENGTH) {
-      setError(`Das Motivationsfeld muss mindestens ${MIN_LENGTH} Zeichen enthalten. (Aktuell: ${motivation.trim().length})`);
-      return;
-    }
-    if (vorstellung.trim().length < MIN_LENGTH) {
-      setError(`Das Vorstellungsfeld muss mindestens ${MIN_LENGTH} Zeichen enthalten. (Aktuell: ${vorstellung.trim().length})`);
-      return;
-    }
+    const motivationError = getIntroLengthError('Motivationsfeld', motivation);
+    if (motivationError) return setError(`${motivationError} (Aktuell: ${motivation.trim().length})`);
+    const vorstellungError = getIntroLengthError('Vorstellungsfeld', vorstellung);
+    if (vorstellungError) return setError(`${vorstellungError} (Aktuell: ${vorstellung.trim().length})`);
 
     setLoading(true);
     const res = await fetch('/api/user/intro', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, motivation, vorstellung }),
+      body: JSON.stringify({ token: token || undefined, userId: userId || undefined, motivation, vorstellung }),
     });
     const data = await res.json();
     setLoading(false);
@@ -44,7 +41,7 @@ function VorstellungForm() {
     }
   }
 
-  if (!userId) {
+  if (!introIdentity) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center px-4">
         <div className="text-center">
@@ -83,7 +80,7 @@ function VorstellungForm() {
           <h1 className="text-2xl font-bold text-blue-800 mb-2">Willkommen bei Der Fluss des Lebens</h1>
           <p className="text-gray-500 text-sm max-w-lg mx-auto">
             Bevor du der Gemeinschaft beitreten kannst, möchten wir dich kennenlernen.
-            Bitte beantworte die folgenden zwei Fragen. <strong>Beide Felder sind Pflicht</strong> (mindestens 300 Zeichen).
+            Bitte beantworte die folgenden zwei Fragen. <strong>Beide Felder sind Pflicht</strong> (mindestens {INTRO_MIN_LENGTH}, höchstens {INTRO_MAX_LENGTH} Zeichen).
           </p>
         </div>
 
@@ -97,18 +94,19 @@ function VorstellungForm() {
             <label className="block text-sm font-semibold text-gray-800 mb-1">
               1. Warum möchtest du auf der Plattform <em>Der Fluss des Lebens</em> mitmachen?
             </label>
-            <p className="text-xs text-gray-500 mb-2">Mindestens 300 Zeichen. Aktuell: {motivation.trim().length}</p>
+            <p className="text-xs text-gray-500 mb-2">Zwischen {INTRO_MIN_LENGTH} und {INTRO_MAX_LENGTH} Zeichen. Aktuell: {motivation.trim().length}</p>
             <textarea
               value={motivation}
               onChange={e => setMotivation(e.target.value)}
               required
               rows={6}
+              maxLength={INTRO_MAX_LENGTH}
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
               placeholder="Beschreibe deine Motivation, warum du dieser Gemeinschaft beitreten möchtest…"
             />
-            {motivation.trim().length > 0 && motivation.trim().length < MIN_LENGTH && (
+            {motivation.trim().length > 0 && motivation.trim().length < INTRO_MIN_LENGTH && (
               <p className="text-xs text-orange-600 mt-1">
-                Noch {MIN_LENGTH - motivation.trim().length} Zeichen erforderlich
+                Noch {INTRO_MIN_LENGTH - motivation.trim().length} Zeichen erforderlich
               </p>
             )}
           </div>
@@ -117,18 +115,19 @@ function VorstellungForm() {
             <label className="block text-sm font-semibold text-gray-800 mb-1">
               2. Stelle dich bitte den anderen Mitgliedern kurz vor.
             </label>
-            <p className="text-xs text-gray-500 mb-2">Mindestens 300 Zeichen. Aktuell: {vorstellung.trim().length}</p>
+            <p className="text-xs text-gray-500 mb-2">Zwischen {INTRO_MIN_LENGTH} und {INTRO_MAX_LENGTH} Zeichen. Aktuell: {vorstellung.trim().length}</p>
             <textarea
               value={vorstellung}
               onChange={e => setVorstellung(e.target.value)}
               required
               rows={6}
+              maxLength={INTRO_MAX_LENGTH}
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
               placeholder="Erzähle etwas über dich – deinen Hintergrund, deine Interessen, wie du zum Glauben gekommen bist…"
             />
-            {vorstellung.trim().length > 0 && vorstellung.trim().length < MIN_LENGTH && (
+            {vorstellung.trim().length > 0 && vorstellung.trim().length < INTRO_MIN_LENGTH && (
               <p className="text-xs text-orange-600 mt-1">
-                Noch {MIN_LENGTH - vorstellung.trim().length} Zeichen erforderlich
+                Noch {INTRO_MIN_LENGTH - vorstellung.trim().length} Zeichen erforderlich
               </p>
             )}
           </div>
@@ -141,7 +140,13 @@ function VorstellungForm() {
 
           <button
             type="submit"
-            disabled={loading || motivation.trim().length < MIN_LENGTH || vorstellung.trim().length < MIN_LENGTH}
+            disabled={
+              loading ||
+              motivation.trim().length < INTRO_MIN_LENGTH ||
+              motivation.trim().length > INTRO_MAX_LENGTH ||
+              vorstellung.trim().length < INTRO_MIN_LENGTH ||
+              vorstellung.trim().length > INTRO_MAX_LENGTH
+            }
             className="w-full bg-blue-800 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
           >
             {loading ? 'Wird gespeichert…' : 'Vorstellung einreichen'}
