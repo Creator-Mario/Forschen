@@ -27,7 +27,7 @@ export default function Navbar() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex min-h-20 items-center justify-between gap-4 py-3">
+        <div className="flex h-20 items-center justify-between gap-4 py-3">
           {/* Brand / Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <Logo size={52} />
