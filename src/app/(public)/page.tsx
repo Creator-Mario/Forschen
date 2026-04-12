@@ -12,6 +12,7 @@ import Logo from '@/components/Logo';
 import { canonicalSiteUrl, siteName } from '@/lib/config';
 import { getTodayTageswort, getCurrentWochenthema, getApprovedThesen } from '@/lib/db';
 import { getTodayPsalmThema, getTodayGlaubenHeuteThema, getTodayBuchempfehlungen } from '@/lib/generated-content';
+import { founderProfile } from '@/lib/founder-profile';
 
 export default function HomePage() {
   const tageswort = getTodayTageswort();
@@ -210,6 +211,75 @@ export default function HomePage() {
             ))}
           </div>
         </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 py-12">
+        <section className="overflow-hidden rounded-[2rem] border border-blue-100 bg-white shadow-lg">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr]">
+            <div className="p-8 md:p-10">
+              <p className="mb-3 text-sm font-semibold uppercase tracking-[0.22em] text-blue-500">
+                Der Gründer
+              </p>
+              <h2 className="mb-2 text-3xl font-bold text-blue-900 font-serif">
+                {founderProfile.name}
+              </h2>
+              <p className="mb-5 text-sm font-semibold text-amber-600">
+                {founderProfile.role}
+              </p>
+              <p className="mb-5 max-w-2xl text-lg leading-relaxed text-gray-700">
+                {founderProfile.tagline}
+              </p>
+              <div className="space-y-4 text-sm leading-relaxed text-gray-600">
+                <p>{founderProfile.shortBio}</p>
+                {founderProfile.homeSummary.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Link
+                  href="/vision"
+                  className="inline-flex items-center rounded-full bg-blue-800 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+                >
+                  {founderProfile.book.ctaLabel}
+                </Link>
+                <Link
+                  href="/registrieren"
+                  className="inline-flex items-center rounded-full border border-amber-300 px-6 py-3 text-sm font-semibold text-amber-700 transition-colors hover:bg-amber-50"
+                >
+                  Kostenlos registrieren
+                </Link>
+              </div>
+            </div>
+
+            <div className="border-t border-blue-100 bg-gradient-to-br from-blue-50 via-white to-amber-50 p-8 lg:border-l lg:border-t-0">
+              <div className="mx-auto max-w-[320px]">
+                <p className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-blue-500">
+                  Buch des Gründers
+                </p>
+                <div className="rounded-[1.5rem] border border-blue-100 bg-white p-4 shadow-md">
+                  <Image
+                    src={founderProfile.book.imagePath}
+                    alt={founderProfile.book.alt}
+                    width={320}
+                    height={462}
+                    className="h-auto w-full rounded-xl border border-blue-100 shadow-sm"
+                  />
+                  <h3 className="mt-4 text-lg font-semibold text-blue-900">
+                    {founderProfile.book.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                    {founderProfile.book.subtitle}
+                  </p>
+                  <p className="mt-4 rounded-xl bg-blue-50 px-4 py-3 text-sm leading-relaxed text-blue-800">
+                    Öffentlich positioniert: klare geistliche Haltung, schriftnahe Forschung und eine
+                    Plattform, die Vertrauen durch Inhalt statt durch Lautstärke gewinnt.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
 
       {/* ── Recent Thesen ── */}
