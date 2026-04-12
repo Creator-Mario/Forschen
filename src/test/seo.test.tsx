@@ -88,4 +88,12 @@ describe('SEO metadata', () => {
     );
     expect(sitemap().some((entry) => entry.url.endsWith('/registrieren'))).toBe(false);
   });
+
+  it('treats headless audit agents as html-limited bots for blocking metadata', async () => {
+    const nextConfig = (await import('../../next.config.mjs')).default;
+
+    expect(nextConfig.htmlLimitedBots).toBeInstanceOf(RegExp);
+    expect(nextConfig.htmlLimitedBots?.test('Mozilla/5.0 HeadlessChrome/146.0.0.0 Safari/537.36')).toBe(true);
+    expect(nextConfig.htmlLimitedBots?.test('Mozilla/5.0 Chrome-Lighthouse')).toBe(true);
+  });
 });
