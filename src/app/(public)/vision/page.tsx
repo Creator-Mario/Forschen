@@ -1,15 +1,9 @@
 export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import BibleLink from '@/components/BibleLink';
-
-const authorProfile = {
-  name: 'Mario Reiner Denzer',
-  amazonUrl: 'https://www.amazon.de/dp/B0GW8FW5GM',
-  coverImageUrl: 'https://images-eu.ssl-images-amazon.com/images/P/B0GW8FW5GM.01.LZZZZZZZ.jpg',
-  bookTitle: 'Der Schmale Pfad der Mündigkeit',
-  bookSubtitle: 'Eine Reise zur Freiheit der Nachfolge von der Enge der Organisation zur Weite des Geistes',
-};
+import { founderProfile } from '@/lib/founder-profile';
 
 const sections = [
   {
@@ -101,52 +95,41 @@ export default function VisionPage() {
           <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
             <div className="lg:w-2/3">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-500 mb-3">Über mich</p>
-              <h2 className="text-3xl font-bold text-blue-800 mb-4">{authorProfile.name}</h2>
+              <h2 className="text-3xl font-bold text-blue-800 mb-2">{founderProfile.name}</h2>
+              <p className="text-sm font-semibold text-amber-600 mb-4">{founderProfile.role}</p>
               <div className="space-y-4 text-gray-600 leading-relaxed">
+                <p>{founderProfile.visionParagraphs.intro}</p>
                 <p>
-                  Diese Plattform ist aus meiner persönlichen Suche nach einer ehrlichen, freien und tiefen
-                  Nachfolge Jesu entstanden. Ich wollte einen Ort schaffen, an dem geistliche Fragen nicht
-                  übergangen werden und in dem Bibelforschung wichtiger ist als Selbstdarstellung.
+                  In meinem Buch <strong>{founderProfile.book.title}</strong> {founderProfile.visionParagraphs.book}
                 </p>
-                <p>
-                  In meinem Buch <strong>{authorProfile.bookTitle}</strong> beschreibe ich den Weg von
-                  Verletzungen und Enttäuschungen innerhalb religiöser Strukturen hin zu einer direkteren,
-                  reiferen und verantwortlichen Beziehung zu Jesus Christus.
-                </p>
-                <p>
-                  Der Fluss des Lebens ist deshalb nicht einfach ein Projekt, sondern Ausdruck dieser
-                  Berufung: Menschen zu ermutigen, die Heilige Schrift ernst zu nehmen, selbst zu prüfen und
-                  im Glauben mündig zu werden.
-                </p>
+                <p>{founderProfile.visionParagraphs.calling}</p>
               </div>
             </div>
 
             <aside className="lg:w-1/3">
               <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4 shadow-sm">
                 <a
-                  href={authorProfile.amazonUrl}
+                  href={founderProfile.book.amazonUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block"
-                  aria-label={`${authorProfile.bookTitle} auf Amazon ansehen`}
+                  aria-label={`${founderProfile.book.title} auf Amazon ansehen`}
                 >
-                  <object
-                    data={authorProfile.coverImageUrl}
-                    type="image/jpeg"
-                    aria-label={`Buchcover von ${authorProfile.bookTitle}`}
-                    className="mx-auto mb-4 aspect-[2/3] w-full max-w-[260px] overflow-hidden rounded-xl border border-blue-200 bg-white object-cover shadow-md"
-                  >
-                    <div className="mx-auto flex aspect-[2/3] w-full max-w-[260px] flex-col justify-end rounded-xl border border-blue-200 bg-gradient-to-b from-blue-900 via-blue-700 to-amber-500 p-5 text-white shadow-md">
-                      <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-100">Buch</p>
-                      <h3 className="mt-3 text-2xl font-bold leading-tight">{authorProfile.bookTitle}</h3>
-                      <p className="mt-3 text-sm leading-relaxed text-blue-50">{authorProfile.name}</p>
-                    </div>
-                  </object>
+                  <Image
+                    src={founderProfile.book.imagePath}
+                    alt={founderProfile.book.alt}
+                    width={260}
+                    height={375}
+                    className="mx-auto mb-4 aspect-[2/3] w-full max-w-[260px] rounded-xl border border-blue-200 bg-white object-cover shadow-md"
+                  />
                 </a>
-                <h3 className="text-lg font-semibold text-blue-900">{authorProfile.bookTitle}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-gray-600">{authorProfile.bookSubtitle}</p>
+                <h3 className="text-lg font-semibold text-blue-900">{founderProfile.book.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-gray-600">{founderProfile.book.subtitle}</p>
+                <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-900">
+                  {founderProfile.visionAside}
+                </p>
                 <a
-                  href={authorProfile.amazonUrl}
+                  href={founderProfile.book.amazonUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-4 inline-flex items-center rounded-full bg-blue-800 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"

@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1300" role="img" aria-labelledby="title desc">
+  <title id="title">Der Schmale Pfad der Mündigkeit</title>
+  <desc id="desc">Stilisiertes Buchcover von Mario Reiner Denzer in Bordeaux, Gold und Creme.</desc>
+  <defs>
+    <linearGradient id="coverBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7d1630"/>
+      <stop offset="100%" stop-color="#6e1028"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="1300" fill="url(#coverBg)"/>
+  <rect x="55" y="55" width="790" height="1190" fill="none" stroke="#d6a23d" stroke-width="3"/>
+  <rect x="75" y="75" width="750" height="1150" fill="none" stroke="#d6a23d" stroke-width="2"/>
+  <text x="450" y="170" text-anchor="middle" font-size="42" font-family="Georgia, 'Times New Roman', serif" fill="#ffffff" font-weight="700" letter-spacing="1.5">
+    DER SCHMALE PFAD
+  </text>
+  <text x="450" y="228" text-anchor="middle" font-size="42" font-family="Georgia, 'Times New Roman', serif" fill="#ffffff" font-weight="700" letter-spacing="1.5">
+    DER MÜNDIGKEIT
+  </text>
+  <line x1="320" y1="275" x2="580" y2="275" stroke="#d6a23d" stroke-width="4"/>
+  <circle cx="450" cy="275" r="8" fill="#d6a23d"/>
+  <text x="450" y="360" text-anchor="middle" font-size="28" font-family="Georgia, serif" fill="#f1e6d0" font-style="italic">
+    Eine Reise zur Freiheit der Nachfolge
+  </text>
+  <text x="450" y="398" text-anchor="middle" font-size="28" font-family="Georgia, serif" fill="#f1e6d0" font-style="italic">
+    von der Enge der Organisation
+  </text>
+  <text x="450" y="436" text-anchor="middle" font-size="28" font-family="Georgia, serif" fill="#f1e6d0" font-style="italic">
+    zur Weite in Christus
+  </text>
+  <rect x="170" y="505" width="560" height="320" fill="#f4ecdc" stroke="#d2c3a6" stroke-width="2"/>
+  <line x1="190" y1="665" x2="710" y2="665" stroke="#b8b1a3" stroke-width="3"/>
+  <g stroke="#2f3136" stroke-width="4" fill="none" opacity="0.9">
+    <path d="M420 800 L480 610 L540 800"/>
+    <path d="M450 610 L450 800"/>
+    <path d="M470 610 L470 800"/>
+    <path d="M490 610 L490 800"/>
+    <path d="M430 645 L510 645"/>
+    <path d="M445 610 L495 610 L485 665 L455 665 Z"/>
+  </g>
+  <g stroke="#d8cfbe" stroke-width="2" opacity="0.8">
+    <path d="M195 795 L195 840"/>
+    <path d="M208 785 L208 835"/>
+    <path d="M222 800 L222 850"/>
+    <path d="M237 778 L237 838"/>
+    <path d="M252 790 L252 842"/>
+    <path d="M268 776 L268 836"/>
+    <path d="M286 787 L286 845"/>
+    <path d="M304 781 L304 837"/>
+    <path d="M322 793 L322 848"/>
+    <path d="M340 779 L340 840"/>
+    <path d="M558 790 L558 845"/>
+    <path d="M575 780 L575 836"/>
+    <path d="M592 792 L592 850"/>
+    <path d="M610 778 L610 838"/>
+    <path d="M628 786 L628 844"/>
+    <path d="M646 781 L646 839"/>
+    <path d="M664 792 L664 846"/>
+    <path d="M682 780 L682 835"/>
+    <path d="M700 788 L700 843"/>
+  </g>
+  <line x1="330" y1="878" x2="570" y2="878" stroke="#d6a23d" stroke-width="4"/>
+  <circle cx="450" cy="878" r="8" fill="#d6a23d"/>
+  <text x="450" y="975" text-anchor="middle" font-size="34" font-family="Georgia, serif" fill="#d6a23d">
+    Mario Reiner Denzer
+  </text>
+  <text x="450" y="1175" text-anchor="middle" font-size="26" font-family="Georgia, serif" fill="#ffffff">
+    Independently published
+  </text>
+</svg>
