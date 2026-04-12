@@ -595,7 +595,9 @@ describe('POST /api/admin/moderate', () => {
     expect(saveForschung.mock.calls[0][0].status).toBe('published');
   });
 
-  it('rejects publishing videos without a wochenthema', async () => {
+  it('publishes videos without requiring a wochenthema', async () => {
+    const saveVideo = vi.fn().mockResolvedValue(undefined);
+    const saveAdminLog = vi.fn().mockResolvedValue(undefined);
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(ADMIN_SESSION) }));
     vi.doMock('@/lib/db', () => ({
       getThesen: vi.fn().mockReturnValue([]),
@@ -605,19 +607,21 @@ describe('POST /api/admin/moderate', () => {
       getGebete: vi.fn().mockReturnValue([]),
       saveGebet: vi.fn(),
       getVideos: vi.fn().mockReturnValue([{ id: 'v1', userId: 'u1', title: 'Vid', status: 'review' }]),
-      saveVideo: vi.fn(),
+      saveVideo,
       getAktionen: vi.fn().mockReturnValue([]),
       saveAktion: vi.fn(),
       getBuchempfehlungen: vi.fn().mockReturnValue([]),
       saveBuchempfehlung: vi.fn(),
       getUserById: vi.fn().mockReturnValue(null),
       deleteContentItem: vi.fn(),
-      saveAdminLog: vi.fn(),
+      saveAdminLog,
     }));
     vi.doMock('@/lib/email', () => ({ sendAdminMessageEmail: vi.fn() }));
     const { POST } = await import('@/app/api/admin/moderate/route');
     const res = await POST(makeJsonRequest('http://localhost/api/admin/moderate', { type: 'video', id: 'v1', status: 'published' }));
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(200);
+    expect(saveVideo.mock.calls[0][0].status).toBe('published');
+    expect(saveVideo.mock.calls[0][0].wochenthemaId).toBeUndefined();
   });
 
   it('sends question_to_user email when applicable', async () => {
