@@ -37,8 +37,17 @@ export default function NeueFragestellungPage() {
       <div className="max-w-2xl mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold text-blue-800 mb-2">Frage an die Gemeinschaft stellen</h1>
         <p className="text-gray-500 mb-8">
-          Formuliere deine Fragestellung so, dass andere Mitglieder gezielt darauf eingehen können.
+          Formuliere deine Fragestellung klar, damit andere Mitglieder gezielt und hilfreich darauf eingehen können.
         </p>
+
+        <div className="mb-6 rounded-2xl border border-blue-100 bg-blue-50 px-5 py-4">
+          <h2 className="font-semibold text-blue-900 mb-2">Hinweise für eine gute Frage</h2>
+          <ul className="space-y-1 text-sm text-gray-700">
+            <li>• Nenne das eigentliche Anliegen möglichst präzise.</li>
+            <li>• Beschreibe den Hintergrund nur so ausführlich wie nötig.</li>
+            <li>• Wenn es passt, füge einen Bibelbezug oder eine konkrete Beobachtung hinzu.</li>
+          </ul>
+        </div>
 
         <div className="bg-white rounded-xl shadow-md p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -50,7 +59,7 @@ export default function NeueFragestellungPage() {
                 onChange={e => setTitle(e.target.value)}
                 required
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Worum geht es in deiner Frage?"
+                placeholder="z. B. Wie ist dieser Vers im Zusammenhang zu verstehen?"
               />
             </div>
 
@@ -62,7 +71,7 @@ export default function NeueFragestellungPage() {
                 required
                 rows={8}
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                placeholder="Beschreibe deine Frage, den Hintergrund und was du von der Gemeinschaft hören möchtest…"
+                placeholder="Beschreibe deine Frage, den Kontext und was du von der Gemeinschaft hören möchtest…"
               />
             </div>
 
