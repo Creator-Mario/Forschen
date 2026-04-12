@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import type { Video } from '@/types';
 import Link from 'next/link';
 import { formatDate, getStatusColor, getStatusLabel } from '@/lib/utils';
-import { useSearchParams } from 'next/navigation';
 
 function isVisibleVideo(status: string) {
   return status === 'approved' || status === 'published';
@@ -16,12 +15,17 @@ function sortNewestFirst(a: Video, b: Video) {
 }
 
 export default function MeineVideosPage() {
-  const searchParams = useSearchParams();
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showSubmittedNotice, setShowSubmittedNotice] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      setShowSubmittedNotice(params.get('submitted') === '1');
+    }
+
     fetch('/api/videos?mine=1')
       .then(async r => {
         if (!r.ok) {
@@ -42,7 +46,6 @@ export default function MeineVideosPage() {
 
   const visibleVideos = videos.filter(video => isVisibleVideo(video.status)).sort(sortNewestFirst);
   const reviewVideos = videos.filter(video => !isVisibleVideo(video.status)).sort(sortNewestFirst);
-  const showSubmittedNotice = searchParams.get('submitted') === '1';
 
   function renderVideoCard(v: Video) {
     const safeHref =
