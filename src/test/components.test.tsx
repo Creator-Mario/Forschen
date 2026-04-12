@@ -76,6 +76,20 @@ describe('QrShareActions', () => {
     expect(link).toHaveAttribute('href', '/api/share-qr?format=png&download=1');
     expect(link).toHaveAttribute('download', 'fluss-des-lebens-qr-code.png');
   });
+
+  it('renders direct WhatsApp and Facebook share links', async () => {
+    const { default: QrShareActions } = await import('@/components/QrShareActions');
+    render(React.createElement(QrShareActions, { siteUrl: 'https://flussdeslebens.live' }));
+
+    expect(screen.getByRole('link', { name: /Auf WhatsApp teilen/i })).toHaveAttribute(
+      'href',
+      'https://wa.me/?text=Schau%20dir%20diese%20Webseite%20an%20und%20teile%20den%20QR-Code%20gern%20weiter.%20https%3A%2F%2Fflussdeslebens.live',
+    );
+    expect(screen.getByRole('link', { name: /Auf Facebook teilen/i })).toHaveAttribute(
+      'href',
+      'https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fflussdeslebens.live',
+    );
+  });
 });
 
 describe('Footer', () => {
