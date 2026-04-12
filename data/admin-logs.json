@@ -280,5 +280,13 @@
     "targetType": "forschung",
     "targetId": "forschung-1775981659749-m6q4vhq47",
     "createdAt": "2026-04-12T08:17:09.558Z"
+  },
+  {
+    "id": "log-1776036386654-050n24wfd",
+    "adminId": "admin-001",
+    "action": "user_hard_delete",
+    "targetType": "user",
+    "targetId": "user-1776003495631-r8nor0cnz",
+    "createdAt": "2026-04-12T23:26:26.654Z"
   }
 ]
