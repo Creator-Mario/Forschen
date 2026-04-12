@@ -246,6 +246,8 @@ describe('db – saveUser (local fs write)', () => {
   beforeEach(() => {
     vi.resetModules();
     delete process.env.GITHUB_TOKEN;
+    delete process.env.VERCEL;
+    delete process.env.ENABLE_GITHUB_DATA_SYNC;
     vi.spyOn(fs, 'existsSync').mockReturnValue(true);
     vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify([]));
     vi.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
@@ -255,6 +257,14 @@ describe('db – saveUser (local fs write)', () => {
   it('calls writeFileSync when no GITHUB_TOKEN is set', async () => {
     const { saveUser } = await import('@/lib/db');
     const user = { id: 'u99', email: 'test@test.de', name: 'Test', role: 'USER' as const, status: 'active' as const, active: true, createdAt: '2024-01-01', password: 'hash' };
+    await saveUser(user);
+    expect(fs.writeFileSync).toHaveBeenCalled();
+  });
+
+  it('still writes locally when a generic GITHUB_TOKEN is present outside Vercel', async () => {
+    process.env.GITHUB_TOKEN = 'test-token';
+    const { saveUser } = await import('@/lib/db');
+    const user = { id: 'u100', email: 'local@test.de', name: 'Local', role: 'USER' as const, status: 'active' as const, active: true, createdAt: '2024-01-01', password: 'hash' };
     await saveUser(user);
     expect(fs.writeFileSync).toHaveBeenCalled();
   });
@@ -382,6 +392,7 @@ describe('db – deleteUserAccount', () => {
   beforeEach(() => {
     vi.resetModules();
     delete process.env.GITHUB_TOKEN;
+    delete process.env.VERCEL;
     vi.spyOn(fs, 'existsSync').mockReturnValue(true);
     vi.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
     vi.spyOn(fs, 'readFileSync').mockImplementation((p) => {
@@ -398,7 +409,10 @@ describe('db – deleteUserAccount', () => {
       return JSON.stringify([]);
     });
   });
-  afterEach(() => vi.restoreAllMocks());
+  afterEach(() => {
+    delete process.env.VERCEL;
+    vi.restoreAllMocks();
+  });
 
   it('removes the user and their content from all collections', async () => {
     const { deleteUserAccount } = await import('@/lib/db');
@@ -456,6 +470,7 @@ describe('db – deleteUserAccount', () => {
 
   it('writes hard-delete updates sequentially when using GitHub-backed storage', async () => {
     process.env.GITHUB_TOKEN = 'test-token';
+    process.env.VERCEL = '1';
     // users, thesen, forschung, gebete, videos, aktionen, buchempfehlungen, messages, fragestellungen
     const EXPECTED_DELETION_FILE_COUNT = 9;
 

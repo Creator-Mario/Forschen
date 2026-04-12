@@ -27,6 +27,11 @@ function ResetForm() {
       return;
     }
 
+    if (password.length < 8 || confirm.length < 8) {
+      setError('Das Passwort muss mindestens 8 Zeichen haben.');
+      return;
+    }
+
     setLoading(true);
     console.info('[passwort-zuruecksetzen] Submitting password reset. Token present:', !!token);
 
@@ -113,6 +118,7 @@ function ResetForm() {
                 type="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
+                autoComplete="new-password"
                 required
                 minLength={8}
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -129,6 +135,7 @@ function ResetForm() {
                 type="password"
                 value={confirm}
                 onChange={e => setConfirm(e.target.value)}
+                autoComplete="new-password"
                 required
                 minLength={8}
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"

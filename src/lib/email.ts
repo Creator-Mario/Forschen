@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { Resend } from 'resend';
 import {
   siteName as SITE_NAME,
@@ -35,6 +37,30 @@ function isDeliverableEmail(address: string): boolean {
 /** Returns the canonical live URL used inside outbound e-mails. */
 function getBaseUrl(): string {
   return CANONICAL_SITE_URL;
+}
+
+const LOCAL_DEV_EMAIL_OUTBOX_PATH = path.join('/tmp', 'forschen-dev-email-outbox.json');
+
+function canUseLocalDevEmailOutbox(): boolean {
+  return !process.env.RESEND_API_KEY && process.env.VERCEL !== '1';
+}
+
+function appendLocalDevEmail(message: {
+  to: string;
+  subject: string;
+  html: string;
+  text?: string;
+}): void {
+  const existing = fs.existsSync(LOCAL_DEV_EMAIL_OUTBOX_PATH)
+    ? JSON.parse(fs.readFileSync(LOCAL_DEV_EMAIL_OUTBOX_PATH, 'utf-8')) as unknown[]
+    : [];
+
+  existing.push({
+    ...message,
+    createdAt: new Date().toISOString(),
+  });
+
+  fs.writeFileSync(LOCAL_DEV_EMAIL_OUTBOX_PATH, JSON.stringify(existing, null, 2), 'utf-8');
 }
 
 let _resend: Resend | null = null;
@@ -81,6 +107,12 @@ export async function sendEmail({
   if (!isDeliverableEmail(to)) {
     console.error('[email] Skipping send – invalid or undeliverable address:', JSON.stringify({ to, subject }));
     return false;
+  }
+
+  if (canUseLocalDevEmailOutbox()) {
+    appendLocalDevEmail({ to, subject, html, text });
+    console.info('[email] RESEND_API_KEY missing – wrote e-mail to local dev outbox:', LOCAL_DEV_EMAIL_OUTBOX_PATH);
+    return true;
   }
 
   try {

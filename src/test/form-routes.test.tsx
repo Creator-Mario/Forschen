@@ -242,6 +242,19 @@ describe('public form entry routes', () => {
     expect(screen.getByRole('button', { name: /passwort speichern/i })).toBeInTheDocument();
   });
 
+  it('shows a clear minimum-length error before submitting the reset form', async () => {
+    currentSearchParams = new URLSearchParams('token=reset-123');
+    const { default: PasswortZuruecksetzenPage } = await import('@/app/(public)/passwort-zuruecksetzen/page');
+    render(React.createElement(PasswortZuruecksetzenPage));
+
+    await userEvent.type(await screen.findByLabelText(/neues passwort/i), 'kurz12');
+    await userEvent.type(screen.getByLabelText(/passwort bestätigen/i), 'kurz12');
+    await userEvent.click(screen.getByRole('button', { name: /passwort speichern/i }));
+
+    expect(await screen.findByText(/mindestens 8 zeichen/i)).toBeInTheDocument();
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
   it('connects admin login and admin reset routes', async () => {
     const { default: AdminLoginPage } = await import('@/app/(admin)/admin-login/page');
     const { default: AdminResetPage } = await import('@/app/(admin)/admin-reset/page');

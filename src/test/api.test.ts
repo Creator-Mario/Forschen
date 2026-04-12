@@ -505,6 +505,21 @@ describe('GET /api/auth/verify-email', () => {
     expect(updatedUser.emailToken).toBe('good-token');
     expect(updatedUser.status).toBe('email_verified');
   });
+
+  it('preserves the forwarded host when redirecting after verification', async () => {
+    const user = { id: 'u1', email: 'a@a.de', emailToken: 'good-token', status: 'pending_email', intro: null };
+    const saveUser = vi.fn().mockResolvedValue(undefined);
+    vi.doMock('@/lib/db', () => ({ getUserByEmailToken: vi.fn().mockReturnValue(user), saveUser }));
+    const { GET } = await import('@/app/api/auth/verify-email/route');
+    const res = await GET(makeRequest('http://localhost/api/auth/verify-email?token=good-token', {
+      headers: {
+        host: '127.0.0.1:3000',
+        'x-forwarded-host': '127.0.0.1:3000',
+        'x-forwarded-proto': 'http',
+      },
+    }));
+    expect(res.headers.get('location')).toBe('http://127.0.0.1:3000/vorstellung?token=good-token');
+  });
 });
 
 // ─── /api/auth/forgot-password ────────────────────────────────────────────────

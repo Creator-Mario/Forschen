@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserByEmailToken, saveUser } from '@/lib/db';
 
+function buildRedirectUrl(req: NextRequest, pathnameWithQuery: string): URL {
+  const forwardedProto = req.headers.get('x-forwarded-proto')?.trim();
+  const forwardedHost = req.headers.get('x-forwarded-host')?.trim();
+  const host = forwardedHost || req.headers.get('host')?.trim() || req.nextUrl.host;
+  const protocol = forwardedProto || req.nextUrl.protocol.replace(/:$/, '') || 'https';
+  return new URL(pathnameWithQuery, `${protocol}://${host}`);
+}
+
 export async function GET(req: NextRequest) {
   const token = req.nextUrl.searchParams.get('token');
   if (!token) {
@@ -16,7 +24,7 @@ export async function GET(req: NextRequest) {
     const dest = user.status === 'email_verified'
       ? `/vorstellung${token ? `?token=${encodeURIComponent(token)}` : ''}`
       : '/login';
-    return NextResponse.redirect(new URL(dest, req.url));
+    return NextResponse.redirect(buildRedirectUrl(req, dest));
   }
 
   // Mark email as verified and keep the token until the intro is submitted so
@@ -28,5 +36,5 @@ export async function GET(req: NextRequest) {
   });
 
   // Redirect to mandatory intro form
-  return NextResponse.redirect(new URL(`/vorstellung?token=${encodeURIComponent(token)}`, req.url));
+  return NextResponse.redirect(buildRedirectUrl(req, `/vorstellung?token=${encodeURIComponent(token)}`));
 }
