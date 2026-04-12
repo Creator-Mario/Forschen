@@ -27,7 +27,7 @@ export default function Navbar() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex min-h-[4.5rem] items-center justify-between gap-4 py-3">
+        <div className="flex min-h-20 items-center justify-between gap-4 py-3">
           {/* Brand / Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <Logo size={52} />
@@ -60,7 +60,7 @@ export default function Navbar() {
         </div>
 
         {/* Desktop Nav */}
-        <div className="hidden xl:flex items-start justify-between gap-6 border-t border-blue-700/70 pb-4 pt-3">
+        <div className="hidden xl:flex items-center justify-between gap-6 border-t border-blue-700/70 pb-4 pt-3">
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
             {[
               { href: '/tageswort', label: 'Tageswort' },
