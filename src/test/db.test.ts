@@ -435,14 +435,15 @@ describe('db – deleteUserAccount', () => {
       await new Promise(resolve => setTimeout(resolve, 0));
       activeWrites -= 1;
     });
+    class MockOctokit {
+      repos = {
+        getContent,
+        createOrUpdateFileContents,
+      };
+    }
 
     vi.doMock('@octokit/rest', () => ({
-      Octokit: vi.fn().mockImplementation(() => ({
-        repos: {
-          getContent,
-          createOrUpdateFileContents,
-        },
-      })),
+      Octokit: MockOctokit,
     }));
 
     const { deleteUserAccount } = await import('@/lib/db');
