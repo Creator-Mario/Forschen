@@ -30,5 +30,18 @@
     "active": true,
     "weeklyFaithEmailEnabled": true,
     "weeklyFaithEmailUpdatedAt": "2026-04-11T23:43:39.348Z"
+  },
+  {
+    "id": "user-1775965976728-lyelf7xw5",
+    "email": "denzer97@gmail.com",
+    "password": "$2b$12$y1HoVxFqrcp4B/NpJGFYoOnrW9tyO3SG8CCdi8hnO0rH/bUfpu1jK",
+    "name": "Test",
+    "role": "USER",
+    "status": "pending_email",
+    "createdAt": "2026-04-12T03:52:56.728Z",
+    "active": false,
+    "emailToken": "7daf13c918ddc0ccf8621cb3bfb867829126a7a3f0024b63862dab2c062c3383",
+    "weeklyFaithEmailEnabled": true,
+    "weeklyFaithEmailUpdatedAt": "2026-04-12T03:52:56.728Z"
   }
 ]
