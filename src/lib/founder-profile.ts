@@ -1,6 +1,6 @@
 export const founderProfile = {
   name: 'Mario Reiner Denzer',
-  role: 'Gründer von Der Fluss des Lebens',
+  role: 'Administrator und Gründer von Der Fluss des Lebens',
   tagline: 'Ein Raum für ernsthafte Bibelforschung, geistliche Mündigkeit und ehrliche Nachfolge.',
   shortBio:
     'Der Fluss des Lebens entstand aus dem Wunsch, einen geschützten und zugleich öffentlichen Ort zu schaffen, an dem geistliche Fragen nicht übergangen werden und Bibelforschung wichtiger ist als Selbstdarstellung.',

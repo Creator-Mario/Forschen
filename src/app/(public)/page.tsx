@@ -80,78 +80,97 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="relative z-10 -mt-8 px-4 pb-4 md:-mt-12">
-        <div className="max-w-6xl mx-auto">
-          <section className="overflow-hidden rounded-[2rem] border border-blue-100 bg-white shadow-xl">
-            <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr]">
-              <div className="p-8 md:p-10">
-                <p className="mb-3 text-sm font-semibold uppercase tracking-[0.22em] text-blue-500">
-                  Über mich
-                </p>
-                <h2 className="mb-2 text-3xl font-bold text-blue-900 font-serif">
-                  {founderProfile.name}
-                </h2>
-                <p className="mb-5 text-sm font-semibold text-amber-600">
-                  {founderProfile.role}
-                </p>
-                <p className="mb-5 max-w-2xl text-lg leading-relaxed text-gray-700">
-                  {founderProfile.tagline}
-                </p>
-                <div className="space-y-4 text-sm leading-relaxed text-gray-600">
-                  <p>{founderProfile.shortBio}</p>
-                  {founderProfile.homeSummary.map((paragraph, index) => (
-                    <p key={index}>{paragraph}</p>
-                  ))}
-                </div>
+      <section className="border-b border-blue-100 bg-gradient-to-b from-[#f4f9ff] via-white to-[#f9fbff]">
+        <div className="max-w-6xl mx-auto px-4 py-16 md:py-20">
+          <div className="mb-10 max-w-3xl">
+            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.22em] text-blue-500">
+              Vorstellung des Administrators
+            </p>
+            <h2 className="text-3xl font-bold text-blue-900 font-serif md:text-4xl">
+              {founderProfile.name}
+            </h2>
+            <p className="mt-3 max-w-2xl text-base leading-relaxed text-gray-600 md:text-lg">
+              Ein fester Bestandteil der Startseite: Wer die Plattform verantwortet, welche geistliche Haltung sie prägt und warum ihre Ausrichtung bewusst schriftbezogen und ruhig bleibt.
+            </p>
+          </div>
 
-                <div className="mt-8 flex flex-wrap gap-4">
-                  <Link
-                    href="/vision"
-                    className="inline-flex items-center rounded-full bg-blue-800 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
-                  >
-                    {founderProfile.book.ctaLabel}
-                  </Link>
-                  <Link
-                    href="/registrieren"
-                    className="inline-flex items-center rounded-full border border-amber-300 px-6 py-3 text-sm font-semibold text-amber-700 transition-colors hover:bg-amber-50"
-                  >
-                    Kostenlos registrieren
-                  </Link>
-                </div>
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1.35fr)_minmax(300px,0.65fr)] lg:items-start">
+            <div>
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="inline-flex items-center rounded-full bg-blue-100 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-blue-800">
+                  {founderProfile.role}
+                </span>
+                <span className="inline-flex items-center rounded-full bg-amber-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">
+                  Geistliche Leitung & Verantwortung
+                </span>
               </div>
 
-              <div className="border-t border-blue-100 bg-gradient-to-br from-blue-50 via-white to-amber-50 p-8 lg:border-l lg:border-t-0">
-                <div className="mx-auto max-w-[320px]">
-                  <p className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-blue-500">
-                    Mein Buch
-                  </p>
-                  <div className="rounded-[1.5rem] border border-blue-100 bg-white p-4 shadow-md">
+              <p className="mt-6 max-w-3xl text-xl leading-relaxed text-gray-800 md:text-2xl">
+                {founderProfile.tagline}
+              </p>
+
+              <div className="mt-8 space-y-5 text-base leading-8 text-gray-700">
+                <p>{founderProfile.shortBio}</p>
+                {founderProfile.homeSummary.map((paragraph, index) => (
+                  <p key={index}>{paragraph}</p>
+                ))}
+              </div>
+
+              <div className="mt-8 border-l-4 border-amber-400 bg-white/70 px-5 py-4 text-sm leading-7 text-gray-700">
+                {founderProfile.publicPositioning}
+              </div>
+
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Link
+                  href="/vision"
+                  className="inline-flex items-center rounded-full bg-blue-800 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+                >
+                  {founderProfile.book.ctaLabel}
+                </Link>
+                <Link
+                  href="/registrieren"
+                  className="inline-flex items-center rounded-full border border-blue-200 bg-white px-6 py-3 text-sm font-semibold text-blue-800 transition-colors hover:border-blue-300 hover:bg-blue-50"
+                >
+                  Kostenlos registrieren
+                </Link>
+              </div>
+            </div>
+
+            <aside className="lg:border-l lg:border-blue-100 lg:pl-10">
+              <div className="mx-auto max-w-[340px]">
+                <p className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-blue-500">
+                  Publikation des Administrators
+                </p>
+                <div className="overflow-hidden rounded-[1.75rem] border border-blue-100 bg-white">
+                  <div className="bg-gradient-to-br from-blue-50 via-white to-amber-50 p-5">
                     <Image
                       src={founderProfile.book.imagePath}
                       alt={founderProfile.book.alt}
                       width={320}
                       height={462}
-                      className="h-auto w-full rounded-xl border border-blue-100 shadow-sm"
+                      className="h-auto w-full rounded-xl border border-blue-100"
                     />
-                    <h3 className="mt-4 text-lg font-semibold text-blue-900">
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-lg font-semibold text-blue-900">
                       {founderProfile.book.title}
                     </h3>
                     <p className="mt-2 text-sm leading-relaxed text-gray-600">
                       {founderProfile.book.subtitle}
                     </p>
-                    <p className="mt-4 rounded-xl bg-blue-50 px-4 py-3 text-sm leading-relaxed text-blue-800">
-                      {founderProfile.publicPositioning}
+                    <p className="mt-5 text-sm leading-7 text-gray-700">
+                      Das Buch steht für den Anspruch der Plattform: geistliche Reife, persönliche Verantwortung und eine ernsthafte, ruhige Auseinandersetzung mit der Heiligen Schrift.
                     </p>
                   </div>
                 </div>
               </div>
-            </div>
-          </section>
+            </aside>
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* ── Today + Weekly ── */}
-      <div className="max-w-6xl mx-auto px-4 pt-8 pb-6">
+      <div className="max-w-6xl mx-auto px-4 pt-12 pb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-14">
           <div>
             {tageswort ? (
