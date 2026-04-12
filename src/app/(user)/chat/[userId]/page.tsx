@@ -1,6 +1,7 @@
 'use client';
 
 import ProtectedRoute from '@/components/ProtectedRoute';
+import UserAvatar from '@/components/UserAvatar';
 import { useEffect, useState, useRef, useCallback, FormEvent, Suspense } from 'react';
 import { useSession } from 'next-auth/react';
 import { useParams, useSearchParams } from 'next/navigation';
@@ -28,6 +29,7 @@ function ChatView() {
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [headerTitle, setHeaderTitle] = useState('');
+  const [headerProfileImage, setHeaderProfileImage] = useState<string | null>(null);
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -55,6 +57,7 @@ function ChatView() {
           setHeaderTitle(
             `${u1?.name || otherUserId} & ${u2?.name || partnerParam}`
           );
+          setHeaderProfileImage(null);
         }
       });
     } else {
@@ -63,8 +66,11 @@ function ChatView() {
         .then(r => r.json())
         .then(data => {
           if (Array.isArray(data)) {
-            const p = data.find((x: { id: string; name: string }) => x.id === otherUserId);
-            if (p) setHeaderTitle(p.name);
+            const p = data.find((x: { id: string; name: string; profileImage?: string | null }) => x.id === otherUserId);
+            if (p) {
+              setHeaderTitle(p.name);
+              setHeaderProfileImage(p.profileImage ?? null);
+            }
           }
         });
     }
@@ -119,9 +125,12 @@ function ChatView() {
             </>
           ) : (
             <>
-              <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold text-sm shrink-0">
-                {headerTitle.charAt(0).toUpperCase() || '?'}
-              </div>
+              <UserAvatar
+                name={headerTitle || '?'}
+                imageSrc={headerProfileImage}
+                className="h-9 w-9 shrink-0 text-sm"
+                textClassName="text-sm font-semibold"
+              />
               <h1 className="font-semibold text-gray-800">{headerTitle || 'Lade…'}</h1>
             </>
           )}

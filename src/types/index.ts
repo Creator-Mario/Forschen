@@ -33,6 +33,8 @@ export interface User {
   email: string;
   password: string;
   name: string;
+  profileImage?: string;
+  profileImageUpdatedAt?: string;
   role: UserRole;
   status: UserStatus;
   createdAt: string;

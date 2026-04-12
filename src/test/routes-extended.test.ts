@@ -303,6 +303,7 @@ describe('GET /api/mitglieder', () => {
     expect(json).toHaveLength(1);
     expect(json[0].id).toBe('u1');
     expect(json[0].vorstellung).toBe('Ich bin Alice');
+    expect(json[0].profileImage).toBeNull();
     expect(json[0].password).toBeUndefined();
   });
 });

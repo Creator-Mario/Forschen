@@ -79,6 +79,23 @@ describe('Footer', () => {
   });
 });
 
+describe('UserAvatar', () => {
+  it('renders the fallback initial without an image', async () => {
+    const { default: UserAvatar } = await import('@/components/UserAvatar');
+    render(React.createElement(UserAvatar, { name: 'Alice Example' }));
+    expect(screen.getByText('A')).toBeInTheDocument();
+  });
+
+  it('renders the profile image when provided', async () => {
+    const { default: UserAvatar } = await import('@/components/UserAvatar');
+    render(React.createElement(UserAvatar, { name: 'Alice Example', imageSrc: 'data:image/png;base64,aGVsbG8=' }));
+    expect(screen.getByRole('img', { name: /alice example profilbild/i })).toHaveAttribute(
+      'src',
+      'data:image/png;base64,aGVsbG8='
+    );
+  });
+});
+
 describe('BookRecommendationsCard', () => {
   const collection = {
     id: 'bk-1',

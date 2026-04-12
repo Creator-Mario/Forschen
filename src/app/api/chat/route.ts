@@ -19,7 +19,13 @@ export async function GET() {
     }
     const users = getUsers()
       .filter(u => userIds.has(u.id))
-      .map(u => ({ id: u.id, name: u.name, email: u.email, unreadCount: 0 }));
+      .map(u => ({
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        profileImage: u.profileImage ?? null,
+        unreadCount: 0,
+      }));
     return NextResponse.json(users);
   }
 
@@ -34,7 +40,12 @@ export async function GET() {
       const unreadCount = allMessages.filter(
         m => m.fromUserId === u!.id && m.toUserId === myId && !m.readAt
       ).length;
-      return { id: u!.id, name: u!.name, unreadCount };
+      return {
+        id: u!.id,
+        name: u!.name,
+        profileImage: u!.profileImage ?? null,
+        unreadCount,
+      };
     });
 
   return NextResponse.json(partners);
