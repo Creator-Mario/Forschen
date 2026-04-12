@@ -1,9 +1,10 @@
 'use client';
 
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import type { Video } from '@/types';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { formatDate, getStatusColor, getStatusLabel } from '@/lib/utils';
 
 function isVisibleVideo(status: string) {
@@ -14,18 +15,14 @@ function sortNewestFirst(a: Video, b: Video) {
   return b.createdAt.localeCompare(a.createdAt);
 }
 
-export default function MeineVideosPage() {
+function MeineVideosPageContent() {
+  const searchParams = useSearchParams();
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [showSubmittedNotice, setShowSubmittedNotice] = useState(false);
+  const showSubmittedNotice = searchParams.get('submitted') === '1';
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      setShowSubmittedNotice(params.get('submitted') === '1');
-    }
-
     fetch('/api/videos?mine=1')
       .then(async r => {
         if (!r.ok) {
@@ -87,8 +84,7 @@ export default function MeineVideosPage() {
   }
 
   return (
-    <ProtectedRoute>
-      <div className="max-w-4xl mx-auto px-4 py-12">
+    <div className="max-w-4xl mx-auto px-4 py-12">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-blue-800">Meine Videos</h1>
@@ -150,7 +146,16 @@ export default function MeineVideosPage() {
             </Link>
           </div>
         )}
-      </div>
+    </div>
+  );
+}
+
+export default function MeineVideosPage() {
+  return (
+    <ProtectedRoute>
+      <Suspense fallback={<div className="flex items-center justify-center min-h-64 text-gray-400">Laden…</div>}>
+        <MeineVideosPageContent />
+      </Suspense>
     </ProtectedRoute>
   );
 }

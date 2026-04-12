@@ -429,6 +429,16 @@ describe('protected user form routes and their entry links', () => {
     expect(screen.getByText('Prüfungsvideo')).toBeInTheDocument();
     expect(fetchMock).toHaveBeenCalledWith('/api/videos?mine=1');
   });
+
+  it('shows the submission notice when the upload flow redirects with submitted=1', async () => {
+    setUserSession();
+    currentSearchParams = new URLSearchParams('submitted=1');
+    const { default: MeineVideosPage } = await import('@/app/(user)/meine-videos/page');
+
+    render(React.createElement(MeineVideosPage));
+
+    expect(await screen.findByText(/dein video wurde eingereicht/i)).toBeInTheDocument();
+  });
 });
 
 describe('admin form routes and their entry links', () => {
