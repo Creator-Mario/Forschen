@@ -425,6 +425,7 @@ describe('db – deleteUserAccount', () => {
 
   it('writes hard-delete updates sequentially when using GitHub-backed storage', async () => {
     process.env.GITHUB_TOKEN = 'test-token';
+    // users, thesen, forschung, gebete, videos, aktionen, buchempfehlungen, messages
     const EXPECTED_DELETION_FILE_COUNT = 8;
 
     const getContent = vi.fn().mockResolvedValue({ data: { sha: 'sha-1' } });
