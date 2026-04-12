@@ -425,6 +425,7 @@ describe('db – deleteUserAccount', () => {
 
   it('writes hard-delete updates sequentially when using GitHub-backed storage', async () => {
     process.env.GITHUB_TOKEN = 'test-token';
+    const EXPECTED_DELETION_FILE_COUNT = 8;
 
     const getContent = vi.fn().mockResolvedValue({ data: { sha: 'sha-1' } });
     let activeWrites = 0;
@@ -432,7 +433,11 @@ describe('db – deleteUserAccount', () => {
     const createOrUpdateFileContents = vi.fn().mockImplementation(async () => {
       activeWrites += 1;
       maxActiveWrites = Math.max(maxActiveWrites, activeWrites);
-      await new Promise(resolve => setTimeout(resolve, 0));
+      if (activeWrites > 1) {
+        activeWrites -= 1;
+        throw new Error('deleteUserAccount must not overlap GitHub writes');
+      }
+      await new Promise(resolve => setTimeout(resolve, 5));
       activeWrites -= 1;
     });
     class MockOctokit {
@@ -449,7 +454,8 @@ describe('db – deleteUserAccount', () => {
     const { deleteUserAccount } = await import('@/lib/db');
     await deleteUserAccount('u1');
 
-    expect(createOrUpdateFileContents).toHaveBeenCalledTimes(8);
+    expect(getContent).toHaveBeenCalledTimes(EXPECTED_DELETION_FILE_COUNT);
+    expect(createOrUpdateFileContents).toHaveBeenCalledTimes(EXPECTED_DELETION_FILE_COUNT);
     expect(maxActiveWrites).toBe(1);
   });
 });
