@@ -8,7 +8,8 @@ function VorstellungForm() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token') || '';
   const userId = searchParams.get('userId') || '';
-  const introIdentity = token || userId;
+  const verified = searchParams.get('verified') === '1';
+  const introIdentity = token || userId || (verified ? 'verified' : '');
 
   const [motivation, setMotivation] = useState('');
   const [vorstellung, setVorstellung] = useState('');

@@ -37,19 +37,8 @@ function findUserByResetToken(rawToken: string) {
   return { user };
 }
 
-export async function GET(req: NextRequest) {
-  const token = req.nextUrl.searchParams.get('token')?.trim();
-
-  if (!token) {
-    return NextResponse.json({ error: 'Token fehlt.' }, { status: 400 });
-  }
-
-  const result = findUserByResetToken(token);
-  if ('error' in result) {
-    return NextResponse.json({ error: result.error }, { status: 400 });
-  }
-
-  return NextResponse.json({ success: true });
+export async function GET() {
+  return NextResponse.json({ error: 'Methode nicht unterstützt.' }, { status: 405 });
 }
 
 export async function POST(req: NextRequest) {

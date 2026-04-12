@@ -466,6 +466,34 @@ describe('POST /api/user/intro', () => {
     expect(sendEmail.mock.calls[0][0].text).toContain(longText);
     expect(sendRegistrationPendingEmail).toHaveBeenCalledWith('alice@example.com', 'Alice');
   });
+
+  it('accepts the secure intro cookie flow and clears the cookie afterwards', async () => {
+    const saveUser = vi.fn().mockResolvedValue(undefined);
+    const sendRegistrationPendingEmail = vi.fn().mockResolvedValue(true);
+    const sendEmail = vi.fn().mockResolvedValue(true);
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(USER_SESSION) }));
+    vi.doMock('@/lib/db', () => ({
+      getUserByEmailToken: vi.fn().mockReturnValue({ id: 'u1', email: 'alice@example.com', name: 'Alice', status: 'email_verified', emailToken: 'cookie-token' }),
+      getUserById: vi.fn(),
+      saveUser,
+    }));
+    vi.doMock('@/lib/email', () => ({ sendEmail, sendRegistrationPendingEmail, escHtml: (s: string) => s }));
+    vi.doMock('@/lib/config', () => ({ operatorEmail: 'op@example.com', canonicalSiteUrl: 'https://flussdeslebens.live', siteDomain: 'example.com', siteName: 'Site' }));
+    const longText = 'B'.repeat(180);
+    const { POST } = await import('@/app/api/user/intro/route');
+    const res = await POST(new NextRequest('http://localhost/api/user/intro', {
+      method: 'POST',
+      body: JSON.stringify({ motivation: longText, vorstellung: longText }),
+      headers: {
+        'Content-Type': 'application/json',
+        cookie: 'intro_verification_token=cookie-token',
+      },
+    }));
+    expect(res.status).toBe(200);
+    expect(saveUser).toHaveBeenCalledOnce();
+    expect(res.cookies.get('intro_verification_token')?.value).toBe('');
+    expect(sendRegistrationPendingEmail).toHaveBeenCalledWith('alice@example.com', 'Alice');
+  });
 });
 
 // ─── /api/admin/moderate ─────────────────────────────────────────────────────
@@ -777,13 +805,13 @@ describe('GET /api/admin/logs', () => {
 
 // ─── /api/auth/reset-password ────────────────────────────────────────────────
 
-describe('GET /api/auth/reset-password', () => {
+describe('POST /api/auth/reset-password/validate', () => {
   beforeEach(() => vi.resetModules());
 
   it('returns 400 when the reset token is missing', async () => {
     vi.doMock('@/lib/db', () => ({ getUsers: vi.fn().mockReturnValue([]), saveUser: vi.fn() }));
-    const { GET } = await import('@/app/api/auth/reset-password/route');
-    const res = await GET(makeRequest('http://localhost/api/auth/reset-password'));
+    const { POST } = await import('@/app/api/auth/reset-password/validate/route');
+    const res = await POST(makeJsonRequest('http://localhost/api/auth/reset-password/validate', {}));
     expect(res.status).toBe(400);
   });
 
@@ -792,12 +820,12 @@ describe('GET /api/auth/reset-password', () => {
       getUsers: vi.fn().mockReturnValue([{
         id: 'u1',
         passwordResetToken: 'expired-token',
-        passwordResetExpiry: new Date(Date.now() - 1000).toISOString(),
+      passwordResetExpiry: new Date(Date.now() - 1000).toISOString(),
       }]),
       saveUser: vi.fn(),
     }));
-    const { GET } = await import('@/app/api/auth/reset-password/route');
-    const res = await GET(makeRequest('http://localhost/api/auth/reset-password?token=expired-token'));
+    const { POST } = await import('@/app/api/auth/reset-password/validate/route');
+    const res = await POST(makeJsonRequest('http://localhost/api/auth/reset-password/validate', { token: 'expired-token' }));
     expect(res.status).toBe(400);
   });
 
@@ -810,8 +838,8 @@ describe('GET /api/auth/reset-password', () => {
       }]),
       saveUser: vi.fn(),
     }));
-    const { GET } = await import('@/app/api/auth/reset-password/route');
-    const res = await GET(makeRequest('http://localhost/api/auth/reset-password?token=valid-token'));
+    const { POST } = await import('@/app/api/auth/reset-password/validate/route');
+    const res = await POST(makeJsonRequest('http://localhost/api/auth/reset-password/validate', { token: 'valid-token' }));
     expect(res.status).toBe(200);
   });
 });

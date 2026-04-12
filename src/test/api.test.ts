@@ -512,6 +512,37 @@ describe('GET /api/auth/verify-email', () => {
   });
 });
 
+describe('GET /api/auth/verify-email/complete', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('redirects to the public confirmation page when token is missing', async () => {
+    vi.doMock('@/lib/db', () => ({ getUserByEmailToken: vi.fn(), saveUser: vi.fn() }));
+    const { GET } = await import('@/app/api/auth/verify-email/complete/route');
+    const res = await GET(makeRequest('http://localhost/api/auth/verify-email/complete'));
+    expect(res.status).toBe(307);
+    expect(res.headers.get('location')).toBe('http://localhost/email-bestaetigung');
+  });
+
+  it('stores the intro cookie and redirects verified users into the intro form', async () => {
+    const saveUser = vi.fn().mockResolvedValue(undefined);
+    vi.doMock('@/lib/db', () => ({
+      getUserByEmailToken: vi.fn().mockReturnValue({
+        id: 'u1',
+        email: 'a@a.de',
+        emailToken: 'good-token',
+        status: 'pending_email',
+      }),
+      saveUser,
+    }));
+    const { GET } = await import('@/app/api/auth/verify-email/complete/route');
+    const res = await GET(makeRequest('http://localhost/api/auth/verify-email/complete?token=good-token'));
+    expect(res.status).toBe(307);
+    expect(res.headers.get('location')).toBe('http://localhost/vorstellung?verified=1');
+    expect(res.cookies.get('intro_verification_token')?.value).toBe('good-token');
+    expect(saveUser).toHaveBeenCalledOnce();
+  });
+});
+
 // ─── /api/auth/forgot-password ────────────────────────────────────────────────
 
 describe('POST /api/auth/forgot-password', () => {

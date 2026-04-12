@@ -35,9 +35,11 @@ function ResetForm() {
       setTokenChecked(false);
 
       try {
-        const res = await fetch(`/api/auth/reset-password?token=${encodeURIComponent(token)}`, {
-          method: 'GET',
+        const res = await fetch('/api/auth/reset-password/validate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           cache: 'no-store',
+          body: JSON.stringify({ token }),
         });
         const data = await res.json();
 

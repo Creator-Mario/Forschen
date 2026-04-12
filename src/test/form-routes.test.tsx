@@ -237,9 +237,11 @@ describe('public form entry routes', () => {
 
     currentSearchParams = new URLSearchParams('token=reset-123');
     render(React.createElement(PasswortZuruecksetzenPage));
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/auth/reset-password?token=reset-123', {
-      method: 'GET',
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/auth/reset-password/validate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       cache: 'no-store',
+      body: JSON.stringify({ token: 'reset-123' }),
     }));
     expect(await screen.findByRole('heading', { name: /neues passwort vergeben/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/neues passwort/i)).toBeInTheDocument();
@@ -261,9 +263,11 @@ describe('public form entry routes', () => {
 
     expect(await screen.findByText(/mindestens 8 zeichen/i)).toBeInTheDocument();
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(fetchMock).toHaveBeenCalledWith('/api/auth/reset-password?token=reset-123', {
-      method: 'GET',
+    expect(fetchMock).toHaveBeenCalledWith('/api/auth/reset-password/validate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       cache: 'no-store',
+      body: JSON.stringify({ token: 'reset-123' }),
     });
   });
 

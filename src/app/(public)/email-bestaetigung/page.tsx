@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
-import { getUserByEmailToken, saveUser } from '@/lib/db';
+import { getUserByEmailToken } from '@/lib/db';
 import { createNoIndexMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = createNoIndexMetadata(
@@ -81,17 +81,11 @@ export default async function EmailBestaetigungPage({ searchParams }: EmailBesta
   }
 
   if (user.status === 'pending_email') {
-    await saveUser({
-      ...user,
-      emailVerifiedAt: new Date().toISOString(),
-      status: 'email_verified',
-    });
+    redirect(`/api/auth/verify-email/complete?token=${encodeURIComponent(token)}`);
   }
 
-  const effectiveStatus = user.status === 'pending_email' ? 'email_verified' : user.status;
-
-  if (effectiveStatus === 'email_verified') {
-    redirect(`/vorstellung?token=${encodeURIComponent(token)}`);
+  if (user.status === 'email_verified') {
+    redirect(`/api/auth/verify-email/complete?token=${encodeURIComponent(token)}`);
   }
 
   redirect('/login');
