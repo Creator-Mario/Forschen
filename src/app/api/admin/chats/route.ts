@@ -33,7 +33,9 @@ export async function GET() {
     userId1: p.userId1,
     userId2: p.userId2,
     user1Name: userMap.get(p.userId1)?.name || p.userId1,
+    user1ProfileImage: userMap.get(p.userId1)?.profileImage ?? null,
     user2Name: userMap.get(p.userId2)?.name || p.userId2,
+    user2ProfileImage: userMap.get(p.userId2)?.profileImage ?? null,
     messageCount: p.count,
     lastAt: p.lastAt,
   })).sort((a, b) => b.lastAt.localeCompare(a.lastAt));

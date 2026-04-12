@@ -590,6 +590,39 @@ describe('GET /api/chat', () => {
   });
 });
 
+describe('GET /api/admin/chats', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('returns conversation pairs with participant profile images for admins', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'admin1', role: 'ADMIN' } }) }));
+    vi.doMock('@/lib/db', () => ({
+      getChatMessages: vi.fn().mockReturnValue([
+        { fromUserId: 'u1', toUserId: 'u2', createdAt: '2024-01-01T00:00:00Z' },
+        { fromUserId: 'u2', toUserId: 'u1', createdAt: '2024-01-02T00:00:00Z' },
+      ]),
+      getUsers: vi.fn().mockReturnValue([
+        { id: 'u1', name: 'Alice', profileImage: 'data:image/png;base64,aGVsbG8=' },
+        { id: 'u2', name: 'Bob', profileImage: null },
+      ]),
+    }));
+    const { GET } = await import('@/app/api/admin/chats/route');
+    const res = await GET();
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual([
+      {
+        userId1: 'u1',
+        userId2: 'u2',
+        user1Name: 'Alice',
+        user1ProfileImage: 'data:image/png;base64,aGVsbG8=',
+        user2Name: 'Bob',
+        user2ProfileImage: null,
+        messageCount: 2,
+        lastAt: '2024-01-02T00:00:00Z',
+      },
+    ]);
+  });
+});
+
 // ─── /api/user/password ──────────────────────────────────────────────────────
 
 describe('POST /api/user/password', () => {

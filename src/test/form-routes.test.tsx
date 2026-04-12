@@ -479,6 +479,35 @@ describe('admin form routes and their entry links', () => {
     expect(screen.queryByText('Bereits veröffentlicht')).toBeNull();
   });
 
+  it('shows participant avatars on the admin chats page', async () => {
+    setAdminSession();
+    const fetchMock = global.fetch as unknown as ReturnType<typeof vi.fn>;
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ([
+        {
+          userId1: 'u1',
+          userId2: 'u2',
+          user1Name: 'Alice',
+          user1ProfileImage: 'data:image/png;base64,aGVsbG8=',
+          user2Name: 'Bob',
+          user2ProfileImage: 'data:image/png;base64,aGVsbG8=',
+          messageCount: 3,
+          lastAt: '2024-01-02T00:00:00Z',
+        },
+      ]),
+    });
+
+    const { default: AdminChatsPage } = await import('@/app/(admin)/admin/chats/page');
+    render(React.createElement(AdminChatsPage));
+
+    expect(await screen.findByText('Alice')).toBeInTheDocument();
+    expect(screen.getByText('Bob')).toBeInTheDocument();
+    expect(screen.getByAltText('Alice Profilbild')).toBeInTheDocument();
+    expect(screen.getByAltText('Bob Profilbild')).toBeInTheDocument();
+    expect(fetchMock).toHaveBeenCalledWith('/api/admin/chats');
+  });
+
   it('opens the admin tageswort and wochenthema forms with stable labels', async () => {
     setAdminSession();
     const user = userEvent.setup();
