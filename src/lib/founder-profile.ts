@@ -1,12 +1,12 @@
 export const founderProfile = {
   name: 'Mario Reiner Denzer',
   role: 'Gründer von Der Fluss des Lebens',
-  tagline: 'Ein Raum für ernsthafte Bibelforschung, geistliche Mündigkeit und ehrliche Nachfolge.',
+  tagline: 'Ein Ort für sorgfältige Bibelforschung, geistliche Reife und eine verantwortete Nachfolge Jesu.',
   shortBio:
-    'Der Fluss des Lebens entstand aus dem Wunsch, einen geschützten und zugleich öffentlichen Ort zu schaffen, an dem geistliche Fragen nicht übergangen werden und Bibelforschung wichtiger ist als Selbstdarstellung.',
+    'Der Fluss des Lebens entstand aus dem Anliegen, einen verlässlichen Raum zu schaffen, in dem geistliche Fragen ernst genommen, biblische Texte gewissenhaft geprüft und Gespräche nicht von Selbstdarstellung bestimmt werden.',
   homeSummary: [
-    'Mario Reiner Denzer positioniert die Plattform bewusst als Gegenentwurf zu oberflächlichen Debatten: schriftnah, ruhig und auf echte Prüfung ausgerichtet.',
-    'Im Mittelpunkt steht nicht Personenkult, sondern die Einladung, die Heilige Schrift ernst zu nehmen, selbst zu prüfen und im Glauben mündig zu werden.',
+    'Als Gründer steht Mario Reiner Denzer für eine Plattform, die sich bewusst von oberflächlichen Debatten absetzt: schriftnah, ruhig und auf echte Prüfung ausgerichtet.',
+    'Im Mittelpunkt steht nicht die Person des Leiters, sondern die Einladung, die Heilige Schrift eigenständig zu prüfen, Verantwortung im Glauben zu übernehmen und in geistlicher Mündigkeit zu wachsen.',
   ],
   visionParagraphs: {
     intro:
@@ -17,7 +17,7 @@ export const founderProfile = {
       'Der Fluss des Lebens ist deshalb nicht einfach ein Projekt, sondern Ausdruck dieser Berufung: Menschen zu ermutigen, die Heilige Schrift ernst zu nehmen, selbst zu prüfen und im Glauben mündig zu werden.',
   },
   publicPositioning:
-    'Öffentlich positioniert: klare geistliche Haltung, schriftnahe Forschung und eine Plattform, die Vertrauen durch Inhalt statt durch Lautstärke gewinnt.',
+    'Öffentlich positioniert: klare geistliche Haltung, schriftnahe Forschung und eine Plattform, die Vertrauen durch Substanz, Verlässlichkeit und inhaltliche Sorgfalt gewinnt.',
   visionAside:
     'Das Buch steht sinnbildlich für den Anspruch des Projekts: geistliche Reife, persönliche Verantwortung und eine freie, ernsthafte Nachfolge Jesu.',
   book: {

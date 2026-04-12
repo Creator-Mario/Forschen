@@ -429,6 +429,40 @@ describe('protected user form routes and their entry links', () => {
     expect(screen.getByText('Prüfungsvideo')).toBeInTheDocument();
     expect(fetchMock).toHaveBeenCalledWith('/api/videos?mine=1');
   });
+
+  it('shows an accessible loading indicator while personal videos are loading', async () => {
+    setUserSession();
+    const fetchMock = global.fetch as unknown as ReturnType<typeof vi.fn>;
+    let deferredFetchResolver: ((value: { ok: boolean; json: () => Promise<never[]> }) => void) | undefined;
+    fetchMock.mockReturnValueOnce(
+      new Promise(resolve => {
+        deferredFetchResolver = resolve;
+      }),
+    );
+
+    const { default: MeineVideosPage } = await import('@/app/(user)/meine-videos/page');
+    render(React.createElement(MeineVideosPage));
+
+    expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(screen.getByText(/videos werden geladen/i)).toBeInTheDocument();
+
+    deferredFetchResolver?.({
+      ok: true,
+      json: async () => [],
+    });
+
+    expect(await screen.findByText(/du hast noch keine videos geteilt/i)).toBeInTheDocument();
+  });
+
+  it('shows the submission notice when the upload flow redirects with submitted=1', async () => {
+    setUserSession();
+    currentSearchParams = new URLSearchParams('submitted=1');
+    const { default: MeineVideosPage } = await import('@/app/(user)/meine-videos/page');
+
+    render(React.createElement(MeineVideosPage));
+
+    expect(await screen.findByText(/dein video wurde eingereicht/i)).toBeInTheDocument();
+  });
 });
 
 describe('admin form routes and their entry links', () => {
