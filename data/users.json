@@ -39,11 +39,11 @@
     "password": "$2b$12$we62fRJnKfFBp6/Ya6xJi.uV9ICGfGsSpU/LjK1xK4m1vqbHRxYEq",
     "name": "Regina Christy Denzer",
     "role": "USER",
-    "status": "pending_email",
+    "status": "email_verified",
     "createdAt": "2026-04-12T14:18:15.631Z",
     "active": false,
-    "emailToken": "5f776de71ca69b67c76f136e977760e708d181c48d30757323b472f8a54f4075",
     "weeklyFaithEmailEnabled": true,
-    "weeklyFaithEmailUpdatedAt": "2026-04-12T14:18:15.631Z"
+    "weeklyFaithEmailUpdatedAt": "2026-04-12T14:18:15.631Z",
+    "emailVerifiedAt": "2026-04-12T14:19:18.511Z"
   }
 ]
