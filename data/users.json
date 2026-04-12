@@ -17,7 +17,9 @@
     "role": "USER",
     "status": "active",
     "createdAt": "2024-01-15T10:00:00.000Z",
-    "active": true
+    "active": true,
+    "passwordResetToken": "3673a5566c96f86d08e93f362ac9da6bc7f3e9482264e88721633b1cd7c889bf",
+    "passwordResetExpiry": "2026-04-12T16:23:39.883Z"
   },
   {
     "id": "user-1775609619026-3fb7xzayj",

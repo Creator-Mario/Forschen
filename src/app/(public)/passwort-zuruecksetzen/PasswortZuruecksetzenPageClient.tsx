@@ -117,10 +117,12 @@ function ResetForm() {
                 id="password"
                 type="password"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={e => {
+                  setPassword(e.target.value);
+                  if (error) setError('');
+                }}
                 autoComplete="new-password"
                 required
-                minLength={8}
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="••••••••"
               />
@@ -134,10 +136,12 @@ function ResetForm() {
                 id="confirm"
                 type="password"
                 value={confirm}
-                onChange={e => setConfirm(e.target.value)}
+                onChange={e => {
+                  setConfirm(e.target.value);
+                  if (error) setError('');
+                }}
                 autoComplete="new-password"
                 required
-                minLength={8}
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="••••••••"
               />
