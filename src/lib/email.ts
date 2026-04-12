@@ -163,7 +163,7 @@ export async function sendVerificationEmail(
   try {
     const baseUrl = getBaseUrl();
     console.log('[sendVerificationEmail] Called with', { toEmail, token: token.slice(0, 8) + '…', baseUrl });
-    const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${token}`;
+    const verifyUrl = `${baseUrl}/email-bestaetigung?token=${token}`;
 
     const result = await sendEmail({
       to: toEmail,

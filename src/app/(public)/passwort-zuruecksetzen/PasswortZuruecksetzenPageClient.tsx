@@ -14,9 +14,58 @@ function ResetForm() {
   const [done, setDone] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [tokenChecked, setTokenChecked] = useState(false);
+  const [tokenValid, setTokenValid] = useState(false);
 
   useEffect(() => {
     console.info('[passwort-zuruecksetzen] Token from URL present:', !!token);
+  }, [token]);
+
+  useEffect(() => {
+    if (!token) {
+      setTokenChecked(true);
+      setTokenValid(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    async function validateToken() {
+      setError('');
+      setTokenChecked(false);
+
+      try {
+        const res = await fetch(`/api/auth/reset-password?token=${encodeURIComponent(token)}`, {
+          method: 'GET',
+          cache: 'no-store',
+        });
+        const data = await res.json();
+
+        if (cancelled) return;
+
+        if (res.ok) {
+          setTokenValid(true);
+          setTokenChecked(true);
+          return;
+        }
+
+        setTokenValid(false);
+        setTokenChecked(true);
+        setError(data.error || 'Dieser Link ist ungültig oder abgelaufen. Bitte fordere einen neuen Reset-Link an.');
+      } catch (err) {
+        if (cancelled) return;
+        console.error('[passwort-zuruecksetzen] Token validation failed:', err);
+        setTokenValid(false);
+        setTokenChecked(true);
+        setError('Der Reset-Link konnte gerade nicht geprüft werden. Bitte versuche es erneut.');
+      }
+    }
+
+    void validateToken();
+
+    return () => {
+      cancelled = true;
+    };
   }, [token]);
 
   async function handleSubmit(e: FormEvent) {
@@ -60,14 +109,28 @@ function ResetForm() {
     }
   }
 
-  if (!token) {
+  if (!tokenChecked && token) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md text-center">
+          <div className="text-blue-600 text-4xl mb-4">🔐</div>
+          <h1 className="text-xl font-bold text-gray-800 mb-3">Link wird geprüft</h1>
+          <p className="text-gray-600 text-sm leading-relaxed">
+            Wir prüfen gerade deinen Passwort-Link. Bitte einen Moment Geduld.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!token || !tokenValid) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md text-center">
           <div className="text-red-500 text-4xl mb-4">⚠️</div>
           <h1 className="text-xl font-bold text-gray-800 mb-3">Ungültiger Link</h1>
           <p className="text-gray-600 text-sm mb-6 leading-relaxed">
-            Dieser Link ist ungültig oder abgelaufen. Bitte fordere einen neuen Reset-Link an.
+            {error || 'Dieser Link ist ungültig oder abgelaufen. Bitte fordere einen neuen Reset-Link an.'}
           </p>
           <Link
             href="/passwort-vergessen"
@@ -150,7 +213,7 @@ function ResetForm() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !tokenValid}
               className="w-full bg-blue-800 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-60"
             >
               {loading ? 'Wird gespeichert…' : 'Passwort speichern'}

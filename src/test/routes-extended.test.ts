@@ -777,6 +777,45 @@ describe('GET /api/admin/logs', () => {
 
 // ─── /api/auth/reset-password ────────────────────────────────────────────────
 
+describe('GET /api/auth/reset-password', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('returns 400 when the reset token is missing', async () => {
+    vi.doMock('@/lib/db', () => ({ getUsers: vi.fn().mockReturnValue([]), saveUser: vi.fn() }));
+    const { GET } = await import('@/app/api/auth/reset-password/route');
+    const res = await GET(makeRequest('http://localhost/api/auth/reset-password'));
+    expect(res.status).toBe(400);
+  });
+
+  it('returns 400 when the reset token is expired', async () => {
+    vi.doMock('@/lib/db', () => ({
+      getUsers: vi.fn().mockReturnValue([{
+        id: 'u1',
+        passwordResetToken: 'expired-token',
+        passwordResetExpiry: new Date(Date.now() - 1000).toISOString(),
+      }]),
+      saveUser: vi.fn(),
+    }));
+    const { GET } = await import('@/app/api/auth/reset-password/route');
+    const res = await GET(makeRequest('http://localhost/api/auth/reset-password?token=expired-token'));
+    expect(res.status).toBe(400);
+  });
+
+  it('returns 200 when the reset token is still valid', async () => {
+    vi.doMock('@/lib/db', () => ({
+      getUsers: vi.fn().mockReturnValue([{
+        id: 'u1',
+        passwordResetToken: 'valid-token',
+        passwordResetExpiry: new Date(Date.now() + 60_000).toISOString(),
+      }]),
+      saveUser: vi.fn(),
+    }));
+    const { GET } = await import('@/app/api/auth/reset-password/route');
+    const res = await GET(makeRequest('http://localhost/api/auth/reset-password?token=valid-token'));
+    expect(res.status).toBe(200);
+  });
+});
+
 describe('POST /api/auth/reset-password', () => {
   beforeEach(() => vi.resetModules());
 

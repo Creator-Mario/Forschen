@@ -478,38 +478,28 @@ describe('POST /api/videos', () => {
 describe('GET /api/auth/verify-email', () => {
   beforeEach(() => vi.resetModules());
 
-  it('returns 400 when token is missing', async () => {
-    vi.doMock('@/lib/db', () => ({ getUserByEmailToken: vi.fn(), saveUser: vi.fn() }));
+  it('redirects to the public confirmation page when token is missing', async () => {
     const { GET } = await import('@/app/api/auth/verify-email/route');
     const res = await GET(makeRequest('http://localhost/api/auth/verify-email'));
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(307);
+    expect(res.headers.get('location')).toBe('http://localhost/email-bestaetigung');
   });
 
-  it('returns 400 when token is invalid', async () => {
-    vi.doMock('@/lib/db', () => ({ getUserByEmailToken: vi.fn().mockReturnValue(undefined), saveUser: vi.fn() }));
+  it('redirects legacy verification links to the public confirmation page with the token', async () => {
     const { GET } = await import('@/app/api/auth/verify-email/route');
     const res = await GET(makeRequest('http://localhost/api/auth/verify-email?token=badtoken'));
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(307);
+    expect(res.headers.get('location')).toBe('http://localhost/email-bestaetigung?token=badtoken');
   });
 
-  it('verifies a valid token and updates user status', async () => {
-    const user = { id: 'u1', email: 'a@a.de', emailToken: 'good-token', status: 'pending_email', intro: null };
-    const saveUser = vi.fn().mockResolvedValue(undefined);
-    vi.doMock('@/lib/db', () => ({ getUserByEmailToken: vi.fn().mockReturnValue(user), saveUser }));
+  it('redirects valid legacy verification links to the public confirmation page', async () => {
     const { GET } = await import('@/app/api/auth/verify-email/route');
     const res = await GET(makeRequest('http://localhost/api/auth/verify-email?token=good-token'));
     expect(res.status).toBe(307);
-    expect(res.headers.get('location')).toBe('http://localhost/vorstellung?token=good-token');
-    expect(saveUser).toHaveBeenCalledOnce();
-    const updatedUser = saveUser.mock.calls[0][0];
-    expect(updatedUser.emailToken).toBe('good-token');
-    expect(updatedUser.status).toBe('email_verified');
+    expect(res.headers.get('location')).toBe('http://localhost/email-bestaetigung?token=good-token');
   });
 
   it('preserves the forwarded host when redirecting after verification', async () => {
-    const user = { id: 'u1', email: 'a@a.de', emailToken: 'good-token', status: 'pending_email', intro: null };
-    const saveUser = vi.fn().mockResolvedValue(undefined);
-    vi.doMock('@/lib/db', () => ({ getUserByEmailToken: vi.fn().mockReturnValue(user), saveUser }));
     const { GET } = await import('@/app/api/auth/verify-email/route');
     const res = await GET(makeRequest('http://localhost/api/auth/verify-email?token=good-token', {
       headers: {
@@ -518,7 +508,7 @@ describe('GET /api/auth/verify-email', () => {
         'x-forwarded-proto': 'http',
       },
     }));
-    expect(res.headers.get('location')).toBe('http://127.0.0.1:3000/vorstellung?token=good-token');
+    expect(res.headers.get('location')).toBe('http://127.0.0.1:3000/email-bestaetigung?token=good-token');
   });
 });
 
