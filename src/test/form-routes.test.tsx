@@ -433,10 +433,10 @@ describe('protected user form routes and their entry links', () => {
   it('shows an accessible loading indicator while personal videos are loading', async () => {
     setUserSession();
     const fetchMock = global.fetch as unknown as ReturnType<typeof vi.fn>;
-    let fetchResolver: ((value: { ok: boolean; json: () => Promise<never[]> }) => void) | undefined;
+    let deferredFetchResolver: ((value: { ok: boolean; json: () => Promise<never[]> }) => void) | undefined;
     fetchMock.mockReturnValueOnce(
       new Promise(resolve => {
-        fetchResolver = resolve;
+        deferredFetchResolver = resolve;
       }),
     );
 
@@ -446,7 +446,7 @@ describe('protected user form routes and their entry links', () => {
     expect(screen.getByRole('status')).toBeInTheDocument();
     expect(screen.getByText(/videos werden geladen/i)).toBeInTheDocument();
 
-    fetchResolver?.({
+    deferredFetchResolver?.({
       ok: true,
       json: async () => [],
     });

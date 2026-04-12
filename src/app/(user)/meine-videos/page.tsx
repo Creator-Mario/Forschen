@@ -19,7 +19,6 @@ function PageLoadingState() {
   return (
     <div
       role="status"
-      aria-live="polite"
       className="flex min-h-64 flex-col items-center justify-center gap-3 px-4 text-center"
     >
       <span
