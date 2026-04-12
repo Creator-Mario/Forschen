@@ -90,7 +90,7 @@ export default function HomePage() {
               {founderProfile.name}
             </h2>
             <p className="mt-3 max-w-2xl text-base leading-relaxed text-gray-600 md:text-lg">
-              Ein fester Bestandteil der Startseite: Wer die Plattform verantwortet, welche geistliche Haltung sie prägt und warum ihre Ausrichtung bewusst schriftbezogen und ruhig bleibt.
+              Ein fester Bestandteil der Startseite: eine klare Vorstellung der Person, die diese Plattform verantwortet, ihrer geistlichen Ausrichtung und des Anspruchs, Bibelforschung mit Ruhe, Klarheit und Sorgfalt zu gestalten.
             </p>
           </div>
 
@@ -159,7 +159,7 @@ export default function HomePage() {
                       {founderProfile.book.subtitle}
                     </p>
                     <p className="mt-5 text-sm leading-7 text-gray-700">
-                      Das Buch steht für den Anspruch der Plattform: geistliche Reife, persönliche Verantwortung und eine ernsthafte, ruhige Auseinandersetzung mit der Heiligen Schrift.
+                      Die Publikation unterstreicht den Anspruch der Plattform: geistliche Reife, persönliche Verantwortung und eine ernsthafte, gewissenhafte Auseinandersetzung mit der Heiligen Schrift.
                     </p>
                   </div>
                 </div>

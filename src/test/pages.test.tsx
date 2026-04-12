@@ -668,6 +668,6 @@ describe('HomePage', () => {
     expect(screen.getByRole('link', { name: /QR-Code herunterladen/i })).toHaveAttribute('href', '/api/share-qr?format=png&download=1');
     expect(screen.getByRole('link', { name: /Auf WhatsApp teilen/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Auf Facebook teilen/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Zur Vision des Gründers/i })).toHaveAttribute('href', '/vision');
+    expect(screen.getByRole('link', { name: /Zur Vision des Administrators/i })).toHaveAttribute('href', '/vision');
   });
 });
