@@ -37,9 +37,9 @@
     "password": "$2b$12$y1HoVxFqrcp4B/NpJGFYoOnrW9tyO3SG8CCdi8hnO0rH/bUfpu1jK",
     "name": "Test",
     "role": "USER",
-    "status": "awaiting_admin_review",
+    "status": "active",
     "createdAt": "2026-04-12T03:52:56.728Z",
-    "active": false,
+    "active": true,
     "weeklyFaithEmailEnabled": true,
     "weeklyFaithEmailUpdatedAt": "2026-04-12T03:52:56.728Z",
     "emailVerifiedAt": "2026-04-12T03:58:44.641Z",
@@ -47,6 +47,7 @@
       "motivation": "Bitte diese umgehend bereinigen vorher war alles grün und jetz error Bitte den Code professionell überprüfen und reperieren[11.4., 07:34] Tiara Asmarani: Aku baik baik ajah\n[11.4., 07:34] Tiara Asmarani: Aku mau coba lebih memperbaiki diri ajahTiara, tolong pulang dan istirahatlah hari ini. Ibu dan anak-anakmu sangat khawatir, dan tidak baik jika kamu sendirian saat sedang tidak enak badan. Aku akan mendoakanmu. 🙏 🙏 🙏 🙏 🙏 🙏 🙏",
       "vorstellung": "Bitte diese umgehend bereinigen vorher war alles grün und jetz error Bitte den Code professionell überprüfen und reperieren[11.4., 07:34] Tiara Asmarani: Aku baik baik ajah\n[11.4., 07:34] Tiara Asmarani: Aku mau coba lebih memperbaiki diri ajahTiara, tolong pulang dan istirahatlah hari ini. Ibu dan anak-anakmu sangat khawatir, dan tidak baik jika kamu sendirian saat sedang tidak enak badan. Aku akan mendoakanmu. 🙏 🙏 🙏 🙏 🙏 🙏 🙏",
       "submittedAt": "2026-04-12T04:01:44.249Z"
-    }
+    },
+    "adminNote": "HERZLICH WILLKOMMEN,\nBei Fragen stehe ich immer gerne zu Verfügung uber WhatsApp oder Email. "
   }
 ]
