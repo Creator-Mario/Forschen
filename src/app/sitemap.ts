@@ -26,10 +26,7 @@ const PUBLIC_ROUTES = [
 ] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date();
-
   return PUBLIC_ROUTES.map((route) => ({
     url: `${canonicalSiteUrl}${route}`,
-    lastModified,
   }));
 }
