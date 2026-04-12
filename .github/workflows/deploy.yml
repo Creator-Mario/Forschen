@@ -56,8 +56,8 @@ jobs:
           NEXTAUTH_SECRET: ci-build-secret
           NEXTAUTH_URL: http://localhost:3000
 
-# Production deployment is handled by deploy-production.yml (push to main / workflow_dispatch).
-# Keeping deploy-production out of this workflow avoids a "skipped" check on every PR.
+# Production deployment from pushes to main is handled by Vercel's native git integration.
+# deploy-production.yml remains available as a manual fallback via workflow_dispatch only.
 # Connect this repository at https://vercel.com/new
 # Required environment variables in Vercel:
 #   NEXTAUTH_SECRET  – a long random string (e.g. openssl rand -base64 32)
@@ -75,4 +75,3 @@ jobs:
 #   Environment variables for staging can be managed with:
 #     vercel env add MY_KEY staging
 #     vercel pull --environment=staging
-
