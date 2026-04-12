@@ -348,7 +348,7 @@ describe('protected user form routes and their entry links', () => {
 
     render(React.createElement(MeineVideosPage));
     expect(screen.getByRole('link', { name: /\+ video teilen/i })).toHaveAttribute('href', '/videos/hochladen');
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/videos?all=1'));
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/videos?mine=1'));
   });
 
   it('renders the intro form only for the verified click path with userId', async () => {
@@ -394,6 +394,7 @@ describe('protected user form routes and their entry links', () => {
     render(React.createElement(VideoHochladenPage));
     expect(screen.getByRole('heading', { name: /video teilen/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /video einreichen/i })).toBeInTheDocument();
+    expect(screen.getByText(/erst nach freigabe erscheint er unter „meine videos“/i)).toBeInTheDocument();
     unmount();
 
     render(React.createElement(NeueAktionPage));
@@ -406,6 +407,27 @@ describe('protected user form routes and their entry links', () => {
     expect(screen.getByLabelText(/profilbild/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /passwort ändern/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /konto unwiderruflich löschen/i })).toBeInTheDocument();
+  });
+
+  it('shows approved videos separately from videos still under admin review', async () => {
+    setUserSession();
+    const fetchMock = global.fetch as unknown as ReturnType<typeof vi.fn>;
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ([
+        { id: 'v1', userId: 'u1', title: 'Freigegebenes Video', description: 'Sichtbar', status: 'published', createdAt: '2026-04-12T08:00:00Z', url: 'https://example.com/1' },
+        { id: 'v2', userId: 'u1', title: 'Prüfungsvideo', description: 'Noch prüfen', status: 'review', createdAt: '2026-04-12T09:00:00Z', url: 'https://example.com/2' },
+      ]),
+    });
+    const { default: MeineVideosPage } = await import('@/app/(user)/meine-videos/page');
+
+    render(React.createElement(MeineVideosPage));
+
+    expect(await screen.findByRole('heading', { name: /freigegebene videos/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /aktuell in prüfung/i })).toBeInTheDocument();
+    expect(screen.getByText('Freigegebenes Video')).toBeInTheDocument();
+    expect(screen.getByText('Prüfungsvideo')).toBeInTheDocument();
+    expect(fetchMock).toHaveBeenCalledWith('/api/videos?mine=1');
   });
 });
 
@@ -455,6 +477,35 @@ describe('admin form routes and their entry links', () => {
     expect(screen.getByText('Zur Prüfung')).toBeInTheDocument();
     expect(screen.getByText('Rückfrage läuft')).toBeInTheDocument();
     expect(screen.queryByText('Bereits veröffentlicht')).toBeNull();
+  });
+
+  it('shows participant avatars on the admin chats page', async () => {
+    setAdminSession();
+    const fetchMock = global.fetch as unknown as ReturnType<typeof vi.fn>;
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ([
+        {
+          userId1: 'u1',
+          userId2: 'u2',
+          user1Name: 'Alice',
+          user1ProfileImage: 'data:image/png;base64,aGVsbG8=',
+          user2Name: 'Bob',
+          user2ProfileImage: 'data:image/png;base64,aGVsbG8=',
+          messageCount: 3,
+          lastAt: '2024-01-02T00:00:00Z',
+        },
+      ]),
+    });
+
+    const { default: AdminChatsPage } = await import('@/app/(admin)/admin/chats/page');
+    render(React.createElement(AdminChatsPage));
+
+    expect(await screen.findByText('Alice')).toBeInTheDocument();
+    expect(screen.getByText('Bob')).toBeInTheDocument();
+    expect(screen.getByAltText('Alice Profilbild')).toBeInTheDocument();
+    expect(screen.getByAltText('Bob Profilbild')).toBeInTheDocument();
+    expect(fetchMock).toHaveBeenCalledWith('/api/admin/chats');
   });
 
   it('opens the admin tageswort and wochenthema forms with stable labels', async () => {

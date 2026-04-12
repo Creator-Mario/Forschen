@@ -4,12 +4,15 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { useEffect, useState } from 'react';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
+import UserAvatar from '@/components/UserAvatar';
 
 interface ConversationPair {
   userId1: string;
   userId2: string;
   user1Name: string;
+  user1ProfileImage?: string | null;
   user2Name: string;
+  user2ProfileImage?: string | null;
   messageCount: number;
   lastAt: string;
 }
@@ -90,12 +93,32 @@ export default function AdminChatsPage() {
                 {pairs.map(p => (
                   <tr key={`${p.userId1}:${p.userId2}`} className="border-b last:border-0 hover:bg-slate-50 transition-colors">
                     <td className="px-4 py-3">
-                      <p className="font-medium text-gray-800">{p.user1Name}</p>
-                      <p className="text-xs text-gray-400 font-mono">{p.userId1}</p>
+                      <div className="flex items-center gap-3">
+                        <UserAvatar
+                          name={p.user1Name}
+                          imageSrc={p.user1ProfileImage}
+                          className="h-10 w-10 shrink-0 text-sm"
+                          textClassName="text-sm font-semibold"
+                        />
+                        <div>
+                          <p className="font-medium text-gray-800">{p.user1Name}</p>
+                          <p className="text-xs text-gray-400 font-mono">{p.userId1}</p>
+                        </div>
+                      </div>
                     </td>
                     <td className="px-4 py-3">
-                      <p className="font-medium text-gray-800">{p.user2Name}</p>
-                      <p className="text-xs text-gray-400 font-mono">{p.userId2}</p>
+                      <div className="flex items-center gap-3">
+                        <UserAvatar
+                          name={p.user2Name}
+                          imageSrc={p.user2ProfileImage}
+                          className="h-10 w-10 shrink-0 text-sm"
+                          textClassName="text-sm font-semibold"
+                        />
+                        <div>
+                          <p className="font-medium text-gray-800">{p.user2Name}</p>
+                          <p className="text-xs text-gray-400 font-mono">{p.userId2}</p>
+                        </div>
+                      </div>
                     </td>
                     <td className="px-4 py-3 text-gray-600">{p.messageCount}</td>
                     <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{formatDate(p.lastAt)}</td>

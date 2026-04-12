@@ -382,6 +382,28 @@ describe('GET /api/videos', () => {
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual(approved);
   });
+
+  it('returns only the current user videos for mine=1', async () => {
+    const ownVideos = [
+      { id: 'v1', userId: 'u1', status: 'review', url: 'https://example.com/1' },
+      { id: 'v2', userId: 'u1', status: 'published', url: 'https://example.com/2' },
+    ];
+    const allVideos = [...ownVideos, { id: 'v3', userId: 'u2', status: 'published', url: 'https://example.com/3' }];
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', role: 'USER' } }) }));
+    vi.doMock('@/lib/db', () => ({ getApprovedVideos: vi.fn().mockReturnValue(allVideos.filter(video => video.status === 'published')), getVideos: vi.fn().mockReturnValue(allVideos), saveVideo: vi.fn() }));
+    const { GET } = await import('@/app/api/videos/route');
+    const res = await GET(makeRequest('http://localhost/api/videos?mine=1'));
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual(ownVideos);
+  });
+
+  it('returns 401 for mine=1 when unauthenticated', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
+    vi.doMock('@/lib/db', () => ({ getApprovedVideos: vi.fn().mockReturnValue([]), getVideos: vi.fn().mockReturnValue([]), saveVideo: vi.fn() }));
+    const { GET } = await import('@/app/api/videos/route');
+    const res = await GET(makeRequest('http://localhost/api/videos?mine=1'));
+    expect(res.status).toBe(401);
+  });
 });
 
 describe('POST /api/videos', () => {
@@ -403,14 +425,24 @@ describe('POST /api/videos', () => {
     expect(res.status).toBe(400);
   });
 
+  it('returns 400 when title or description are blank after trimming', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', name: 'Alice', role: 'USER' } }) }));
+    vi.doMock('@/lib/db', () => ({ saveVideo: vi.fn() }));
+    const { POST } = await import('@/app/api/videos/route');
+    const res = await POST(makeJsonRequest('http://localhost/api/videos', { title: '   ', url: 'https://youtube.com/watch?v=abc', description: '   ' }));
+    expect(res.status).toBe(400);
+  });
+
   it('saves video and returns success for valid input', async () => {
     const saveVideo = vi.fn().mockResolvedValue(undefined);
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', name: 'Alice', role: 'USER' } }) }));
     vi.doMock('@/lib/db', () => ({ saveVideo }));
     const { POST } = await import('@/app/api/videos/route');
-    const res = await POST(makeJsonRequest('http://localhost/api/videos', { title: 'My Video', url: 'https://youtube.com/watch?v=abc', description: 'Desc' }));
+    const res = await POST(makeJsonRequest('http://localhost/api/videos', { title: ' <b>My Video</b> ', url: 'https://youtube.com/watch?v=abc', description: ' <i>Desc</i> ' }));
     expect(res.status).toBe(200);
     expect(saveVideo).toHaveBeenCalledOnce();
+    expect(saveVideo.mock.calls[0][0].title).toBe('My Video');
+    expect(saveVideo.mock.calls[0][0].description).toBe('Desc');
     expect(saveVideo.mock.calls[0][0].url).toBe('https://youtube.com/watch?v=abc');
     expect(saveVideo.mock.calls[0][0].status).toBe('review');
   });
@@ -555,6 +587,39 @@ describe('GET /api/chat', () => {
     const { GET } = await import('@/app/api/chat/route');
     const res = await GET(makeRequest('http://localhost/api/chat'));
     expect(res.status).toBe(401);
+  });
+});
+
+describe('GET /api/admin/chats', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('returns conversation pairs with participant profile images for admins', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'admin1', role: 'ADMIN' } }) }));
+    vi.doMock('@/lib/db', () => ({
+      getChatMessages: vi.fn().mockReturnValue([
+        { fromUserId: 'u1', toUserId: 'u2', createdAt: '2024-01-01T00:00:00Z' },
+        { fromUserId: 'u2', toUserId: 'u1', createdAt: '2024-01-02T00:00:00Z' },
+      ]),
+      getUsers: vi.fn().mockReturnValue([
+        { id: 'u1', name: 'Alice', profileImage: 'data:image/png;base64,aGVsbG8=' },
+        { id: 'u2', name: 'Bob', profileImage: null },
+      ]),
+    }));
+    const { GET } = await import('@/app/api/admin/chats/route');
+    const res = await GET();
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual([
+      {
+        userId1: 'u1',
+        userId2: 'u2',
+        user1Name: 'Alice',
+        user1ProfileImage: 'data:image/png;base64,aGVsbG8=',
+        user2Name: 'Bob',
+        user2ProfileImage: null,
+        messageCount: 2,
+        lastAt: '2024-01-02T00:00:00Z',
+      },
+    ]);
   });
 });
 
