@@ -56,14 +56,19 @@ jobs:
           NEXTAUTH_SECRET: ci-build-secret
           NEXTAUTH_URL: http://localhost:3000
 
-# Production deployment from pushes to main is handled only by Vercel's native git integration.
-# Connect this repository at https://vercel.com/new
+# Production deployment from pushes to main is handled by deploy-production.yml via the
+# Vercel CLI, which avoids Vercel's blocked Git-based production deployments for
+# unverified commits. Connect this repository at https://vercel.com/new
 # Required environment variables in Vercel:
 #   NEXTAUTH_SECRET  – a long random string (e.g. openssl rand -base64 32)
 #   NEXTAUTH_URL     – your Vercel URL, e.g. https://forschen.vercel.app
 #   GITHUB_TOKEN     – a Personal Access Token with "repo" scope (for data persistence)
 #   GITHUB_OWNER     – Creator-Mario
 #   GITHUB_REPO      – Forschen
+# Required repository secrets for deploy-production.yml:
+#   VERCEL_TOKEN      – Vercel API token (https://vercel.com/account/tokens)
+#   VERCEL_ORG_ID     – Vercel team/org ID (found in team settings)
+#   VERCEL_PROJECT_ID – Vercel project ID (found in project settings)
 #
 # Staging environment (deploy-staging.yml workflow):
 #   Push to the "staging" branch to trigger a deployment to the custom Vercel
