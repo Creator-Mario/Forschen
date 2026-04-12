@@ -47,6 +47,8 @@
       "motivation": "Bitte diese umgehend bereinigen vorher war alles grün und jetz error Bitte den Code professionell überprüfen und reperierenEinige kleine Review-Hinweise zur allgemeinen Wartbarkeit außerhalb des eigentlichen Features habe ich nicht mehr umgebaut.Langkah kecil yang konsisten pasti akan membawa hasil yang luar biasa, tetap semangat!",
       "vorstellung": "als Nächstes noch die Texte/Bezeichnungen sprachlich glätten und die neuen Bereiche im Startseiten-Layout kompakter machen.mache ich als Nächstes noch einen letzten inhaltlichen Review der Admin-Delete-Actions ( deletevs. hard_delete) und räume die Benennung ebenfalls noch auf.prüfe ich als Nächstes noch jede einzelne Formularroute per Klickpfad gegen die UI-Texte und Buttons durch.Einige kleine Review-Hinweise zur allgemeinen Wartbarkeit außerhalb des eigentlichen Features habe ich nicht mehr umgebaut.",
       "submittedAt": "2026-04-12T06:00:11.406Z"
-    }
+    },
+    "passwordResetToken": "827d291aa1968d829042b913f714ae8cb217234bb43c17ca8787f622b23948c1",
+    "passwordResetExpiry": "2026-04-12T07:02:17.769Z"
   }
 ]
