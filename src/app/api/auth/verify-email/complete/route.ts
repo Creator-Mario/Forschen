@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { getUserByEmailToken, saveUser } from '@/lib/db';
+import { getUserByEmailTokenFresh, saveUser } from '@/lib/db';
 
 const INTRO_TOKEN_EXPIRY_SECONDS = 60 * 60;
 
@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(buildRedirectUrl(req, '/email-bestaetigung'));
   }
 
-  const user = getUserByEmailToken(token);
+  const user = await getUserByEmailTokenFresh(token);
   if (!user) {
     return NextResponse.redirect(buildRedirectUrl(req, `/email-bestaetigung?token=${encodeURIComponent(token)}`));
   }

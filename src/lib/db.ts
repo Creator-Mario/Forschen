@@ -24,6 +24,35 @@ function readJson<T>(filename: string): T[] {
   return JSON.parse(content) as T[];
 }
 
+async function readJsonFresh<T>(filename: string): Promise<T[]> {
+  if (!shouldUseGithubBackedStorage()) {
+    return readJson<T>(filename);
+  }
+
+  try {
+    const { Octokit } = await import('@octokit/rest');
+    const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+    const { data } = await octokit.repos.getContent({
+      owner: GITHUB_OWNER,
+      repo: GITHUB_REPO,
+      path: `data/${filename}`,
+      ref: GITHUB_BRANCH,
+    });
+
+    if (Array.isArray(data) || !('content' in data) || typeof data.content !== 'string') {
+      throw new Error(`Unerwartetes GitHub-Antwortformat für ${filename}`);
+    }
+
+    const decoded = Buffer.from(data.content, 'base64').toString('utf-8');
+    const parsed = JSON.parse(decoded) as T[];
+    memoryCache.set(filename, parsed as unknown[]);
+    return parsed;
+  } catch (error) {
+    console.error(`[db] GitHub read failed for ${filename}; falling back to local data:`, error);
+    return readJson<T>(filename);
+  }
+}
+
 function writeJsonToLocalFile<T>(filename: string, data: T[]): void {
   const filePath = path.join(DATA_DIR, filename);
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
@@ -106,15 +135,31 @@ async function writeJson<T>(filename: string, data: T[]): Promise<void> {
 export function getUsers(): User[] {
   return readJson<User>('users.json');
 }
+export async function getUsersFresh(): Promise<User[]> {
+  return readJsonFresh<User>('users.json');
+}
 export function getUserById(id: string): User | undefined {
   return getUsers().find(u => u.id === id);
+}
+export async function getUserByIdFresh(id: string): Promise<User | undefined> {
+  const users = await getUsersFresh();
+  return users.find(u => u.id === id);
 }
 export function getUserByEmail(email: string): User | undefined {
   const normalizedEmail = normalizeEmail(email);
   return getUsers().find(u => normalizeEmail(u.email) === normalizedEmail);
 }
+export async function getUserByEmailFresh(email: string): Promise<User | undefined> {
+  const normalizedEmail = normalizeEmail(email);
+  const users = await getUsersFresh();
+  return users.find(u => normalizeEmail(u.email) === normalizedEmail);
+}
 export function getUserByEmailToken(token: string): User | undefined {
   return getUsers().find(u => u.emailToken === token);
+}
+export async function getUserByEmailTokenFresh(token: string): Promise<User | undefined> {
+  const users = await getUsersFresh();
+  return users.find(u => u.emailToken === token);
 }
 export function getAwaitingReviewUsers(): User[] {
   return getUsers().filter(u => u.role !== 'ADMIN' && (

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserByEmailToken, getUserById, saveUser } from '@/lib/db';
+import { getUserByEmailTokenFresh, getUserByIdFresh, saveUser } from '@/lib/db';
 import { sendEmail, sendRegistrationPendingEmail, escHtml } from '@/lib/email';
 import { operatorEmail, canonicalSiteUrl, siteDomain, siteName } from '@/lib/config';
 import { getIntroLengthError } from '@/lib/intro-validation';
@@ -23,8 +23,8 @@ export async function POST(req: NextRequest) {
     if (vorstellungError) return NextResponse.json({ error: vorstellungError }, { status: 400 });
 
     const user = effectiveToken
-      ? getUserByEmailToken(effectiveToken)
-      : getUserById(userId);
+      ? await getUserByEmailTokenFresh(effectiveToken)
+      : await getUserByIdFresh(userId);
     if (!user) {
       return NextResponse.json({ error: 'Nutzer nicht gefunden.' }, { status: 404 });
     }

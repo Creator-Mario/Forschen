@@ -40,6 +40,31 @@ describe('db – readJson (via getUsers)', () => {
     expect(readSpy.mock.calls.length).toBe(callsAfterWrite);
     vi.restoreAllMocks();
   });
+
+  it('reads fresh users from GitHub-backed storage when enabled', async () => {
+    process.env.GITHUB_TOKEN = 'test-token';
+    process.env.VERCEL = '1';
+
+    const getContent = vi.fn().mockResolvedValue({
+      data: {
+        content: Buffer.from(JSON.stringify([{ id: 'remote-u1', email: 'remote@example.com', password: 'x', name: 'Remote', role: 'USER', status: 'pending_email', active: false, createdAt: '2026-04-13T00:00:00Z', emailToken: 'remote-token' }])).toString('base64'),
+      },
+    });
+
+    class MockOctokit {
+      repos = { getContent };
+    }
+
+    vi.doMock('@octokit/rest', () => ({ Octokit: MockOctokit }));
+
+    const { getUserByEmailTokenFresh } = await import('@/lib/db');
+    await expect(getUserByEmailTokenFresh('remote-token')).resolves.toMatchObject({
+      id: 'remote-u1',
+      email: 'remote@example.com',
+    });
+    expect(getContent).toHaveBeenCalledOnce();
+    vi.restoreAllMocks();
+  });
 });
 
 // ── getUserById / getUserByEmail ──────────────────────────────────────────────
