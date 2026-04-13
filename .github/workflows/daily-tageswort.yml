@@ -151,7 +151,15 @@ jobs:
             exit 0
           fi
 
-          publication_date=$(node -e "const fs=require('fs'); const entries=JSON.parse(fs.readFileSync('data/tageswort.json','utf8')).filter(entry => entry.published).sort((a,b) => a.date.localeCompare(b.date)); process.stdout.write(entries.at(-1)?.date ?? 'unknown');")
+          publication_date=$(
+            node <<'EOF'
+            const fs = require('fs');
+            const entries = JSON.parse(fs.readFileSync('data/tageswort.json', 'utf8'))
+              .filter(entry => entry.published)
+              .sort((a, b) => a.date.localeCompare(b.date));
+            process.stdout.write(entries.at(-1)?.date ?? 'unknown');
+            EOF
+          )
           git commit -m "chore: add daily Tageswort for ${publication_date}"
 
           for attempt in 1 2 3; do

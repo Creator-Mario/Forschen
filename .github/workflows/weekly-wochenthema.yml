@@ -168,7 +168,15 @@ jobs:
             exit 0
           fi
 
-          publication_week=$(node -e "const fs=require('fs'); const entries=JSON.parse(fs.readFileSync('data/wochenthema.json','utf8')).filter(entry => entry.status === 'published' || entry.status === 'archived').sort((a,b) => a.week.localeCompare(b.week)); process.stdout.write(entries.at(-1)?.week ?? 'unknown');")
+          publication_week=$(
+            node <<'EOF'
+            const fs = require('fs');
+            const entries = JSON.parse(fs.readFileSync('data/wochenthema.json', 'utf8'))
+              .filter(entry => entry.status === 'published' || entry.status === 'archived')
+              .sort((a, b) => a.week.localeCompare(b.week));
+            process.stdout.write(entries.at(-1)?.week ?? 'unknown');
+            EOF
+          )
           git commit -m "chore: add weekly theme for ${publication_week}"
 
           for attempt in 1 2 3; do
