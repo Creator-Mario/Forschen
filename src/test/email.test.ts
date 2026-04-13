@@ -162,8 +162,8 @@ describe('sendVerificationEmail', () => {
     await sendVerificationEmail('alice@example.com', 'mytoken42');
     const callArgs = mockEmailSend.mock.calls[0][0] as { html: string; text: string };
     expect(callArgs.html).toContain('mytoken42');
-    expect(callArgs.html).toContain('/api/auth/verify-email');
-    expect(callArgs.html).toContain('https://flussdeslebens.live/api/auth/verify-email?token=mytoken42');
+    expect(callArgs.html).toContain('/email-bestaetigung');
+    expect(callArgs.html).toContain('https://flussdeslebens.live/email-bestaetigung?token=mytoken42');
     expect(callArgs.html).not.toContain('https://example.com');
     expect(callArgs.text).toContain('mytoken42');
   });

@@ -7,8 +7,11 @@ import { getIntroLengthError } from '@/lib/intro-validation';
 export async function POST(req: NextRequest) {
   try {
     const { userId, token, motivation, vorstellung } = await req.json();
+    const cookieToken = req.cookies.get('intro_verification_token')?.value?.trim();
+    const requestToken = typeof token === 'string' ? token.trim() : '';
+    const effectiveToken = requestToken || cookieToken;
 
-    if ((!userId && !token) || !motivation || !vorstellung) {
+    if ((!userId && !effectiveToken) || !motivation || !vorstellung) {
       return NextResponse.json({ error: 'Alle Felder sind erforderlich.' }, { status: 400 });
     }
 
@@ -19,8 +22,8 @@ export async function POST(req: NextRequest) {
     const vorstellungError = getIntroLengthError('Vorstellungsfeld', trimmedVorstellung);
     if (vorstellungError) return NextResponse.json({ error: vorstellungError }, { status: 400 });
 
-    const user = typeof token === 'string' && token.trim()
-      ? getUserByEmailToken(token.trim())
+    const user = effectiveToken
+      ? getUserByEmailToken(effectiveToken)
       : getUserById(userId);
     if (!user) {
       return NextResponse.json({ error: 'Nutzer nicht gefunden.' }, { status: 404 });
@@ -102,7 +105,18 @@ export async function POST(req: NextRequest) {
       console.error('[intro] User confirmation email could not be sent:', err);
     }
 
-    return NextResponse.json({ success: true });
+    const response = NextResponse.json({ success: true });
+    if (cookieToken) {
+      response.cookies.set('intro_verification_token', '', {
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+        path: '/',
+        expires: new Date(0),
+      });
+    }
+
+    return response;
   } catch {
     return NextResponse.json({ error: 'Fehler beim Speichern der Vorstellung.' }, { status: 500 });
   }

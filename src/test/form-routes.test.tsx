@@ -228,6 +228,7 @@ describe('public form entry routes', () => {
 
   it('shows the reset fallback path without token and the real form with token', async () => {
     const { default: PasswortZuruecksetzenPage } = await import('@/app/(public)/passwort-zuruecksetzen/page');
+    const fetchMock = global.fetch as unknown as ReturnType<typeof vi.fn>;
 
     const { unmount } = render(React.createElement(PasswortZuruecksetzenPage));
     expect(await screen.findByRole('heading', { name: /ungültiger link/i })).toBeInTheDocument();
@@ -236,6 +237,12 @@ describe('public form entry routes', () => {
 
     currentSearchParams = new URLSearchParams('token=reset-123');
     render(React.createElement(PasswortZuruecksetzenPage));
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith('/api/auth/reset-password/validate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
+      body: JSON.stringify({ token: 'reset-123' }),
+    }));
     expect(await screen.findByRole('heading', { name: /neues passwort vergeben/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/neues passwort/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/passwort bestätigen/i)).toBeInTheDocument();
@@ -245,14 +252,39 @@ describe('public form entry routes', () => {
   it('shows a clear minimum-length error before submitting the reset form', async () => {
     currentSearchParams = new URLSearchParams('token=reset-123');
     const { default: PasswortZuruecksetzenPage } = await import('@/app/(public)/passwort-zuruecksetzen/page');
+    const fetchMock = global.fetch as unknown as ReturnType<typeof vi.fn>;
     render(React.createElement(PasswortZuruecksetzenPage));
+
+    await screen.findByRole('heading', { name: /neues passwort vergeben/i });
 
     await userEvent.type(await screen.findByLabelText(/neues passwort/i), 'kurz12');
     await userEvent.type(screen.getByLabelText(/passwort bestätigen/i), 'kurz12');
     await userEvent.click(screen.getByRole('button', { name: /passwort speichern/i }));
 
     expect(await screen.findByText(/mindestens 8 zeichen/i)).toBeInTheDocument();
-    expect(global.fetch).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledWith('/api/auth/reset-password/validate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
+      body: JSON.stringify({ token: 'reset-123' }),
+    });
+  });
+
+  it('shows the invalid reset-link state immediately when token validation fails', async () => {
+    currentSearchParams = new URLSearchParams('token=kaputt');
+    const fetchMock = global.fetch as unknown as ReturnType<typeof vi.fn>;
+    fetchMock.mockResolvedValueOnce({
+      ok: false,
+      json: async () => ({ error: 'Der Link ist abgelaufen. Bitte fordere einen neuen an.' }),
+    });
+
+    const { default: PasswortZuruecksetzenPage } = await import('@/app/(public)/passwort-zuruecksetzen/page');
+    render(React.createElement(PasswortZuruecksetzenPage));
+
+    expect(await screen.findByRole('heading', { name: /ungültiger link/i })).toBeInTheDocument();
+    expect(screen.getByText(/der link ist abgelaufen/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /neuen link anfordern/i })).toHaveAttribute('href', '/passwort-vergessen');
   });
 
   it('connects admin login and admin reset routes', async () => {
