@@ -422,7 +422,7 @@ describe('POST /api/user/intro', () => {
 
   it('returns 400 when required fields are missing', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(USER_SESSION) }));
-    vi.doMock('@/lib/db', () => ({ getUserByIdFresh: vi.fn(), saveUser: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ getUserByIdFresh: vi.fn().mockResolvedValue(undefined), saveUser: vi.fn() }));
     vi.doMock('@/lib/email', () => ({ sendEmail: vi.fn(), sendRegistrationPendingEmail: vi.fn(), escHtml: (s: string) => s }));
     vi.doMock('@/lib/config', () => ({ operatorEmail: 'op@example.com', canonicalSiteUrl: 'https://flussdeslebens.live', siteDomain: 'example.com', siteName: 'Site' }));
     const { POST } = await import('@/app/api/user/intro/route');
@@ -447,7 +447,7 @@ describe('POST /api/user/intro', () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(USER_SESSION) }));
     vi.doMock('@/lib/db', () => ({
       getUserByEmailTokenFresh: vi.fn().mockResolvedValue({ id: 'u1', email: 'alice@example.com', name: 'Alice', status: 'email_verified', emailToken: 'good-token' }),
-      getUserByIdFresh: vi.fn(),
+      getUserByIdFresh: vi.fn().mockResolvedValue(undefined),
       saveUser,
     }));
     vi.doMock('@/lib/email', () => ({ sendEmail, sendRegistrationPendingEmail, escHtml: (s: string) => s }));
@@ -474,7 +474,7 @@ describe('POST /api/user/intro', () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(USER_SESSION) }));
     vi.doMock('@/lib/db', () => ({
       getUserByEmailTokenFresh: vi.fn().mockResolvedValue({ id: 'u1', email: 'alice@example.com', name: 'Alice', status: 'email_verified', emailToken: 'cookie-token' }),
-      getUserByIdFresh: vi.fn(),
+      getUserByIdFresh: vi.fn().mockResolvedValue(undefined),
       saveUser,
     }));
     vi.doMock('@/lib/email', () => ({ sendEmail, sendRegistrationPendingEmail, escHtml: (s: string) => s }));

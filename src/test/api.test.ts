@@ -516,7 +516,7 @@ describe('GET /api/auth/verify-email/complete', () => {
   beforeEach(() => vi.resetModules());
 
   it('redirects to the public confirmation page when token is missing', async () => {
-    vi.doMock('@/lib/db', () => ({ getUserByEmailTokenFresh: vi.fn(), saveUser: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ getUserByEmailTokenFresh: vi.fn().mockResolvedValue(undefined), saveUser: vi.fn() }));
     const { GET } = await import('@/app/api/auth/verify-email/complete/route');
     const res = await GET(makeRequest('http://localhost/api/auth/verify-email/complete'));
     expect(res.status).toBe(307);
