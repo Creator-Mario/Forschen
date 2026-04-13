@@ -304,5 +304,14 @@
     "targetType": "user",
     "targetId": "user-1776036598121-42yacavcj",
     "createdAt": "2026-04-13T01:00:44.517Z"
+  },
+  {
+    "id": "log-1776042633269-zssi35s7v",
+    "adminId": "admin-001",
+    "action": "vorstellung_approve",
+    "targetType": "user",
+    "targetId": "user-1776042090060-qgrolhtuo",
+    "note": "Welcome to our community! \nWe wish you much time with the word of Jesus and that it enriches you. \nBlessed greetings from the River of Life.",
+    "createdAt": "2026-04-13T01:10:33.269Z"
   }
 ]
