@@ -288,5 +288,13 @@
     "targetType": "user",
     "targetId": "user-1776003495631-r8nor0cnz",
     "createdAt": "2026-04-12T23:26:26.654Z"
+  },
+  {
+    "id": "log-1776039247249-ypkmrlmu8",
+    "adminId": "admin-001",
+    "action": "user_hard_delete",
+    "targetType": "user",
+    "targetId": "user-1776036598121-42yacavcj",
+    "createdAt": "2026-04-13T00:14:07.249Z"
   }
 ]
