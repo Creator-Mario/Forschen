@@ -63,10 +63,10 @@ describe('SEO metadata', () => {
     });
   });
 
-  it('marks protected content pages as noindex', () => {
-    expect(forschungMetadata.robots).toMatchObject({
-      index: false,
-      follow: false,
+  it('keeps public content pages indexable after the SEO route repairs', () => {
+    expect(forschungMetadata.alternates?.canonical).toBe('/forschung');
+    expect(forschungMetadata.openGraph).toMatchObject({
+      url: `${canonicalSiteUrl}/forschung`,
     });
   });
 

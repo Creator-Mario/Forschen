@@ -7,19 +7,17 @@ import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { redirect } from 'next/navigation';
-import { createNoIndexMetadata } from '@/lib/seo';
+import { createPageMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = createNoIndexMetadata(
-  'Bibelforschung',
-  'Geschützter Bereich für Forschungsbeiträge aus der Gemeinschaft.',
-  '/forschung',
-);
+export const metadata: Metadata = createPageMetadata({
+  title: 'Bibelforschung',
+  description: 'Freigegebene Forschungsbeiträge aus der Gemeinschaft mit Bezügen zu aktuellen Wochenthemen.',
+  path: '/forschung',
+  keywords: ['Bibelforschung', 'christliche Forschung', 'Wochenthema Beiträge'],
+});
 
 export default async function ForschungPage() {
   const session = await getServerSession(authOptions);
-  if (!session) redirect('/login');
-
   const beitraege = getApprovedForschung();
   const themen = getWochenthemaList().filter(t => t.status === 'published');
   const themenById = new Map(themen.map(theme => [theme.id, theme]));
@@ -29,12 +27,32 @@ export default async function ForschungPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-blue-800 mb-2">Bibelforschung</h1>
-          <p className="text-gray-500">Tiefgehende Beiträge aus der Gemeinschaft</p>
+          <p className="text-gray-500">Freigegebene Forschungsbeiträge aus der Gemeinschaft</p>
         </div>
-        <Link href="/forschung/beitraege" className="bg-blue-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
-          + Beitrag verfassen
-        </Link>
+        {session ? (
+          <Link href="/forschung/beitraege" className="bg-blue-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
+            + Beitrag verfassen
+          </Link>
+        ) : (
+          <div className="flex flex-wrap gap-3">
+            <Link href="/login" className="bg-blue-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
+              Anmelden
+            </Link>
+            <Link href="/registrieren" className="border border-blue-200 text-blue-800 px-4 py-2 rounded-lg text-sm hover:bg-blue-50 transition-colors">
+              Kostenlos registrieren
+            </Link>
+          </div>
+        )}
       </div>
+
+      {!session && (
+        <div className="mb-8 rounded-xl border border-blue-100 bg-blue-50 p-5">
+          <h2 className="font-semibold text-blue-900 mb-2">Öffentlich lesen, als Mitglied selbst beitragen</h2>
+          <p className="text-sm text-gray-700 leading-relaxed">
+            Diese Seite zeigt freigegebene Beiträge öffentlich an. Nach der Anmeldung kannst du eigene Forschung zu Tageswort, Psalmen und Wochenthemen einreichen. Jeder Beitrag geht vorher in die Moderation.
+          </p>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-5">
