@@ -12,6 +12,7 @@ export default function VideoHochladenPage() {
   const [themes, setThemes] = useState<Wochenthema[]>([]);
   const [selectedThemeId, setSelectedThemeId] = useState('');
   const [themesLoading, setThemesLoading] = useState(true);
+  const [themeLoadError, setThemeLoadError] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -21,6 +22,7 @@ export default function VideoHochladenPage() {
 
     async function loadThemes() {
       try {
+        setThemeLoadError('');
         const [currentResponse, allResponse] = await Promise.all([
           fetch('/api/wochenthema', { cache: 'no-store' }),
           fetch('/api/wochenthema?all=1', { cache: 'no-store' }),
@@ -47,6 +49,7 @@ export default function VideoHochladenPage() {
       } catch {
         if (!active) return;
         setThemes([]);
+        setThemeLoadError('Wochenthemen konnten gerade nicht geladen werden. Du kannst das Video trotzdem ohne Zuordnung einreichen.');
       } finally {
         if (active) setThemesLoading(false);
       }
@@ -147,6 +150,9 @@ export default function VideoHochladenPage() {
               <p className="mt-1 text-xs text-gray-500">
                 Wenn möglich, ordne dein Video direkt einem Wochenthema zu. So erscheint es nach der Freigabe am richtigen Themenort.
               </p>
+              {themeLoadError && (
+                <p className="mt-2 text-xs text-amber-700">{themeLoadError}</p>
+              )}
             </div>
 
             {error && (
