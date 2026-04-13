@@ -39,12 +39,16 @@
     "password": "$2b$12$oTbiGrVpTZT./D9cM.HSd.1s2g79mQn2TEh99pim5QgI87j2aVnGi",
     "name": "Regina Christy Denzer",
     "role": "USER",
-    "status": "email_verified",
+    "status": "awaiting_admin_review",
     "createdAt": "2026-04-13T01:01:30.060Z",
     "active": false,
-    "emailToken": "11d332e3de52656bd32a36c94c2ffb6ab31285465663629530f2a0e31615d608",
     "weeklyFaithEmailEnabled": true,
     "weeklyFaithEmailUpdatedAt": "2026-04-13T01:01:30.060Z",
-    "emailVerifiedAt": "2026-04-13T01:01:50.010Z"
+    "emailVerifiedAt": "2026-04-13T01:01:50.010Z",
+    "intro": {
+      "motivation": "Because I believed in Jesus and follow Jesus become My Savior. Because I'm interst with your progam and want to joint & know about the comunity.\nMaybe we can have a good Chat or Talk about Jesus in a future. \nI want to learn more about the Bible verses and their meaning, and how I can apply them. I want to explore this further, integrate it into my life, and live out my faith with love for my neighbor in everyday life.",
+      "vorstellung": "I'm Regina Christy Denzer stay at Nirwana Golden Park Blok D9 no.9 Pakansari Cibinong Kabupaten Bogor West Java 16915.\nI have Son name is Rafael Denzer. He is study now 12 Grade at SMK Plus Pelita Nusantara Ciriung Cibinong Kabupaten Bogor West Java.\nI was Work before as a Lawyer and I joint before at Militery progam name IARMI.",
+      "submittedAt": "2026-04-13T01:02:18.638Z"
+    }
   }
 ]
