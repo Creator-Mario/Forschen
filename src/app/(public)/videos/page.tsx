@@ -48,7 +48,7 @@ export default async function VideosPage() {
         <div className="mb-8 rounded-xl border border-blue-100 bg-blue-50 p-5">
           <h2 className="font-semibold text-blue-900 mb-2">Videos öffentlich ansehen, mit Anmeldung selbst teilen</h2>
           <p className="text-sm text-gray-700 leading-relaxed">
-            Hier siehst du alle freigegebenen Videos. Nach der Anmeldung kannst du eigene Beiträge einreichen. Sie gehen automatisch in die Moderation und erscheinen nach der Freigabe im Mitgliederbereich und unter passenden Themen.
+            Hier siehst du alle freigegebenen Videos. Auch thematisch zugeordnete Videos bleiben hier sichtbar. Nach der Anmeldung kannst du eigene Beiträge einreichen. Sie gehen automatisch in die Moderation und erscheinen nach der Freigabe im Mitgliederbereich und unter passenden Themen.
           </p>
         </div>
       )}

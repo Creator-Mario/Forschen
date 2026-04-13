@@ -282,6 +282,7 @@ describe('VideosPage', () => {
     const { default: VideosPage } = await import('@/app/(public)/videos/page');
     const jsx = await VideosPage();
     render(React.createElement(React.Fragment, null, jsx));
+    expect(screen.getByText('Video')).toBeInTheDocument();
     expect(screen.getByText(/Thema: Treue/i)).toBeInTheDocument();
   });
 });
