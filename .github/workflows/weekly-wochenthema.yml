@@ -6,6 +6,10 @@ on:
     - cron: '5 2 * * 0'
   workflow_dispatch:
 
+concurrency:
+  group: automated-content-updates
+  cancel-in-progress: false
+
 jobs:
   generate-wochenthema:
     runs-on: ubuntu-latest
@@ -16,6 +20,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
+          fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
@@ -157,5 +162,39 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add data/wochenthema.json
-          git diff --staged --quiet || git commit -m "chore: add weekly theme for $(date +%Y-W%V)"
-          git push
+
+          if git diff --staged --quiet; then
+            echo "No Wochenthema changes to commit."
+            exit 0
+          fi
+
+          publication_week=$(
+            node <<'EOF'
+            const fs = require('fs');
+            const entries = JSON.parse(fs.readFileSync('data/wochenthema.json', 'utf8'))
+              .filter(entry => entry.status === 'published' || entry.status === 'archived')
+              .sort((a, b) => a.week.localeCompare(b.week));
+            const publicationWeek = entries.at(-1)?.week;
+            if (!publicationWeek) {
+              process.exitCode = 1;
+              throw new Error('No published or archived Wochenthema entry found after generation.');
+            }
+            process.stdout.write(publicationWeek);
+            EOF
+          )
+          git commit -m "chore: add weekly theme for ${publication_week}"
+
+          for attempt in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              exit 0
+            fi
+
+            if [ "$attempt" -eq 3 ]; then
+              echo "Push failed after ${attempt} attempts."
+              exit 1
+            fi
+
+            git rebase --abort || true
+            echo "Push failed on attempt ${attempt}. Retrying..."
+            sleep $((attempt * 10))
+          done
