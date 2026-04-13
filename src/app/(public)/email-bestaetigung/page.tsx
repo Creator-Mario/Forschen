@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
-import { getUserByEmailToken } from '@/lib/db';
+import { getUserByEmailTokenFresh } from '@/lib/db';
 import { createNoIndexMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = createNoIndexMetadata(
@@ -70,7 +70,7 @@ export default async function EmailBestaetigungPage({ searchParams }: EmailBesta
     );
   }
 
-  const user = getUserByEmailToken(token);
+  const user = await getUserByEmailTokenFresh(token);
   if (!user) {
     return (
       <InvalidVerificationView

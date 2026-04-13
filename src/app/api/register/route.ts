@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import { getUserByEmail, saveUser } from '@/lib/db';
+import { getUserByEmailFresh, saveUser } from '@/lib/db';
 import { generateId, normalizeEmail } from '@/lib/utils';
 import { sendVerificationEmail } from '@/lib/email';
 import { PASSWORD_MIN_LENGTH, PASSWORD_MIN_LENGTH_MESSAGE } from '@/lib/password-policy';
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if user exists
-    const existing = getUserByEmail(normalizedEmail);
+    const existing = await getUserByEmailFresh(normalizedEmail);
     if (existing) {
       // If the user registered but never confirmed their email, resend the verification.
       // For any other status (already verified, active, etc.) silently return success

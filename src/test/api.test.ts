@@ -54,7 +54,7 @@ describe('POST /api/register', () => {
   });
 
   it('returns 400 when required fields are missing', async () => {
-    vi.doMock('@/lib/db', () => ({ getUserByEmail: vi.fn().mockReturnValue(undefined), saveUser: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ getUserByEmailFresh: vi.fn().mockResolvedValue(undefined), saveUser: vi.fn() }));
     vi.doMock('@/lib/email', () => ({ sendVerificationEmail: vi.fn().mockResolvedValue(true) }));
     const { POST } = await import('@/app/api/register/route');
     const req = makeJsonRequest('http://localhost/api/register', { name: '', email: '', password: '' });
@@ -65,7 +65,7 @@ describe('POST /api/register', () => {
   });
 
   it('returns 400 when password is too short', async () => {
-    vi.doMock('@/lib/db', () => ({ getUserByEmail: vi.fn().mockReturnValue(undefined), saveUser: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ getUserByEmailFresh: vi.fn().mockResolvedValue(undefined), saveUser: vi.fn() }));
     vi.doMock('@/lib/email', () => ({ sendVerificationEmail: vi.fn().mockResolvedValue(true) }));
     const { POST } = await import('@/app/api/register/route');
     const req = makeJsonRequest('http://localhost/api/register', { name: 'Alice', email: 'alice@example.com', password: 'short' });
@@ -74,7 +74,7 @@ describe('POST /api/register', () => {
   });
 
   it('returns success (200) without revealing if email already exists', async () => {
-    vi.doMock('@/lib/db', () => ({ getUserByEmail: vi.fn().mockReturnValue({ id: 'existing' }), saveUser: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ getUserByEmailFresh: vi.fn().mockResolvedValue({ id: 'existing' }), saveUser: vi.fn() }));
     vi.doMock('@/lib/email', () => ({ sendVerificationEmail: vi.fn().mockResolvedValue(true) }));
     const { POST } = await import('@/app/api/register/route');
     const req = makeJsonRequest('http://localhost/api/register', { name: 'Alice', email: 'alice@example.com', password: 'password123' });
@@ -86,7 +86,7 @@ describe('POST /api/register', () => {
 
   it('creates a user and returns success for valid input', async () => {
     const saveUser = vi.fn().mockResolvedValue(undefined);
-    vi.doMock('@/lib/db', () => ({ getUserByEmail: vi.fn().mockReturnValue(undefined), saveUser }));
+    vi.doMock('@/lib/db', () => ({ getUserByEmailFresh: vi.fn().mockResolvedValue(undefined), saveUser }));
     vi.doMock('@/lib/email', () => ({ sendVerificationEmail: vi.fn().mockResolvedValue(true) }));
     const { POST } = await import('@/app/api/register/route');
     const req = makeJsonRequest('http://localhost/api/register', { name: 'Alice', email: 'new@example.com', password: 'securePass1' });
@@ -104,7 +104,7 @@ describe('POST /api/register', () => {
   it('normalizes the email address before saving and sending', async () => {
     const saveUser = vi.fn().mockResolvedValue(undefined);
     const sendVerificationEmail = vi.fn().mockResolvedValue(true);
-    vi.doMock('@/lib/db', () => ({ getUserByEmail: vi.fn().mockReturnValue(undefined), saveUser }));
+    vi.doMock('@/lib/db', () => ({ getUserByEmailFresh: vi.fn().mockResolvedValue(undefined), saveUser }));
     vi.doMock('@/lib/email', () => ({ sendVerificationEmail }));
     const { POST } = await import('@/app/api/register/route');
     const req = makeJsonRequest('http://localhost/api/register', { name: ' Alice ', email: ' Alice@Example.COM ', password: 'securePass1' });
@@ -117,7 +117,7 @@ describe('POST /api/register', () => {
 
   it('returns 503 when the initial verification email cannot be sent', async () => {
     const saveUser = vi.fn().mockResolvedValue(undefined);
-    vi.doMock('@/lib/db', () => ({ getUserByEmail: vi.fn().mockReturnValue(undefined), saveUser }));
+    vi.doMock('@/lib/db', () => ({ getUserByEmailFresh: vi.fn().mockResolvedValue(undefined), saveUser }));
     vi.doMock('@/lib/email', () => ({ sendVerificationEmail: vi.fn().mockResolvedValue(false) }));
     const { POST } = await import('@/app/api/register/route');
     const req = makeJsonRequest('http://localhost/api/register', { name: 'Alice', email: 'new@example.com', password: 'securePass1' });
@@ -127,7 +127,7 @@ describe('POST /api/register', () => {
 
   it('stores the weekly faith email choice during registration', async () => {
     const saveUser = vi.fn().mockResolvedValue(undefined);
-    vi.doMock('@/lib/db', () => ({ getUserByEmail: vi.fn().mockReturnValue(undefined), saveUser }));
+    vi.doMock('@/lib/db', () => ({ getUserByEmailFresh: vi.fn().mockResolvedValue(undefined), saveUser }));
     vi.doMock('@/lib/email', () => ({ sendVerificationEmail: vi.fn().mockResolvedValue(true) }));
     const { POST } = await import('@/app/api/register/route');
     const req = makeJsonRequest('http://localhost/api/register', {
@@ -145,7 +145,7 @@ describe('POST /api/register', () => {
   it('restores the previous token when resending the verification email fails', async () => {
     const saveUser = vi.fn().mockResolvedValue(undefined);
     vi.doMock('@/lib/db', () => ({
-      getUserByEmail: vi.fn().mockReturnValue({
+      getUserByEmailFresh: vi.fn().mockResolvedValue({
         id: 'u1',
         email: 'alice@example.com',
         name: 'Alice',
@@ -516,7 +516,7 @@ describe('GET /api/auth/verify-email/complete', () => {
   beforeEach(() => vi.resetModules());
 
   it('redirects to the public confirmation page when token is missing', async () => {
-    vi.doMock('@/lib/db', () => ({ getUserByEmailToken: vi.fn(), saveUser: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ getUserByEmailTokenFresh: vi.fn().mockResolvedValue(undefined), saveUser: vi.fn() }));
     const { GET } = await import('@/app/api/auth/verify-email/complete/route');
     const res = await GET(makeRequest('http://localhost/api/auth/verify-email/complete'));
     expect(res.status).toBe(307);
@@ -526,7 +526,7 @@ describe('GET /api/auth/verify-email/complete', () => {
   it('stores the intro cookie and redirects verified users into the intro form', async () => {
     const saveUser = vi.fn().mockResolvedValue(undefined);
     vi.doMock('@/lib/db', () => ({
-      getUserByEmailToken: vi.fn().mockReturnValue({
+      getUserByEmailTokenFresh: vi.fn().mockResolvedValue({
         id: 'u1',
         email: 'a@a.de',
         emailToken: 'good-token',
