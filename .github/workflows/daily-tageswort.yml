@@ -6,6 +6,10 @@ on:
     - cron: '5 2 * * *'
   workflow_dispatch:
 
+concurrency:
+  group: automated-content-updates
+  cancel-in-progress: false
+
 jobs:
   generate-tageswort:
     runs-on: ubuntu-latest
@@ -16,6 +20,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
+          fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
@@ -140,5 +145,25 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add data/tageswort.json
-          git diff --staged --quiet || git commit -m "chore: add daily Tageswort for $(date +%Y-%m-%d)"
-          git push
+
+          if git diff --staged --quiet; then
+            echo "No Tageswort changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore: update daily Tageswort archive"
+
+          for attempt in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              exit 0
+            fi
+
+            if [ "$attempt" -eq 3 ]; then
+              echo "Push failed after ${attempt} attempts."
+              exit 1
+            fi
+
+            git rebase --abort || true
+            echo "Push failed on attempt ${attempt}. Retrying..."
+            sleep $((attempt * 10))
+          done
