@@ -42,5 +42,15 @@
     "url": "https://youtu.be/zQNQn30PMPs?si=kAKDiTRaCTTU98w1",
     "status": "published",
     "createdAt": "2026-04-12T06:37:15.448Z"
+  },
+  {
+    "id": "video-1776038469499-ew5ua7bx5",
+    "userId": "admin-001",
+    "authorName": "Administrator",
+    "title": "Apostelgeschichte ( Empfehlenswert)",
+    "description": "Nach Jesu Auferstehung und der Sendung des Heiligen Geistes beginnt die Verkündung des Evangeliums durch die Apostel. Es entstehen Gemeinden und auch Nicht-Juden werden getauft, Wunder in Jesu Namen geschehen. Die neuen Gemeinden leiden an der Verfolgung, doch die frohe Botschaft schenkt ihnen Kraft. Auch auf den Missionsreisen der Apostel begegneten ihnen große Herausforderungen und sie sind dem Tode nahe.",
+    "url": "https://youtu.be/5iUksqVkCs8?si=0J7mOc0Gvp52NDg4",
+    "status": "published",
+    "createdAt": "2026-04-13T00:01:09.500Z"
   }
 ]
