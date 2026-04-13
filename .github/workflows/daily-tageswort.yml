@@ -151,7 +151,8 @@ jobs:
             exit 0
           fi
 
-          git commit -m "chore: update daily Tageswort archive"
+          publication_date=$(node -e "const fs=require('fs'); const entries=JSON.parse(fs.readFileSync('data/tageswort.json','utf8')).filter(entry => entry.published).sort((a,b) => a.date.localeCompare(b.date)); process.stdout.write(entries.at(-1)?.date ?? 'unknown');")
+          git commit -m "chore: add daily Tageswort for ${publication_date}"
 
           for attempt in 1 2 3; do
             if git pull --rebase origin main && git push origin HEAD:main; then
