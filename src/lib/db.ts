@@ -40,7 +40,7 @@ async function readJsonFresh<T>(filename: string): Promise<T[]> {
     });
 
     if (Array.isArray(data) || !('content' in data) || typeof data.content !== 'string') {
-      throw new Error(`Unerwartetes GitHub-Antwortformat für ${filename}`);
+      throw new Error(`Unexpected GitHub response format for ${filename}`);
     }
 
     const decoded = Buffer.from(data.content, 'base64').toString('utf-8');
