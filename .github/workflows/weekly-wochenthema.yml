@@ -174,7 +174,12 @@ jobs:
             const entries = JSON.parse(fs.readFileSync('data/wochenthema.json', 'utf8'))
               .filter(entry => entry.status === 'published' || entry.status === 'archived')
               .sort((a, b) => a.week.localeCompare(b.week));
-            process.stdout.write(entries.at(-1)?.week ?? 'unknown');
+            const publicationWeek = entries.at(-1)?.week;
+            if (!publicationWeek) {
+              process.exitCode = 1;
+              throw new Error('No published or archived Wochenthema entry found after generation.');
+            }
+            process.stdout.write(publicationWeek);
             EOF
           )
           git commit -m "chore: add weekly theme for ${publication_week}"

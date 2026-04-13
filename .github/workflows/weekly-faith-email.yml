@@ -14,12 +14,13 @@ jobs:
   send-weekly-faith-email:
     runs-on: ubuntu-latest
     permissions: {}
+    env:
+      SITE_URL: ${{ vars.SITE_URL || vars.EMAIL_LINK_BASE_URL || vars.NEXTAUTH_URL || 'https://flussdeslebens.live' }}
 
     steps:
       - name: Check weekly faith email configuration
         id: check
         env:
-          SITE_URL: ${{ vars.SITE_URL || vars.EMAIL_LINK_BASE_URL || vars.NEXTAUTH_URL || 'https://flussdeslebens.live' }}
           WEEKLY_FAITH_EMAIL_CRON_SECRET: ${{ secrets.WEEKLY_FAITH_EMAIL_CRON_SECRET }}
         run: |
           if [ -z "$WEEKLY_FAITH_EMAIL_CRON_SECRET" ]; then
@@ -34,7 +35,6 @@ jobs:
       - name: Trigger weekly faith email delivery
         if: steps.check.outputs.configured == 'true'
         env:
-          SITE_URL: ${{ vars.SITE_URL || vars.EMAIL_LINK_BASE_URL || vars.NEXTAUTH_URL || 'https://flussdeslebens.live' }}
           WEEKLY_FAITH_EMAIL_CRON_SECRET: ${{ secrets.WEEKLY_FAITH_EMAIL_CRON_SECRET }}
         run: |
           curl --fail-with-body \
