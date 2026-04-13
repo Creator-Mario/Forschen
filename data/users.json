@@ -42,7 +42,7 @@
     "status": "pending_email",
     "createdAt": "2026-04-12T23:29:58.121Z",
     "active": false,
-    "emailToken": "e2ff42ac15f2fd5d33b082394948cc40d8415bfc06c563183da2b8d7b356f76e",
+    "emailToken": "4865de74f1833290c9f01427df1cd97b4daf1deba87d6fb02f7fbe7d4fa25153",
     "weeklyFaithEmailEnabled": true,
     "weeklyFaithEmailUpdatedAt": "2026-04-12T23:29:58.121Z"
   }
