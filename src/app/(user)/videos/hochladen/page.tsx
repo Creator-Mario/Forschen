@@ -49,7 +49,7 @@ export default function VideoHochladenPage() {
       } catch {
         if (!active) return;
         setThemes([]);
-        setThemeLoadError('Wochenthemen konnten gerade nicht geladen werden. Du kannst das Video trotzdem ohne Zuordnung einreichen.');
+        setThemeLoadError('Wochenthemen konnten nicht geladen werden. Du kannst das Video trotzdem ohne Zuordnung einreichen.');
       } finally {
         if (active) setThemesLoading(false);
       }

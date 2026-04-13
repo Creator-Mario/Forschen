@@ -49,7 +49,7 @@ export default async function ForschungPage() {
         <div className="mb-8 rounded-xl border border-blue-100 bg-blue-50 p-5">
           <h2 className="font-semibold text-blue-900 mb-2">Öffentlich lesen, als Mitglied selbst beitragen</h2>
           <p className="text-sm text-gray-700 leading-relaxed">
-            Diese Seite zeigt freigegebene Beiträge öffentlich an. Nach der Anmeldung kannst du eigene Forschung zu Tageswort, Psalmen und Wochenthemen einreichen; jeder Beitrag geht vorher in die Moderation.
+            Diese Seite zeigt freigegebene Beiträge öffentlich an. Nach der Anmeldung kannst du eigene Forschung zu Tageswort, Psalmen und Wochenthemen einreichen. Jeder Beitrag geht vorher in die Moderation.
           </p>
         </div>
       )}
