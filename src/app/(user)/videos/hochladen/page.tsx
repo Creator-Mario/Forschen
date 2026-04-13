@@ -1,16 +1,63 @@
 'use client';
 
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { useState, FormEvent } from 'react';
+import { useEffect, useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Wochenthema } from '@/types';
 
 export default function VideoHochladenPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [url, setUrl] = useState('');
+  const [themes, setThemes] = useState<Wochenthema[]>([]);
+  const [selectedThemeId, setSelectedThemeId] = useState('');
+  const [themesLoading, setThemesLoading] = useState(true);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadThemes() {
+      try {
+        const [currentResponse, allResponse] = await Promise.all([
+          fetch('/api/wochenthema', { cache: 'no-store' }),
+          fetch('/api/wochenthema?all=1', { cache: 'no-store' }),
+        ]);
+
+        const [currentTheme, allThemes] = await Promise.all([
+          currentResponse.ok ? currentResponse.json() : Promise.resolve(null),
+          allResponse.ok ? allResponse.json() : Promise.resolve([]),
+        ]);
+
+        if (!active) return;
+
+        const publishedThemes = Array.isArray(allThemes)
+          ? allThemes.filter((theme): theme is Wochenthema => theme?.status === 'published')
+          : [];
+
+        setThemes(publishedThemes);
+
+        if (typeof currentTheme?.id === 'string') {
+          setSelectedThemeId(currentTheme.id);
+        } else if (publishedThemes.length > 0) {
+          setSelectedThemeId(publishedThemes[0].id);
+        }
+      } catch {
+        if (!active) return;
+        setThemes([]);
+      } finally {
+        if (active) setThemesLoading(false);
+      }
+    }
+
+    void loadThemes();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -19,7 +66,12 @@ export default function VideoHochladenPage() {
     const res = await fetch('/api/videos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, description, url }),
+      body: JSON.stringify({
+        title,
+        description,
+        url,
+        ...(selectedThemeId ? { wochenthemaId: selectedThemeId } : {}),
+      }),
     });
     const data = await res.json();
     setLoading(false);
@@ -72,6 +124,29 @@ export default function VideoHochladenPage() {
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="https://www.youtube.com/watch?v=..."
               />
+            </div>
+
+            <div>
+              <label htmlFor="video-theme" className="block text-sm font-medium text-gray-700 mb-1">Passendes Wochenthema</label>
+              <select
+                id="video-theme"
+                value={selectedThemeId}
+                onChange={e => setSelectedThemeId(e.target.value)}
+                disabled={themesLoading || themes.length === 0}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400"
+              >
+                <option value="">
+                  {themesLoading ? 'Wochenthemen werden geladen…' : 'Ohne Zuordnung einreichen'}
+                </option>
+                {themes.map(theme => (
+                  <option key={theme.id} value={theme.id}>
+                    {theme.week} · {theme.title}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1 text-xs text-gray-500">
+                Wenn möglich, ordne dein Video direkt einem Wochenthema zu. So erscheint es nach der Freigabe am richtigen Themenort.
+              </p>
             </div>
 
             {error && (

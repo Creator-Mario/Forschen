@@ -422,6 +422,7 @@ describe('protected user form routes and their entry links', () => {
     expect(screen.getByRole('heading', { name: /video teilen/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /video einreichen/i })).toBeInTheDocument();
     expect(screen.getByText(/erst nach freigabe erscheint er unter „meine videos“/i)).toBeInTheDocument();
+    expect(await screen.findByLabelText(/passendes wochenthema/i)).toBeInTheDocument();
     unmount();
 
     render(React.createElement(NeueAktionPage));

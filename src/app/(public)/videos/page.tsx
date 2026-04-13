@@ -6,19 +6,17 @@ import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { redirect } from 'next/navigation';
-import { createNoIndexMetadata } from '@/lib/seo';
+import { createPageMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = createNoIndexMetadata(
-  'Videos',
-  'Geschützter Bereich für Video-Beiträge aus der Gemeinschaft.',
-  '/videos',
-);
+export const metadata: Metadata = createPageMetadata({
+  title: 'Videos',
+  description: 'Freigegebene Video-Beiträge aus der Gemeinschaft mit thematischer Zuordnung.',
+  path: '/videos',
+  keywords: ['christliche Videos', 'Bibelforschung Videos', 'Gemeinschaftsvideos'],
+});
 
 export default async function VideosPage() {
   const session = await getServerSession(authOptions);
-  if (!session) redirect('/login');
-
   const videos = getApprovedVideos();
   const themen = getWochenthemaList().filter(t => t.status === 'published');
   const themenById = new Map(themen.map(theme => [theme.id, theme]));
@@ -28,12 +26,32 @@ export default async function VideosPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-blue-800 mb-2">Videos</h1>
-          <p className="text-gray-500">Video-Beiträge aus der Gemeinschaft</p>
+          <p className="text-gray-500">Freigegebene Video-Beiträge aus der Gemeinschaft</p>
         </div>
-        <Link href="/videos/hochladen" className="bg-blue-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
-          + Video teilen
-        </Link>
+        {session ? (
+          <Link href="/videos/hochladen" className="bg-blue-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
+            + Video teilen
+          </Link>
+        ) : (
+          <div className="flex flex-wrap gap-3">
+            <Link href="/login" className="bg-blue-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
+              Anmelden
+            </Link>
+            <Link href="/registrieren" className="border border-blue-200 text-blue-800 px-4 py-2 rounded-lg text-sm hover:bg-blue-50 transition-colors">
+              Kostenlos registrieren
+            </Link>
+          </div>
+        )}
       </div>
+
+      {!session && (
+        <div className="mb-8 rounded-xl border border-blue-100 bg-blue-50 p-5">
+          <h2 className="font-semibold text-blue-900 mb-2">Videos öffentlich ansehen, mit Anmeldung selbst teilen</h2>
+          <p className="text-sm text-gray-700 leading-relaxed">
+            Hier siehst du alle freigegebenen Videos. Eigene Beiträge kannst du nach Anmeldung einreichen; sie gehen danach automatisch in die Moderation und erscheinen nach Freigabe im Mitgliederbereich und unter passenden Themen.
+          </p>
+        </div>
+      )}
 
       {videos.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -75,8 +93,8 @@ export default async function VideosPage() {
       ) : (
         <div className="text-center py-12 text-gray-500">
           <p className="text-lg mb-4">Noch keine Videos vorhanden.</p>
-          <Link href="/videos/hochladen" className="text-blue-600 hover:text-blue-800 transition-colors">
-            Erstes Video teilen →
+          <Link href={session ? '/videos/hochladen' : '/registrieren'} className="text-blue-600 hover:text-blue-800 transition-colors">
+            {session ? 'Erstes Video teilen →' : 'Jetzt registrieren und erstes Video teilen →'}
           </Link>
         </div>
       )}
