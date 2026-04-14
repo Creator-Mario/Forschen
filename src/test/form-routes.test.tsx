@@ -348,7 +348,8 @@ describe('public overview pages link into the right form flows', () => {
     expect(screen.getByRole('link', { name: /kostenlos registrieren/i })).toHaveAttribute('href', '/registrieren');
     unmount();
 
-    render(React.createElement(TageswortPage));
+    const tageswortJsx = await TageswortPage();
+    render(React.createElement(React.Fragment, null, tageswortJsx));
     expect(screen.getByRole('link', { name: /beitrag verfassen/i })).toHaveAttribute('href', '/forschung/beitraege');
   });
 
