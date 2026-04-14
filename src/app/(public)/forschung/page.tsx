@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import type { Metadata } from 'next';
-import { getApprovedForschung, getWochenthemaList } from '@/lib/db';
+import { getApprovedForschung, getWochenthemaListFresh } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
@@ -19,7 +19,7 @@ export const metadata: Metadata = createPageMetadata({
 export default async function ForschungPage() {
   const session = await getServerSession(authOptions);
   const beitraege = getApprovedForschung();
-  const themen = getWochenthemaList().filter(t => t.status === 'published');
+  const themen = (await getWochenthemaListFresh()).filter(t => t.status === 'published');
   const themenById = new Map(themen.map(theme => [theme.id, theme]));
 
   return (

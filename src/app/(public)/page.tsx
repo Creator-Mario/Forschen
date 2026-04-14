@@ -12,7 +12,7 @@ import BookRecommendationsCard from '@/components/BookRecommendationsCard';
 import QrShareActions from '@/components/QrShareActions';
 import Logo from '@/components/Logo';
 import { canonicalSiteUrl, siteName } from '@/lib/config';
-import { getTodayTageswort, getCurrentWochenthema, getApprovedThesen } from '@/lib/db';
+import { getTodayTageswortFresh, getCurrentWochenthemaFresh, getApprovedThesen } from '@/lib/db';
 import { getTodayPsalmThema, getTodayGlaubenHeuteThema, getTodayBuchempfehlungen } from '@/lib/generated-content';
 import { founderProfile } from '@/lib/founder-profile';
 import { createPageMetadata } from '@/lib/seo';
@@ -25,8 +25,8 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default async function HomePage() {
-  const tageswort = getTodayTageswort();
-  const wochenthema = getCurrentWochenthema();
+  const tageswort = await getTodayTageswortFresh();
+  const wochenthema = await getCurrentWochenthemaFresh();
   const thesen = getApprovedThesen().slice(0, 2);
   const psalmThema = await getTodayPsalmThema();
   const glaubenHeute = await getTodayGlaubenHeuteThema();

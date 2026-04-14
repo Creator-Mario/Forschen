@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import type { Metadata } from 'next';
-import { getApprovedVideos, getWochenthemaList } from '@/lib/db';
+import { getApprovedVideos, getWochenthemaListFresh } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import { getServerSession } from 'next-auth';
@@ -18,7 +18,7 @@ export const metadata: Metadata = createPageMetadata({
 export default async function VideosPage() {
   const session = await getServerSession(authOptions);
   const videos = getApprovedVideos();
-  const themen = getWochenthemaList().filter(t => t.status === 'published');
+  const themen = (await getWochenthemaListFresh()).filter(t => t.status === 'published');
   const themenById = new Map(themen.map(theme => [theme.id, theme]));
 
   return (

@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import type { Metadata } from 'next';
-import { getCurrentWochenthema } from '@/lib/db';
+import { getCurrentWochenthemaFresh } from '@/lib/db';
 import { getApprovedForschung, getApprovedVideos } from '@/lib/db';
 import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
@@ -30,8 +30,8 @@ export const metadata: Metadata = createPageMetadata({
   keywords: ['Wochenthema', 'Bibelstudium', 'theologisches Thema'],
 });
 
-export default function WochenthemaPage() {
-  const theme = getCurrentWochenthema();
+export default async function WochenthemaPage() {
+  const theme = await getCurrentWochenthemaFresh();
   const research = theme
     ? getApprovedForschung().filter(item => item.wochenthemaId === theme.id)
     : [];

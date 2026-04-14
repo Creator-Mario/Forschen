@@ -225,10 +225,18 @@ export async function saveAdminLog(log: AdminLog): Promise<void> {
 export function getTageswortList(): Tageswort[] {
   return readJson<Tageswort>('tageswort.json');
 }
-export function getTodayTageswort(): Tageswort | undefined {
+export async function getTageswortListFresh(): Promise<Tageswort[]> {
+  return readJsonFresh<Tageswort>('tageswort.json');
+}
+function selectTodayTageswort(list: Tageswort[]): Tageswort | undefined {
   const today = getCurrentPublicationDate();
-  const list = getTageswortList();
   return list.find(t => t.date === today && t.published) || list.filter(t => t.published).at(-1);
+}
+export function getTodayTageswort(): Tageswort | undefined {
+  return selectTodayTageswort(getTageswortList());
+}
+export async function getTodayTageswortFresh(): Promise<Tageswort | undefined> {
+  return selectTodayTageswort(await getTageswortListFresh());
 }
 export function getTageswortById(id: string): Tageswort | undefined {
   return getTageswortList().find(t => t.id === id);
@@ -253,10 +261,19 @@ export async function deleteTageswort(id: string): Promise<boolean> {
 export function getWochenthemaList(): Wochenthema[] {
   return readJson<Wochenthema>('wochenthema.json');
 }
-export function getCurrentWochenthema(): Wochenthema | undefined {
-  const published = getWochenthemaList().filter(w => w.status === 'published');
+export async function getWochenthemaListFresh(): Promise<Wochenthema[]> {
+  return readJsonFresh<Wochenthema>('wochenthema.json');
+}
+function selectCurrentWochenthema(list: Wochenthema[]): Wochenthema | undefined {
   const currentWeek = getCurrentPublicationWeek();
+  const published = list.filter(w => w.status === 'published');
   return published.find(w => w.week === currentWeek) || published.at(-1);
+}
+export function getCurrentWochenthema(): Wochenthema | undefined {
+  return selectCurrentWochenthema(getWochenthemaList());
+}
+export async function getCurrentWochenthemaFresh(): Promise<Wochenthema | undefined> {
+  return selectCurrentWochenthema(await getWochenthemaListFresh());
 }
 export function getWochenthemaById(id: string): Wochenthema | undefined {
   return getWochenthemaList().find(w => w.id === id);
@@ -281,8 +298,14 @@ export async function deleteWochenthema(id: string): Promise<boolean> {
 export function getGeneratedTopicBundles(): GeneratedTopicBundle[] {
   return readJson<GeneratedTopicBundle>('generated-topics.json');
 }
+export async function getGeneratedTopicBundlesFresh(): Promise<GeneratedTopicBundle[]> {
+  return readJsonFresh<GeneratedTopicBundle>('generated-topics.json');
+}
 export function getGeneratedTopicBundleByDate(date: string): GeneratedTopicBundle | undefined {
   return getGeneratedTopicBundles().find(entry => entry.date === date);
+}
+export async function getGeneratedTopicBundleByDateFresh(date: string): Promise<GeneratedTopicBundle | undefined> {
+  return (await getGeneratedTopicBundlesFresh()).find(entry => entry.date === date);
 }
 export async function saveGeneratedTopicBundle(entry: GeneratedTopicBundle): Promise<void> {
   const list = getGeneratedTopicBundles();

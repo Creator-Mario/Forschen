@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getWochenthemaList, getCurrentWochenthema, saveWochenthema, deleteWochenthema } from '@/lib/db';
+import { getWochenthemaListFresh, getCurrentWochenthemaFresh, saveWochenthema, deleteWochenthema } from '@/lib/db';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
@@ -7,9 +7,9 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const all = searchParams.get('all');
   if (all) {
-    return NextResponse.json(getWochenthemaList());
+    return NextResponse.json(await getWochenthemaListFresh());
   }
-  return NextResponse.json(getCurrentWochenthema() || null);
+  return NextResponse.json((await getCurrentWochenthemaFresh()) || null);
 }
 
 export async function POST(req: NextRequest) {

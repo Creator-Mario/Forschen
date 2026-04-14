@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import type { Metadata } from 'next';
 import BibleVerseCard from '@/components/BibleVerseCard';
 import SubmissionCta from '@/components/SubmissionCta';
-import { getTodayTageswort } from '@/lib/db';
+import { getTodayTageswortFresh } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import { createPageMetadata } from '@/lib/seo';
@@ -15,8 +15,8 @@ export const metadata: Metadata = createPageMetadata({
   keywords: ['Tageswort', 'Bibelvers des Tages', 'Auslegung'],
 });
 
-export default function TageswortPage() {
-  const tageswort = getTodayTageswort();
+export default async function TageswortPage() {
+  const tageswort = await getTodayTageswortFresh();
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">

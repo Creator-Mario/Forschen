@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import type { Metadata } from 'next';
-import { getWochenthemaList } from '@/lib/db';
+import { getWochenthemaListFresh } from '@/lib/db';
 import { keepLatestItemsByWeek } from '@/lib/archive-window';
 import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
@@ -15,10 +15,10 @@ export const metadata: Metadata = createPageMetadata({
   keywords: ['Wochenthema Archiv', 'Themenarchiv'],
 });
 
-export default function WochenthemaArchivPage() {
+export default async function WochenthemaArchivPage() {
   const currentDate = formatDate(new Date().toISOString());
   const themes = keepLatestItemsByWeek(
-    getWochenthemaList().filter(t => t.status === 'published' || t.status === 'archived')
+    (await getWochenthemaListFresh()).filter(t => t.status === 'published' || t.status === 'archived')
   );
 
   return (

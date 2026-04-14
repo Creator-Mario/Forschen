@@ -313,7 +313,7 @@ describe('GET /api/tageswort', () => {
 
   it('returns null when no tageswort is available', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
-    vi.doMock('@/lib/db', () => ({ getTodayTageswort: vi.fn().mockReturnValue(undefined), getTageswortList: vi.fn().mockReturnValue([]) }));
+    vi.doMock('@/lib/db', () => ({ getTodayTageswortFresh: vi.fn().mockResolvedValue(undefined), getTageswortListFresh: vi.fn().mockResolvedValue([]) }));
     const { GET } = await import('@/app/api/tageswort/route');
     const res = await GET(makeRequest('http://localhost/api/tageswort'));
     expect(res.status).toBe(200);
@@ -323,7 +323,7 @@ describe('GET /api/tageswort', () => {
   it('returns the tageswort for today', async () => {
     const tw = { id: 'tw1', verse: 'John 3:16', text: 'For God…', date: '2024-01-01', published: true };
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
-    vi.doMock('@/lib/db', () => ({ getTodayTageswort: vi.fn().mockReturnValue(tw), getTageswortList: vi.fn().mockReturnValue([tw]) }));
+    vi.doMock('@/lib/db', () => ({ getTodayTageswortFresh: vi.fn().mockResolvedValue(tw), getTageswortListFresh: vi.fn().mockResolvedValue([tw]) }));
     const { GET } = await import('@/app/api/tageswort/route');
     const res = await GET(makeRequest('http://localhost/api/tageswort'));
     expect((await res.json()).id).toBe('tw1');
@@ -331,7 +331,7 @@ describe('GET /api/tageswort', () => {
 
   it('returns 401 for ?all without ADMIN session', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', role: 'USER' } }) }));
-    vi.doMock('@/lib/db', () => ({ getTodayTageswort: vi.fn(), getTageswortList: vi.fn().mockReturnValue([]) }));
+    vi.doMock('@/lib/db', () => ({ getTodayTageswortFresh: vi.fn(), getTageswortListFresh: vi.fn().mockResolvedValue([]) }));
     const { GET } = await import('@/app/api/tageswort/route');
     const res = await GET(makeRequest('http://localhost/api/tageswort?all=1'));
     expect(res.status).toBe(401);
@@ -345,7 +345,7 @@ describe('GET /api/wochenthema', () => {
 
   it('returns the current wochenthema', async () => {
     const theme = { id: 'wt1', title: 'Week Theme', status: 'published' };
-    vi.doMock('@/lib/db', () => ({ getCurrentWochenthema: vi.fn().mockReturnValue(theme), getWochenthemaList: vi.fn().mockReturnValue([theme]) }));
+    vi.doMock('@/lib/db', () => ({ getCurrentWochenthemaFresh: vi.fn().mockResolvedValue(theme), getWochenthemaListFresh: vi.fn().mockResolvedValue([theme]) }));
     const { GET } = await import('@/app/api/wochenthema/route');
     const res = await GET(makeRequest('http://localhost/api/wochenthema'));
     expect(res.status).toBe(200);
@@ -353,7 +353,7 @@ describe('GET /api/wochenthema', () => {
   });
 
   it('returns null when no published wochenthema exists', async () => {
-    vi.doMock('@/lib/db', () => ({ getCurrentWochenthema: vi.fn().mockReturnValue(undefined), getWochenthemaList: vi.fn().mockReturnValue([]) }));
+    vi.doMock('@/lib/db', () => ({ getCurrentWochenthemaFresh: vi.fn().mockResolvedValue(undefined), getWochenthemaListFresh: vi.fn().mockResolvedValue([]) }));
     const { GET } = await import('@/app/api/wochenthema/route');
     const res = await GET(makeRequest('http://localhost/api/wochenthema'));
     expect(await res.json()).toBeNull();
@@ -361,7 +361,7 @@ describe('GET /api/wochenthema', () => {
 
   it('returns all wochenthemen when ?all=1', async () => {
     const list = [{ id: 'w1' }, { id: 'w2' }];
-    vi.doMock('@/lib/db', () => ({ getCurrentWochenthema: vi.fn(), getWochenthemaList: vi.fn().mockReturnValue(list) }));
+    vi.doMock('@/lib/db', () => ({ getCurrentWochenthemaFresh: vi.fn(), getWochenthemaListFresh: vi.fn().mockResolvedValue(list) }));
     const { GET } = await import('@/app/api/wochenthema/route');
     const res = await GET(makeRequest('http://localhost/api/wochenthema?all=1'));
     expect((await res.json()).length).toBe(2);
@@ -895,7 +895,7 @@ describe('POST /api/internal/weekly-faith-email', () => {
     const saveUser = vi.fn().mockResolvedValue(undefined);
     const sendWeeklyFaithEmail = vi.fn().mockResolvedValue(true);
     vi.doMock('@/lib/db', () => ({
-      getCurrentWochenthema: vi.fn().mockReturnValue({
+      getCurrentWochenthemaFresh: vi.fn().mockResolvedValue({
         id: '2026-W15',
         week: '2026-W15',
         title: 'Die Nachfolge',
@@ -905,7 +905,7 @@ describe('POST /api/internal/weekly-faith-email', () => {
         researchQuestions: ['Frage 1', 'Frage 2'],
         status: 'published',
       }),
-      getUsers: vi.fn().mockReturnValue([
+      getUsersFresh: vi.fn().mockResolvedValue([
         {
           id: 'u1',
           role: 'USER',
@@ -948,7 +948,7 @@ describe('POST /api/internal/weekly-faith-email', () => {
     process.env.CRON_SECRET = 'cron-secret';
 
     vi.doMock('@/lib/db', () => ({
-      getCurrentWochenthema: vi.fn().mockReturnValue({
+      getCurrentWochenthemaFresh: vi.fn().mockResolvedValue({
         id: '2026-W15',
         week: '2026-W15',
         title: 'Die Nachfolge',
@@ -958,7 +958,7 @@ describe('POST /api/internal/weekly-faith-email', () => {
         researchQuestions: ['Frage 1'],
         status: 'published',
       }),
-      getUsers: vi.fn().mockReturnValue([]),
+      getUsersFresh: vi.fn().mockResolvedValue([]),
       saveUser: vi.fn(),
     }));
     vi.doMock('@/lib/email', () => ({ sendWeeklyFaithEmail: vi.fn() }));

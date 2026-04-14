@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getTodayTageswort, getTageswortList, saveTageswort, deleteTageswort } from '@/lib/db';
+import { getTodayTageswortFresh, getTageswortListFresh, saveTageswort, deleteTageswort } from '@/lib/db';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
@@ -12,9 +12,9 @@ export async function GET(req: NextRequest) {
     if (!session || session.user.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    return NextResponse.json(getTageswortList());
+    return NextResponse.json(await getTageswortListFresh());
   }
-  const today = getTodayTageswort();
+  const today = await getTodayTageswortFresh();
   return NextResponse.json(today || null);
 }
 

@@ -143,27 +143,30 @@ describe('TageswortPage', () => {
   beforeEach(() => vi.resetModules());
 
   it('renders the Tageswort heading', async () => {
-    vi.doMock('@/lib/db', () => ({ getTodayTageswort: vi.fn().mockReturnValue(undefined) }));
+    vi.doMock('@/lib/db', () => ({ getTodayTageswortFresh: vi.fn().mockResolvedValue(undefined) }));
     const { default: TageswortPage } = await import('@/app/(public)/tageswort/page');
-    render(React.createElement(TageswortPage));
+    const jsx = await TageswortPage();
+    render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByRole('heading', { name: /Tageswort/i })).toBeInTheDocument();
   });
 
   it('shows placeholder when no tageswort is available', async () => {
-    vi.doMock('@/lib/db', () => ({ getTodayTageswort: vi.fn().mockReturnValue(undefined) }));
+    vi.doMock('@/lib/db', () => ({ getTodayTageswortFresh: vi.fn().mockResolvedValue(undefined) }));
     const { default: TageswortPage } = await import('@/app/(public)/tageswort/page');
-    render(React.createElement(TageswortPage));
+    const jsx = await TageswortPage();
+    render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByText(/noch kein Tageswort/i)).toBeInTheDocument();
   });
 
   it('renders the tageswort content when available', async () => {
     const tw = { id: 'tw1', date: '2024-01-01', verse: 'Johannes 3,16', text: 'Denn also hat Gott', context: '', questions: [], published: true };
-    vi.doMock('@/lib/db', () => ({ getTodayTageswort: vi.fn().mockReturnValue(tw) }));
+    vi.doMock('@/lib/db', () => ({ getTodayTageswortFresh: vi.fn().mockResolvedValue(tw) }));
     vi.doMock('@/components/BibleVerseCard', () => ({
       default: ({ tageswort }: { tageswort: { text: string } }) => React.createElement('div', null, tageswort.text),
     }));
     const { default: TageswortPage } = await import('@/app/(public)/tageswort/page');
-    render(React.createElement(TageswortPage));
+    const jsx = await TageswortPage();
+    render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByText('Denn also hat Gott')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /beitrag verfassen/i })).toHaveAttribute('href', '/forschung/beitraege');
   });
@@ -177,12 +180,13 @@ describe('TageswortArchivPage', () => {
       { id: 'tw1', date: '2024-01-02', verse: 'Psalm 1,1', text: 'Text 1', context: '', questions: [], published: true },
       { id: 'tw2', date: '2024-01-01', verse: 'Psalm 2,1', text: 'Text 2', context: '', questions: [], published: false },
     ];
-    vi.doMock('@/lib/db', () => ({ getTageswortList: vi.fn().mockReturnValue(items) }));
+    vi.doMock('@/lib/db', () => ({ getTageswortListFresh: vi.fn().mockResolvedValue(items) }));
     vi.doMock('@/components/BibleVerseCard', () => ({
       default: ({ tageswort }: { tageswort: { verse: string } }) => React.createElement('div', null, tageswort.verse),
     }));
     const { default: TageswortArchivPage } = await import('@/app/(public)/tageswort/archiv/page');
-    render(React.createElement(TageswortArchivPage));
+    const jsx = await TageswortArchivPage();
+    render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByRole('heading', { name: /Archiv – Tageswörter/i })).toBeInTheDocument();
     expect(screen.getByText('Psalm 1,1')).toBeInTheDocument();
     expect(screen.queryByText('Psalm 2,1')).not.toBeInTheDocument();
@@ -260,7 +264,7 @@ describe('VideosPage', () => {
   it('renders the Videos heading', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
     vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
-    vi.doMock('@/lib/db', () => ({ getApprovedVideos: vi.fn().mockReturnValue([]), getWochenthemaList: vi.fn().mockReturnValue([]) }));
+    vi.doMock('@/lib/db', () => ({ getApprovedVideos: vi.fn().mockReturnValue([]), getWochenthemaListFresh: vi.fn().mockResolvedValue([]) }));
     const { default: VideosPage } = await import('@/app/(public)/videos/page');
     const jsx = await VideosPage();
     render(React.createElement(React.Fragment, null, jsx));
@@ -275,7 +279,7 @@ describe('VideosPage', () => {
       getApprovedVideos: vi.fn().mockReturnValue([
         { id: 'v1', title: 'Video', description: 'Beschreibung', url: 'https://example.com', authorName: 'Anna', createdAt: '2026-04-11T00:00:00Z', wochenthemaId: 'w1', status: 'published' },
       ]),
-      getWochenthemaList: vi.fn().mockReturnValue([
+      getWochenthemaListFresh: vi.fn().mockResolvedValue([
         { id: 'w1', week: '2026-W15', title: 'Treue', introduction: '', bibleVerses: [], problemStatement: '', researchQuestions: [], status: 'published', createdAt: '2026-04-11T00:00:00Z' },
       ]),
     }));
@@ -294,7 +298,7 @@ describe('WochenthemaPage', () => {
 
   it('renders the Wochenthema heading', async () => {
     vi.doMock('@/lib/db', () => ({
-      getCurrentWochenthema: vi.fn().mockReturnValue({
+      getCurrentWochenthemaFresh: vi.fn().mockResolvedValue({
         id: 'w1',
         week: '2026-W16',
         title: 'Wochenthema',
@@ -306,17 +310,17 @@ describe('WochenthemaPage', () => {
       }),
       getApprovedForschung: vi.fn().mockReturnValue([]),
       getApprovedVideos: vi.fn().mockReturnValue([]),
-      getWochenthemaList: vi.fn().mockReturnValue([]),
     }));
     const { default: WochenthemaPage } = await import('@/app/(public)/wochenthema/page');
-    render(React.createElement(WochenthemaPage));
+    const jsx = await WochenthemaPage();
+    render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByRole('heading', { name: /Wochenthema/i, level: 1 })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /beitrag verfassen/i })).toHaveAttribute('href', '/forschung/beitraege');
   });
 
   it('renders approved research and videos for the current theme', async () => {
     vi.doMock('@/lib/db', () => ({
-      getCurrentWochenthema: vi.fn().mockReturnValue({
+      getCurrentWochenthemaFresh: vi.fn().mockResolvedValue({
         id: 'w1',
         week: '2026-W16',
         title: 'Wochenthema',
@@ -334,10 +338,10 @@ describe('WochenthemaPage', () => {
         { id: 'v1', title: 'Passendes Video', description: 'Beschreibung', url: 'https://example.com/video', authorName: 'Anna', createdAt: '2026-04-11T00:00:00Z', wochenthemaId: 'w1', status: 'published' },
         { id: 'v2', title: 'Falsches Video', description: 'Beschreibung', url: 'https://example.com/other', authorName: 'Ben', createdAt: '2026-04-11T00:00:00Z', wochenthemaId: 'w2', status: 'published' },
       ]),
-      getWochenthemaList: vi.fn().mockReturnValue([]),
     }));
     const { default: WochenthemaPage } = await import('@/app/(public)/wochenthema/page');
-    render(React.createElement(WochenthemaPage));
+    const jsx = await WochenthemaPage();
+    render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByText('Passender Beitrag')).toBeInTheDocument();
     expect(screen.getByText('Passendes Video')).toBeInTheDocument();
     expect(screen.queryByText('Falsches Thema')).not.toBeInTheDocument();
@@ -350,13 +354,14 @@ describe('WochenthemaArchivPage', () => {
 
   it('renders archived themes in the archive view', async () => {
     vi.doMock('@/lib/db', () => ({
-      getWochenthemaList: vi.fn().mockReturnValue([
+      getWochenthemaListFresh: vi.fn().mockResolvedValue([
         { id: 'w1', week: '2024-W02', title: 'Archiviertes Thema', introduction: 'Einführung', bibleVerses: [], problemStatement: '', researchQuestions: [], status: 'archived' },
         { id: 'w2', week: '2024-W03', title: 'Aktuelles Thema', introduction: 'Einführung', bibleVerses: [], problemStatement: '', researchQuestions: [], status: 'published' },
       ]),
     }));
     const { default: WochenthemaArchivPage } = await import('@/app/(public)/wochenthema/archiv/page');
-    render(React.createElement(WochenthemaArchivPage));
+    const jsx = await WochenthemaArchivPage();
+    render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByText('Archiviertes Thema')).toBeInTheDocument();
     expect(screen.getAllByText(/Archiviert/i).length).toBeGreaterThan(0);
   });
@@ -453,7 +458,7 @@ describe('ForschungPage', () => {
   it('renders the Forschung heading', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
     vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
-    vi.doMock('@/lib/db', () => ({ getApprovedForschung: vi.fn().mockReturnValue([]), getWochenthemaList: vi.fn().mockReturnValue([]) }));
+    vi.doMock('@/lib/db', () => ({ getApprovedForschung: vi.fn().mockReturnValue([]), getWochenthemaListFresh: vi.fn().mockResolvedValue([]) }));
     const { default: ForschungPage } = await import('@/app/(public)/forschung/page');
     const jsx = await ForschungPage();
     render(React.createElement(React.Fragment, null, jsx));
@@ -468,7 +473,7 @@ describe('ForschungPage', () => {
       getApprovedForschung: vi.fn().mockReturnValue([
         { id: 'f1', userId: 'u1', authorName: 'Alice', title: 'Beitrag', content: 'Inhalt', bibleReference: '', wochenthemaId: 'w1', status: 'published', createdAt: '2026-04-11T00:00:00Z' },
       ]),
-      getWochenthemaList: vi.fn().mockReturnValue([
+      getWochenthemaListFresh: vi.fn().mockResolvedValue([
         { id: 'w1', week: '2026-W15', title: 'Treue', introduction: '', bibleVerses: [], problemStatement: '', researchQuestions: [], status: 'published', createdAt: '2026-04-11T00:00:00Z' },
       ]),
     }));
@@ -624,8 +629,8 @@ describe('HomePage', () => {
 
   it('renders the hero section', async () => {
     vi.doMock('@/lib/db', () => ({
-      getTodayTageswort: vi.fn().mockReturnValue(undefined),
-      getCurrentWochenthema: vi.fn().mockReturnValue(undefined),
+      getTodayTageswortFresh: vi.fn().mockResolvedValue(undefined),
+      getCurrentWochenthemaFresh: vi.fn().mockResolvedValue(undefined),
       getApprovedThesen: vi.fn().mockReturnValue([]),
     }));
     vi.doMock('@/lib/generated-content', () => ({
