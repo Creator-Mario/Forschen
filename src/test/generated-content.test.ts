@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import type { GeneratedTopicBundle } from '@/types';
 
 function createDbMock(initialEntries: GeneratedTopicBundle[] = []) {
-  let entries = [...initialEntries];
+  const entries = [...initialEntries];
   const saveGeneratedTopicBundle = vi.fn(async (entry: GeneratedTopicBundle) => {
     const index = entries.findIndex(item => item.date === entry.date);
     if (index >= 0) entries[index] = entry;

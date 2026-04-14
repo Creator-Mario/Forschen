@@ -152,18 +152,6 @@ export interface GeneratedTopicBundle {
   books: BuchempfehlungsSammlung;
 }
 
-export type GeneratedTopicSource = 'seed-fallback' | 'ai';
-
-export interface GeneratedTopicBundle {
-  id: string;
-  date: string;
-  source: GeneratedTopicSource;
-  createdAt: string;
-  promptVersion: string;
-  topic: GlaubenHeuteThema;
-  books: BuchempfehlungsSammlung;
-}
-
 export interface NutzerBuchempfehlung {
   id: string;
   userId: string;
