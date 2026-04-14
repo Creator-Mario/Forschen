@@ -1,1 +1,48 @@
-[]
+[
+  {
+    "id": "generated-topic-2026-04-14",
+    "date": "2026-04-14",
+    "source": "ai",
+    "createdAt": "2026-04-14T04:22:04.702Z",
+    "promptVersion": "v1",
+    "topic": {
+      "id": "glauben-heute-2026-04-14",
+      "date": "2026-04-14",
+      "title": "Die Suche nach Weisheit im Glauben",
+      "headline": "Weisheit als göttliches Geschenk entdecken und leben",
+      "worldFocus": "In einer komplexen und schnelllebigen Welt wächst das Bedürfnis nach klarer Orientierung und tiefem Verständnis. Weisheit hilft, Entscheidungen verantwortungsvoll zu treffen und Konflikte friedlich zu lösen. Sie fördert ein Leben in Gerechtigkeit und Barmherzigkeit, das auch gesellschaftlichen Zusammenhalt stärkt.",
+      "faithPerspective": "Weisheit wird in der Bibel als Gabe Gottes verstanden, die den Gläubigen befähigt, Gottes Willen zu erkennen und zu leben. Sie ist mehr als bloßes Wissen; sie verbindet Erkenntnis mit dem rechten Handeln. Im Glauben suchen Christen diese Weisheit, um ihrem Leben eine göttliche Richtung zu geben und anderen Zeugnis zu sein.",
+      "discipleshipImpulse": "Das Streben nach Weisheit fordert dazu heraus, Gottes Wort regelmäßig zu lesen und in der Gemeinschaft zu reflektieren. Praktische Entscheidungen sollen im Licht der biblischen Weisungen getroffen werden. Dabei wächst die Nachfolge Jesu durch tägliches Lernen und gelebte Demut.",
+      "bibleVerses": [
+        "Jakobus 1,5",
+        "Sprüche 3,13-18",
+        "Kolosser 1,9-10"
+      ],
+      "questions": [
+        "Wie kann ich im Alltag nach göttlicher Weisheit fragen und sie erkennen?",
+        "Welche Rolle spielt Weisheit in meinem persönlichen Glaubensleben?",
+        "Wie kann Weisheit zu einem Werkzeug für Versöhnung und Frieden in meiner Umgebung werden?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-04-14",
+      "date": "2026-04-14",
+      "topicTitle": "Weisheit im christlichen Glauben entdecken",
+      "introduction": "Weisheit ist ein zentrales Thema biblischer Lehre und christlicher Lebenspraxis. Die folgenden Bücher bieten fundierte Einblicke in die biblische Weisheitsliteratur und deren Anwendung im Glaubensalltag.",
+      "recommendations": [
+        {
+          "title": "Weisheit aus Gottes Wort",
+          "author": "Ulrich Luz",
+          "description": "Eine gründliche exegetische Einführung in die Weisheitsbücher der Bibel mit Schwerpunkt auf ihrem theologischen Gehalt und praktischen Relevanz.",
+          "relevance": "Hilft, die biblische Weisheit in ihrem historischen Kontext zu verstehen und auf heutige Lebensfragen anzuwenden."
+        },
+        {
+          "title": "Weisheit leben – Christliche Perspektiven",
+          "author": "Elisabeth Moltmann-Wendel",
+          "description": "Dieses Buch verbindet biblische Weisheitstraditionen mit zeitgenössischen Herausforderungen und zeigt Wege zu einem weisen Leben im Glauben auf.",
+          "relevance": "Ermutigt zur Integration von Weisheit in den Alltag und in das persönliche Glaubenswachstum."
+        }
+      ]
+    }
+  }
+]
