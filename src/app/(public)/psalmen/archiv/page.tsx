@@ -14,8 +14,8 @@ export const metadata: Metadata = createPageMetadata({
   keywords: ['Psalmen Archiv', 'Psalm-Andachten'],
 });
 
-export default function PsalmenArchivPage() {
-  const items = getPsalmThemaArchiv();
+export default async function PsalmenArchivPage() {
+  const items = await getPsalmThemaArchiv();
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">

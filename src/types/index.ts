@@ -148,6 +148,7 @@ export interface GeneratedTopicBundle {
   source: GeneratedTopicSource;
   createdAt: string;
   promptVersion: string;
+  psalm?: PsalmThema;
   topic: GlaubenHeuteThema;
   books: BuchempfehlungsSammlung;
 }

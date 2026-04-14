@@ -28,7 +28,7 @@ export default async function HomePage() {
   const tageswort = getTodayTageswort();
   const wochenthema = getCurrentWochenthema();
   const thesen = getApprovedThesen().slice(0, 2);
-  const psalmThema = getTodayPsalmThema();
+  const psalmThema = await getTodayPsalmThema();
   const glaubenHeute = await getTodayGlaubenHeuteThema();
   const buchempfehlungen = await getTodayBuchempfehlungen();
 
