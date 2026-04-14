@@ -48,7 +48,9 @@ vi.mock('next-auth/react', () => ({
 
 vi.mock('@/lib/db', () => ({
   getTodayTageswort: () => currentTageswort,
+  getTodayTageswortFresh: async () => currentTageswort,
   getCurrentWochenthema: () => undefined,
+  getCurrentWochenthemaFresh: async () => undefined,
   getApprovedThesen: () => approvedThesen,
   getApprovedAktionen: () => approvedAktionen,
   getApprovedGebete: () => communityGebete,
@@ -57,7 +59,9 @@ vi.mock('@/lib/db', () => ({
   getForschung: () => userBeitraege,
   getVideos: () => userVideos,
   getGeneratedTopicBundleByDate: () => undefined,
+  getGeneratedTopicBundleByDateFresh: async () => undefined,
   getGeneratedTopicBundles: () => [],
+  getGeneratedTopicBundlesFresh: async () => [],
   saveGeneratedTopicBundle: vi.fn(async () => undefined),
 }));
 

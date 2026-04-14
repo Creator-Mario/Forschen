@@ -225,9 +225,17 @@ export async function saveAdminLog(log: AdminLog): Promise<void> {
 export function getTageswortList(): Tageswort[] {
   return readJson<Tageswort>('tageswort.json');
 }
+export async function getTageswortListFresh(): Promise<Tageswort[]> {
+  return readJsonFresh<Tageswort>('tageswort.json');
+}
 export function getTodayTageswort(): Tageswort | undefined {
   const today = getCurrentPublicationDate();
   const list = getTageswortList();
+  return list.find(t => t.date === today && t.published) || list.filter(t => t.published).at(-1);
+}
+export async function getTodayTageswortFresh(): Promise<Tageswort | undefined> {
+  const today = getCurrentPublicationDate();
+  const list = await getTageswortListFresh();
   return list.find(t => t.date === today && t.published) || list.filter(t => t.published).at(-1);
 }
 export function getTageswortById(id: string): Tageswort | undefined {
@@ -253,8 +261,16 @@ export async function deleteTageswort(id: string): Promise<boolean> {
 export function getWochenthemaList(): Wochenthema[] {
   return readJson<Wochenthema>('wochenthema.json');
 }
+export async function getWochenthemaListFresh(): Promise<Wochenthema[]> {
+  return readJsonFresh<Wochenthema>('wochenthema.json');
+}
 export function getCurrentWochenthema(): Wochenthema | undefined {
   const published = getWochenthemaList().filter(w => w.status === 'published');
+  const currentWeek = getCurrentPublicationWeek();
+  return published.find(w => w.week === currentWeek) || published.at(-1);
+}
+export async function getCurrentWochenthemaFresh(): Promise<Wochenthema | undefined> {
+  const published = (await getWochenthemaListFresh()).filter(w => w.status === 'published');
   const currentWeek = getCurrentPublicationWeek();
   return published.find(w => w.week === currentWeek) || published.at(-1);
 }
@@ -281,8 +297,14 @@ export async function deleteWochenthema(id: string): Promise<boolean> {
 export function getGeneratedTopicBundles(): GeneratedTopicBundle[] {
   return readJson<GeneratedTopicBundle>('generated-topics.json');
 }
+export async function getGeneratedTopicBundlesFresh(): Promise<GeneratedTopicBundle[]> {
+  return readJsonFresh<GeneratedTopicBundle>('generated-topics.json');
+}
 export function getGeneratedTopicBundleByDate(date: string): GeneratedTopicBundle | undefined {
   return getGeneratedTopicBundles().find(entry => entry.date === date);
+}
+export async function getGeneratedTopicBundleByDateFresh(date: string): Promise<GeneratedTopicBundle | undefined> {
+  return (await getGeneratedTopicBundlesFresh()).find(entry => entry.date === date);
 }
 export async function saveGeneratedTopicBundle(entry: GeneratedTopicBundle): Promise<void> {
   const list = getGeneratedTopicBundles();

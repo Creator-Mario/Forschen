@@ -105,7 +105,7 @@ describe('GET /api/tageswort', () => {
   it('returns today tageswort for unauthenticated request', async () => {
     const entry = { id: 't1', date: '2026-01-01', published: true, verse: 'Joh 3:16', text: 'Text', context: '', questions: [] };
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
-    vi.doMock('@/lib/db', () => ({ getTodayTageswort: vi.fn().mockReturnValue(entry), getTageswortList: vi.fn().mockReturnValue([entry]) }));
+    vi.doMock('@/lib/db', () => ({ getTodayTageswortFresh: vi.fn().mockResolvedValue(entry), getTageswortListFresh: vi.fn().mockResolvedValue([entry]) }));
     const { GET } = await import('@/app/api/tageswort/route');
     const res = await GET(makeRequest('http://localhost/api/tageswort'));
     expect(res.status).toBe(200);
@@ -114,7 +114,7 @@ describe('GET /api/tageswort', () => {
 
   it('returns 401 for ?all without admin session', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
-    vi.doMock('@/lib/db', () => ({ getTodayTageswort: vi.fn(), getTageswortList: vi.fn().mockReturnValue([]) }));
+    vi.doMock('@/lib/db', () => ({ getTodayTageswortFresh: vi.fn(), getTageswortListFresh: vi.fn().mockResolvedValue([]) }));
     const { GET } = await import('@/app/api/tageswort/route');
     const res = await GET(makeRequest('http://localhost/api/tageswort?all=1'));
     expect(res.status).toBe(401);
@@ -123,7 +123,7 @@ describe('GET /api/tageswort', () => {
   it('returns full list for admin with ?all', async () => {
     const list = [{ id: 't1' }, { id: 't2' }];
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(ADMIN_SESSION) }));
-    vi.doMock('@/lib/db', () => ({ getTodayTageswort: vi.fn(), getTageswortList: vi.fn().mockReturnValue(list) }));
+    vi.doMock('@/lib/db', () => ({ getTodayTageswortFresh: vi.fn(), getTageswortListFresh: vi.fn().mockResolvedValue(list) }));
     const { GET } = await import('@/app/api/tageswort/route');
     const res = await GET(makeRequest('http://localhost/api/tageswort?all=1'));
     expect(res.status).toBe(200);
@@ -136,7 +136,7 @@ describe('POST /api/tageswort', () => {
 
   it('returns 401 for non-admin', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(USER_SESSION) }));
-    vi.doMock('@/lib/db', () => ({ saveTageswort: vi.fn(), getTodayTageswort: vi.fn(), getTageswortList: vi.fn().mockReturnValue([]) }));
+    vi.doMock('@/lib/db', () => ({ saveTageswort: vi.fn(), getTodayTageswortFresh: vi.fn(), getTageswortListFresh: vi.fn().mockResolvedValue([]) }));
     const { POST } = await import('@/app/api/tageswort/route');
     const res = await POST(makeJsonRequest('http://localhost/api/tageswort', { id: 't1', verse: 'Joh 1:1' }));
     expect(res.status).toBe(401);
@@ -145,7 +145,7 @@ describe('POST /api/tageswort', () => {
   it('saves entry and returns success for admin', async () => {
     const saveTageswort = vi.fn().mockResolvedValue(undefined);
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(ADMIN_SESSION) }));
-    vi.doMock('@/lib/db', () => ({ saveTageswort, getTodayTageswort: vi.fn(), getTageswortList: vi.fn().mockReturnValue([]) }));
+    vi.doMock('@/lib/db', () => ({ saveTageswort, getTodayTageswortFresh: vi.fn(), getTageswortListFresh: vi.fn().mockResolvedValue([]) }));
     const { POST } = await import('@/app/api/tageswort/route');
     const entry = { id: 't1', date: '2026-01-01', verse: 'Joh 1:1', text: 'Im Anfang…', context: '', questions: [] };
     const res = await POST(makeJsonRequest('http://localhost/api/tageswort', entry));
@@ -159,7 +159,7 @@ describe('PATCH /api/tageswort', () => {
 
   it('returns 400 when id is missing', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(ADMIN_SESSION) }));
-    vi.doMock('@/lib/db', () => ({ saveTageswort: vi.fn(), getTodayTageswort: vi.fn(), getTageswortList: vi.fn().mockReturnValue([]) }));
+    vi.doMock('@/lib/db', () => ({ saveTageswort: vi.fn(), getTodayTageswortFresh: vi.fn(), getTageswortListFresh: vi.fn().mockResolvedValue([]) }));
     const { PATCH } = await import('@/app/api/tageswort/route');
     const res = await PATCH(makePatchRequest('http://localhost/api/tageswort', { verse: 'X' }));
     expect(res.status).toBe(400);
@@ -168,7 +168,7 @@ describe('PATCH /api/tageswort', () => {
   it('saves updated entry for admin', async () => {
     const saveTageswort = vi.fn().mockResolvedValue(undefined);
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(ADMIN_SESSION) }));
-    vi.doMock('@/lib/db', () => ({ saveTageswort, getTodayTageswort: vi.fn(), getTageswortList: vi.fn().mockReturnValue([]) }));
+    vi.doMock('@/lib/db', () => ({ saveTageswort, getTodayTageswortFresh: vi.fn(), getTageswortListFresh: vi.fn().mockResolvedValue([]) }));
     const { PATCH } = await import('@/app/api/tageswort/route');
     const res = await PATCH(makePatchRequest('http://localhost/api/tageswort', { id: 't1', verse: 'Updated' }));
     expect(res.status).toBe(200);
@@ -181,7 +181,7 @@ describe('DELETE /api/tageswort', () => {
 
   it('returns 401 for non-admin', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(USER_SESSION) }));
-    vi.doMock('@/lib/db', () => ({ deleteTageswort: vi.fn(), getTodayTageswort: vi.fn(), getTageswortList: vi.fn().mockReturnValue([]) }));
+    vi.doMock('@/lib/db', () => ({ deleteTageswort: vi.fn(), getTodayTageswortFresh: vi.fn(), getTageswortListFresh: vi.fn().mockResolvedValue([]) }));
     const { DELETE } = await import('@/app/api/tageswort/route');
     const res = await DELETE(makeDeleteRequest('http://localhost/api/tageswort', { id: 't1' }));
     expect(res.status).toBe(401);
@@ -189,7 +189,7 @@ describe('DELETE /api/tageswort', () => {
 
   it('returns 404 when entry not found', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(ADMIN_SESSION) }));
-    vi.doMock('@/lib/db', () => ({ deleteTageswort: vi.fn().mockResolvedValue(false), getTodayTageswort: vi.fn(), getTageswortList: vi.fn().mockReturnValue([]) }));
+    vi.doMock('@/lib/db', () => ({ deleteTageswort: vi.fn().mockResolvedValue(false), getTodayTageswortFresh: vi.fn(), getTageswortListFresh: vi.fn().mockResolvedValue([]) }));
     const { DELETE } = await import('@/app/api/tageswort/route');
     const res = await DELETE(makeDeleteRequest('http://localhost/api/tageswort', { id: 'missing' }));
     expect(res.status).toBe(404);
@@ -197,7 +197,7 @@ describe('DELETE /api/tageswort', () => {
 
   it('deletes entry and returns success', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(ADMIN_SESSION) }));
-    vi.doMock('@/lib/db', () => ({ deleteTageswort: vi.fn().mockResolvedValue(true), getTodayTageswort: vi.fn(), getTageswortList: vi.fn().mockReturnValue([]) }));
+    vi.doMock('@/lib/db', () => ({ deleteTageswort: vi.fn().mockResolvedValue(true), getTodayTageswortFresh: vi.fn(), getTageswortListFresh: vi.fn().mockResolvedValue([]) }));
     const { DELETE } = await import('@/app/api/tageswort/route');
     const res = await DELETE(makeDeleteRequest('http://localhost/api/tageswort', { id: 't1' }));
     expect(res.status).toBe(200);
@@ -212,7 +212,7 @@ describe('POST /api/wochenthema', () => {
 
   it('returns 401 for non-admin', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(USER_SESSION) }));
-    vi.doMock('@/lib/db', () => ({ saveWochenthema: vi.fn(), getWochenthemaList: vi.fn().mockReturnValue([]), getCurrentWochenthema: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ saveWochenthema: vi.fn(), getWochenthemaListFresh: vi.fn().mockResolvedValue([]), getCurrentWochenthemaFresh: vi.fn() }));
     const { POST } = await import('@/app/api/wochenthema/route');
     const res = await POST(makeJsonRequest('http://localhost/api/wochenthema', { id: 'w1', week: '2026-W01', title: 'T', status: 'draft' }));
     expect(res.status).toBe(401);
@@ -221,7 +221,7 @@ describe('POST /api/wochenthema', () => {
   it('saves wochenthema and returns success for admin', async () => {
     const saveWochenthema = vi.fn().mockResolvedValue(undefined);
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(ADMIN_SESSION) }));
-    vi.doMock('@/lib/db', () => ({ saveWochenthema, getWochenthemaList: vi.fn().mockReturnValue([]), getCurrentWochenthema: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ saveWochenthema, getWochenthemaListFresh: vi.fn().mockResolvedValue([]), getCurrentWochenthemaFresh: vi.fn() }));
     const { POST } = await import('@/app/api/wochenthema/route');
     const theme = { id: 'w1', week: '2026-W10', title: 'Thema', introduction: '', bibleVerses: [], problemStatement: '', researchQuestions: [], status: 'draft' };
     const res = await POST(makeJsonRequest('http://localhost/api/wochenthema', theme));
@@ -235,7 +235,7 @@ describe('PATCH /api/wochenthema', () => {
 
   it('returns 400 when id is missing', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(ADMIN_SESSION) }));
-    vi.doMock('@/lib/db', () => ({ saveWochenthema: vi.fn(), getWochenthemaList: vi.fn().mockReturnValue([]), getCurrentWochenthema: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ saveWochenthema: vi.fn(), getWochenthemaListFresh: vi.fn().mockResolvedValue([]), getCurrentWochenthemaFresh: vi.fn() }));
     const { PATCH } = await import('@/app/api/wochenthema/route');
     const res = await PATCH(makePatchRequest('http://localhost/api/wochenthema', { title: 'Kein ID' }));
     expect(res.status).toBe(400);
@@ -244,7 +244,7 @@ describe('PATCH /api/wochenthema', () => {
   it('updates wochenthema status to published', async () => {
     const saveWochenthema = vi.fn().mockResolvedValue(undefined);
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(ADMIN_SESSION) }));
-    vi.doMock('@/lib/db', () => ({ saveWochenthema, getWochenthemaList: vi.fn().mockReturnValue([]), getCurrentWochenthema: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ saveWochenthema, getWochenthemaListFresh: vi.fn().mockResolvedValue([]), getCurrentWochenthemaFresh: vi.fn() }));
     const { PATCH } = await import('@/app/api/wochenthema/route');
     const res = await PATCH(makePatchRequest('http://localhost/api/wochenthema', { id: 'w1', status: 'published', title: 'Thema' }));
     expect(res.status).toBe(200);
@@ -257,7 +257,7 @@ describe('DELETE /api/wochenthema', () => {
 
   it('returns 404 when theme not found', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(ADMIN_SESSION) }));
-    vi.doMock('@/lib/db', () => ({ deleteWochenthema: vi.fn().mockResolvedValue(false), getWochenthemaList: vi.fn().mockReturnValue([]), getCurrentWochenthema: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ deleteWochenthema: vi.fn().mockResolvedValue(false), getWochenthemaListFresh: vi.fn().mockResolvedValue([]), getCurrentWochenthemaFresh: vi.fn() }));
     const { DELETE } = await import('@/app/api/wochenthema/route');
     const res = await DELETE(makeDeleteRequest('http://localhost/api/wochenthema', { id: 'missing' }));
     expect(res.status).toBe(404);
@@ -265,7 +265,7 @@ describe('DELETE /api/wochenthema', () => {
 
   it('deletes theme and returns success', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(ADMIN_SESSION) }));
-    vi.doMock('@/lib/db', () => ({ deleteWochenthema: vi.fn().mockResolvedValue(true), getWochenthemaList: vi.fn().mockReturnValue([]), getCurrentWochenthema: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ deleteWochenthema: vi.fn().mockResolvedValue(true), getWochenthemaListFresh: vi.fn().mockResolvedValue([]), getCurrentWochenthemaFresh: vi.fn() }));
     const { DELETE } = await import('@/app/api/wochenthema/route');
     const res = await DELETE(makeDeleteRequest('http://localhost/api/wochenthema', { id: 'w1' }));
     expect(res.status).toBe(200);

@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import BibleVerseCard from '@/components/BibleVerseCard';
-import { getTageswortList } from '@/lib/db';
+import { getTageswortListFresh } from '@/lib/db';
 import { keepLatestItemsByDate } from '@/lib/archive-window';
 import { formatDate } from '@/lib/utils';
 import { createPageMetadata } from '@/lib/seo';
@@ -15,9 +15,9 @@ export const metadata: Metadata = createPageMetadata({
   keywords: ['Tageswort Archiv', 'Bibelarchiv'],
 });
 
-export default function TageswortArchivPage() {
+export default async function TageswortArchivPage() {
   const items = keepLatestItemsByDate(
-    getTageswortList().filter(item => item.published)
+    (await getTageswortListFresh()).filter(item => item.published)
   );
 
   return (

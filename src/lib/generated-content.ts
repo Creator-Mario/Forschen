@@ -7,7 +7,11 @@ import type {
   GeneratedTopicSource,
 } from '@/types';
 import { GENERATED_ARCHIVE_DAYS, MS_PER_DAY } from './archive-window';
-import { getGeneratedTopicBundleByDate, getGeneratedTopicBundles, saveGeneratedTopicBundle } from './db';
+import {
+  getGeneratedTopicBundleByDateFresh,
+  getGeneratedTopicBundlesFresh,
+  saveGeneratedTopicBundle,
+} from './db';
 import { getCurrentPublicationDate } from './publishing';
 
 const psalmSeeds = [
@@ -721,7 +725,7 @@ async function persistGeneratedTopicBundle(bundle: GeneratedTopicBundle): Promis
 }
 
 async function getOrCreateGeneratedTopicBundle(date = getCurrentPublicationDate()): Promise<GeneratedTopicBundle> {
-  const existing = getGeneratedTopicBundleByDate(date);
+  const existing = await getGeneratedTopicBundleByDateFresh(date);
   if (existing && !shouldRefreshGeneratedTopicBundle(existing)) return existing;
 
   const inFlight = inFlightTopicGenerations.get(date);
@@ -749,8 +753,9 @@ export async function getTodayPsalmThema(date = getCurrentPublicationDate()): Pr
 }
 
 export async function getPsalmThemaArchiv(date = getCurrentPublicationDate()): Promise<PsalmThema[]> {
+  const storedBundles = await getGeneratedTopicBundlesFresh();
   const bundlesByDate = new Map(
-    getGeneratedTopicBundles().map(bundle => [bundle.date, bundle] as const)
+    storedBundles.map(bundle => [bundle.date, bundle] as const)
   );
   const todayBundle = await getOrCreateGeneratedTopicBundle(date);
   bundlesByDate.set(date, todayBundle);
@@ -764,8 +769,9 @@ export async function getTodayGlaubenHeuteThema(date = getCurrentPublicationDate
 }
 
 export async function getGlaubenHeuteArchiv(date = getCurrentPublicationDate()): Promise<GlaubenHeuteThema[]> {
+  const storedBundles = await getGeneratedTopicBundlesFresh();
   const bundlesByDate = new Map(
-    getGeneratedTopicBundles().map(bundle => [bundle.date, bundle] as const)
+    storedBundles.map(bundle => [bundle.date, bundle] as const)
   );
   const todayBundle = await getOrCreateGeneratedTopicBundle(date);
   bundlesByDate.set(date, todayBundle);
@@ -779,8 +785,9 @@ export async function getTodayBuchempfehlungen(date = getCurrentPublicationDate(
 }
 
 export async function getBuchempfehlungenArchiv(date = getCurrentPublicationDate()): Promise<BuchempfehlungsSammlung[]> {
+  const storedBundles = await getGeneratedTopicBundlesFresh();
   const bundlesByDate = new Map(
-    getGeneratedTopicBundles().map(bundle => [bundle.date, bundle] as const)
+    storedBundles.map(bundle => [bundle.date, bundle] as const)
   );
   const todayBundle = await getOrCreateGeneratedTopicBundle(date);
   bundlesByDate.set(date, todayBundle);

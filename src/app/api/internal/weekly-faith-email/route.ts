@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getCurrentWochenthema, getUsers, saveUser } from '@/lib/db';
+import { getCurrentWochenthemaFresh, getUsersFresh, saveUser } from '@/lib/db';
 import { sendWeeklyFaithEmail } from '@/lib/email';
 
 export async function POST(req: Request) {
@@ -16,12 +16,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const theme = getCurrentWochenthema();
+  const theme = await getCurrentWochenthemaFresh();
   if (!theme) {
     return NextResponse.json({ error: 'Kein veröffentlichtes Wochenthema gefunden.' }, { status: 404 });
   }
 
-  const recipients = getUsers().filter(user =>
+  const recipients = (await getUsersFresh()).filter(user =>
     user.role !== 'ADMIN' &&
     user.status === 'active' &&
     user.active &&

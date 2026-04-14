@@ -12,7 +12,9 @@ function createDbMock(initialEntries: GeneratedTopicBundle[] = []) {
   return {
     module: {
       getGeneratedTopicBundleByDate: vi.fn((date: string) => entries.find(entry => entry.date === date)),
+      getGeneratedTopicBundleByDateFresh: vi.fn(async (date: string) => entries.find(entry => entry.date === date)),
       getGeneratedTopicBundles: vi.fn(() => entries),
+      getGeneratedTopicBundlesFresh: vi.fn(async () => entries),
       saveGeneratedTopicBundle,
     },
     saveGeneratedTopicBundle,
