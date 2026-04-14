@@ -175,6 +175,128 @@ describe('db – getTodayTageswort', () => {
   });
 });
 
+describe('db – fresh GitHub-backed public content reads', () => {
+  const remoteTageswort = [
+    { id: 't1', date: '2026-04-10', published: true, verse: 'old', text: 'old text', context: '', questions: [] },
+    { id: 't2', date: '2026-04-11', published: true, verse: 'John 3:16', text: 'For God…', context: '', questions: [] },
+  ];
+  const remoteWochenthemen = [
+    { id: 'w1', week: '2026-W15', status: 'published', title: 'Week 15', introduction: '', bibleVerses: [], problemStatement: '', researchQuestions: [] },
+    { id: 'w2', week: '2026-W16', status: 'published', title: 'Week 16', introduction: '', bibleVerses: [], problemStatement: '', researchQuestions: [] },
+  ];
+  const remoteGeneratedTopics = [
+    {
+      id: 'generated-topic-2026-04-11',
+      date: '2026-04-11',
+      source: 'ai',
+      createdAt: '2026-04-11T00:00:00.000Z',
+      promptVersion: 'v2',
+      psalm: {
+        id: 'psalm-2026-04-11',
+        date: '2026-04-11',
+        psalmReference: 'Psalm 1,1-3',
+        title: 'Verwurzelt leben',
+        excerpt: 'Auszug',
+        summary: 'Zusammenfassung',
+        significance: 'Bedeutung',
+        practice: 'Praxis',
+        questions: ['Frage 1', 'Frage 2', 'Frage 3'],
+      },
+      topic: {
+        id: 'glauben-heute-2026-04-11',
+        date: '2026-04-11',
+        title: 'Thema',
+        headline: 'Überschrift',
+        worldFocus: 'Fokus',
+        faithPerspective: 'Perspektive',
+        discipleshipImpulse: 'Impuls',
+        bibleVerses: ['Johannes 3,16', 'Psalm 1,1', 'Römer 8,1'],
+        questions: ['Frage 1', 'Frage 2', 'Frage 3'],
+      },
+      books: {
+        id: 'buchliste-2026-04-11',
+        date: '2026-04-11',
+        topicTitle: 'Thema',
+        introduction: 'Intro',
+        recommendations: [
+          { title: 'Buch 1', author: 'Autor 1', description: 'Beschreibung 1', relevance: 'Relevanz 1' },
+          { title: 'Buch 2', author: 'Autor 2', description: 'Beschreibung 2', relevance: 'Relevanz 2' },
+        ],
+      },
+    },
+  ];
+
+  beforeEach(() => {
+    vi.resetModules();
+    process.env.GITHUB_TOKEN = 'test-token';
+    process.env.VERCEL = '1';
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-04-11T10:00:00Z'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+    delete process.env.GITHUB_TOKEN;
+    delete process.env.VERCEL;
+    delete process.env.ENABLE_GITHUB_DATA_SYNC;
+  });
+
+  it('loads Tageswort and Wochenthemen fresh from GitHub storage', async () => {
+    const getContent = vi.fn().mockImplementation(async ({ path }: { path: string }) => {
+      const payloads: Record<string, unknown> = {
+        'data/tageswort.json': remoteTageswort,
+        'data/wochenthema.json': remoteWochenthemen,
+      };
+      return {
+        data: {
+          content: Buffer.from(JSON.stringify(payloads[path]), 'utf-8').toString('base64'),
+        },
+      };
+    });
+
+    class MockOctokit {
+      repos = { getContent };
+    }
+
+    vi.doMock('@octokit/rest', () => ({ Octokit: MockOctokit }));
+
+    const {
+      getTageswortListFresh,
+      getTodayTageswortFresh,
+      getWochenthemaListFresh,
+      getCurrentWochenthemaFresh,
+    } = await import('@/lib/db');
+
+    await expect(getTageswortListFresh()).resolves.toHaveLength(2);
+    await expect(getTodayTageswortFresh()).resolves.toMatchObject({ id: 't2' });
+    await expect(getWochenthemaListFresh()).resolves.toHaveLength(2);
+    await expect(getCurrentWochenthemaFresh()).resolves.toMatchObject({ id: 'w2' });
+  });
+
+  it('loads generated topic bundles fresh from GitHub storage', async () => {
+    const getContent = vi.fn().mockResolvedValue({
+      data: {
+        content: Buffer.from(JSON.stringify(remoteGeneratedTopics), 'utf-8').toString('base64'),
+      },
+    });
+
+    class MockOctokit {
+      repos = { getContent };
+    }
+
+    vi.doMock('@octokit/rest', () => ({ Octokit: MockOctokit }));
+
+    const { getGeneratedTopicBundlesFresh, getGeneratedTopicBundleByDateFresh } = await import('@/lib/db');
+
+    await expect(getGeneratedTopicBundlesFresh()).resolves.toHaveLength(1);
+    await expect(getGeneratedTopicBundleByDateFresh('2026-04-11')).resolves.toMatchObject({
+      id: 'generated-topic-2026-04-11',
+      source: 'ai',
+    });
+  });
+});
+
 // ── Thesen filter helpers ─────────────────────────────────────────────────────
 
 describe('db – getApprovedThesen', () => {
