@@ -7,7 +7,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
-import { formatDate } from '@/lib/utils';
 
 const routerPush = vi.fn();
 const routerReplace = vi.fn();
@@ -320,11 +319,11 @@ describe('WeeklyThemeCard', () => {
     expect(link).toHaveAttribute('href', '/wochenthema');
   });
 
-  it('shows week number and current date', async () => {
+  it('shows the week label without a daily date stamp', async () => {
     const { default: WeeklyThemeCard } = await import('@/components/WeeklyThemeCard');
     render(React.createElement(WeeklyThemeCard, { theme }));
     expect(screen.getByText(new RegExp(`Woche ${theme.week}`))).toBeInTheDocument();
-    expect(screen.getByText(new RegExp(formatDate(new Date().toISOString())))).toBeInTheDocument();
+    expect(screen.queryByText(/\d{2}\.\s+\w+\s+\d{4}/)).toBeNull();
   });
 });
 

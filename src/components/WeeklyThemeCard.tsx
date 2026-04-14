@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import type { Wochenthema } from '@/types';
 import BibleLink from './BibleLink';
-import { formatDate } from '@/lib/utils';
 
 interface WeeklyThemeCardProps {
   theme: Wochenthema;
@@ -9,12 +8,10 @@ interface WeeklyThemeCardProps {
 }
 
 export default function WeeklyThemeCard({ theme, compact = false }: WeeklyThemeCardProps) {
-  const currentDate = formatDate(new Date().toISOString());
-
   return (
     <div className="bg-white rounded-xl shadow-md p-6">
       <div className="text-blue-500 text-xs font-medium uppercase tracking-wide mb-2">Wochenthema</div>
-      <p className="text-sm text-gray-500 mb-2">Woche {theme.week} · {currentDate}</p>
+      <p className="text-sm text-gray-500 mb-2">Woche {theme.week}</p>
       <h2 className="text-gray-800 font-bold text-xl mb-3 leading-snug">{theme.title}</h2>
       {!compact && (
         <p className="text-gray-600 text-sm leading-relaxed mb-4">{theme.introduction}</p>
