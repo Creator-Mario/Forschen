@@ -151,20 +151,7 @@ jobs:
             exit 0
           fi
 
-          publication_date=$(
-            node <<'EOF'
-            const fs = require('fs');
-            const entries = JSON.parse(fs.readFileSync('data/tageswort.json', 'utf8'))
-              .filter(entry => entry.published)
-              .sort((a, b) => a.date.localeCompare(b.date));
-            const publicationDate = entries.at(-1)?.date;
-            if (!publicationDate) {
-              process.exitCode = 1;
-              throw new Error('No published Tageswort entry found after generation.');
-            }
-            process.stdout.write(publicationDate);
-            EOF
-          )
+          publication_date=$(node -e "const fs = require('fs'); const entries = JSON.parse(fs.readFileSync('data/tageswort.json', 'utf8')).filter(entry => entry.published).sort((a, b) => a.date.localeCompare(b.date)); const publicationDate = entries.at(-1)?.date; if (!publicationDate) { throw new Error('No published Tageswort entry found after generation.'); } process.stdout.write(publicationDate);")
           git commit -m "chore: add daily Tageswort for ${publication_date}"
 
           for attempt in 1 2 3; do
