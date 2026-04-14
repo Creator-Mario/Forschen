@@ -45,7 +45,7 @@ describe('generated-content', () => {
     vi.doMock('@/lib/db', () => dbMock.module);
     const { getPsalmThemaArchiv, getGlaubenHeuteArchiv, getBuchempfehlungenArchiv } = await import('@/lib/generated-content');
 
-    const psalmen = getPsalmThemaArchiv();
+    const psalmen = await getPsalmThemaArchiv();
     const glaubenHeute = await getGlaubenHeuteArchiv();
     const buecher = await getBuchempfehlungenArchiv();
 
@@ -62,8 +62,8 @@ describe('generated-content', () => {
     vi.doMock('@/lib/db', () => dbMock.module);
     const { getTodayPsalmThema, getTodayGlaubenHeuteThema } = await import('@/lib/generated-content');
 
-    const firstPsalm = getTodayPsalmThema('2026-04-11');
-    const secondPsalm = getTodayPsalmThema('2026-04-12');
+    const firstPsalm = await getTodayPsalmThema('2026-04-11');
+    const secondPsalm = await getTodayPsalmThema('2026-04-12');
     const firstTopic = await getTodayGlaubenHeuteThema('2026-04-11');
     const secondTopic = await getTodayGlaubenHeuteThema('2026-04-12');
 
@@ -103,6 +103,15 @@ describe('generated-content', () => {
           {
             message: {
               content: JSON.stringify({
+                psalm: {
+                  psalmReference: 'Psalm 25,4-5',
+                  title: 'Auf Gottes Wegen bleiben',
+                  excerpt: 'Herr, zeige mir deine Wege und lehre mich deine Steige.',
+                  summary: 'Der Psalm bittet Gott um Leitung inmitten von Unsicherheit und offenen Fragen. Er verbindet Demut mit dem Vertrauen, dass Gott seinen Weg zeigt.',
+                  significance: 'Für den Glauben heute heißt das, Orientierung nicht nur in uns selbst zu suchen, sondern im Wort und in der Gegenwart Gottes. Gerade darin wächst geistliche Klarheit.',
+                  practice: 'Nimm dir heute bewusst Zeit, eine Entscheidung oder offene Frage betend vor Gott zu bringen. Bitte ihn konkret um Leitung und Bereitschaft zum Gehorsam.',
+                  questions: ['Wo brauche ich gerade Gottes Leitung?', 'Welche Wege möchte Gott in mir zurechtrücken?', 'Wie übe ich hörenden Gehorsam im Alltag ein?'],
+                },
                 topic: {
                   title: 'Wahrheit und Treue im Alltag',
                   headline: 'Wenn Klarheit und Liebe zusammengehören',
@@ -139,11 +148,13 @@ describe('generated-content', () => {
 
     vi.stubGlobal('fetch', fetchMock);
     vi.doMock('@/lib/db', () => dbMock.module);
-    const { getTodayGlaubenHeuteThema, getTodayBuchempfehlungen } = await import('@/lib/generated-content');
+    const { getTodayPsalmThema, getTodayGlaubenHeuteThema, getTodayBuchempfehlungen } = await import('@/lib/generated-content');
 
+    const psalm = await getTodayPsalmThema('2026-04-11');
     const topic = await getTodayGlaubenHeuteThema('2026-04-11');
     const books = await getTodayBuchempfehlungen('2026-04-11');
 
+    expect(psalm.title).toBe('Auf Gottes Wegen bleiben');
     expect(topic.title).toBe('Wahrheit und Treue im Alltag');
     expect(books.recommendations).toHaveLength(2);
     expect(fetchMock).toHaveBeenCalledTimes(1);

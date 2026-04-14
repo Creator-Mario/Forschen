@@ -380,7 +380,8 @@ describe('PsalmenPage', () => {
       }),
     }));
     const { default: PsalmenPage } = await import('@/app/(public)/psalmen/page');
-    render(React.createElement(PsalmenPage));
+    const jsx = await PsalmenPage();
+    render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByRole('heading', { name: /Psalm des Tages/i })).toBeInTheDocument();
     expect(screen.getByText('Frage 1')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /psalm-beitrag verfassen/i })).toHaveAttribute('href', '/forschung/beitraege');

@@ -384,6 +384,7 @@ function buildGeneratedTopicBundle(
     source,
     createdAt: new Date().toISOString(),
     promptVersion: GENERATED_TOPIC_PROMPT_VERSION,
+    psalm: buildPsalmThema(date),
     topic: buildGlaubenHeuteThema(date),
     books: buildBuchempfehlungsSammlung(date),
   };
@@ -422,11 +423,24 @@ function extractJsonPayload(text: string): string {
 
 function parseAiBundle(date: string, rawText: string): GeneratedTopicBundle {
   const payload = JSON.parse(extractJsonPayload(rawText)) as Record<string, unknown>;
+  const psalm = payload.psalm as Record<string, unknown> | undefined;
   const topic = payload.topic as Record<string, unknown> | undefined;
   const books = payload.books as Record<string, unknown> | undefined;
 
-  if (!topic || !books) {
-    throw new Error('Antwort enthält kein topic/books-Objekt.');
+  if (!psalm || !topic || !books) {
+    throw new Error('Antwort enthält kein psalm/topic/books-Objekt.');
+  }
+
+  if (
+    !isNonEmptyString(psalm.psalmReference) ||
+    !isNonEmptyString(psalm.title) ||
+    !isNonEmptyString(psalm.excerpt) ||
+    !isNonEmptyString(psalm.summary) ||
+    !isNonEmptyString(psalm.significance) ||
+    !isNonEmptyString(psalm.practice) ||
+    !isStringArray(psalm.questions, 3)
+  ) {
+    throw new Error('Antwort enthält ein unvollständiges psalm-Objekt.');
   }
 
   if (
@@ -442,6 +456,13 @@ function parseAiBundle(date: string, rawText: string): GeneratedTopicBundle {
   }
 
   const recommendations = books.recommendations;
+  const psalmReference = psalm.psalmReference as string;
+  const psalmTitle = psalm.title as string;
+  const psalmExcerpt = psalm.excerpt as string;
+  const psalmSummary = psalm.summary as string;
+  const psalmSignificance = psalm.significance as string;
+  const psalmPractice = psalm.practice as string;
+  const psalmQuestions = psalm.questions as string[];
   const bibleVerses = topic.bibleVerses as string[];
   const questions = topic.questions as string[];
   const title = topic.title as string;
@@ -467,6 +488,17 @@ function parseAiBundle(date: string, rawText: string): GeneratedTopicBundle {
     source: 'ai',
     createdAt: new Date().toISOString(),
     promptVersion: GENERATED_TOPIC_PROMPT_VERSION,
+    psalm: {
+      id: `psalm-${date}`,
+      date,
+      psalmReference: psalmReference.trim(),
+      title: psalmTitle.trim(),
+      excerpt: psalmExcerpt.trim(),
+      summary: psalmSummary.trim(),
+      significance: psalmSignificance.trim(),
+      practice: psalmPractice.trim(),
+      questions: psalmQuestions.map(entry => entry.trim()),
+    },
     topic: {
       id: `glauben-heute-${date}`,
       date,
@@ -499,6 +531,15 @@ function getAiPrompt(date: string): string {
     'Antworte ausschließlich als valides JSON ohne Markdown oder zusätzliche Erklärungen.',
     'Struktur:',
     JSON.stringify({
+      psalm: {
+        psalmReference: 'string',
+        title: 'string',
+        excerpt: 'string',
+        summary: 'string',
+        significance: 'string',
+        practice: 'string',
+        questions: ['string', 'string', 'string'],
+      },
       topic: {
         title: 'string',
         headline: 'string',
@@ -530,6 +571,10 @@ function getAiPrompt(date: string): string {
     'Anforderungen:',
     '- Sprache: Deutsch.',
     '- Inhaltlich schriftnah, nüchtern, geistlich ernsthaft und passend zu freier christlicher Bibelforschung.',
+    '- psalm.psalmReference muss eine echte Psalmstelle enthalten.',
+    '- psalm.summary, psalm.significance und psalm.practice jeweils 2-4 Sätze.',
+    '- psalm.excerpt soll ein kurzer prägnanter Satz aus oder über den Psalm sein.',
+    '- Genau drei Psalm-Fragen.',
     '- worldFocus, faithPerspective und discipleshipImpulse jeweils 2-4 Sätze.',
     '- Drei echte Bibelstellen als bibleVerses.',
     '- Genau drei vertiefende Fragen.',
@@ -630,12 +675,19 @@ async function getOrCreateGeneratedTopicBundle(date = getCurrentPublicationDate(
   }
 }
 
-export function getTodayPsalmThema(date = getCurrentPublicationDate()): PsalmThema {
-  return buildPsalmThema(date);
+export async function getTodayPsalmThema(date = getCurrentPublicationDate()): Promise<PsalmThema> {
+  const bundle = await getOrCreateGeneratedTopicBundle(date);
+  return bundle.psalm ?? buildPsalmThema(date);
 }
 
-export function getPsalmThemaArchiv(date = getCurrentPublicationDate()): PsalmThema[] {
-  return buildDateList(date).map(buildPsalmThema);
+export async function getPsalmThemaArchiv(date = getCurrentPublicationDate()): Promise<PsalmThema[]> {
+  const bundlesByDate = new Map(
+    getGeneratedTopicBundles().map(bundle => [bundle.date, bundle] as const)
+  );
+  const todayBundle = await getOrCreateGeneratedTopicBundle(date);
+  bundlesByDate.set(date, todayBundle);
+
+  return buildDateList(date).map(entryDate => bundlesByDate.get(entryDate)?.psalm ?? buildPsalmThema(entryDate));
 }
 
 export async function getTodayGlaubenHeuteThema(date = getCurrentPublicationDate()): Promise<GlaubenHeuteThema> {
