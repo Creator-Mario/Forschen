@@ -296,7 +296,7 @@ const currentTopicSeeds = [
   },
 ] as const;
 
-const GENERATED_TOPIC_PROMPT_VERSION = 'v1';
+const GENERATED_TOPIC_PROMPT_VERSION = 'v2';
 const OPENAI_API_BASE_URL = (process.env.OPENAI_BASE_URL ?? 'https://api.openai.com/v1').replace(/\/$/, '');
 const OPENAI_MODEL = process.env.OPENAI_MODEL?.trim() || 'gpt-4.1-mini';
 const AI_TIMEOUT_MS = Number(process.env.OPENAI_TIMEOUT_MS ?? 20000);
@@ -406,6 +406,65 @@ function isBookRecommendation(value: unknown): value is Buchempfehlung {
     isNonEmptyString(candidate.author) &&
     isNonEmptyString(candidate.description) &&
     isNonEmptyString(candidate.relevance)
+  );
+}
+
+function isPsalmThema(value: unknown): value is PsalmThema {
+  if (!value || typeof value !== 'object') return false;
+  const candidate = value as Record<string, unknown>;
+  return (
+    isNonEmptyString(candidate.id) &&
+    isNonEmptyString(candidate.date) &&
+    isNonEmptyString(candidate.psalmReference) &&
+    isNonEmptyString(candidate.title) &&
+    isNonEmptyString(candidate.excerpt) &&
+    isNonEmptyString(candidate.summary) &&
+    isNonEmptyString(candidate.significance) &&
+    isNonEmptyString(candidate.practice) &&
+    isStringArray(candidate.questions, 3)
+  );
+}
+
+function isGlaubenHeuteThema(value: unknown): value is GlaubenHeuteThema {
+  if (!value || typeof value !== 'object') return false;
+  const candidate = value as Record<string, unknown>;
+  return (
+    isNonEmptyString(candidate.id) &&
+    isNonEmptyString(candidate.date) &&
+    isNonEmptyString(candidate.title) &&
+    isNonEmptyString(candidate.headline) &&
+    isNonEmptyString(candidate.worldFocus) &&
+    isNonEmptyString(candidate.faithPerspective) &&
+    isNonEmptyString(candidate.discipleshipImpulse) &&
+    isStringArray(candidate.bibleVerses, 3) &&
+    isStringArray(candidate.questions, 3)
+  );
+}
+
+function isBuchempfehlungsSammlung(value: unknown): value is BuchempfehlungsSammlung {
+  if (!value || typeof value !== 'object') return false;
+  const candidate = value as Record<string, unknown>;
+  return (
+    isNonEmptyString(candidate.id) &&
+    isNonEmptyString(candidate.date) &&
+    isNonEmptyString(candidate.topicTitle) &&
+    isNonEmptyString(candidate.introduction) &&
+    Array.isArray(candidate.recommendations) &&
+    candidate.recommendations.length >= 2 &&
+    candidate.recommendations.every(isBookRecommendation)
+  );
+}
+
+function isUsableGeneratedTopicBundle(bundle: GeneratedTopicBundle | undefined): bundle is GeneratedTopicBundle {
+  return Boolean(
+    bundle &&
+    isNonEmptyString(bundle.id) &&
+    isNonEmptyString(bundle.date) &&
+    isNonEmptyString(bundle.createdAt) &&
+    isNonEmptyString(bundle.promptVersion) &&
+    isPsalmThema(bundle.psalm) &&
+    isGlaubenHeuteThema(bundle.topic) &&
+    isBuchempfehlungsSammlung(bundle.books)
   );
 }
 
@@ -588,6 +647,14 @@ function getOpenAiApiKey(): string | null {
   return process.env.OPENAI_API_KEY?.trim() || null;
 }
 
+function shouldRefreshGeneratedTopicBundle(bundle: GeneratedTopicBundle | undefined): boolean {
+  if (!bundle) return true;
+  if (!isUsableGeneratedTopicBundle(bundle)) return true;
+  const aiConfigured = Boolean(getOpenAiApiKey());
+  if (!aiConfigured) return false;
+  return bundle.source !== 'ai' || bundle.promptVersion !== GENERATED_TOPIC_PROMPT_VERSION;
+}
+
 async function generateTopicBundleWithAi(date: string): Promise<GeneratedTopicBundle | null> {
   const apiKey = getOpenAiApiKey();
   if (!apiKey) return null;
@@ -655,14 +722,15 @@ async function persistGeneratedTopicBundle(bundle: GeneratedTopicBundle): Promis
 
 async function getOrCreateGeneratedTopicBundle(date = getCurrentPublicationDate()): Promise<GeneratedTopicBundle> {
   const existing = getGeneratedTopicBundleByDate(date);
-  if (existing) return existing;
+  if (existing && !shouldRefreshGeneratedTopicBundle(existing)) return existing;
 
   const inFlight = inFlightTopicGenerations.get(date);
   if (inFlight) return inFlight;
 
   const generation = (async () => {
     const generated = await generateTopicBundleWithAi(date);
-    const bundle = generated ?? buildGeneratedTopicBundle(date);
+    const bundle = generated
+      ?? (isUsableGeneratedTopicBundle(existing) ? existing : buildGeneratedTopicBundle(date));
     return persistGeneratedTopicBundle(bundle);
   })();
 
