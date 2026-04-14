@@ -15,8 +15,8 @@ export const metadata: Metadata = createPageMetadata({
   keywords: ['Glauben heute', 'christliche Impulse', 'Tagesimpuls'],
 });
 
-export default function GlaubenHeutePage() {
-  const item = getTodayGlaubenHeuteThema();
+export default async function GlaubenHeutePage() {
+  const item = await getTodayGlaubenHeuteThema();
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">

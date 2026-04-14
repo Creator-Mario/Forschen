@@ -14,8 +14,8 @@ export const metadata: Metadata = createPageMetadata({
   keywords: ['Glauben heute Archiv', 'Themenimpulse Archiv'],
 });
 
-export default function GlaubenHeuteArchivPage() {
-  const items = getGlaubenHeuteArchiv();
+export default async function GlaubenHeuteArchivPage() {
+  const items = await getGlaubenHeuteArchiv();
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
