@@ -2,45 +2,60 @@
   {
     "id": "generated-topic-2026-04-14",
     "date": "2026-04-14",
-    "source": "ai",
-    "createdAt": "2026-04-14T04:22:06.419Z",
-    "promptVersion": "v1",
+    "source": "seed-fallback",
+    "createdAt": "2026-04-14T05:01:58.215Z",
+    "promptVersion": "v2",
+    "psalm": {
+      "id": "psalm-2026-04-14",
+      "date": "2026-04-14",
+      "psalmReference": "Psalm 51,3-12",
+      "title": "Umkehr mit offenem Herzen",
+      "excerpt": "Schaffe in mir, Gott, ein reines Herz.",
+      "summary": "Psalm 51 ist ein Bußpsalm, der nicht bei Schuld stehen bleibt, sondern Gottes erneuernde Gnade sucht.",
+      "significance": "Er zeigt, dass echte Umkehr nicht Selbstrettung ist, sondern die Bitte um ein innerlich verwandeltes Herz.",
+      "practice": "Halte heute kurz inne und nenne vor Gott konkret, was bereinigt und neu geordnet werden soll.",
+      "questions": [
+        "Welche Form von Reue beschreibt Psalm 51?",
+        "Warum ist das neue Herz entscheidender als bloße äußere Korrektur?",
+        "Wie wird aus persönlicher Umkehr neue Hoffnung?"
+      ]
+    },
     "topic": {
       "id": "glauben-heute-2026-04-14",
       "date": "2026-04-14",
-      "title": "Die Suche nach Weisheit in der Bibel",
-      "headline": "Wie biblische Weisheit unser Forschen leitet",
-      "worldFocus": "In einer Welt voller Informationsflut ist die Suche nach echter Weisheit von zentraler Bedeutung. Christliche Forschung kann Orientierung bieten, indem sie sich auf Gottes Wort gründet und damit Antworten auf ethische und existenzielle Fragen gibt.",
-      "faithPerspective": "Die Bibel zeigt Weisheit als Gabe Gottes, die weit über menschliches Wissen hinausgeht. Sie fordert uns auf, demütig und lernbereit zu forschen, dabei Gottes Führung zu suchen und die Erkenntnis zu seinem Lob zu nutzen.",
-      "discipleshipImpulse": "Ermutigt, täglich im Wort Gottes Weisheit zu suchen und die gewonnenen Erkenntnisse im Alltag umzusetzen. Forscher und Gläubige sind eingeladen, ihre Arbeit als Dienst an Gott und der Gemeinschaft zu verstehen, der verantwortungsvoll und betend nachgegangen wird.",
+      "title": "Frieden in konfliktgeladenen Zeiten",
+      "headline": "Versöhnung lernen, wenn Fronten sich verhärten",
+      "worldFocus": "Konflikte in Politik, Familie und Gemeinde eskalieren oft schnell. Der Ton wird rauer, die Bereitschaft zum Zuhören kleiner.",
+      "faithPerspective": "Jesus nennt die Friedensstifter selig. Christlicher Friede ist nicht Konfliktvermeidung, sondern die mutige Suche nach Wahrheit, Gerechtigkeit und Versöhnung.",
+      "discipleshipImpulse": "Gehe heute einen kleinen Schritt auf eine angespannte Beziehung zu: durch Gebet, Zuhören oder ein klärendes Wort.",
       "bibleVerses": [
-        "Sprüche 2,6",
-        "Jakobus 1,5",
-        "Kolosser 1,9-10"
+        "Matthäus 5,9",
+        "Römer 12,18",
+        "Kolosser 3,12-15"
       ],
       "questions": [
-        "Wie können wir in unserem Forschen demütig bleiben und Gottes Weisheit suchen?",
-        "In welchen Bereichen unseres Lebens brauchen wir besonders biblische Orientierung?",
-        "Wie lässt sich biblische Weisheit praktisch im Alltag umsetzen?"
+        "Was unterscheidet Friedenstiften von Harmoniestreben?",
+        "Wie hängen Wahrheit, Gerechtigkeit und Versöhnung zusammen?",
+        "Welche geistlichen Haltungen helfen in festgefahrenen Konflikten?"
       ]
     },
     "books": {
       "id": "buchliste-2026-04-14",
       "date": "2026-04-14",
-      "topicTitle": "Weisheit und Erkenntnis in der christlichen Forschung",
-      "introduction": "Die folgenden Bücher bieten tiefgehende Einblicke in das Verständnis von Weisheit aus biblischer Perspektive und zeigen Wege auf, wie christliche Forscher ihre Arbeit im Glauben verankern können.",
+      "topicTitle": "Frieden in konfliktgeladenen Zeiten",
+      "introduction": "Diese Buchempfehlungen greifen das Tagesthema „Frieden in konfliktgeladenen Zeiten“ auf und helfen dabei, biblische Orientierung zu vertiefen.",
       "recommendations": [
         {
-          "title": "Weisheit aus Gottes Wort",
-          "author": "Hans-Peter Raddatz",
-          "description": "Eine fundierte Auslegung biblischer Weisheitsliteratur mit Fokus auf praktische Anwendung für Forscher und Gläubige.",
-          "relevance": "Hilft, die biblischen Weisheitsbücher besser zu verstehen und ihre Bedeutung für heutige Fragestellungen zu erkennen."
+          "title": "The Peacemaker",
+          "author": "Ken Sande",
+          "description": "Ein sehr praktischer Leitfaden, wie Christen Konflikte biblisch bearbeiten und Versöhnung suchen können.",
+          "relevance": "Besonders geeignet, wenn Konflikte nicht nur verstanden, sondern konkret bearbeitet werden sollen."
         },
         {
-          "title": "Glaubensforschung und Erkenntnis",
-          "author": "Miriam Schulze",
-          "description": "Diskussion zur Verbindung von wissenschaftlichem Forschen und christlichem Glauben, mit Impulsen zur Integration von Gebet und Bibelstudium.",
-          "relevance": "Zeigt Wege auf, wie christliche Forscher ihren Glauben in den wissenschaftlichen Alltag einbringen können."
+          "title": "Mere Christianity",
+          "author": "C. S. Lewis",
+          "description": "Lewis verbindet klare Überzeugungen mit einem Ton, der zur Demut und zum gemeinsamen Ringen um Wahrheit einlädt.",
+          "relevance": "Hilft, Überzeugung und Friedfertigkeit nicht gegeneinander auszuspielen."
         }
       ]
     }
