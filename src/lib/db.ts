@@ -17,17 +17,23 @@ const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main';
 // In-memory overlay so writes are immediately visible within the current process instance.
 const memoryCache = new Map<string, unknown[]>();
 
-function readJson<T>(filename: string): T[] {
-  if (memoryCache.has(filename)) return memoryCache.get(filename) as T[];
+function readJsonFromLocalFile<T>(filename: string): T[] {
   const filePath = path.join(DATA_DIR, filename);
   if (!fs.existsSync(filePath)) return [];
   const content = fs.readFileSync(filePath, 'utf-8');
   return JSON.parse(content) as T[];
 }
 
+function readJson<T>(filename: string): T[] {
+  if (memoryCache.has(filename)) return memoryCache.get(filename) as T[];
+  return readJsonFromLocalFile<T>(filename);
+}
+
 async function readJsonFresh<T>(filename: string): Promise<T[]> {
   if (!shouldUseGithubBackedStorage()) {
-    return readJson<T>(filename);
+    const parsed = readJsonFromLocalFile<T>(filename);
+    memoryCache.set(filename, parsed as unknown[]);
+    return parsed;
   }
 
   try {

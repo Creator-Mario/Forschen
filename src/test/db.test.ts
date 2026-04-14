@@ -297,6 +297,110 @@ describe('db – fresh GitHub-backed public content reads', () => {
   });
 });
 
+describe('db – fresh local generated topic reads', () => {
+  beforeEach(() => {
+    vi.resetModules();
+    delete process.env.GITHUB_TOKEN;
+    delete process.env.VERCEL;
+    delete process.env.ENABLE_GITHUB_DATA_SYNC;
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('reloads generated topic bundles from disk even when an older bundle is cached in memory', async () => {
+    const cachedBundle = {
+      id: 'generated-topic-2026-04-13',
+      date: '2026-04-13',
+      source: 'ai',
+      createdAt: '2026-04-13T00:00:00.000Z',
+      promptVersion: 'v2',
+      psalm: {
+        id: 'psalm-2026-04-13',
+        date: '2026-04-13',
+        psalmReference: 'Psalm 1,1-3',
+        title: 'Altes Psalmthema',
+        excerpt: 'Auszug alt',
+        summary: 'Zusammenfassung alt',
+        significance: 'Bedeutung alt',
+        practice: 'Praxis alt',
+        questions: ['Frage 1', 'Frage 2', 'Frage 3'],
+      },
+      topic: {
+        id: 'glauben-heute-2026-04-13',
+        date: '2026-04-13',
+        title: 'Altes Thema',
+        headline: 'Alte Überschrift',
+        worldFocus: 'Alter Fokus',
+        faithPerspective: 'Alte Perspektive',
+        discipleshipImpulse: 'Alter Impuls',
+        bibleVerses: ['Johannes 3,16', 'Psalm 1,1', 'Römer 8,1'],
+        questions: ['Frage 1', 'Frage 2', 'Frage 3'],
+      },
+      books: {
+        id: 'buchliste-2026-04-13',
+        date: '2026-04-13',
+        topicTitle: 'Altes Thema',
+        introduction: 'Alte Einführung',
+        recommendations: [
+          { title: 'Buch 1', author: 'Autor 1', description: 'Beschreibung 1', relevance: 'Relevanz 1' },
+          { title: 'Buch 2', author: 'Autor 2', description: 'Beschreibung 2', relevance: 'Relevanz 2' },
+        ],
+      },
+    };
+    const diskBundle = {
+      ...cachedBundle,
+      id: 'generated-topic-2026-04-14',
+      date: '2026-04-14',
+      createdAt: '2026-04-14T00:00:00.000Z',
+      psalm: {
+        ...cachedBundle.psalm,
+        id: 'psalm-2026-04-14',
+        date: '2026-04-14',
+        title: 'Neues Psalmthema',
+      },
+      topic: {
+        ...cachedBundle.topic,
+        id: 'glauben-heute-2026-04-14',
+        date: '2026-04-14',
+        title: 'Neues Thema',
+        headline: 'Neue Überschrift',
+      },
+      books: {
+        ...cachedBundle.books,
+        id: 'buchliste-2026-04-14',
+        date: '2026-04-14',
+        topicTitle: 'Neues Thema',
+      },
+    };
+
+    let diskPayload = JSON.stringify([]);
+    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fs, 'readFileSync').mockImplementation(() => diskPayload);
+    vi.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
+
+    const { saveGeneratedTopicBundle, getGeneratedTopicBundlesFresh, getGeneratedTopicBundleByDateFresh } = await import('@/lib/db');
+
+    await saveGeneratedTopicBundle(cachedBundle);
+
+    diskPayload = JSON.stringify([diskBundle]);
+
+    await expect(getGeneratedTopicBundlesFresh()).resolves.toMatchObject([
+      expect.objectContaining({
+        id: 'generated-topic-2026-04-14',
+        date: '2026-04-14',
+      }),
+    ]);
+    await expect(getGeneratedTopicBundleByDateFresh('2026-04-14')).resolves.toMatchObject({
+      id: 'generated-topic-2026-04-14',
+      topic: expect.objectContaining({
+        title: 'Neues Thema',
+      }),
+    });
+  });
+});
+
 // ── Thesen filter helpers ─────────────────────────────────────────────────────
 
 describe('db – getApprovedThesen', () => {
