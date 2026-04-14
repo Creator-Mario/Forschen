@@ -318,7 +318,7 @@ describe('db – getCurrentWochenthema', () => {
     vi.resetModules();
     delete process.env.GITHUB_TOKEN;
     vi.useFakeTimers();
-    vi.setSystemTime(new Date('2026-04-12T22:30:00Z'));
+    vi.setSystemTime(new Date('2026-04-13T01:30:00Z'));
     vi.spyOn(fs, 'existsSync').mockReturnValue(true);
     vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(themes));
   });
