@@ -6,6 +6,7 @@ import { getApprovedForschung, getApprovedVideos } from '@/lib/db';
 import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
 import SubmissionCta from '@/components/SubmissionCta';
+import { formatDate } from '@/lib/utils';
 import { createPageMetadata } from '@/lib/seo';
 
 function getSafeVideoUrl(url: string | undefined): string | null {
