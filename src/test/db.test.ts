@@ -7,6 +7,8 @@ describe('db – readJson (via getUsers)', () => {
   beforeEach(() => {
     vi.resetModules();
     delete process.env.GITHUB_TOKEN;
+    delete process.env.GITHUB_BRANCH;
+    delete process.env.VERCEL_GIT_COMMIT_REF;
   });
 
   it('returns an empty array when the data file does not exist', async () => {
@@ -64,6 +66,31 @@ describe('db – readJson (via getUsers)', () => {
     });
     expect(getContent).toHaveBeenCalledOnce();
     vi.restoreAllMocks();
+  });
+
+  it('uses the active Vercel git branch for fresh GitHub reads when no explicit branch is configured', async () => {
+    process.env.GITHUB_TOKEN = 'test-token';
+    process.env.VERCEL = '1';
+    process.env.VERCEL_GIT_COMMIT_REF = 'copilot/fix-tagesthema-display-error';
+
+    const getContent = vi.fn().mockResolvedValue({
+      data: {
+        content: Buffer.from(JSON.stringify([{ id: 'remote-u1', email: 'remote@example.com', password: 'x', name: 'Remote', role: 'USER', status: 'pending_email', active: false, createdAt: '2026-04-13T00:00:00Z', emailToken: 'remote-token' }])).toString('base64'),
+      },
+    });
+
+    class MockOctokit {
+      repos = { getContent };
+    }
+
+    vi.doMock('@octokit/rest', () => ({ Octokit: MockOctokit }));
+
+    const { getUserByEmailTokenFresh } = await import('@/lib/db');
+    await getUserByEmailTokenFresh('remote-token');
+
+    expect(getContent).toHaveBeenCalledWith(expect.objectContaining({
+      ref: 'copilot/fix-tagesthema-display-error',
+    }));
   });
 
   it('falls back to local disk data instead of stale in-memory cache when GitHub fresh reads fail', async () => {
@@ -284,7 +311,9 @@ describe('db – fresh GitHub-backed public content reads', () => {
     vi.useRealTimers();
     vi.restoreAllMocks();
     delete process.env.GITHUB_TOKEN;
+    delete process.env.GITHUB_BRANCH;
     delete process.env.VERCEL;
+    delete process.env.VERCEL_GIT_COMMIT_REF;
     delete process.env.ENABLE_GITHUB_DATA_SYNC;
   });
 
@@ -801,6 +830,74 @@ describe('db – deleteUserAccount', () => {
     expect(getContent).toHaveBeenCalledTimes(EXPECTED_DELETION_FILE_COUNT);
     expect(createOrUpdateFileContents).toHaveBeenCalledTimes(EXPECTED_DELETION_FILE_COUNT);
     expect(maxActiveWrites).toBe(1);
+  });
+
+  it('uses the active Vercel git branch for GitHub-backed writes when no explicit branch is configured', async () => {
+    process.env.GITHUB_TOKEN = 'test-token';
+    process.env.VERCEL = '1';
+    process.env.VERCEL_GIT_COMMIT_REF = 'staging';
+
+    const getContent = vi.fn().mockResolvedValue({ data: { sha: 'sha-1' } });
+    const createOrUpdateFileContents = vi.fn().mockResolvedValue(undefined);
+
+    class MockOctokit {
+      repos = {
+        getContent,
+        createOrUpdateFileContents,
+      };
+    }
+
+    vi.doMock('@octokit/rest', () => ({
+      Octokit: MockOctokit,
+    }));
+
+    const { saveGeneratedTopicBundle } = await import('@/lib/db');
+    await saveGeneratedTopicBundle({
+      id: 'generated-topic-2026-04-14',
+      date: '2026-04-14',
+      source: 'ai',
+      createdAt: '2026-04-14T00:00:00.000Z',
+      promptVersion: 'v2',
+      psalm: {
+        id: 'psalm-2026-04-14',
+        date: '2026-04-14',
+        psalmReference: 'Psalm 23',
+        title: 'Der Herr ist mein Hirte',
+        excerpt: 'Der Herr ist mein Hirte; mir wird nichts mangeln.',
+        summary: 'Zusammenfassung',
+        significance: 'Bedeutung',
+        practice: 'Praxis',
+        questions: ['Frage 1', 'Frage 2', 'Frage 3'],
+      },
+      topic: {
+        id: 'glauben-heute-2026-04-14',
+        date: '2026-04-14',
+        title: 'Vertrauen auf Gottes Führung',
+        headline: 'Mit Psalm 23 den Weg des Glaubens sicher gehen',
+        worldFocus: 'Fokus',
+        faithPerspective: 'Perspektive',
+        discipleshipImpulse: 'Impuls',
+        bibleVerses: ['Psalm 23,1', 'Jesaja 40,11', 'Johannes 10,11'],
+        questions: ['Frage 1', 'Frage 2', 'Frage 3'],
+      },
+      books: {
+        id: 'buchliste-2026-04-14',
+        date: '2026-04-14',
+        topicTitle: 'Vertrauen auf Gottes Führung',
+        introduction: 'Intro',
+        recommendations: [
+          { title: 'Buch 1', author: 'Autor 1', description: 'Beschreibung 1', relevance: 'Relevanz 1' },
+          { title: 'Buch 2', author: 'Autor 2', description: 'Beschreibung 2', relevance: 'Relevanz 2' },
+        ],
+      },
+    });
+
+    expect(getContent).toHaveBeenCalledWith(expect.objectContaining({
+      ref: 'staging',
+    }));
+    expect(createOrUpdateFileContents).toHaveBeenCalledWith(expect.objectContaining({
+      branch: 'staging',
+    }));
   });
 });
 

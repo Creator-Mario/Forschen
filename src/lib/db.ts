@@ -12,10 +12,13 @@ const DATA_DIR = path.join(process.cwd(), 'data');
 
 const GITHUB_OWNER = process.env.GITHUB_OWNER || 'Creator-Mario';
 const GITHUB_REPO = process.env.GITHUB_REPO || 'Forschen';
-const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main';
 
 // In-memory overlay so writes are immediately visible within the current process instance.
 const memoryCache = new Map<string, unknown[]>();
+
+function getGithubBranch(): string {
+  return process.env.GITHUB_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || 'main';
+}
 
 function readJsonFromLocalFile<T>(filename: string): T[] {
   const filePath = path.join(DATA_DIR, filename);
@@ -43,7 +46,7 @@ async function readJsonFresh<T>(filename: string): Promise<T[]> {
       owner: GITHUB_OWNER,
       repo: GITHUB_REPO,
       path: `data/${filename}`,
-      ref: GITHUB_BRANCH,
+      ref: getGithubBranch(),
     });
 
     if (Array.isArray(data) || !('content' in data) || typeof data.content !== 'string') {
@@ -99,7 +102,7 @@ async function writeJson<T>(filename: string, data: T[]): Promise<void> {
           owner: GITHUB_OWNER,
           repo: GITHUB_REPO,
           path: filePath,
-          ref: GITHUB_BRANCH,
+          ref: getGithubBranch(),
         });
         const sha =
           !Array.isArray(existing) && 'sha' in existing
@@ -110,7 +113,7 @@ async function writeJson<T>(filename: string, data: T[]): Promise<void> {
           owner: GITHUB_OWNER,
           repo: GITHUB_REPO,
           path: filePath,
-          branch: GITHUB_BRANCH,
+          branch: getGithubBranch(),
           message: `data: update ${filename}`,
           content: encoded,
           sha,
