@@ -228,15 +228,15 @@ export function getTageswortList(): Tageswort[] {
 export async function getTageswortListFresh(): Promise<Tageswort[]> {
   return readJsonFresh<Tageswort>('tageswort.json');
 }
-export function getTodayTageswort(): Tageswort | undefined {
+function selectTodayTageswort(list: Tageswort[]): Tageswort | undefined {
   const today = getCurrentPublicationDate();
-  const list = getTageswortList();
   return list.find(t => t.date === today && t.published) || list.filter(t => t.published).at(-1);
 }
+export function getTodayTageswort(): Tageswort | undefined {
+  return selectTodayTageswort(getTageswortList());
+}
 export async function getTodayTageswortFresh(): Promise<Tageswort | undefined> {
-  const today = getCurrentPublicationDate();
-  const list = await getTageswortListFresh();
-  return list.find(t => t.date === today && t.published) || list.filter(t => t.published).at(-1);
+  return selectTodayTageswort(await getTageswortListFresh());
 }
 export function getTageswortById(id: string): Tageswort | undefined {
   return getTageswortList().find(t => t.id === id);
@@ -264,15 +264,16 @@ export function getWochenthemaList(): Wochenthema[] {
 export async function getWochenthemaListFresh(): Promise<Wochenthema[]> {
   return readJsonFresh<Wochenthema>('wochenthema.json');
 }
-export function getCurrentWochenthema(): Wochenthema | undefined {
-  const published = getWochenthemaList().filter(w => w.status === 'published');
+function selectCurrentWochenthema(list: Wochenthema[]): Wochenthema | undefined {
   const currentWeek = getCurrentPublicationWeek();
+  const published = list.filter(w => w.status === 'published');
   return published.find(w => w.week === currentWeek) || published.at(-1);
 }
+export function getCurrentWochenthema(): Wochenthema | undefined {
+  return selectCurrentWochenthema(getWochenthemaList());
+}
 export async function getCurrentWochenthemaFresh(): Promise<Wochenthema | undefined> {
-  const published = (await getWochenthemaListFresh()).filter(w => w.status === 'published');
-  const currentWeek = getCurrentPublicationWeek();
-  return published.find(w => w.week === currentWeek) || published.at(-1);
+  return selectCurrentWochenthema(await getWochenthemaListFresh());
 }
 export function getWochenthemaById(id: string): Wochenthema | undefined {
   return getWochenthemaList().find(w => w.id === id);
