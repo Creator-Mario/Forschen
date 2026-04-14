@@ -44,6 +44,18 @@ describe('generated-content', () => {
     expect(firstTopic.id).not.toBe(secondTopic.id);
   });
 
+  it('uses the 03:00 Berlin publication switch for daily generated themes', async () => {
+    const { getTodayGlaubenHeuteThema, getTodayBuchempfehlungen } = await import('@/lib/generated-content');
+
+    vi.setSystemTime(new Date('2026-04-11T00:30:00Z'));
+    expect(getTodayGlaubenHeuteThema().date).toBe('2026-04-10');
+    expect(getTodayBuchempfehlungen().date).toBe('2026-04-10');
+
+    vi.setSystemTime(new Date('2026-04-11T01:30:00Z'));
+    expect(getTodayGlaubenHeuteThema().date).toBe('2026-04-11');
+    expect(getTodayBuchempfehlungen().date).toBe('2026-04-11');
+  });
+
   it('uses a neutral introduction for book recommendations', async () => {
     const { getTodayBuchempfehlungen } = await import('@/lib/generated-content');
 
