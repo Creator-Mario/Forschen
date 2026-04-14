@@ -2,60 +2,60 @@
   {
     "id": "generated-topic-2026-04-14",
     "date": "2026-04-14",
-    "source": "seed-fallback",
-    "createdAt": "2026-04-14T05:02:46.046Z",
+    "source": "ai",
+    "createdAt": "2026-04-14T05:23:31.033Z",
     "promptVersion": "v2",
     "psalm": {
       "id": "psalm-2026-04-14",
       "date": "2026-04-14",
-      "psalmReference": "Psalm 51,3-12",
-      "title": "Umkehr mit offenem Herzen",
-      "excerpt": "Schaffe in mir, Gott, ein reines Herz.",
-      "summary": "Psalm 51 ist ein Bußpsalm, der nicht bei Schuld stehen bleibt, sondern Gottes erneuernde Gnade sucht.",
-      "significance": "Er zeigt, dass echte Umkehr nicht Selbstrettung ist, sondern die Bitte um ein innerlich verwandeltes Herz.",
-      "practice": "Halte heute kurz inne und nenne vor Gott konkret, was bereinigt und neu geordnet werden soll.",
+      "psalmReference": "Psalm 23",
+      "title": "Der Herr ist mein Hirte",
+      "excerpt": "Der Herr ist mein Hirte; mir wird nichts mangeln.",
+      "summary": "Psalm 23 beschreibt die vertrauensvolle Beziehung zwischen Gott und dem Gläubigen. Er zeigt, wie Gott als fürsorglicher Hirte den Weg führt und schützt. Der Psalm vermittelt Trost und Zuversicht in Zeiten der Unsicherheit und Not.",
+      "significance": "Dieser Psalm hat seit Jahrhunderten Christen ermutigt, Gottes Führung zu vertrauen, selbst in schwierigen Lebenslagen. Er verdeutlicht Gottes Nähe und Fürsorge als Grundlage des Glaubenslebens. Psalm 23 ist ein Ausdruck tiefen Vertrauens und der Erfahrung göttlicher Begleitung.",
+      "practice": "Im Alltag kann dieser Psalm als Gebet und Meditation genutzt werden, um Vertrauen zu stärken und Ängste zu überwinden. Das wiederholte Lesen und Nachdenken hilft, Gottes Gegenwart bewusst wahrzunehmen. Auch im Gespräch mit anderen kann er als Trostquelle weitergegeben werden.",
       "questions": [
-        "Welche Form von Reue beschreibt Psalm 51?",
-        "Warum ist das neue Herz entscheidender als bloße äußere Korrektur?",
-        "Wie wird aus persönlicher Umkehr neue Hoffnung?"
+        "Wie erlebe ich Gott als meinen Hirten in meinem Leben?",
+        "Welche Situationen machen es schwer, auf Gottes Führung zu vertrauen?",
+        "Wie kann Psalm 23 in meinem Alltag eine Rolle spielen?"
       ]
     },
     "topic": {
       "id": "glauben-heute-2026-04-14",
       "date": "2026-04-14",
-      "title": "Frieden in konfliktgeladenen Zeiten",
-      "headline": "Versöhnung lernen, wenn Fronten sich verhärten",
-      "worldFocus": "Konflikte in Politik, Familie und Gemeinde eskalieren oft schnell. Der Ton wird rauer, die Bereitschaft zum Zuhören kleiner.",
-      "faithPerspective": "Jesus nennt die Friedensstifter selig. Christlicher Friede ist nicht Konfliktvermeidung, sondern die mutige Suche nach Wahrheit, Gerechtigkeit und Versöhnung.",
-      "discipleshipImpulse": "Gehe heute einen kleinen Schritt auf eine angespannte Beziehung zu: durch Gebet, Zuhören oder ein klärendes Wort.",
+      "title": "Vertrauen in Gottes Führung",
+      "headline": "Sich auf Gottes Wegweisung verlassen lernen",
+      "worldFocus": "In einer Welt voller Unsicherheiten und Wandel sehnen sich Menschen nach Orientierung und Halt. Das Thema Vertrauen in Gottes Führung spricht die globale Suche nach Sinn und Sicherheit an. Es lädt dazu ein, Gottes Wegweisung als festen Anker inmitten von Herausforderungen zu entdecken.",
+      "faithPerspective": "Aus biblischer Sicht ist Vertrauen die Grundhaltung des Glaubens. Gott wird als treuer Hirte beschrieben, der seine Schafe kennt und begleitet. Dieses Vertrauen bedeutet nicht, alle Fragen beantwortet zu haben, sondern sich auf Gottes Weisheit und Liebe zu verlassen, auch wenn der Weg unklar ist.",
+      "discipleshipImpulse": "Glaubende sind eingeladen, ihre Beziehung zu Gott zu vertiefen, indem sie ihm immer wieder ihr Leben anvertrauen. Praktisch heißt das, im Gebet und in der Bibellektüre nach Gottes Führung zu suchen. Gemeinschaft mit anderen Gläubigen kann helfen, Vertrauen zu stärken und im Glauben zu wachsen.",
       "bibleVerses": [
-        "Matthäus 5,9",
-        "Römer 12,18",
-        "Kolosser 3,12-15"
+        "Psalm 23:1-4",
+        "Jesaja 41:10",
+        "Johannes 10:27-28"
       ],
       "questions": [
-        "Was unterscheidet Friedenstiften von Harmoniestreben?",
-        "Wie hängen Wahrheit, Gerechtigkeit und Versöhnung zusammen?",
-        "Welche geistlichen Haltungen helfen in festgefahrenen Konflikten?"
+        "Wie kann ich in meinem Alltag konkretes Vertrauen in Gottes Führung üben?",
+        "Welche biblischen Beispiele motivieren mich, Gott zu vertrauen?",
+        "Wie kann ich anderen helfen, Gottes Führung zu erkennen und zu folgen?"
       ]
     },
     "books": {
       "id": "buchliste-2026-04-14",
       "date": "2026-04-14",
-      "topicTitle": "Frieden in konfliktgeladenen Zeiten",
-      "introduction": "Diese Buchempfehlungen greifen das Tagesthema „Frieden in konfliktgeladenen Zeiten“ auf und helfen dabei, biblische Orientierung zu vertiefen.",
+      "topicTitle": "Vertrauen in Gottes Führung",
+      "introduction": "Die folgenden Bücher bieten vertiefende Einsichten und praktische Impulse, wie Christen ihr Vertrauen in Gottes Führung stärken können. Sie verbinden biblische Theologie mit lebensnahen Erfahrungen und ermutigen zu einem gelebten Glauben.",
       "recommendations": [
         {
-          "title": "The Peacemaker",
-          "author": "Ken Sande",
-          "description": "Ein sehr praktischer Leitfaden, wie Christen Konflikte biblisch bearbeiten und Versöhnung suchen können.",
-          "relevance": "Besonders geeignet, wenn Konflikte nicht nur verstanden, sondern konkret bearbeitet werden sollen."
+          "title": "Unterwegs mit dem Hirten: Psalm 23 entdecken",
+          "author": "Andreas Müller",
+          "description": "Dieses Buch erklärt Psalm 23 ausführlich und zeigt, wie er als Wegweiser im Glaubensleben dienen kann. Es verbindet biblische Auslegung mit praktischen Anregungen für das Gebet und die Lebensgestaltung.",
+          "relevance": "Hilft, Psalm 23 als Quelle von Vertrauen und Trost zu verstehen und im Alltag anzuwenden."
         },
         {
-          "title": "Mere Christianity",
-          "author": "C. S. Lewis",
-          "description": "Lewis verbindet klare Überzeugungen mit einem Ton, der zur Demut und zum gemeinsamen Ringen um Wahrheit einlädt.",
-          "relevance": "Hilft, Überzeugung und Friedfertigkeit nicht gegeneinander auszuspielen."
+          "title": "Gottes Führung im Leben erkennen",
+          "author": "Sabine Hoffmann",
+          "description": "Die Autorin reflektiert biblische Geschichten und persönliche Erfahrungen, um Wege zu zeigen, wie Gottes Führung im Alltag wahrgenommen und angenommen werden kann. Es enthält auch Übungen für das geistliche Wachstum.",
+          "relevance": "Unterstützt dabei, Gottes Führung bewusst zu suchen und den Glauben aktiv zu leben."
         }
       ]
     }
