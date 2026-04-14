@@ -1,8 +1,8 @@
 import { getISOWeek } from './utils';
 
 const BERLIN_TIMEZONE = 'Europe/Berlin';
-// Business rule: daily public content switches at 03:00 in German local time.
-const DAILY_PUBLISH_HOUR = 3;
+// Daily and weekly public content follow the local Berlin calendar day.
+const DAILY_PUBLISH_HOUR = 0;
 
 function getBerlinParts(date: Date) {
   const formatter = new Intl.DateTimeFormat('en-CA', {
@@ -47,13 +47,5 @@ export function getCurrentPublicationDate(date = new Date()): string {
 }
 
 export function getCurrentPublicationWeek(date = new Date()): string {
-  const effectiveDate = parseIsoDate(getCurrentPublicationDate(date));
-
-  // Business rule: the next weekly cycle becomes active on Sunday at 03:00 local time,
-  // so Sunday content after the cutoff already points to the upcoming ISO week.
-  if (effectiveDate.getUTCDay() === 0) {
-    effectiveDate.setUTCDate(effectiveDate.getUTCDate() + 1);
-  }
-
-  return getISOWeek(effectiveDate);
+  return getISOWeek(parseIsoDate(getCurrentPublicationDate(date)));
 }

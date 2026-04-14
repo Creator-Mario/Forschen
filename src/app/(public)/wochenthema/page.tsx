@@ -32,7 +32,6 @@ export const metadata: Metadata = createPageMetadata({
 
 export default function WochenthemaPage() {
   const theme = getCurrentWochenthema();
-  const currentDate = formatDate(new Date().toISOString());
   const research = theme
     ? getApprovedForschung().filter(item => item.wochenthemaId === theme.id)
     : [];
@@ -45,7 +44,7 @@ export default function WochenthemaPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-blue-800 mb-1">Wochenthema</h1>
-          {theme && <p className="text-gray-500">Woche {theme.week} · {currentDate}</p>}
+          {theme && <p className="text-gray-500">Woche {theme.week}</p>}
         </div>
         <Link href="/wochenthema/archiv" className="text-blue-600 hover:text-blue-800 text-sm transition-colors">
           Archiv →

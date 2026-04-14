@@ -168,8 +168,8 @@ describe('db – getTodayTageswort', () => {
     expect(getTodayTageswort()?.id).not.toBe('t3');
   });
 
-  it('uses the previous day before 03:00 Europe/Berlin', async () => {
-    vi.setSystemTime(new Date('2026-04-11T00:30:00Z'));
+  it('uses the previous day before midnight Europe/Berlin', async () => {
+    vi.setSystemTime(new Date('2026-04-10T21:30:00Z'));
     const { getTodayTageswort } = await import('@/lib/db');
     expect(getTodayTageswort()?.id).toBe('t1');
   });
@@ -318,7 +318,7 @@ describe('db – getCurrentWochenthema', () => {
     vi.resetModules();
     delete process.env.GITHUB_TOKEN;
     vi.useFakeTimers();
-    vi.setSystemTime(new Date('2026-04-12T01:30:00Z'));
+    vi.setSystemTime(new Date('2026-04-12T22:30:00Z'));
     vi.spyOn(fs, 'existsSync').mockReturnValue(true);
     vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(themes));
   });
@@ -338,8 +338,8 @@ describe('db – getCurrentWochenthema', () => {
     expect(getCurrentWochenthema()).toBeUndefined();
   });
 
-  it('keeps the previous week before the Sunday 03:00 Europe/Berlin switch', async () => {
-    vi.setSystemTime(new Date('2026-04-12T00:30:00Z'));
+  it('keeps the previous week before Monday midnight Europe/Berlin', async () => {
+    vi.setSystemTime(new Date('2026-04-12T21:30:00Z'));
     const { getCurrentWochenthema } = await import('@/lib/db');
     expect(getCurrentWochenthema()?.id).toBe('w1');
   });
