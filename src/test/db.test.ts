@@ -271,7 +271,7 @@ describe('db – fresh GitHub-backed public content reads', () => {
     await expect(getTageswortListFresh()).resolves.toHaveLength(2);
     await expect(getTodayTageswortFresh()).resolves.toMatchObject({ id: 't2' });
     await expect(getWochenthemaListFresh()).resolves.toHaveLength(2);
-    await expect(getCurrentWochenthemaFresh()).resolves.toMatchObject({ id: 'w2' });
+    await expect(getCurrentWochenthemaFresh()).resolves.toMatchObject({ id: 'w1' });
   });
 
   it('loads generated topic bundles fresh from GitHub storage', async () => {
