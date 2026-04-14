@@ -65,6 +65,52 @@ describe('db – readJson (via getUsers)', () => {
     expect(getContent).toHaveBeenCalledOnce();
     vi.restoreAllMocks();
   });
+
+  it('falls back to local disk data instead of stale in-memory cache when GitHub fresh reads fail', async () => {
+    const staleUser = {
+      id: 'cached-u1',
+      email: 'cached@example.com',
+      password: 'x',
+      name: 'Cached',
+      role: 'USER' as const,
+      status: 'active' as const,
+      active: true,
+      createdAt: '2026-04-13T00:00:00Z',
+    };
+    const diskUser = {
+      ...staleUser,
+      id: 'disk-u1',
+      email: 'disk@example.com',
+      name: 'Disk',
+      createdAt: '2026-04-14T00:00:00Z',
+    };
+
+    class MockOctokit {
+      repos = {
+        getContent: vi.fn().mockRejectedValue(new Error('GitHub unavailable')),
+      };
+    }
+
+    let diskPayload = JSON.stringify([]);
+    vi.doMock('@octokit/rest', () => ({ Octokit: MockOctokit }));
+    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fs, 'readFileSync').mockImplementation(() => diskPayload);
+    vi.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
+
+    const { saveUser, getUsersFresh } = await import('@/lib/db');
+
+    await saveUser(staleUser);
+    diskPayload = JSON.stringify([diskUser]);
+    process.env.GITHUB_TOKEN = 'test-token';
+    process.env.VERCEL = '1';
+
+    await expect(getUsersFresh()).resolves.toMatchObject([
+      expect.objectContaining({
+        id: 'disk-u1',
+        email: 'disk@example.com',
+      }),
+    ]);
+  });
 });
 
 // ── getUserById / getUserByEmail ──────────────────────────────────────────────

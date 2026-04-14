@@ -56,7 +56,9 @@ async function readJsonFresh<T>(filename: string): Promise<T[]> {
     return parsed;
   } catch (error) {
     console.error(`[db] GitHub read failed for ${filename}; falling back to local data:`, error);
-    return readJson<T>(filename);
+    const parsed = readJsonFromLocalFile<T>(filename);
+    memoryCache.set(filename, parsed as unknown[]);
+    return parsed;
   }
 }
 
