@@ -174,4 +174,181 @@ describe('generated-content', () => {
     expect(books.introduction).not.toContain('KI-inspirierten');
     expect(dbMock.getEntries()[0]?.source).toBe('seed-fallback');
   });
+
+  it('refreshes old fallback bundles with AI when OpenAI is configured', async () => {
+    process.env.OPENAI_API_KEY = 'test-key';
+    process.env.OPENAI_BASE_URL = 'https://example.test/v1';
+    process.env.OPENAI_MODEL = 'gpt-test';
+
+    const dbMock = createDbMock([
+      {
+        id: 'generated-topic-2026-04-11',
+        date: '2026-04-11',
+        source: 'seed-fallback',
+        createdAt: '2026-04-11T00:00:00.000Z',
+        promptVersion: 'v1',
+        psalm: {
+          id: 'psalm-2026-04-11',
+          date: '2026-04-11',
+          psalmReference: 'Psalm 1,1-3',
+          title: 'Verwurzelt leben',
+          excerpt: 'Der Gerechte ist wie ein Baum, gepflanzt an Wasserbächen.',
+          summary: 'Seed summary.',
+          significance: 'Seed significance.',
+          practice: 'Seed practice.',
+          questions: ['Frage 1', 'Frage 2', 'Frage 3'],
+        },
+        topic: {
+          id: 'glauben-heute-2026-04-11',
+          date: '2026-04-11',
+          title: 'Seed title',
+          headline: 'Seed headline',
+          worldFocus: 'Seed world focus.',
+          faithPerspective: 'Seed faith perspective.',
+          discipleshipImpulse: 'Seed discipleship impulse.',
+          bibleVerses: ['Johannes 14,6', 'Epheser 4,15', 'Psalm 25,10'],
+          questions: ['Frage 1', 'Frage 2', 'Frage 3'],
+        },
+        books: {
+          id: 'buchliste-2026-04-11',
+          date: '2026-04-11',
+          topicTitle: 'Seed title',
+          introduction: 'Seed intro.',
+          recommendations: [
+            {
+              title: 'Seed book 1',
+              author: 'Seed author 1',
+              description: 'Seed description 1',
+              relevance: 'Seed relevance 1',
+            },
+            {
+              title: 'Seed book 2',
+              author: 'Seed author 2',
+              description: 'Seed description 2',
+              relevance: 'Seed relevance 2',
+            },
+          ],
+        },
+      },
+    ]);
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        choices: [
+          {
+            message: {
+              content: JSON.stringify({
+                psalm: {
+                  psalmReference: 'Psalm 25,4-5',
+                  title: 'Auf Gottes Wegen bleiben',
+                  excerpt: 'Herr, zeige mir deine Wege und lehre mich deine Steige.',
+                  summary: 'Der Psalm bittet Gott um Leitung inmitten von Unsicherheit und offenen Fragen. Er verbindet Demut mit dem Vertrauen, dass Gott seinen Weg zeigt.',
+                  significance: 'Für den Glauben heute heißt das, Orientierung nicht nur in uns selbst zu suchen, sondern im Wort und in der Gegenwart Gottes. Gerade darin wächst geistliche Klarheit.',
+                  practice: 'Nimm dir heute bewusst Zeit, eine Entscheidung oder offene Frage betend vor Gott zu bringen. Bitte ihn konkret um Leitung und Bereitschaft zum Gehorsam.',
+                  questions: ['Wo brauche ich gerade Gottes Leitung?', 'Welche Wege möchte Gott in mir zurechtrücken?', 'Wie übe ich hörenden Gehorsam im Alltag ein?'],
+                },
+                topic: {
+                  title: 'Wahrheit und Treue im Alltag',
+                  headline: 'Wenn Klarheit und Liebe zusammengehören',
+                  worldFocus: 'Viele Menschen erleben widersprüchliche Informationen und verlieren Vertrauen. Das erzeugt Müdigkeit und Unsicherheit.',
+                  faithPerspective: 'Die Schrift ruft dazu auf, Wahrheit nicht als Waffe, sondern als Weg der Treue zu leben. Christus verbindet Klarheit mit Liebe.',
+                  discipleshipImpulse: 'Prüfe heute ein Gespräch oder eine Entscheidung bewusst im Licht von Wahrheit, Geduld und Liebe.',
+                  bibleVerses: ['Johannes 14,6', 'Epheser 4,15', 'Psalm 25,10'],
+                  questions: ['Wo fehlt mir gerade Klarheit?', 'Wie sieht wahrhaftige Liebe konkret aus?', 'Welche Gewohnheit stärkt Treue im Alltag?'],
+                },
+                books: {
+                  topicTitle: 'Wahrheit und Treue im Alltag',
+                  introduction: 'Diese Buchempfehlungen vertiefen das heutige Tagesthema und helfen, biblische Orientierung praktisch einzuüben.',
+                  recommendations: [
+                    {
+                      title: 'Nachfolge',
+                      author: 'Dietrich Bonhoeffer',
+                      description: 'Ein klares Buch über die Bindung an Christus im Alltag.',
+                      relevance: 'Hilft, Wahrheit nicht theoretisch, sondern gehorsam zu verstehen.',
+                    },
+                    {
+                      title: 'Basic Christianity',
+                      author: 'John Stott',
+                      description: 'Eine konzentrierte Einführung in zentrale Wahrheiten des Glaubens.',
+                      relevance: 'Stärkt die Fähigkeit, tragfähige christliche Orientierung zu gewinnen.',
+                    },
+                  ],
+                },
+              }),
+            },
+          },
+        ],
+      }),
+    });
+
+    vi.stubGlobal('fetch', fetchMock);
+    vi.doMock('@/lib/db', () => dbMock.module);
+    const { getTodayGlaubenHeuteThema } = await import('@/lib/generated-content');
+
+    const topic = await getTodayGlaubenHeuteThema('2026-04-11');
+
+    expect(topic.title).toBe('Wahrheit und Treue im Alltag');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(dbMock.saveGeneratedTopicBundle).toHaveBeenCalledTimes(1);
+    expect(dbMock.getEntries()[0]?.source).toBe('ai');
+    expect(dbMock.getEntries()[0]?.promptVersion).toBe('v2');
+  });
+
+  it('rebuilds incomplete stored bundles when AI is unavailable', async () => {
+    const dbMock = createDbMock([
+      {
+        id: 'generated-topic-2026-04-11',
+        date: '2026-04-11',
+        source: 'ai',
+        createdAt: '2026-04-11T00:00:00.000Z',
+        promptVersion: 'v1',
+        topic: {
+          id: 'glauben-heute-2026-04-11',
+          date: '2026-04-11',
+          title: 'Alter Titel',
+          headline: 'Alte Überschrift',
+          worldFocus: 'Alter Fokus.',
+          faithPerspective: 'Alte Perspektive.',
+          discipleshipImpulse: 'Alter Impuls.',
+          bibleVerses: ['Johannes 14,6', 'Epheser 4,15', 'Psalm 25,10'],
+          questions: ['Frage 1', 'Frage 2', 'Frage 3'],
+        },
+        books: {
+          id: 'buchliste-2026-04-11',
+          date: '2026-04-11',
+          topicTitle: 'Alter Titel',
+          introduction: 'Alte Einführung.',
+          recommendations: [
+            {
+              title: 'Altes Buch 1',
+              author: 'Autor 1',
+              description: 'Beschreibung 1',
+              relevance: 'Relevanz 1',
+            },
+            {
+              title: 'Altes Buch 2',
+              author: 'Autor 2',
+              description: 'Beschreibung 2',
+              relevance: 'Relevanz 2',
+            },
+          ],
+        },
+      } as GeneratedTopicBundle,
+    ]);
+
+    vi.doMock('@/lib/db', () => dbMock.module);
+    const { getTodayPsalmThema, getTodayGlaubenHeuteThema, getTodayBuchempfehlungen } = await import('@/lib/generated-content');
+
+    const psalm = await getTodayPsalmThema('2026-04-11');
+    const topic = await getTodayGlaubenHeuteThema('2026-04-11');
+    const books = await getTodayBuchempfehlungen('2026-04-11');
+
+    expect(psalm.id).toBe('psalm-2026-04-11');
+    expect(topic.id).toBe('glauben-heute-2026-04-11');
+    expect(books.id).toBe('buchliste-2026-04-11');
+    expect(dbMock.saveGeneratedTopicBundle).toHaveBeenCalledTimes(1);
+    expect(dbMock.getEntries()[0]?.source).toBe('seed-fallback');
+    expect(dbMock.getEntries()[0]?.promptVersion).toBe('v2');
+    expect(dbMock.getEntries()[0]?.psalm?.id).toBe('psalm-2026-04-11');
+  });
 });
