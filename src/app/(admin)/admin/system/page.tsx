@@ -102,7 +102,7 @@ export default function AdminSystemPage() {
               <li><code className="bg-white px-1 rounded">RESEND_API_KEY</code> – API-Key von{' '}
                 <a href="https://resend.com/api-keys" className="underline text-blue-700" target="_blank" rel="noopener noreferrer">resend.com</a>
               </li>
-              <li><code className="bg-white px-1 rounded">OPENAI_API_KEY</code> – aktiviert die KI-Generierung für Psalmen, Glauben-heute-Themen und Buchempfehlungen</li>
+              <li><code className="bg-white px-1 rounded">OPENAI_API_KEY</code> – aktiviert die KI-Generierung für Psalmen, Glauben-heute-Themen und Buchempfehlungen und ersetzt bestehende Fallback-Einträge automatisch</li>
               <li><code className="bg-white px-1 rounded">OPENAI_BASE_URL</code> – optionaler OpenAI-kompatibler Endpoint, falls nicht api.openai.com genutzt wird</li>
               <li><code className="bg-white px-1 rounded">OPENAI_MODEL</code> – optionaler Modellname für die KI-Generierung</li>
               <li><code className="bg-white px-1 rounded">OPENAI_TIMEOUT_MS</code> – optionales Timeout pro KI-Anfrage in Millisekunden</li>
