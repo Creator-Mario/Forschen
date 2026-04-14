@@ -1,8 +1,8 @@
 import { getISOWeek } from './utils';
 
 const BERLIN_TIMEZONE = 'Europe/Berlin';
-// Daily and weekly public content follow the local Berlin calendar day.
-const DAILY_PUBLISH_HOUR = 0;
+// Daily and weekly public content switch at 03:00 local Berlin time.
+const DAILY_PUBLISH_HOUR = 3;
 
 function getBerlinParts(date: Date) {
   const formatter = new Intl.DateTimeFormat('en-CA', {

@@ -405,7 +405,8 @@ describe('GlaubenHeutePage', () => {
       }),
     }));
     const { default: GlaubenHeutePage } = await import('@/app/(public)/glauben-heute/page');
-    render(React.createElement(GlaubenHeutePage));
+    const jsx = await GlaubenHeutePage();
+    render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByRole('heading', { name: /Glauben heute/i })).toBeInTheDocument();
     expect(screen.getByText('Frage A')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /gedankenbeitrag verfassen/i })).toHaveAttribute('href', '/forschung/beitraege');
@@ -434,7 +435,8 @@ describe('BuchempfehlungenPage', () => {
       ]),
     }));
     const { default: BuchempfehlungenPage } = await import('@/app/(public)/buchempfehlungen/page');
-    render(React.createElement(BuchempfehlungenPage));
+    const jsx = await BuchempfehlungenPage();
+    render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByRole('heading', { name: /Buchempfehlungen des Tages/i })).toBeInTheDocument();
     expect(screen.getByText('Gemeinschaftsbuch')).toBeInTheDocument();
     expect(screen.queryByText('Altes Buch')).toBeNull();
@@ -660,7 +662,8 @@ describe('HomePage', () => {
     vi.doMock('@/components/WeeklyThemeCard', () => ({ default: () => null }));
     vi.doMock('@/components/Logo', () => ({ default: () => React.createElement('div', null, 'Logo') }));
     const { default: HomePage } = await import('@/app/(public)/page');
-    render(React.createElement(HomePage));
+    const jsx = await HomePage();
+    render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByRole('heading', { name: /Der Fluss/i, level: 1 })).toBeInTheDocument();
     expect(screen.getByText(/Vorstellung des Gründers/i)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /Mario Reiner Denzer/i })).toBeInTheDocument();

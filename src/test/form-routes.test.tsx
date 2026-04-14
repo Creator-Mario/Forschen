@@ -56,6 +56,9 @@ vi.mock('@/lib/db', () => ({
   getThesen: () => userThesen,
   getForschung: () => userBeitraege,
   getVideos: () => userVideos,
+  getGeneratedTopicBundleByDate: () => undefined,
+  getGeneratedTopicBundles: () => [],
+  saveGeneratedTopicBundle: vi.fn(async () => undefined),
 }));
 
 vi.mock('@/components/BibleVerseCard', () => ({
@@ -142,7 +145,8 @@ describe('public form entry routes', () => {
     const { default: HomePage } = await import('@/app/(public)/page');
     const { default: VisionPage } = await import('@/app/(public)/vision/page');
 
-    const { unmount } = render(React.createElement(HomePage));
+    const homeJsx = await HomePage();
+    const { unmount } = render(React.createElement(React.Fragment, null, homeJsx));
     expect(screen.getByRole('link', { name: /jetzt kostenlos registrieren/i })).toHaveAttribute('href', '/registrieren');
     unmount();
 
@@ -350,7 +354,8 @@ describe('public overview pages link into the right form flows', () => {
     ];
     const { default: BuchempfehlungenPage } = await import('@/app/(public)/buchempfehlungen/page');
 
-    render(React.createElement(BuchempfehlungenPage));
+    const jsx = await BuchempfehlungenPage();
+    render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByRole('link', { name: /\+ empfehlung einreichen/i })).toHaveAttribute('href', '/buchempfehlungen/neu');
   });
 });

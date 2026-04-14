@@ -24,13 +24,13 @@ export const metadata: Metadata = createPageMetadata({
   keywords: ['Startseite', 'christliche Forschung', 'Bibelarbeit'],
 });
 
-export default function HomePage() {
+export default async function HomePage() {
   const tageswort = getTodayTageswort();
   const wochenthema = getCurrentWochenthema();
   const thesen = getApprovedThesen().slice(0, 2);
   const psalmThema = getTodayPsalmThema();
-  const glaubenHeute = getTodayGlaubenHeuteThema();
-  const buchempfehlungen = getTodayBuchempfehlungen();
+  const glaubenHeute = await getTodayGlaubenHeuteThema();
+  const buchempfehlungen = await getTodayBuchempfehlungen();
 
   return (
     <div>

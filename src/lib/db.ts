@@ -4,7 +4,8 @@ import { normalizeEmail } from '@/lib/utils';
 import { getCurrentPublicationDate, getCurrentPublicationWeek } from '@/lib/publishing';
 import type {
   User, Tageswort, Wochenthema, These, ForschungsBeitrag,
-  Gebet, Video, Aktion, SpendenRecord, AdminLog, ChatMessage, NutzerBuchempfehlung, CommunityQuestion
+  Gebet, Video, Aktion, SpendenRecord, AdminLog, ChatMessage, NutzerBuchempfehlung, CommunityQuestion,
+  GeneratedTopicBundle
 } from '@/types';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
@@ -274,6 +275,21 @@ export async function deleteWochenthema(id: string): Promise<boolean> {
   if (next.length === list.length) return false;
   await writeJson('wochenthema.json', next);
   return true;
+}
+
+// KI-generierte Tagesthemen
+export function getGeneratedTopicBundles(): GeneratedTopicBundle[] {
+  return readJson<GeneratedTopicBundle>('generated-topics.json');
+}
+export function getGeneratedTopicBundleByDate(date: string): GeneratedTopicBundle | undefined {
+  return getGeneratedTopicBundles().find(entry => entry.date === date);
+}
+export async function saveGeneratedTopicBundle(entry: GeneratedTopicBundle): Promise<void> {
+  const list = getGeneratedTopicBundles();
+  const idx = list.findIndex(item => item.date === entry.date);
+  if (idx >= 0) list[idx] = entry;
+  else list.push(entry);
+  await writeJson('generated-topics.json', list);
 }
 
 // Thesen

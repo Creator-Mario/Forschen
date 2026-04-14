@@ -3,8 +3,11 @@ import type {
   GlaubenHeuteThema,
   Buchempfehlung,
   BuchempfehlungsSammlung,
+  GeneratedTopicBundle,
+  GeneratedTopicSource,
 } from '@/types';
 import { GENERATED_ARCHIVE_DAYS, MS_PER_DAY } from './archive-window';
+import { getGeneratedTopicBundleByDate, getGeneratedTopicBundles, saveGeneratedTopicBundle } from './db';
 import { getCurrentPublicationDate } from './publishing';
 
 const psalmSeeds = [
@@ -293,6 +296,13 @@ const currentTopicSeeds = [
   },
 ] as const;
 
+const GENERATED_TOPIC_PROMPT_VERSION = 'v1';
+const OPENAI_API_BASE_URL = (process.env.OPENAI_BASE_URL ?? 'https://api.openai.com/v1').replace(/\/$/, '');
+const OPENAI_MODEL = process.env.OPENAI_MODEL?.trim() || 'gpt-4.1-mini';
+const AI_TIMEOUT_MS = Number(process.env.OPENAI_TIMEOUT_MS ?? 20000);
+const AI_MAX_RETRIES = 2;
+const inFlightTopicGenerations = new Map<string, Promise<GeneratedTopicBundle>>();
+
 function parseIsoDate(value: string): Date {
   const [year, month, day] = value.split('-').map(Number);
   return new Date(Date.UTC(year, month - 1, day));
@@ -363,6 +373,263 @@ function buildBuchempfehlungsSammlung(date: string): BuchempfehlungsSammlung {
   };
 }
 
+
+function buildGeneratedTopicBundle(
+  date: string,
+  source: GeneratedTopicSource = 'seed-fallback'
+): GeneratedTopicBundle {
+  return {
+    id: `generated-topic-${date}`,
+    date,
+    source,
+    createdAt: new Date().toISOString(),
+    promptVersion: GENERATED_TOPIC_PROMPT_VERSION,
+    topic: buildGlaubenHeuteThema(date),
+    books: buildBuchempfehlungsSammlung(date),
+  };
+}
+
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === 'string' && value.trim().length > 0;
+}
+
+function isStringArray(value: unknown, minLength: number): value is string[] {
+  return Array.isArray(value) && value.length >= minLength && value.every(isNonEmptyString);
+}
+
+function isBookRecommendation(value: unknown): value is Buchempfehlung {
+  if (!value || typeof value !== 'object') return false;
+  const candidate = value as Record<string, unknown>;
+  return (
+    isNonEmptyString(candidate.title) &&
+    isNonEmptyString(candidate.author) &&
+    isNonEmptyString(candidate.description) &&
+    isNonEmptyString(candidate.relevance)
+  );
+}
+
+function extractJsonPayload(text: string): string {
+  const trimmed = text.trim();
+  const fencedMatch = trimmed.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  if (fencedMatch?.[1]) return fencedMatch[1].trim();
+  const firstBrace = trimmed.indexOf('{');
+  const lastBrace = trimmed.lastIndexOf('}');
+  if (firstBrace >= 0 && lastBrace > firstBrace) {
+    return trimmed.slice(firstBrace, lastBrace + 1);
+  }
+  return trimmed;
+}
+
+function parseAiBundle(date: string, rawText: string): GeneratedTopicBundle {
+  const payload = JSON.parse(extractJsonPayload(rawText)) as Record<string, unknown>;
+  const topic = payload.topic as Record<string, unknown> | undefined;
+  const books = payload.books as Record<string, unknown> | undefined;
+
+  if (!topic || !books) {
+    throw new Error('Antwort enthält kein topic/books-Objekt.');
+  }
+
+  if (
+    !isNonEmptyString(topic.title) ||
+    !isNonEmptyString(topic.headline) ||
+    !isNonEmptyString(topic.worldFocus) ||
+    !isNonEmptyString(topic.faithPerspective) ||
+    !isNonEmptyString(topic.discipleshipImpulse) ||
+    !isStringArray(topic.bibleVerses, 3) ||
+    !isStringArray(topic.questions, 3)
+  ) {
+    throw new Error('Antwort enthält ein unvollständiges topic-Objekt.');
+  }
+
+  const recommendations = books.recommendations;
+  const bibleVerses = topic.bibleVerses as string[];
+  const questions = topic.questions as string[];
+  const title = topic.title as string;
+  const headline = topic.headline as string;
+  const worldFocus = topic.worldFocus as string;
+  const faithPerspective = topic.faithPerspective as string;
+  const discipleshipImpulse = topic.discipleshipImpulse as string;
+  const topicTitle = books.topicTitle as string;
+  const introduction = books.introduction as string;
+  if (
+    !isNonEmptyString(books.topicTitle) ||
+    !isNonEmptyString(books.introduction) ||
+    !Array.isArray(recommendations) ||
+    recommendations.length < 2 ||
+    !recommendations.every(isBookRecommendation)
+  ) {
+    throw new Error('Antwort enthält ein unvollständiges books-Objekt.');
+  }
+
+  return {
+    id: `generated-topic-${date}`,
+    date,
+    source: 'ai',
+    createdAt: new Date().toISOString(),
+    promptVersion: GENERATED_TOPIC_PROMPT_VERSION,
+    topic: {
+      id: `glauben-heute-${date}`,
+      date,
+      title: title.trim(),
+      headline: headline.trim(),
+      worldFocus: worldFocus.trim(),
+      faithPerspective: faithPerspective.trim(),
+      discipleshipImpulse: discipleshipImpulse.trim(),
+      bibleVerses: bibleVerses.map(entry => entry.trim()),
+      questions: questions.map(entry => entry.trim()),
+    },
+    books: {
+      id: `buchliste-${date}`,
+      date,
+      topicTitle: topicTitle.trim(),
+      introduction: introduction.trim(),
+      recommendations: (recommendations as Buchempfehlung[]).map(book => ({
+        title: book.title.trim(),
+        author: book.author.trim(),
+        description: book.description.trim(),
+        relevance: book.relevance.trim(),
+      })),
+    },
+  };
+}
+
+function getAiPrompt(date: string): string {
+  return [
+    `Erstelle für ${date} ein christliches Tagesthema für die Website Forschen.`,
+    'Antworte ausschließlich als valides JSON ohne Markdown oder zusätzliche Erklärungen.',
+    'Struktur:',
+    JSON.stringify({
+      topic: {
+        title: 'string',
+        headline: 'string',
+        worldFocus: 'string',
+        faithPerspective: 'string',
+        discipleshipImpulse: 'string',
+        bibleVerses: ['string', 'string', 'string'],
+        questions: ['string', 'string', 'string'],
+      },
+      books: {
+        topicTitle: 'string',
+        introduction: 'string',
+        recommendations: [
+          {
+            title: 'string',
+            author: 'string',
+            description: 'string',
+            relevance: 'string',
+          },
+          {
+            title: 'string',
+            author: 'string',
+            description: 'string',
+            relevance: 'string',
+          },
+        ],
+      },
+    }),
+    'Anforderungen:',
+    '- Sprache: Deutsch.',
+    '- Inhaltlich schriftnah, nüchtern, geistlich ernsthaft und passend zu freier christlicher Bibelforschung.',
+    '- worldFocus, faithPerspective und discipleshipImpulse jeweils 2-4 Sätze.',
+    '- Drei echte Bibelstellen als bibleVerses.',
+    '- Genau drei vertiefende Fragen.',
+    '- Genau zwei Buchempfehlungen.',
+    '- books.topicTitle muss inhaltlich zu topic.title passen.',
+    '- books.introduction darf nicht erwähnen, dass der Inhalt von KI erstellt wurde.',
+  ].join('\n');
+}
+
+function getOpenAiApiKey(): string | null {
+  return process.env.OPENAI_API_KEY?.trim() || null;
+}
+
+async function generateTopicBundleWithAi(date: string): Promise<GeneratedTopicBundle | null> {
+  const apiKey = getOpenAiApiKey();
+  if (!apiKey) return null;
+
+  const prompt = getAiPrompt(date);
+
+  for (let attempt = 1; attempt <= AI_MAX_RETRIES; attempt += 1) {
+    try {
+      const response = await fetch(`${OPENAI_API_BASE_URL}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: OPENAI_MODEL,
+          temperature: 0.7,
+          messages: [
+            {
+              role: 'system',
+              content:
+                'Du erstellst christliche Themenimpulse für eine deutschsprachige Website. Gib ausschließlich JSON zurück.',
+            },
+            {
+              role: 'user',
+              content: prompt,
+            },
+          ],
+        }),
+        signal: AbortSignal.timeout(AI_TIMEOUT_MS),
+      });
+
+      if (!response.ok) {
+        throw new Error(`OpenAI request failed with status ${response.status}`);
+      }
+
+      const data = await response.json() as {
+        choices?: Array<{ message?: { content?: string | null } }>;
+      };
+      const content = data.choices?.[0]?.message?.content;
+      if (!isNonEmptyString(content)) {
+        throw new Error('OpenAI returned no content.');
+      }
+
+      return parseAiBundle(date, content);
+    } catch (error) {
+      if (attempt === AI_MAX_RETRIES) {
+        console.error('[generated-content] KI-Generierung fehlgeschlagen:', error);
+        return null;
+      }
+    }
+  }
+
+  return null;
+}
+
+async function persistGeneratedTopicBundle(bundle: GeneratedTopicBundle): Promise<GeneratedTopicBundle> {
+  try {
+    await saveGeneratedTopicBundle(bundle);
+  } catch (error) {
+    console.error('[generated-content] Persistieren des Tagesthemas fehlgeschlagen:', error);
+  }
+  return bundle;
+}
+
+async function getOrCreateGeneratedTopicBundle(date = getCurrentPublicationDate()): Promise<GeneratedTopicBundle> {
+  const existing = getGeneratedTopicBundleByDate(date);
+  if (existing) return existing;
+
+  const inFlight = inFlightTopicGenerations.get(date);
+  if (inFlight) return inFlight;
+
+  const generation = (async () => {
+    const generated = await generateTopicBundleWithAi(date);
+    const bundle = generated ?? buildGeneratedTopicBundle(date);
+    return persistGeneratedTopicBundle(bundle);
+  })();
+
+  inFlightTopicGenerations.set(date, generation);
+
+  try {
+    return await generation;
+  } finally {
+    inFlightTopicGenerations.delete(date);
+  }
+}
+
 export function getTodayPsalmThema(date = getCurrentPublicationDate()): PsalmThema {
   return buildPsalmThema(date);
 }
@@ -371,18 +638,32 @@ export function getPsalmThemaArchiv(date = getCurrentPublicationDate()): PsalmTh
   return buildDateList(date).map(buildPsalmThema);
 }
 
-export function getTodayGlaubenHeuteThema(date = getCurrentPublicationDate()): GlaubenHeuteThema {
-  return buildGlaubenHeuteThema(date);
+export async function getTodayGlaubenHeuteThema(date = getCurrentPublicationDate()): Promise<GlaubenHeuteThema> {
+  const bundle = await getOrCreateGeneratedTopicBundle(date);
+  return bundle.topic;
 }
 
-export function getGlaubenHeuteArchiv(date = getCurrentPublicationDate()): GlaubenHeuteThema[] {
-  return buildDateList(date).map(buildGlaubenHeuteThema);
+export async function getGlaubenHeuteArchiv(date = getCurrentPublicationDate()): Promise<GlaubenHeuteThema[]> {
+  const bundlesByDate = new Map(
+    getGeneratedTopicBundles().map(bundle => [bundle.date, bundle] as const)
+  );
+  const todayBundle = await getOrCreateGeneratedTopicBundle(date);
+  bundlesByDate.set(date, todayBundle);
+
+  return buildDateList(date).map(entryDate => (bundlesByDate.get(entryDate) ?? buildGeneratedTopicBundle(entryDate)).topic);
 }
 
-export function getTodayBuchempfehlungen(date = getCurrentPublicationDate()): BuchempfehlungsSammlung {
-  return buildBuchempfehlungsSammlung(date);
+export async function getTodayBuchempfehlungen(date = getCurrentPublicationDate()): Promise<BuchempfehlungsSammlung> {
+  const bundle = await getOrCreateGeneratedTopicBundle(date);
+  return bundle.books;
 }
 
-export function getBuchempfehlungenArchiv(date = getCurrentPublicationDate()): BuchempfehlungsSammlung[] {
-  return buildDateList(date).map(buildBuchempfehlungsSammlung);
+export async function getBuchempfehlungenArchiv(date = getCurrentPublicationDate()): Promise<BuchempfehlungsSammlung[]> {
+  const bundlesByDate = new Map(
+    getGeneratedTopicBundles().map(bundle => [bundle.date, bundle] as const)
+  );
+  const todayBundle = await getOrCreateGeneratedTopicBundle(date);
+  bundlesByDate.set(date, todayBundle);
+
+  return buildDateList(date).map(entryDate => (bundlesByDate.get(entryDate) ?? buildGeneratedTopicBundle(entryDate)).books);
 }

@@ -21,8 +21,8 @@ export const metadata: Metadata = createPageMetadata({
   keywords: ['christliche Buchempfehlungen', 'Literaturtipps', 'Bücher'],
 });
 
-export default function BuchempfehlungenPage() {
-  const collection = getTodayBuchempfehlungen();
+export default async function BuchempfehlungenPage() {
+  const collection = await getTodayBuchempfehlungen();
   const communityRecommendations = getApprovedBuchempfehlungen()
     .filter(item => isWithinArchiveWindow(item.createdAt))
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
