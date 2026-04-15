@@ -1,107 +1,61 @@
 [
   {
-    "id": "generated-topic-2026-04-14",
-    "date": "2026-04-14",
-    "source": "ai",
-    "createdAt": "2026-04-14T04:22:06.419Z",
-    "promptVersion": "v1",
-    "topic": {
-      "id": "glauben-heute-2026-04-14",
-      "date": "2026-04-14",
-      "title": "Die Suche nach Weisheit in der Bibel",
-      "headline": "Wie biblische Weisheit unser Forschen leitet",
-      "worldFocus": "In einer Welt voller Informationsflut ist die Suche nach echter Weisheit von zentraler Bedeutung. Christliche Forschung kann Orientierung bieten, indem sie sich auf Gottes Wort gründet und damit Antworten auf ethische und existenzielle Fragen gibt.",
-      "faithPerspective": "Die Bibel zeigt Weisheit als Gabe Gottes, die weit über menschliches Wissen hinausgeht. Sie fordert uns auf, demütig und lernbereit zu forschen, dabei Gottes Führung zu suchen und die Erkenntnis zu seinem Lob zu nutzen.",
-      "discipleshipImpulse": "Ermutigt, täglich im Wort Gottes Weisheit zu suchen und die gewonnenen Erkenntnisse im Alltag umzusetzen. Forscher und Gläubige sind eingeladen, ihre Arbeit als Dienst an Gott und der Gemeinschaft zu verstehen, der verantwortungsvoll und betend nachgegangen wird.",
-      "bibleVerses": [
-        "Sprüche 2,6",
-        "Jakobus 1,5",
-        "Kolosser 1,9-10"
-      ],
-      "questions": [
-        "Wie können wir in unserem Forschen demütig bleiben und Gottes Weisheit suchen?",
-        "In welchen Bereichen unseres Lebens brauchen wir besonders biblische Orientierung?",
-        "Wie lässt sich biblische Weisheit praktisch im Alltag umsetzen?"
-      ]
-    },
-    "books": {
-      "id": "buchliste-2026-04-14",
-      "date": "2026-04-14",
-      "topicTitle": "Weisheit und Erkenntnis in der christlichen Forschung",
-      "introduction": "Die folgenden Bücher bieten tiefgehende Einblicke in das Verständnis von Weisheit aus biblischer Perspektive und zeigen Wege auf, wie christliche Forscher ihre Arbeit im Glauben verankern können.",
-      "recommendations": [
-        {
-          "title": "Weisheit aus Gottes Wort",
-          "author": "Hans-Peter Raddatz",
-          "description": "Eine fundierte Auslegung biblischer Weisheitsliteratur mit Fokus auf praktische Anwendung für Forscher und Gläubige.",
-          "relevance": "Hilft, die biblischen Weisheitsbücher besser zu verstehen und ihre Bedeutung für heutige Fragestellungen zu erkennen."
-        },
-        {
-          "title": "Glaubensforschung und Erkenntnis",
-          "author": "Miriam Schulze",
-          "description": "Diskussion zur Verbindung von wissenschaftlichem Forschen und christlichem Glauben, mit Impulsen zur Integration von Gebet und Bibelstudium.",
-          "relevance": "Zeigt Wege auf, wie christliche Forscher ihren Glauben in den wissenschaftlichen Alltag einbringen können."
-        }
-      ]
-    }
-  },
-  {
     "id": "generated-topic-2026-04-15",
     "date": "2026-04-15",
-    "source": "seed-fallback",
-    "createdAt": "2026-04-15T15:48:38.213Z",
-    "promptVersion": "v2",
+    "source": "ai",
+    "createdAt": "2026-04-15T15:48:46.420Z",
+    "promptVersion": "v1",
     "psalm": {
       "id": "psalm-2026-04-15",
       "date": "2026-04-15",
-      "psalmReference": "Psalm 139,1-10",
-      "title": "Von Gott ganz erkannt",
-      "excerpt": "Herr, du erforschest mich und kennest mich.",
-      "summary": "Psalm 139 verbindet Gottes Allwissenheit mit seiner liebevollen Nähe. Erkenntnis wird hier nicht bedrohlich, sondern tröstlich.",
-      "significance": "Gerade in einer Zeit der Selbstdarstellung erinnert der Psalm daran, dass unsere tiefste Identität aus Gottes Blick hervorgeht.",
-      "practice": "Frage dich heute: Wo suche ich Anerkennung, die ich längst aus Gottes Zuwendung empfangen habe?",
+      "psalmReference": "Psalm 23",
+      "title": "Der Herr ist mein Hirte",
+      "excerpt": "Der Herr ist mein Hirte; mir wird nichts mangeln.",
+      "summary": "Psalm 23 beschreibt das Vertrauen des Gläubigen in Gottes fürsorgliche Führung und seinen Schutz. David malt das Bild eines Hirten, der seine Schafe sicher leitet, auch durch dunkle Täler. Der Psalm vermittelt Trost und Zuversicht in schwierigen Lebenslagen. Er zeigt, dass Gottes Gegenwart Sicherheit und Frieden schenkt.",
+      "significance": "Dieser Psalm ist eine der bekanntesten und am meisten zitierten Bibelstellen, die Gottes liebevolle Fürsorge darstellen. Er erinnert Christen daran, dass Gott immer bei ihnen ist, selbst in Zeiten von Angst und Unsicherheit. Die Metapher des Hirten stärkt das geistliche Vertrauen und die Abhängigkeit von Gott.",
+      "practice": "Im Alltag kann Psalm 23 dazu ermutigen, in Momenten der Angst und des Zweifels bewusst Gottes Führung zu suchen und sich seiner Gegenwart anzuvertrauen. Das regelmäßige Lesen oder Meditieren dieses Psalms fördert inneren Frieden und stärkt den Glauben. Auch das Gebet mit den Worten dieses Psalms kann Trost und Hoffnung spenden.",
       "questions": [
-        "Wie verändert Gottes umfassende Kenntnis unser Selbstverständnis?",
-        "Warum ist Gottes Nähe in Psalm 139 keine Überwachung, sondern Trost?",
-        "Welche Konsequenzen hat dieser Psalm für Ehrlichkeit und Identität?"
+        "Wie erlebe ich Gottes Führung in meinem Leben?",
+        "Welche 'dunklen Täler' habe ich bereits mit Gottes Hilfe durchschritten?",
+        "Wie kann ich anderen Menschen Gottes Fürsorge durch mein Leben sichtbar machen?"
       ]
     },
     "topic": {
       "id": "glauben-heute-2026-04-15",
       "date": "2026-04-15",
-      "title": "Künstliche Intelligenz und Menschenwürde",
-      "headline": "Technischer Fortschritt und die Frage nach dem Bild Gottes",
-      "worldFocus": "KI verändert Kommunikation, Arbeit und Bildung. Gleichzeitig wachsen Fragen nach Wahrheit, Verantwortung und dem Wesen menschlicher Würde.",
-      "faithPerspective": "Christlicher Glaube betrachtet den Menschen nicht primär nach seiner Nützlichkeit, sondern als Ebenbild Gottes mit unverlierbarer Würde.",
-      "discipleshipImpulse": "Nutze Technik heute bewusst dienend: als Werkzeug, nicht als Identitätsquelle oder Ersatz für Weisheit.",
+      "title": "Vertrauen in Gottes Führung",
+      "headline": "Gottes Wegweisung in unserem Alltag erkennen und leben",
+      "worldFocus": "In einer Welt voller Unsicherheit und Wandel sehnen sich viele Menschen nach einer verlässlichen Orientierung. Das Thema Vertrauen in Gottes Führung spricht Menschen an, die Halt suchen und sich nach innerem Frieden sehnen. Es lädt dazu ein, Gottes beständige Gegenwart als Anker im Leben zu entdecken.",
+      "faithPerspective": "Der christliche Glaube betont, dass Gott aktiv in das Leben seiner Gläubigen eingreift und sie leitet. Vertrauen bedeutet hier, sich bewusst auf Gottes Weisheit und Wege einzulassen, auch wenn sie nicht immer sofort verständlich sind. Diese Haltung fördert eine tiefe Beziehung zu Gott und eröffnet neue Perspektiven für den Glaubensweg.",
+      "discipleshipImpulse": "Als Nachfolger Christi sind wir herausgefordert, unser Vertrauen nicht auf eigene Kraft, sondern auf Gottes Führung zu setzen. Dies erfordert tägliches Gebet, Bibelstudium und die Bereitschaft, Gottes Willen auch gegen Widerstände zu folgen. Durch gelebtes Vertrauen können wir Zeugnis geben und andere ermutigen, ebenfalls Gottes Begleitung zu suchen.",
       "bibleVerses": [
-        "1. Mose 1,26-27",
-        "Psalm 8,4-7",
-        "Philipper 4,8"
+        "Psalm 23:1-4",
+        "Jesaja 41:10",
+        "Sprüche 3:5-6"
       ],
       "questions": [
-        "Welche Chancen und Grenzen sind mit KI aus christlicher Sicht zu bedenken?",
-        "Wie schützt der Glaube die Würde des Menschen im digitalen Wandel?",
-        "Was heißt geistliche Unterscheidung im Umgang mit neuer Technologie?"
+        "Wie kann ich mein Vertrauen in Gottes Führung praktisch stärken?",
+        "Welche Rolle spielt Gebet bei meinem Vertrauen auf Gott?",
+        "Wie gehe ich mit Zweifeln an Gottes Führung um?"
       ]
     },
     "books": {
       "id": "buchliste-2026-04-15",
       "date": "2026-04-15",
-      "topicTitle": "Künstliche Intelligenz und Menschenwürde",
-      "introduction": "Diese Buchempfehlungen greifen das Tagesthema „Künstliche Intelligenz und Menschenwürde“ auf und helfen dabei, biblische Orientierung zu vertiefen.",
+      "topicTitle": "Vertrauen in Gottes Führung",
+      "introduction": "Diese Buchempfehlungen bieten wertvolle Impulse und praktische Hilfen, um das Vertrauen in Gottes Führung zu vertiefen und im Alltag umzusetzen. Sie verbinden biblische Exegese mit geistlicher Praxis und lebensnahen Beispielen.",
       "recommendations": [
         {
-          "title": "Futureville",
-          "author": "Skye Jethani",
-          "description": "Ein zugänglicher Einstieg in die Frage, wie Christen technologische Entwicklungen geistlich reflektieren können.",
-          "relevance": "Hilft, Fortschritt nicht reflexhaft abzulehnen oder unkritisch zu feiern."
+          "title": "Gottes Führung erfahren",
+          "author": "Margaret Feinberg",
+          "description": "Das Buch zeigt anhand biblischer Geschichten, wie Gott Menschen heute noch leitet und wie man seine Führung erkennen kann.",
+          "relevance": "Es bietet praktische Anleitungen und ermutigende Impulse, um Gottes Wegweisung im eigenen Leben bewusst wahrzunehmen."
         },
         {
-          "title": "The Divine Conspiracy",
-          "author": "Dallas Willard",
-          "description": "Willard zeichnet die Tiefe des Lebens im Reich Gottes nach und bewahrt damit den Blick für das eigentlich Menschliche.",
-          "relevance": "Wichtig, um Technik im größeren Horizont von Nachfolge, Charakter und Gottes Reich zu beurteilen."
+          "title": "Vertrauen lernen",
+          "author": "Henri Nouwen",
+          "description": "Nouwen beschreibt den Prozess des Vertrauenswachstums im Glauben und wie man Ängste und Zweifel überwinden kann.",
+          "relevance": "Das Buch hilft, den inneren Widerstand gegen Gottes Führung zu überwinden und zu einem unerschütterlichen Vertrauen zu gelangen."
         }
       ]
     }
