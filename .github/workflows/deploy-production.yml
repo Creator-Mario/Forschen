@@ -86,7 +86,7 @@ jobs:
         id: deploy
         run: |
           for attempt in 1 2 3; do
-            output=$(vercel deploy --prebuilt --prod --token="${VERCEL_TOKEN}" 2>&1) && status=0 || status=$?
+            output=$(vercel deploy --prebuilt --prod --archive=tgz --token="${VERCEL_TOKEN}" 2>&1) && status=0 || status=$?
             echo "$output"
             if [ "$status" -eq 0 ]; then
               url=$(printf '%s\n' "$output" | tail -n 1)
