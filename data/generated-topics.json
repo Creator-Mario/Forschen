@@ -59,5 +59,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-04-15",
+    "date": "2026-04-15",
+    "source": "seed-fallback",
+    "createdAt": "2026-04-15T01:10:50.046Z",
+    "promptVersion": "v2",
+    "psalm": {
+      "id": "psalm-2026-04-15",
+      "date": "2026-04-15",
+      "psalmReference": "Psalm 139,1-10",
+      "title": "Von Gott ganz erkannt",
+      "excerpt": "Herr, du erforschest mich und kennest mich.",
+      "summary": "Psalm 139 verbindet Gottes Allwissenheit mit seiner liebevollen Nähe. Erkenntnis wird hier nicht bedrohlich, sondern tröstlich.",
+      "significance": "Gerade in einer Zeit der Selbstdarstellung erinnert der Psalm daran, dass unsere tiefste Identität aus Gottes Blick hervorgeht.",
+      "practice": "Frage dich heute: Wo suche ich Anerkennung, die ich längst aus Gottes Zuwendung empfangen habe?",
+      "questions": [
+        "Wie verändert Gottes umfassende Kenntnis unser Selbstverständnis?",
+        "Warum ist Gottes Nähe in Psalm 139 keine Überwachung, sondern Trost?",
+        "Welche Konsequenzen hat dieser Psalm für Ehrlichkeit und Identität?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-04-15",
+      "date": "2026-04-15",
+      "title": "Künstliche Intelligenz und Menschenwürde",
+      "headline": "Technischer Fortschritt und die Frage nach dem Bild Gottes",
+      "worldFocus": "KI verändert Kommunikation, Arbeit und Bildung. Gleichzeitig wachsen Fragen nach Wahrheit, Verantwortung und dem Wesen menschlicher Würde.",
+      "faithPerspective": "Christlicher Glaube betrachtet den Menschen nicht primär nach seiner Nützlichkeit, sondern als Ebenbild Gottes mit unverlierbarer Würde.",
+      "discipleshipImpulse": "Nutze Technik heute bewusst dienend: als Werkzeug, nicht als Identitätsquelle oder Ersatz für Weisheit.",
+      "bibleVerses": [
+        "1. Mose 1,26-27",
+        "Psalm 8,4-7",
+        "Philipper 4,8"
+      ],
+      "questions": [
+        "Welche Chancen und Grenzen sind mit KI aus christlicher Sicht zu bedenken?",
+        "Wie schützt der Glaube die Würde des Menschen im digitalen Wandel?",
+        "Was heißt geistliche Unterscheidung im Umgang mit neuer Technologie?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-04-15",
+      "date": "2026-04-15",
+      "topicTitle": "Künstliche Intelligenz und Menschenwürde",
+      "introduction": "Diese Buchempfehlungen greifen das Tagesthema „Künstliche Intelligenz und Menschenwürde“ auf und helfen dabei, biblische Orientierung zu vertiefen.",
+      "recommendations": [
+        {
+          "title": "Futureville",
+          "author": "Skye Jethani",
+          "description": "Ein zugänglicher Einstieg in die Frage, wie Christen technologische Entwicklungen geistlich reflektieren können.",
+          "relevance": "Hilft, Fortschritt nicht reflexhaft abzulehnen oder unkritisch zu feiern."
+        },
+        {
+          "title": "The Divine Conspiracy",
+          "author": "Dallas Willard",
+          "description": "Willard zeichnet die Tiefe des Lebens im Reich Gottes nach und bewahrt damit den Blick für das eigentlich Menschliche.",
+          "relevance": "Wichtig, um Technik im größeren Horizont von Nachfolge, Charakter und Gottes Reich zu beurteilen."
+        }
+      ]
+    }
   }
 ]
