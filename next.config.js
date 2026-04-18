@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   images: {
     unoptimized: true,
   },
-  htmlLimitedBots: /.*/,
 };
 
-export default nextConfig;
+module.exports = nextConfig;
