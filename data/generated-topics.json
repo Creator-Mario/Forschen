@@ -120,5 +120,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-04-18",
+    "date": "2026-04-18",
+    "source": "seed-fallback",
+    "createdAt": "2026-04-18T07:44:31.894Z",
+    "promptVersion": "v2",
+    "psalm": {
+      "id": "psalm-2026-04-18",
+      "date": "2026-04-18",
+      "psalmReference": "Psalm 27,1-4",
+      "title": "Mut trotz Gegenwind",
+      "excerpt": "Der Herr ist mein Licht und mein Heil; vor wem sollte ich mich fürchten?",
+      "summary": "Psalm 27 verbindet starke Zuversicht mit ehrlicher Bedrohungserfahrung. Der Beter verdrängt Angst nicht, sondern bringt sie vor Gott.",
+      "significance": "Die geistliche Stärke dieses Psalms liegt darin, dass Hoffnung nicht aus günstigen Umständen, sondern aus Gottes Gegenwart erwächst.",
+      "practice": "Benenne heute eine konkrete Angst und formuliere daneben bewusst, was Gottes Nähe darüber aussagt.",
+      "questions": [
+        "Wie hängen Gottes Gegenwart und menschlicher Mut in Psalm 27 zusammen?",
+        "Warum ist Anbetung hier kein Rückzug, sondern eine Form geistlicher Standfestigkeit?",
+        "Wie kann dieser Psalm in Konflikten oder Unsicherheit gebetet werden?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-04-18",
+      "date": "2026-04-18",
+      "title": "Hoffnung in einer Krisenwelt",
+      "headline": "Warum christliche Hoffnung mehr ist als Optimismus",
+      "worldFocus": "Kriege, Krisenmeldungen und wirtschaftliche Unsicherheit erzeugen bei vielen Menschen Müdigkeit, Zukunftsangst und inneren Rückzug.",
+      "faithPerspective": "Biblische Hoffnung ist kein positives Denken, sondern eine begründete Erwartung, dass Gott Geschichte und Leben nicht aus der Hand gegeben hat.",
+      "discipleshipImpulse": "Setze heute bewusst ein Zeichen der Hoffnung: ein Gebet, ein Gespräch oder eine Ermutigung für jemanden, der unter Druck steht.",
+      "bibleVerses": [
+        "Römer 15,13",
+        "1. Petrus 1,3",
+        "Klagelieder 3,21-23"
+      ],
+      "questions": [
+        "Wie unterscheidet sich Hoffnung von bloßer Stimmung?",
+        "Wodurch wird christliche Hoffnung in leidvollen Zeiten genährt?",
+        "Wie kann Hoffnung sichtbar gelebt werden, ohne Leid zu verharmlosen?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-04-18",
+      "date": "2026-04-18",
+      "topicTitle": "Hoffnung in einer Krisenwelt",
+      "introduction": "Diese Buchempfehlungen greifen das Tagesthema „Hoffnung in einer Krisenwelt“ auf und helfen dabei, biblische Orientierung zu vertiefen.",
+      "recommendations": [
+        {
+          "title": "Das Gebet des Jabez",
+          "author": "Bruce Wilkinson",
+          "description": "Ein leicht zugänglicher Impuls, Gottes Handeln erwartungsvoll in den Alltag hineinzubitten.",
+          "relevance": "Kann helfen, Hoffnung wieder praktisch und betend zu buchstabieren."
+        },
+        {
+          "title": "Der Weg des Herzens",
+          "author": "Henri J. M. Nouwen",
+          "description": "Nouwen beschreibt, wie Christen in Einsamkeit, Gebet und Dienst eine tragfähige innere Hoffnung finden.",
+          "relevance": "Besonders hilfreich, wenn Krisenmeldungen innerlich erschöpfen."
+        }
+      ]
+    }
   }
 ]
