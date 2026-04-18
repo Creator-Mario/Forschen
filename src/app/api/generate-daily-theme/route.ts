@@ -2,11 +2,15 @@ import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY ?? 'missing-openai-api-key',
 });
 
 export async function POST() {
   try {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OPENAI_API_KEY fehlt');
+    }
+
     const completion = await openai.chat.completions.create({
       model: process.env.OPENAI_MODEL ?? 'gpt-4o-mini',
       messages: [
@@ -32,7 +36,12 @@ export async function POST() {
   } catch (error) {
     console.error('Fehler bei der Generierung:', error);
     return NextResponse.json(
-      { error: 'Tageswort konnte nicht generiert werden' },
+      {
+        error: 'Tageswort konnte nicht generiert werden',
+        ...(process.env.NODE_ENV !== 'production' && error instanceof Error
+          ? { details: error.message }
+          : {}),
+      },
       { status: 500 }
     );
   }

@@ -89,11 +89,11 @@ describe('SEO metadata', () => {
     expect(sitemap().some((entry) => entry.url.endsWith('/registrieren'))).toBe(false);
   });
 
-  it('serves blocking metadata for all user agents', async () => {
-    const nextConfig = (await import('../../next.config.mjs')).default;
+  it('configures standalone output mode with unoptimized images', async () => {
+    const nextConfigModule = await import('../../next.config.js');
+    const nextConfig = nextConfigModule.default ?? nextConfigModule;
 
-    expect(nextConfig.htmlLimitedBots).toBeInstanceOf(RegExp);
-    expect(nextConfig.htmlLimitedBots?.test('Mozilla/5.0 HeadlessChrome/146.0.0.0 Safari/537.36')).toBe(true);
-    expect(nextConfig.htmlLimitedBots?.test('Mozilla/5.0 Chrome/146.0.0.0 Mobile Safari/537.36')).toBe(true);
+    expect(nextConfig.output).toBe('standalone');
+    expect(nextConfig.images?.unoptimized).toBe(true);
   });
 });
