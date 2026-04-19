@@ -32,4 +32,39 @@ describe('start-standalone asset preparation', () => {
     expect(fs.readFileSync(path.join(repoRoot, '.next', 'standalone', 'public', 'cover.svg'), 'utf8')).toBe('<svg />');
     expect(fs.readFileSync(path.join(repoRoot, '.next', 'standalone', '.next', 'static', 'runtime.js'), 'utf8')).toBe('runtime');
   });
+
+  it('builds standalone server options without forcing the request hostname', async () => {
+    const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'forschen-standalone-options-'));
+    tempDirs.push(repoRoot);
+
+    fs.mkdirSync(path.join(repoRoot, '.next'), { recursive: true });
+    fs.writeFileSync(
+      path.join(repoRoot, '.next', 'required-server-files.json'),
+      JSON.stringify({
+        config: {
+          distDir: '.next',
+        },
+      }),
+    );
+
+    process.env.HOSTNAME = '0.0.0.0';
+    delete process.env.STANDALONE_HOSTNAME;
+    delete process.env.PORT;
+    delete process.env.KEEP_ALIVE_TIMEOUT;
+
+    const { getStandaloneServerOptions } = require('../../start-standalone.js');
+    const options = getStandaloneServerOptions(repoRoot);
+
+    expect(options).toMatchObject({
+      dir: repoRoot,
+      isDev: false,
+      port: 3000,
+      hostname: undefined,
+      allowRetry: false,
+      config: {
+        distDir: '.next',
+      },
+    });
+    expect(options.keepAliveTimeout).toBeUndefined();
+  });
 });

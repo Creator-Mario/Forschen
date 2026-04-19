@@ -35,14 +35,42 @@ function prepareStandaloneAssets(repoRoot) {
   ensureDirectoryAvailable(path.join(resolvedRepoRoot, '.next', 'static'), path.join(standaloneRoot, '.next', 'static'));
 }
 
-function startStandaloneServer() {
-  if (process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID) {
-    process.env.HOSTNAME = '0.0.0.0';
+function getStandaloneServerOptions(repoRoot) {
+  const resolvedRepoRoot = repoRoot ?? __dirname;
+  const requiredServerFiles = JSON.parse(
+    fs.readFileSync(path.join(resolvedRepoRoot, '.next', 'required-server-files.json'), 'utf8'),
+  );
+  const currentPort = parseInt(process.env.PORT, 10) || 3000;
+  let keepAliveTimeout = parseInt(process.env.KEEP_ALIVE_TIMEOUT, 10);
+
+  if (
+    Number.isNaN(keepAliveTimeout) ||
+    !Number.isFinite(keepAliveTimeout) ||
+    keepAliveTimeout < 0
+  ) {
+    keepAliveTimeout = undefined;
   }
 
-  prepareStandaloneAssets(__dirname);
+  return {
+    dir: resolvedRepoRoot,
+    isDev: false,
+    config: requiredServerFiles.config,
+    hostname: process.env.STANDALONE_HOSTNAME?.trim() || undefined,
+    port: currentPort,
+    allowRetry: false,
+    keepAliveTimeout,
+  };
+}
 
-  require('./.next/standalone/server.js');
+function startStandaloneServer() {
+  prepareStandaloneAssets(__dirname);
+  process.env.NODE_ENV = 'production';
+
+  const { startServer } = require('next/dist/server/lib/start-server');
+  startServer(getStandaloneServerOptions(__dirname)).catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
 }
 
 if (require.main === module) {
@@ -52,5 +80,6 @@ if (require.main === module) {
 module.exports = {
   ensureDirectoryAvailable,
   prepareStandaloneAssets,
+  getStandaloneServerOptions,
   startStandaloneServer,
 };
