@@ -12,7 +12,7 @@
  * mocked constructor. `mockEmailSend` is a module-level vi.fn() that is reset
  * in beforeEach, allowing per-test configuration without module cache issues.
  */
-import { describe, it, expect, vi, beforeAll, beforeEach, afterAll } from 'vitest';
+import { describe, it, expect, vi, beforeAll, beforeEach, afterAll, afterEach } from 'vitest';
 import fs from 'fs';
 
 // ─── Module-level Resend mock ─────────────────────────────────────────────────
@@ -35,7 +35,7 @@ vi.mock('@/lib/config', () => ({
 
 // Set env vars before the module is imported for the first time.
 beforeAll(() => {
-  process.env.RESEND_API_KEY = 'test-resend-key';
+  process.env.RESEND_API_KEY = 're_test_resend_key';
   process.env.NEXTAUTH_URL  = 'https://example.com';
 });
 afterAll(() => {
@@ -46,6 +46,7 @@ afterAll(() => {
 // Import the functions under test AFTER mocks are registered.
 import {
   escHtml,
+  getEmailDeliveryDiagnostics,
   sendEmail,
   sendAdminApprovalEmail,
   sendVerificationEmail,
@@ -141,7 +142,32 @@ describe('sendEmail – address validation', () => {
     expect(mockEmailSend).not.toHaveBeenCalled();
     expect(fs.writeFileSync).toHaveBeenCalledOnce();
 
-    process.env.RESEND_API_KEY = 'test-resend-key';
+    process.env.RESEND_API_KEY = 're_test_resend_key';
+  });
+});
+
+describe('getEmailDeliveryDiagnostics', () => {
+  afterEach(() => {
+    process.env.RESEND_API_KEY = 're_test_resend_key';
+  });
+
+  it('treats a trimmed re_* key as valid even when Railway stores surrounding whitespace', () => {
+    process.env.RESEND_API_KEY = '  re_test_key  ';
+
+    expect(getEmailDeliveryDiagnostics()).toMatchObject({
+      apiKeyPresent: true,
+      apiKeyLooksValid: true,
+      apiKeyHadWhitespace: true,
+    });
+  });
+
+  it('flags malformed RESEND_API_KEY values before a send attempt', () => {
+    process.env.RESEND_API_KEY = 'invalid-key';
+
+    expect(getEmailDeliveryDiagnostics()).toMatchObject({
+      apiKeyPresent: true,
+      apiKeyLooksValid: false,
+    });
   });
 });
 

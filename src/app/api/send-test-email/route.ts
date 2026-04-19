@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { sendEmail } from '@/lib/email';
+import { getEmailDeliveryDiagnostics, sendEmail } from '@/lib/email';
 import { emailFromAddress, siteDomain, canonicalSiteUrl } from '@/lib/config';
 
 /**
@@ -25,6 +25,22 @@ export async function GET() {
   }
 
   const to = session.user.email;
+  const diagnostics = getEmailDeliveryDiagnostics();
+
+  if (!diagnostics.apiKeyPresent) {
+    return NextResponse.json(
+      { error: 'RESEND_API_KEY fehlt in Railway.', diagnostics },
+      { status: 500 },
+    );
+  }
+
+  if (!diagnostics.apiKeyLooksValid) {
+    return NextResponse.json(
+      { error: 'RESEND_API_KEY ist ungültig formatiert und muss mit re_ beginnen.', diagnostics },
+      { status: 500 },
+    );
+  }
+
   const ok = await sendEmail({
     to,
     subject: `[Test] Resend-Verbindung erfolgreich – ${siteDomain}`,
@@ -63,10 +79,10 @@ export async function GET() {
 
   if (!ok) {
     return NextResponse.json(
-      { error: 'Versand fehlgeschlagen – Server-Logs prüfen.' },
+      { error: 'Versand fehlgeschlagen – Server-Logs prüfen.', diagnostics },
       { status: 500 },
     );
   }
 
-  return NextResponse.json({ ok: true, sentTo: to });
+  return NextResponse.json({ ok: true, sentTo: to, diagnostics });
 }

@@ -43,7 +43,7 @@ function getBaseUrl(): string {
 const LOCAL_DEV_EMAIL_OUTBOX_PATH = path.join(os.tmpdir(), 'forschen-dev-email-outbox.json');
 
 function canUseLocalDevEmailOutbox(): boolean {
-  return !process.env.RESEND_API_KEY && (
+  return !getConfiguredResendApiKey() && (
     process.env.NODE_ENV === 'development' ||
     process.env.NODE_ENV === 'test'
   );
@@ -68,12 +68,50 @@ function appendLocalDevEmail(message: {
 }
 
 let _resend: Resend | null = null;
+export function getEmailDeliveryDiagnostics() {
+  const rawApiKey = process.env.RESEND_API_KEY;
+  const trimmedApiKey = rawApiKey?.trim() ?? '';
+  const configuredEmailFrom = process.env.EMAIL_FROM?.trim() ?? '';
+  const emailFromConfiguredAndValid =
+    configuredEmailFrom.length > 0 &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(configuredEmailFrom);
+
+  return {
+    apiKeyPresent: trimmedApiKey.length > 0,
+    apiKeyLooksValid: trimmedApiKey.startsWith('re_'),
+    apiKeyHadWhitespace: Boolean(rawApiKey && rawApiKey !== trimmedApiKey),
+    emailFromConfigured: configuredEmailFrom.length > 0,
+    emailFromUsesFallback: !emailFromConfiguredAndValid,
+    emailFromAddress: FROM_EMAIL,
+  };
+}
+
+function getConfiguredResendApiKey(): string | null {
+  const rawApiKey = process.env.RESEND_API_KEY;
+  if (!rawApiKey) return null;
+
+  const trimmedApiKey = rawApiKey.trim();
+  if (!trimmedApiKey) return null;
+
+  return trimmedApiKey;
+}
+
 function getResend(): Resend {
   if (!_resend) {
-    if (!process.env.RESEND_API_KEY) {
+    const resendApiKey = getConfiguredResendApiKey();
+    if (!resendApiKey) {
       throw new Error('[email] RESEND_API_KEY is not configured.');
     }
-    _resend = new Resend(process.env.RESEND_API_KEY);
+
+    if (!resendApiKey.startsWith('re_')) {
+      throw new Error('[email] RESEND_API_KEY is malformed. Expected a value starting with "re_".');
+    }
+
+    if (process.env.RESEND_API_KEY !== resendApiKey) {
+      console.warn('[email] RESEND_API_KEY contains surrounding whitespace; trimming it before initializing Resend.');
+    }
+
+    _resend = new Resend(resendApiKey);
   }
   return _resend;
 }
