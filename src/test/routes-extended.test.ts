@@ -817,11 +817,13 @@ describe('POST /api/auth/reset-password/validate', () => {
 
   it('returns 400 when the reset token is expired', async () => {
     vi.doMock('@/lib/db', () => ({
-      getUsersFresh: vi.fn().mockResolvedValue([{
-        id: 'u1',
-        passwordResetToken: 'expired-token',
-        passwordResetExpiry: new Date(Date.now() - 60_000).toISOString(),
-      }]),
+      getUsersFresh: vi.fn().mockResolvedValue([
+        {
+          id: 'u1',
+          passwordResetToken: 'expired-token',
+          passwordResetExpiry: new Date(Date.now() - 60_000).toISOString(),
+        },
+      ]),
       saveUser: vi.fn(),
     }));
     const { POST } = await import('@/app/api/auth/reset-password/validate/route');
