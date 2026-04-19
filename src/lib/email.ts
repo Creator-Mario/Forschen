@@ -72,13 +72,16 @@ export function getEmailDeliveryDiagnostics() {
   const rawApiKey = process.env.RESEND_API_KEY;
   const trimmedApiKey = rawApiKey?.trim() ?? '';
   const configuredEmailFrom = process.env.EMAIL_FROM?.trim() ?? '';
+  const emailFromConfiguredAndValid =
+    configuredEmailFrom.length > 0 &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(configuredEmailFrom);
 
   return {
     apiKeyPresent: trimmedApiKey.length > 0,
     apiKeyLooksValid: trimmedApiKey.startsWith('re_'),
     apiKeyHadWhitespace: Boolean(rawApiKey && rawApiKey !== trimmedApiKey),
     emailFromConfigured: configuredEmailFrom.length > 0,
-    emailFromUsesFallback: configuredEmailFrom !== FROM_EMAIL,
+    emailFromUsesFallback: !emailFromConfiguredAndValid,
     emailFromAddress: FROM_EMAIL,
   };
 }
