@@ -33,4 +33,4 @@ Production deployments are triggered by the GitHub Actions workflow in `.github/
 
 Configure the `RAILWAY_TOKEN` GitHub repository secret so the workflow can deploy the `Forschen` Railway service.
 
-Because `next.config.js` uses `output: 'standalone'`, production startup uses the generated standalone server (`npm start` runs `node .next/standalone/server.js`).
+Because `next.config.js` uses `output: 'standalone'`, production startup uses the generated standalone server through `npm start`. The wrapper forces Railway deployments to bind to `0.0.0.0` instead of a platform-specific `HOSTNAME`, which prevents the container from failing to accept traffic.
