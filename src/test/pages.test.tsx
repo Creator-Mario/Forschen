@@ -69,6 +69,10 @@ describe('VisionPage', () => {
 
     expect(screen.getByRole('heading', { name: /Mario Reiner Denzer/i })).toBeInTheDocument();
     expect(screen.getAllByText(/Der Schmale Pfad der Mündigkeit/i).length).toBeGreaterThan(0);
+    expect(screen.getByAltText(/Buchcover von Der Schmale Pfad der Mündigkeit/i)).toHaveAttribute(
+      'src',
+      '/mario-reiner-denzer-book.svg',
+    );
     expect(
       screen
         .getAllByRole('link', { name: /Auf Amazon ansehen/i })
@@ -674,6 +678,10 @@ describe('HomePage', () => {
     expect(screen.getByText(/Vorstellung des Gründers/i)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /Mario Reiner Denzer/i })).toBeInTheDocument();
     expect(screen.getByAltText(/qr-code zum teilen der website/i).getAttribute('src')).toContain('share-qr');
+    expect(screen.getByAltText(/Buchcover von Der Schmale Pfad der Mündigkeit/i)).toHaveAttribute(
+      'src',
+      '/mario-reiner-denzer-book.svg',
+    );
     expect(screen.getByText('Der Fluss des Lebens')).toBeInTheDocument();
     expect(screen.getByText('https://flussdeslebens.live')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Link teilen/i })).toBeInTheDocument();

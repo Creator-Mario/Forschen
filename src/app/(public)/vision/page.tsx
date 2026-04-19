@@ -130,6 +130,7 @@ export default function VisionPage() {
                     alt={founderProfile.book.alt}
                     width={260}
                     height={375}
+                    priority
                     className="mx-auto mb-4 aspect-[2/3] w-full max-w-[260px] rounded-xl border border-blue-200 bg-white object-cover shadow-md"
                   />
                 </a>

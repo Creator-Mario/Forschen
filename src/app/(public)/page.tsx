@@ -161,6 +161,7 @@ export default async function HomePage() {
                       alt={founderProfile.book.alt}
                       width={320}
                       height={462}
+                      priority
                       className="h-auto w-full rounded-xl border border-blue-100"
                     />
                   </div>
