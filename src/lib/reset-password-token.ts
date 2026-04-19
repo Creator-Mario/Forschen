@@ -1,8 +1,8 @@
-import { getUsers } from '@/lib/db';
+import { getUsersFresh } from '@/lib/db';
 
-export function validatePasswordResetToken(rawToken: string) {
+export async function validatePasswordResetToken(rawToken: string) {
   const normalizedToken = rawToken.trim();
-  const users = getUsers();
+  const users = await getUsersFresh();
 
   const user = users.find(u => u.passwordResetToken === normalizedToken);
   if (!user) {

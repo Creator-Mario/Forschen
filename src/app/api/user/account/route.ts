@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { getUserByEmail, getUserById, saveUser, deleteUserAccount } from '@/lib/db';
+import { getUserByEmailFresh, getUserByIdFresh, saveUser, deleteUserAccount } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { normalizeEmail } from '@/lib/utils';
 
@@ -41,7 +41,7 @@ export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: 'Nicht eingeloggt.' }, { status: 401 });
 
-  const user = getUserById(session.user.id);
+  const user = await getUserByIdFresh(session.user.id);
   if (!user) return NextResponse.json({ error: 'Nutzer nicht gefunden.' }, { status: 404 });
 
   return NextResponse.json({
@@ -78,10 +78,10 @@ export async function PATCH(req: NextRequest) {
     );
   }
 
-  const user = getUserById(session.user.id);
+  const user = await getUserByIdFresh(session.user.id);
   if (!user) return NextResponse.json({ error: 'Nutzer nicht gefunden.' }, { status: 404 });
 
-  const existingUser = getUserByEmail(normalizedEmail);
+  const existingUser = await getUserByEmailFresh(normalizedEmail);
   if (existingUser && existingUser.id !== user.id) {
     return NextResponse.json({ error: 'Diese E-Mail-Adresse wird bereits verwendet.' }, { status: 409 });
   }
@@ -124,7 +124,7 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: 'Passwort ist erforderlich.' }, { status: 400 });
   }
 
-  const user = getUserById(session.user.id);
+  const user = await getUserByIdFresh(session.user.id);
   if (!user) return NextResponse.json({ error: 'Nutzer nicht gefunden.' }, { status: 404 });
 
   // Admins may not self-delete via this endpoint to prevent accidental lockout.

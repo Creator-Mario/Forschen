@@ -549,7 +549,7 @@ describe('POST /api/auth/forgot-password', () => {
   beforeEach(() => vi.resetModules());
 
   it('returns 400 when email is missing', async () => {
-    vi.doMock('@/lib/db', () => ({ getUserByEmail: vi.fn(), saveUser: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ getUserByEmailFresh: vi.fn(), saveUser: vi.fn() }));
     vi.doMock('@/lib/email', () => ({ sendPasswordResetEmail: vi.fn().mockResolvedValue(true) }));
     const { POST } = await import('@/app/api/auth/forgot-password/route');
     const res = await POST(makeJsonRequest('http://localhost/api/auth/forgot-password', { email: '   ' }));
@@ -559,7 +559,7 @@ describe('POST /api/auth/forgot-password', () => {
   it('returns 503 and restores the previous reset token when email sending fails', async () => {
     const saveUser = vi.fn().mockResolvedValue(undefined);
     vi.doMock('@/lib/db', () => ({
-      getUserByEmail: vi.fn().mockReturnValue({
+      getUserByEmailFresh: vi.fn().mockResolvedValue({
         id: 'u1',
         email: 'alice@example.com',
         name: 'Alice',
@@ -783,13 +783,13 @@ describe('GET /api/user/account', () => {
   it('returns the current private account data', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1' } }) }));
     vi.doMock('@/lib/db', () => ({
-      getUserById: vi.fn().mockReturnValue({
+      getUserByIdFresh: vi.fn().mockResolvedValue({
         id: 'u1',
         name: 'Alice',
         email: 'alice@example.com',
         weeklyFaithEmailEnabled: true,
       }),
-      getUserByEmail: vi.fn(),
+      getUserByEmailFresh: vi.fn(),
       saveUser: vi.fn(),
       deleteUserAccount: vi.fn(),
     }));
@@ -812,14 +812,14 @@ describe('PATCH /api/user/account', () => {
     const saveUser = vi.fn().mockResolvedValue(undefined);
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1' } }) }));
     vi.doMock('@/lib/db', () => ({
-      getUserById: vi.fn().mockReturnValue({
+      getUserByIdFresh: vi.fn().mockResolvedValue({
         id: 'u1',
         name: 'Alice',
         email: 'alice@example.com',
         role: 'USER',
         weeklyFaithEmailEnabled: false,
       }),
-      getUserByEmail: vi.fn().mockReturnValue(undefined),
+      getUserByEmailFresh: vi.fn().mockResolvedValue(undefined),
       saveUser,
       deleteUserAccount: vi.fn(),
     }));
@@ -843,12 +843,12 @@ describe('PATCH /api/user/account', () => {
   it('rejects unsupported profile image formats', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1' } }) }));
     vi.doMock('@/lib/db', () => ({
-      getUserById: vi.fn().mockReturnValue({
+      getUserByIdFresh: vi.fn().mockResolvedValue({
         id: 'u1',
         name: 'Alice',
         email: 'alice@example.com',
       }),
-      getUserByEmail: vi.fn().mockReturnValue(undefined),
+      getUserByEmailFresh: vi.fn().mockResolvedValue(undefined),
       saveUser: vi.fn(),
       deleteUserAccount: vi.fn(),
     }));
@@ -865,12 +865,12 @@ describe('PATCH /api/user/account', () => {
   it('returns 409 when another user already uses the email address', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1' } }) }));
     vi.doMock('@/lib/db', () => ({
-      getUserById: vi.fn().mockReturnValue({
+      getUserByIdFresh: vi.fn().mockResolvedValue({
         id: 'u1',
         name: 'Alice',
         email: 'alice@example.com',
       }),
-      getUserByEmail: vi.fn().mockReturnValue({ id: 'u2', email: 'taken@example.com' }),
+      getUserByEmailFresh: vi.fn().mockResolvedValue({ id: 'u2', email: 'taken@example.com' }),
       saveUser: vi.fn(),
       deleteUserAccount: vi.fn(),
     }));

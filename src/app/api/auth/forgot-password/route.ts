@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { getUserByEmail, saveUser } from '@/lib/db';
+import { getUserByEmailFresh, saveUser } from '@/lib/db';
 import { sendPasswordResetEmail } from '@/lib/email';
 import { normalizeEmail } from '@/lib/utils';
 
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'E-Mail-Adresse fehlt.' }, { status: 400 });
     }
 
-    const user = getUserByEmail(normalizedEmail);
+    const user = await getUserByEmailFresh(normalizedEmail);
 
     if (user && user.status !== 'deleted') {
       const previousToken = user.passwordResetToken;

@@ -32,3 +32,5 @@ To learn more about Next.js, take a look at the following resources:
 Production deployments are triggered by the GitHub Actions workflow in `.github/workflows/railway-deploy.yml` whenever `main` is updated.
 
 Configure the `RAILWAY_TOKEN` GitHub repository secret so the workflow can deploy the `Forschen` Railway service.
+
+Because `next.config.js` uses `output: 'standalone'`, production startup uses the generated standalone server (`npm start` runs `node .next/standalone/server.js`).

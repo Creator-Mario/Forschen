@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Trim to guard against accidental whitespace in the token value.
-    const result = validatePasswordResetToken(token);
+    const result = await validatePasswordResetToken(token);
     if ('error' in result) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }
