@@ -10,10 +10,10 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install Railway CLI
         run: npm install -g @railway/cli
       - name: Deploy to Railway
-        run: railway up
+        run: railway up --service Forschen
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
