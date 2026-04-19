@@ -43,7 +43,11 @@ function getBaseUrl(): string {
 const LOCAL_DEV_EMAIL_OUTBOX_PATH = path.join(os.tmpdir(), 'forschen-dev-email-outbox.json');
 
 function canUseLocalDevEmailOutbox(): boolean {
-  return !process.env.RESEND_API_KEY && process.env.NODE_ENV !== 'production';
+  return !process.env.RESEND_API_KEY && (
+    process.env.NODE_ENV === 'development' ||
+    process.env.NODE_ENV === 'test' ||
+    !process.env.NODE_ENV
+  );
 }
 
 function appendLocalDevEmail(message: {
