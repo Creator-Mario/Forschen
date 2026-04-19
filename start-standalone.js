@@ -27,11 +27,12 @@ function ensureDirectoryAvailable(sourceDir, targetDir) {
   }
 }
 
-function prepareStandaloneAssets(repoRoot = __dirname) {
-  const standaloneRoot = path.join(repoRoot, '.next', 'standalone');
+function prepareStandaloneAssets(repoRoot) {
+  const resolvedRepoRoot = repoRoot ?? __dirname;
+  const standaloneRoot = path.join(resolvedRepoRoot, '.next', 'standalone');
 
-  ensureDirectoryAvailable(path.join(repoRoot, 'public'), path.join(standaloneRoot, 'public'));
-  ensureDirectoryAvailable(path.join(repoRoot, '.next', 'static'), path.join(standaloneRoot, '.next', 'static'));
+  ensureDirectoryAvailable(path.join(resolvedRepoRoot, 'public'), path.join(standaloneRoot, 'public'));
+  ensureDirectoryAvailable(path.join(resolvedRepoRoot, '.next', 'static'), path.join(standaloneRoot, '.next', 'static'));
 }
 
 function startStandaloneServer() {

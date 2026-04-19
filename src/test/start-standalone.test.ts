@@ -1,9 +1,11 @@
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 
 const tempDirs: string[] = [];
+const require = createRequire(import.meta.url);
 
 afterEach(() => {
   while (tempDirs.length > 0) {
@@ -23,8 +25,7 @@ describe('start-standalone asset preparation', () => {
     fs.writeFileSync(path.join(repoRoot, 'public', 'cover.svg'), '<svg />');
     fs.writeFileSync(path.join(repoRoot, '.next', 'static', 'runtime.js'), 'runtime');
 
-    const standaloneModule = await import('../../start-standalone.js');
-    const { prepareStandaloneAssets } = standaloneModule.default ?? standaloneModule;
+    const { prepareStandaloneAssets } = require('../../start-standalone.js');
 
     prepareStandaloneAssets(repoRoot);
 
