@@ -3,7 +3,6 @@ import type { Metadata } from 'next';
 export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import BibleVerseCard from '@/components/BibleVerseCard';
 import WeeklyThemeCard from '@/components/WeeklyThemeCard';
 import PsalmThemeCard from '@/components/PsalmThemeCard';
@@ -156,11 +155,13 @@ export default async function HomePage() {
                 </p>
                 <div className="overflow-hidden rounded-[1.75rem] border border-blue-100 bg-white">
                   <div className="bg-gradient-to-br from-blue-50 via-white to-amber-50 p-5">
-                    <Image
+                    <img
                       src={founderProfile.book.imagePath}
                       alt={founderProfile.book.alt}
                       width={320}
                       height={462}
+                      loading="eager"
+                      decoding="async"
                       className="h-auto w-full rounded-xl border border-blue-100"
                     />
                   </div>

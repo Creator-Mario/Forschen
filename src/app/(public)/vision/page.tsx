@@ -3,7 +3,6 @@ export const dynamic = 'force-dynamic';
 import type { Metadata } from 'next';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import BibleLink from '@/components/BibleLink';
 import { founderProfile } from '@/lib/founder-profile';
 import { createPageMetadata } from '@/lib/seo';
@@ -125,11 +124,13 @@ export default function VisionPage() {
                   className="block"
                   aria-label={`${founderProfile.book.title} auf Amazon ansehen`}
                 >
-                  <Image
+                  <img
                     src={founderProfile.book.imagePath}
                     alt={founderProfile.book.alt}
                     width={260}
                     height={375}
+                    loading="eager"
+                    decoding="async"
                     className="mx-auto mb-4 aspect-[2/3] w-full max-w-[260px] rounded-xl border border-blue-200 bg-white object-cover shadow-md"
                   />
                 </a>
