@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Token fehlt.' }, { status: 400 });
     }
 
-    const result = validatePasswordResetToken(token);
+    const result = await validatePasswordResetToken(token);
     if ('error' in result) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }

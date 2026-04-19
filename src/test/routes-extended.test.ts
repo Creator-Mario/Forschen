@@ -369,7 +369,7 @@ describe('DELETE /api/user/account', () => {
 
   it('returns 401 when unauthenticated', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
-    vi.doMock('@/lib/db', () => ({ getUserById: vi.fn(), deleteUserAccount: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ getUserByIdFresh: vi.fn(), deleteUserAccount: vi.fn() }));
     vi.doMock('bcryptjs', () => ({ default: { compare: vi.fn() } }));
     const { DELETE } = await import('@/app/api/user/account/route');
     const res = await DELETE(makeDeleteRequest('http://localhost/api/user/account', { password: 'pw' }));
@@ -378,7 +378,7 @@ describe('DELETE /api/user/account', () => {
 
   it('returns 400 when password is missing', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(USER_SESSION) }));
-    vi.doMock('@/lib/db', () => ({ getUserById: vi.fn().mockReturnValue({ id: 'u1', role: 'USER', password: 'hashed' }), deleteUserAccount: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ getUserByIdFresh: vi.fn().mockResolvedValue({ id: 'u1', role: 'USER', password: 'hashed' }), deleteUserAccount: vi.fn() }));
     vi.doMock('bcryptjs', () => ({ default: { compare: vi.fn() } }));
     const { DELETE } = await import('@/app/api/user/account/route');
     const res = await DELETE(makeDeleteRequest('http://localhost/api/user/account', {}));
@@ -387,7 +387,7 @@ describe('DELETE /api/user/account', () => {
 
   it('returns 403 when admin tries to self-delete', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(ADMIN_SESSION) }));
-    vi.doMock('@/lib/db', () => ({ getUserById: vi.fn().mockReturnValue({ id: 'admin1', role: 'ADMIN', password: 'hashed' }), deleteUserAccount: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ getUserByIdFresh: vi.fn().mockResolvedValue({ id: 'admin1', role: 'ADMIN', password: 'hashed' }), deleteUserAccount: vi.fn() }));
     vi.doMock('bcryptjs', () => ({ default: { compare: vi.fn().mockResolvedValue(true) } }));
     const { DELETE } = await import('@/app/api/user/account/route');
     const res = await DELETE(makeDeleteRequest('http://localhost/api/user/account', { password: 'pw' }));
@@ -396,7 +396,7 @@ describe('DELETE /api/user/account', () => {
 
   it('returns 400 when password is wrong', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(USER_SESSION) }));
-    vi.doMock('@/lib/db', () => ({ getUserById: vi.fn().mockReturnValue({ id: 'u1', role: 'USER', password: 'hashed' }), deleteUserAccount: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ getUserByIdFresh: vi.fn().mockResolvedValue({ id: 'u1', role: 'USER', password: 'hashed' }), deleteUserAccount: vi.fn() }));
     vi.doMock('bcryptjs', () => ({ default: { compare: vi.fn().mockResolvedValue(false) } }));
     const { DELETE } = await import('@/app/api/user/account/route');
     const res = await DELETE(makeDeleteRequest('http://localhost/api/user/account', { password: 'wrong' }));
@@ -406,7 +406,7 @@ describe('DELETE /api/user/account', () => {
   it('deletes account and returns success with correct password', async () => {
     const deleteUserAccount = vi.fn().mockResolvedValue(undefined);
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(USER_SESSION) }));
-    vi.doMock('@/lib/db', () => ({ getUserById: vi.fn().mockReturnValue({ id: 'u1', role: 'USER', password: 'hashed' }), deleteUserAccount }));
+    vi.doMock('@/lib/db', () => ({ getUserByIdFresh: vi.fn().mockResolvedValue({ id: 'u1', role: 'USER', password: 'hashed' }), deleteUserAccount }));
     vi.doMock('bcryptjs', () => ({ default: { compare: vi.fn().mockResolvedValue(true) } }));
     const { DELETE } = await import('@/app/api/user/account/route');
     const res = await DELETE(makeDeleteRequest('http://localhost/api/user/account', { password: 'correct' }));
@@ -809,7 +809,7 @@ describe('POST /api/auth/reset-password/validate', () => {
   beforeEach(() => vi.resetModules());
 
   it('returns 400 when the reset token is missing', async () => {
-    vi.doMock('@/lib/db', () => ({ getUsers: vi.fn().mockReturnValue([]), saveUser: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ getUsersFresh: vi.fn().mockResolvedValue([]), saveUser: vi.fn() }));
     const { POST } = await import('@/app/api/auth/reset-password/validate/route');
     const res = await POST(makeJsonRequest('http://localhost/api/auth/reset-password/validate', {}));
     expect(res.status).toBe(400);
@@ -817,10 +817,10 @@ describe('POST /api/auth/reset-password/validate', () => {
 
   it('returns 400 when the reset token is expired', async () => {
     vi.doMock('@/lib/db', () => ({
-      getUsers: vi.fn().mockReturnValue([{
+      getUsersFresh: vi.fn().mockResolvedValue([{
         id: 'u1',
         passwordResetToken: 'expired-token',
-      passwordResetExpiry: new Date(Date.now() - 60_000).toISOString(),
+        passwordResetExpiry: new Date(Date.now() - 60_000).toISOString(),
       }]),
       saveUser: vi.fn(),
     }));
@@ -831,7 +831,7 @@ describe('POST /api/auth/reset-password/validate', () => {
 
   it('returns 200 when the reset token is still valid', async () => {
     vi.doMock('@/lib/db', () => ({
-      getUsers: vi.fn().mockReturnValue([{
+      getUsersFresh: vi.fn().mockResolvedValue([{
         id: 'u1',
         passwordResetToken: 'valid-token',
         passwordResetExpiry: new Date(Date.now() + 60_000).toISOString(),
@@ -855,21 +855,21 @@ describe('POST /api/auth/reset-password', () => {
   });
 
   it('returns 400 when token or password is missing', async () => {
-    vi.doMock('@/lib/db', () => ({ getUsers: vi.fn().mockReturnValue([]), saveUser: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ getUsersFresh: vi.fn().mockResolvedValue([]), saveUser: vi.fn() }));
     const { POST } = await import('@/app/api/auth/reset-password/route');
     const res = await POST(makeJsonRequest('http://localhost/api/auth/reset-password', { token: '', password: '' }));
     expect(res.status).toBe(400);
   });
 
   it('returns 400 when password is too short', async () => {
-    vi.doMock('@/lib/db', () => ({ getUsers: vi.fn().mockReturnValue([]), saveUser: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ getUsersFresh: vi.fn().mockResolvedValue([]), saveUser: vi.fn() }));
     const { POST } = await import('@/app/api/auth/reset-password/route');
     const res = await POST(makeJsonRequest('http://localhost/api/auth/reset-password', { token: 'valid-token', password: 'short' }));
     expect(res.status).toBe(400);
   });
 
   it('returns 400 when token is not found', async () => {
-    vi.doMock('@/lib/db', () => ({ getUsers: vi.fn().mockReturnValue([{ id: 'u1', passwordResetToken: 'other-token', passwordResetExpiry: new Date(Date.now() + 60000).toISOString() }]), saveUser: vi.fn() }));
+    vi.doMock('@/lib/db', () => ({ getUsersFresh: vi.fn().mockResolvedValue([{ id: 'u1', passwordResetToken: 'other-token', passwordResetExpiry: new Date(Date.now() + 60000).toISOString() }]), saveUser: vi.fn() }));
     const { POST } = await import('@/app/api/auth/reset-password/route');
     const res = await POST(makeJsonRequest('http://localhost/api/auth/reset-password', { token: 'unknown-token', password: 'newSecurePassword' }));
     expect(res.status).toBe(400);
@@ -878,7 +878,7 @@ describe('POST /api/auth/reset-password', () => {
   it('returns 400 when token is expired', async () => {
     const expiredToken = 'expired-token';
     vi.doMock('@/lib/db', () => ({
-      getUsers: vi.fn().mockReturnValue([{
+      getUsersFresh: vi.fn().mockResolvedValue([{
         id: 'u1',
         passwordResetToken: expiredToken,
         passwordResetExpiry: new Date(Date.now() - 60_000).toISOString(),
@@ -895,7 +895,7 @@ describe('POST /api/auth/reset-password', () => {
     const saveUser = vi.fn().mockResolvedValue(undefined);
     const validToken = 'valid-reset-token';
     vi.doMock('@/lib/db', () => ({
-      getUsers: vi.fn().mockReturnValue([{
+      getUsersFresh: vi.fn().mockResolvedValue([{
         id: 'u1',
         email: 'alice@example.com',
         password: 'old-hashed',
