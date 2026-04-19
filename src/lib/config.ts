@@ -40,12 +40,12 @@ export const adminSeedEmail =
 
 /**
  * Canonical sender address for Resend e-mails.
- * We never fall back to no-reply because Resend flags that pattern.
+ * Use EMAIL_FROM as configured when it is a syntactically valid address.
+ * Fall back to the public operator address only when EMAIL_FROM is missing or invalid.
  */
 export const emailFromAddress = (() => {
   const configured = process.env.EMAIL_FROM?.trim();
-  const localPart = configured?.split('@')[0] ?? '';
-  if (configured && !/^no-?reply$/i.test(localPart)) return configured;
+  if (configured && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(configured)) return configured;
   return operatorEmail;
 })();
 
