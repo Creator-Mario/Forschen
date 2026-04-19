@@ -162,7 +162,6 @@ export default async function HomePage() {
                       width={320}
                       height={462}
                       priority
-                      unoptimized
                       className="h-auto w-full rounded-xl border border-blue-100"
                     />
                   </div>

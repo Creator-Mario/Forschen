@@ -37,6 +37,7 @@ function prepareStandaloneAssets(repoRoot) {
 
 function getStandaloneServerOptions(repoRoot) {
   const resolvedRepoRoot = repoRoot ?? __dirname;
+  const configuredHostname = (process.env.STANDALONE_HOSTNAME ?? '').trim() || undefined;
   const requiredServerFiles = JSON.parse(
     fs.readFileSync(path.join(resolvedRepoRoot, '.next', 'required-server-files.json'), 'utf8'),
   );
@@ -55,7 +56,7 @@ function getStandaloneServerOptions(repoRoot) {
     dir: resolvedRepoRoot,
     isDev: false,
     config: requiredServerFiles.config,
-    hostname: process.env.STANDALONE_HOSTNAME?.trim() || undefined,
+    hostname: configuredHostname,
     port: currentPort,
     allowRetry: false,
     keepAliveTimeout,

@@ -131,7 +131,6 @@ export default function VisionPage() {
                     width={260}
                     height={375}
                     priority
-                    unoptimized
                     className="mx-auto mb-4 aspect-[2/3] w-full max-w-[260px] rounded-xl border border-blue-200 bg-white object-cover shadow-md"
                   />
                 </a>
