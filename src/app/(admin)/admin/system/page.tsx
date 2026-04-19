@@ -95,7 +95,7 @@ export default function AdminSystemPage() {
             <ul className="mt-2 text-sm text-gray-700 space-y-1">
               <li><code className="bg-white px-1 rounded">NEXTAUTH_SECRET</code> – ein langer zufälliger String</li>
               <li><code className="bg-white px-1 rounded">NEXTAUTH_URL</code> – echte Live-URL der Webseite</li>
-              <li><code className="bg-white px-1 rounded">GITHUB_TOKEN</code> – Personal Access Token (repo-Zugriff) für Datenpersistenz</li>
+              <li><code className="bg-white px-1 rounded">GITHUB_TOKEN</code> – Personal Access Token (repo-Zugriff) für Datenpersistenz; auf Railway wird die GitHub-Synchronisierung damit automatisch aktiviert</li>
               <li><code className="bg-white px-1 rounded">GITHUB_OWNER</code> – Creator-Mario</li>
               <li><code className="bg-white px-1 rounded">GITHUB_REPO</code> – Forschen</li>
               <li><code className="bg-white px-1 rounded">ADMIN_RESET_TOKEN</code> – ein geheimes Wort für den Notfall-Reset</li>

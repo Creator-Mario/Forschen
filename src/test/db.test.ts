@@ -95,6 +95,31 @@ describe('db – readJson (via getUsers)', () => {
     }));
   });
 
+  it('auto-enables fresh GitHub reads on Railway without requiring an explicit sync flag', async () => {
+    process.env.GITHUB_TOKEN = 'test-token';
+    delete process.env.ENABLE_GITHUB_DATA_SYNC;
+    process.env.RAILWAY_PROJECT_ID = 'railway-project';
+
+    const getContent = vi.fn().mockResolvedValue({
+      data: {
+        content: Buffer.from(JSON.stringify([{ id: 'remote-u2', email: 'railway@example.com', password: 'x', name: 'Railway', role: 'USER', status: 'pending_email', active: false, createdAt: '2026-04-13T00:00:00Z', emailToken: 'railway-token' }])).toString('base64'),
+      },
+    });
+
+    class MockOctokit {
+      repos = { getContent };
+    }
+
+    vi.doMock('@octokit/rest', () => ({ Octokit: MockOctokit }));
+
+    const { getUserByEmailTokenFresh } = await import('@/lib/db');
+    await expect(getUserByEmailTokenFresh('railway-token')).resolves.toMatchObject({
+      id: 'remote-u2',
+      email: 'railway@example.com',
+    });
+    expect(getContent).toHaveBeenCalledOnce();
+  });
+
   it('falls back to local disk data instead of stale in-memory cache when GitHub fresh reads fail', async () => {
     const staleUser = {
       id: 'cached-u1',
@@ -572,6 +597,7 @@ describe('db – saveUser (local fs write)', () => {
   beforeEach(() => {
     vi.resetModules();
     delete process.env.GITHUB_TOKEN;
+    delete process.env.RAILWAY_PROJECT_ID;
     delete process.env.ENABLE_GITHUB_DATA_SYNC;
     vi.spyOn(fs, 'existsSync').mockReturnValue(true);
     vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify([]));
@@ -591,6 +617,18 @@ describe('db – saveUser (local fs write)', () => {
     const { saveUser } = await import('@/lib/db');
     const user = { id: 'u100', email: 'local@test.de', name: 'Local', role: 'USER' as const, status: 'active' as const, active: true, createdAt: '2024-01-01', password: 'hash' };
     await saveUser(user);
+    expect(fs.writeFileSync).toHaveBeenCalled();
+  });
+
+  it('allows Railway sync auto-detection to be disabled explicitly', async () => {
+    process.env.GITHUB_TOKEN = 'test-token';
+    process.env.RAILWAY_PROJECT_ID = 'railway-project';
+    process.env.ENABLE_GITHUB_DATA_SYNC = 'false';
+
+    const { saveUser } = await import('@/lib/db');
+    const user = { id: 'u101', email: 'local-optout@test.de', name: 'Local Opt-Out', role: 'USER' as const, status: 'active' as const, active: true, createdAt: '2024-01-01', password: 'hash' };
+    await saveUser(user);
+
     expect(fs.writeFileSync).toHaveBeenCalled();
   });
 
@@ -895,6 +933,71 @@ describe('db – deleteUserAccount', () => {
     expect(createOrUpdateFileContents).toHaveBeenCalledWith(expect.objectContaining({
       branch: 'staging',
     }));
+  });
+
+  it('auto-enables GitHub-backed writes on Railway without requiring an explicit sync flag', async () => {
+    process.env.GITHUB_TOKEN = 'test-token';
+    delete process.env.ENABLE_GITHUB_DATA_SYNC;
+    process.env.RAILWAY_PROJECT_ID = 'railway-project';
+
+    const getContent = vi.fn().mockResolvedValue({ data: { sha: 'sha-1' } });
+    const createOrUpdateFileContents = vi.fn().mockResolvedValue(undefined);
+
+    class MockOctokit {
+      repos = {
+        getContent,
+        createOrUpdateFileContents,
+      };
+    }
+
+    vi.doMock('@octokit/rest', () => ({
+      Octokit: MockOctokit,
+    }));
+
+    const { saveGeneratedTopicBundle } = await import('@/lib/db');
+    await saveGeneratedTopicBundle({
+      id: 'generated-topic-2026-04-15',
+      date: '2026-04-15',
+      source: 'ai',
+      createdAt: '2026-04-15T00:00:00.000Z',
+      promptVersion: 'v2',
+      psalm: {
+        id: 'psalm-2026-04-15',
+        date: '2026-04-15',
+        psalmReference: 'Psalm 91',
+        title: 'Unter Gottes Schutz',
+        excerpt: 'Wer unter dem Schirm des Höchsten sitzt.',
+        summary: 'Zusammenfassung',
+        significance: 'Bedeutung',
+        practice: 'Praxis',
+        questions: ['Frage 1', 'Frage 2', 'Frage 3'],
+      },
+      topic: {
+        id: 'glauben-heute-2026-04-15',
+        date: '2026-04-15',
+        title: 'Geborgenheit bei Gott',
+        headline: 'Sicherheit im Alltag finden',
+        worldFocus: 'Fokus',
+        faithPerspective: 'Perspektive',
+        discipleshipImpulse: 'Impuls',
+        bibleVerses: ['Psalm 91,1', 'Psalm 46,2', 'Johannes 16,33'],
+        questions: ['Frage 1', 'Frage 2', 'Frage 3'],
+      },
+      books: {
+        id: 'buchliste-2026-04-15',
+        date: '2026-04-15',
+        topicTitle: 'Geborgenheit bei Gott',
+        introduction: 'Intro',
+        recommendations: [
+          { title: 'Buch 1', author: 'Autor 1', description: 'Beschreibung 1', relevance: 'Relevanz 1' },
+          { title: 'Buch 2', author: 'Autor 2', description: 'Beschreibung 2', relevance: 'Relevanz 2' },
+        ],
+      },
+    });
+
+    expect(getContent).toHaveBeenCalled();
+    expect(createOrUpdateFileContents).toHaveBeenCalled();
+    expect(fs.writeFileSync).not.toHaveBeenCalled();
   });
 });
 
