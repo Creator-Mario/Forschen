@@ -47,6 +47,7 @@ describe('db – readJson (via getUsers)', () => {
   it('reads fresh users from GitHub-backed storage when enabled', async () => {
     process.env.GITHUB_TOKEN = 'test-token';
     process.env.ENABLE_GITHUB_DATA_SYNC = 'true';
+    delete process.env.RAILWAY_GIT_BRANCH;
 
     const getContent = vi.fn().mockResolvedValue({
       data: {

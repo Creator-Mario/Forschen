@@ -954,7 +954,6 @@ describe('POST /api/internal/weekly-faith-email', () => {
     const { POST } = await import('@/app/api/internal/weekly-faith-email/route');
     const res = await POST(new Request('http://localhost/api/internal/weekly-faith-email', {
       method: 'POST',
-      headers: { Authorization: 'Bearer cron-secret' },
     }));
 
     expect(res.status).toBe(503);
