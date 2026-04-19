@@ -18,7 +18,7 @@ export default function AdminSystemPage() {
         setEmailMsg(`✅ Test-E-Mail erfolgreich gesendet an: ${data.sentTo}`);
       } else {
         setEmailStatus('error');
-        setEmailMsg(`❌ Fehler: ${data.error ?? 'Versand fehlgeschlagen – Vercel-Logs prüfen.'}`);
+        setEmailMsg(`❌ Fehler: ${data.error ?? 'Versand fehlgeschlagen – Server-Logs prüfen.'}`);
       }
     } catch {
       setEmailStatus('error');
@@ -86,12 +86,12 @@ export default function AdminSystemPage() {
             <ul className="text-sm text-gray-600 space-y-1">
               <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Tägliches Tageswort (5:00 UTC)</li>
               <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Wöchentliches Wochenthema (Mo, 6:00 UTC)</li>
-              <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Vercel Deployment (automatisch bei Push auf main)</li>
+              <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Railway Deployment (automatisch bei Push auf main)</li>
             </ul>
           </div>
 
           <div className="bg-amber-50 border border-amber-100 rounded-xl p-6">
-            <h2 className="font-semibold text-amber-800 mb-2">Erforderliche Umgebungsvariablen (Vercel)</h2>
+            <h2 className="font-semibold text-amber-800 mb-2">Erforderliche Umgebungsvariablen (Produktion / Railway)</h2>
             <ul className="mt-2 text-sm text-gray-700 space-y-1">
               <li><code className="bg-white px-1 rounded">NEXTAUTH_SECRET</code> – ein langer zufälliger String</li>
               <li><code className="bg-white px-1 rounded">NEXTAUTH_URL</code> – echte Live-URL der Webseite</li>

@@ -3,7 +3,7 @@
  * All values are read from environment variables so they never need to be
  * hard-coded inside individual components.
  *
- * Required env vars (set in .env.local for development, Vercel env for prod):
+ * Required env vars (set in .env.local for development and in production envs):
  *   OPERATOR_NAME          – full legal name of the operator
  *   OPERATOR_EMAIL         – public contact e-mail address
  *   OPERATOR_PHONE_E164    – contact phone in E.164 format (e.g. +6283832835228)

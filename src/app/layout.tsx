@@ -4,7 +4,6 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { SessionProvider } from '@/components/SessionProvider';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import { canonicalSiteUrl, operatorName, siteName } from '@/lib/config';
 import {
   defaultOgImage,
@@ -111,7 +110,6 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
-          <SpeedInsights />
         </SessionProvider>
       </body>
     </html>

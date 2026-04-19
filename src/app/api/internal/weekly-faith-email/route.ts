@@ -3,13 +3,11 @@ import { getCurrentWochenthemaFresh, getUsersFresh, saveUser } from '@/lib/db';
 import { sendWeeklyFaithEmail } from '@/lib/email';
 
 export async function POST(req: Request) {
-  const expectedSecret =
-    process.env.WEEKLY_FAITH_EMAIL_CRON_SECRET?.trim() ||
-    process.env.CRON_SECRET?.trim();
+  const expectedSecret = process.env.WEEKLY_FAITH_EMAIL_CRON_SECRET?.trim();
   const providedSecret = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '').trim();
 
   if (!expectedSecret) {
-    return NextResponse.json({ error: 'WEEKLY_FAITH_EMAIL_CRON_SECRET oder CRON_SECRET fehlt.' }, { status: 503 });
+    return NextResponse.json({ error: 'WEEKLY_FAITH_EMAIL_CRON_SECRET fehlt.' }, { status: 503 });
   }
 
   if (!providedSecret || providedSecret !== expectedSecret) {
