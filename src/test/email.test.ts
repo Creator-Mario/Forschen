@@ -130,9 +130,8 @@ describe('sendEmail – address validation', () => {
     expect(result).toBe(false);
   });
 
-  it('writes to the local dev outbox when RESEND_API_KEY is missing outside Vercel', async () => {
+  it('writes to the local dev outbox when RESEND_API_KEY is missing in test mode', async () => {
     delete process.env.RESEND_API_KEY;
-    delete process.env.VERCEL;
     vi.spyOn(fs, 'existsSync').mockReturnValue(false);
     vi.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
 

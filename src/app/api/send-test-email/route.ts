@@ -9,7 +9,7 @@ import { emailFromAddress, siteDomain, canonicalSiteUrl } from '@/lib/config';
  *
  * Admin-only endpoint that sends a test e-mail via Resend.
  * Useful for verifying that RESEND_API_KEY and EMAIL_FROM are set up
- * correctly on Vercel.
+ * correctly in production.
  *
  * The test e-mail is sent to the currently logged-in admin's address.
  *
@@ -63,7 +63,7 @@ export async function GET() {
 
   if (!ok) {
     return NextResponse.json(
-      { error: 'Versand fehlgeschlagen – Vercel-Funktionslogs prüfen.' },
+      { error: 'Versand fehlgeschlagen – Server-Logs prüfen.' },
       { status: 500 },
     );
   }

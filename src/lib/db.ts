@@ -17,7 +17,7 @@ const GITHUB_REPO = process.env.GITHUB_REPO || 'Forschen';
 const memoryCache = new Map<string, unknown[]>();
 
 function getGithubBranch(): string {
-  return process.env.GITHUB_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || 'main';
+  return process.env.GITHUB_BRANCH || process.env.RAILWAY_GIT_BRANCH || 'main';
 }
 
 function readJsonFromLocalFile<T>(filename: string): T[] {
@@ -74,9 +74,8 @@ function shouldUseGithubBackedStorage(): boolean {
   if (!process.env.GITHUB_TOKEN) return false;
   // Local shells (including CI/sandbox environments) often expose GITHUB_TOKEN
   // for repository APIs, but app data should still be written to the checked-out
-  // JSON files there. Restrict GitHub-backed persistence to real Vercel runtime
-  // or an explicit opt-in override.
-  return process.env.VERCEL === '1' || process.env.ENABLE_GITHUB_DATA_SYNC === 'true';
+  // JSON files there. Only enable GitHub-backed persistence explicitly.
+  return process.env.ENABLE_GITHUB_DATA_SYNC === 'true';
 }
 
 async function writeJson<T>(filename: string, data: T[]): Promise<void> {
@@ -84,14 +83,14 @@ async function writeJson<T>(filename: string, data: T[]): Promise<void> {
   memoryCache.set(filename, data as unknown[]);
 
   if (shouldUseGithubBackedStorage()) {
-    // Production (Vercel): commit data changes back to the GitHub repo via the API.
+    // Production sync: commit data changes back to the GitHub repo via the API.
     // This way the JSON files in the repo are the persistent store across deployments.
     const { Octokit } = await import('@octokit/rest');
     const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
     const filePath = `data/${filename}`;
     const encoded = Buffer.from(JSON.stringify(data, null, 2) + '\n', 'utf-8').toString('base64');
 
-    // Retry up to 3 times to handle SHA conflicts from concurrent writes (Vercel serverless).
+    // Retry up to 3 times to handle SHA conflicts from concurrent writes.
     const MAX_RETRIES = 3;
     let lastError: unknown;
 

@@ -3,7 +3,7 @@
  * All values are read from environment variables so they never need to be
  * hard-coded inside individual components.
  *
- * Required env vars (set in .env.local for development, Vercel env for prod):
+ * Required env vars (set in .env.local for development and in production envs):
  *   OPERATOR_NAME          – full legal name of the operator
  *   OPERATOR_EMAIL         – public contact e-mail address
  *   OPERATOR_PHONE_E164    – contact phone in E.164 format (e.g. +6283832835228)
@@ -40,12 +40,12 @@ export const adminSeedEmail =
 
 /**
  * Canonical sender address for Resend e-mails.
- * We never fall back to no-reply because Resend flags that pattern.
+ * Use EMAIL_FROM as configured when it is a syntactically valid address.
+ * Fall back to the public operator address only when EMAIL_FROM is missing or invalid.
  */
 export const emailFromAddress = (() => {
   const configured = process.env.EMAIL_FROM?.trim();
-  const localPart = configured?.split('@')[0] ?? '';
-  if (configured && !/^no-?reply$/i.test(localPart)) return configured;
+  if (configured && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(configured)) return configured;
   return operatorEmail;
 })();
 

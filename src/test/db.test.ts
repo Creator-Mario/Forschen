@@ -8,7 +8,8 @@ describe('db – readJson (via getUsers)', () => {
     vi.resetModules();
     delete process.env.GITHUB_TOKEN;
     delete process.env.GITHUB_BRANCH;
-    delete process.env.VERCEL_GIT_COMMIT_REF;
+    delete process.env.RAILWAY_GIT_BRANCH;
+    delete process.env.ENABLE_GITHUB_DATA_SYNC;
   });
 
   it('returns an empty array when the data file does not exist', async () => {
@@ -45,7 +46,8 @@ describe('db – readJson (via getUsers)', () => {
 
   it('reads fresh users from GitHub-backed storage when enabled', async () => {
     process.env.GITHUB_TOKEN = 'test-token';
-    process.env.VERCEL = '1';
+    process.env.ENABLE_GITHUB_DATA_SYNC = 'true';
+    delete process.env.RAILWAY_GIT_BRANCH;
 
     const getContent = vi.fn().mockResolvedValue({
       data: {
@@ -68,10 +70,10 @@ describe('db – readJson (via getUsers)', () => {
     vi.restoreAllMocks();
   });
 
-  it('uses the active Vercel git branch for fresh GitHub reads when no explicit branch is configured', async () => {
+  it('uses the active Railway git branch for fresh GitHub reads when no explicit branch is configured', async () => {
     process.env.GITHUB_TOKEN = 'test-token';
-    process.env.VERCEL = '1';
-    process.env.VERCEL_GIT_COMMIT_REF = 'copilot/fix-tagesthema-display-error';
+    process.env.ENABLE_GITHUB_DATA_SYNC = 'true';
+    process.env.RAILWAY_GIT_BRANCH = 'copilot/fix-tagesthema-display-error';
 
     const getContent = vi.fn().mockResolvedValue({
       data: {
@@ -129,7 +131,7 @@ describe('db – readJson (via getUsers)', () => {
     await saveUser(staleUser);
     diskPayload = JSON.stringify([diskUser]);
     process.env.GITHUB_TOKEN = 'test-token';
-    process.env.VERCEL = '1';
+    process.env.ENABLE_GITHUB_DATA_SYNC = 'true';
 
     await expect(getUsersFresh()).resolves.toMatchObject([
       expect.objectContaining({
@@ -302,7 +304,7 @@ describe('db – fresh GitHub-backed public content reads', () => {
   beforeEach(() => {
     vi.resetModules();
     process.env.GITHUB_TOKEN = 'test-token';
-    process.env.VERCEL = '1';
+    process.env.ENABLE_GITHUB_DATA_SYNC = 'true';
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-04-11T10:00:00Z'));
   });
@@ -312,8 +314,7 @@ describe('db – fresh GitHub-backed public content reads', () => {
     vi.restoreAllMocks();
     delete process.env.GITHUB_TOKEN;
     delete process.env.GITHUB_BRANCH;
-    delete process.env.VERCEL;
-    delete process.env.VERCEL_GIT_COMMIT_REF;
+    delete process.env.RAILWAY_GIT_BRANCH;
     delete process.env.ENABLE_GITHUB_DATA_SYNC;
   });
 
@@ -376,7 +377,6 @@ describe('db – fresh local generated topic reads', () => {
   beforeEach(() => {
     vi.resetModules();
     delete process.env.GITHUB_TOKEN;
-    delete process.env.VERCEL;
     delete process.env.ENABLE_GITHUB_DATA_SYNC;
   });
 
@@ -572,7 +572,6 @@ describe('db – saveUser (local fs write)', () => {
   beforeEach(() => {
     vi.resetModules();
     delete process.env.GITHUB_TOKEN;
-    delete process.env.VERCEL;
     delete process.env.ENABLE_GITHUB_DATA_SYNC;
     vi.spyOn(fs, 'existsSync').mockReturnValue(true);
     vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify([]));
@@ -587,7 +586,7 @@ describe('db – saveUser (local fs write)', () => {
     expect(fs.writeFileSync).toHaveBeenCalled();
   });
 
-  it('still writes locally when a generic GITHUB_TOKEN is present outside Vercel', async () => {
+  it('still writes locally when a generic GITHUB_TOKEN is present without hosted sync enabled', async () => {
     process.env.GITHUB_TOKEN = 'test-token';
     const { saveUser } = await import('@/lib/db');
     const user = { id: 'u100', email: 'local@test.de', name: 'Local', role: 'USER' as const, status: 'active' as const, active: true, createdAt: '2024-01-01', password: 'hash' };
@@ -718,7 +717,6 @@ describe('db – deleteUserAccount', () => {
   beforeEach(() => {
     vi.resetModules();
     delete process.env.GITHUB_TOKEN;
-    delete process.env.VERCEL;
     vi.spyOn(fs, 'existsSync').mockReturnValue(true);
     vi.spyOn(fs, 'writeFileSync').mockImplementation(() => {});
     vi.spyOn(fs, 'readFileSync').mockImplementation((p) => {
@@ -736,7 +734,6 @@ describe('db – deleteUserAccount', () => {
     });
   });
   afterEach(() => {
-    delete process.env.VERCEL;
     vi.restoreAllMocks();
   });
 
@@ -796,7 +793,7 @@ describe('db – deleteUserAccount', () => {
 
   it('writes hard-delete updates sequentially when using GitHub-backed storage', async () => {
     process.env.GITHUB_TOKEN = 'test-token';
-    process.env.VERCEL = '1';
+    process.env.ENABLE_GITHUB_DATA_SYNC = 'true';
     // users, thesen, forschung, gebete, videos, aktionen, buchempfehlungen, messages, fragestellungen
     const EXPECTED_DELETION_FILE_COUNT = 9;
 
@@ -832,10 +829,10 @@ describe('db – deleteUserAccount', () => {
     expect(maxActiveWrites).toBe(1);
   });
 
-  it('uses the active Vercel git branch for GitHub-backed writes when no explicit branch is configured', async () => {
+  it('uses the active Railway git branch for GitHub-backed writes when no explicit branch is configured', async () => {
     process.env.GITHUB_TOKEN = 'test-token';
-    process.env.VERCEL = '1';
-    process.env.VERCEL_GIT_COMMIT_REF = 'staging';
+    process.env.ENABLE_GITHUB_DATA_SYNC = 'true';
+    process.env.RAILWAY_GIT_BRANCH = 'staging';
 
     const getContent = vi.fn().mockResolvedValue({ data: { sha: 'sha-1' } });
     const createOrUpdateFileContents = vi.fn().mockResolvedValue(undefined);

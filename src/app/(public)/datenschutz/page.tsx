@@ -62,7 +62,7 @@ export default function DatenschutzPage() {
         <section>
           <h2 className="text-xl font-semibold text-gray-800 mb-3">4. Datenspeicherung</h2>
           <p>
-            Deine Daten werden auf den Servern des Hosting-Dienstleisters (Vercel) gespeichert. Wir
+            Deine Daten werden auf den Servern des Hosting-Dienstleisters (Railway) gespeichert. Wir
             wenden angemessene technische und organisatorische Maßnahmen an, um deine Daten vor
             unbefugtem Zugriff zu schützen.
           </p>

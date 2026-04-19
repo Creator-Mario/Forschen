@@ -38,7 +38,7 @@ export default function AdminResetPage() {
           <div className="text-slate-400 text-sm mb-2">Notfall-Zugang</div>
           <h1 className="text-2xl font-bold text-white">Passwort zurücksetzen</h1>
           <p className="text-slate-400 text-sm mt-2">
-            Gib den <code className="bg-slate-700 px-1 rounded text-slate-200">ADMIN_RESET_TOKEN</code> aus deinen Vercel-Einstellungen ein.
+            Gib den <code className="bg-slate-700 px-1 rounded text-slate-200">ADMIN_RESET_TOKEN</code> aus deinen Produktiv-Einstellungen ein.
           </p>
         </div>
 
