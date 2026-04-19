@@ -72,10 +72,20 @@ function writeJsonToLocalFile<T>(filename: string, data: T[]): void {
 
 function shouldUseGithubBackedStorage(): boolean {
   if (!process.env.GITHUB_TOKEN) return false;
-  // Local shells (including CI/sandbox environments) often expose GITHUB_TOKEN
-  // for repository APIs, but app data should still be written to the checked-out
-  // JSON files there. Only enable GitHub-backed persistence explicitly.
-  return process.env.ENABLE_GITHUB_DATA_SYNC === 'true';
+  const syncOverride = process.env.ENABLE_GITHUB_DATA_SYNC?.trim().toLowerCase();
+  if (syncOverride === 'true') return true;
+  if (syncOverride === 'false') return false;
+
+  // Railway deployments should persist data back to GitHub automatically.
+  // Local shells/CI may still expose GITHUB_TOKEN, so only Railway runtime
+  // metadata enables hosted sync implicitly.
+  return Boolean(
+    process.env.RAILWAY_PROJECT_ID ||
+    process.env.RAILWAY_SERVICE_ID ||
+    process.env.RAILWAY_SERVICE_NAME ||
+    process.env.RAILWAY_ENVIRONMENT ||
+    process.env.RAILWAY_ENVIRONMENT_NAME
+  );
 }
 
 async function writeJson<T>(filename: string, data: T[]): Promise<void> {
