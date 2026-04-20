@@ -35,6 +35,9 @@ export const canonicalSiteUrl =
     .trim()
     .replace(/\/$/, '');
 
+export const googleSiteVerification =
+  process.env.GOOGLE_SITE_VERIFICATION?.trim() || '8qrr9y5mXoHjrEcjmHknia6AII5XTeFlf_uvocJMbCc';
+
 export const adminSeedEmail =
   process.env.ADMIN_SEED_EMAIL ?? 'kontakt@flussdeslebens.live';
 
