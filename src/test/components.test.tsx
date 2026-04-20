@@ -34,20 +34,20 @@ describe('QrShareActions', () => {
     });
 
     const { default: QrShareActions } = await import('@/components/QrShareActions');
-    render(React.createElement(QrShareActions, { siteUrl: 'https://flussdeslebens.live' }));
+    render(React.createElement(QrShareActions, { siteUrl: 'https://www.flussdeslebens.live' }));
 
     fireEvent.click(screen.getByRole('button', { name: /Link teilen/i }));
 
     expect(share).toHaveBeenCalledWith({
       title: 'Der Fluss des Lebens',
       text: 'Schau dir diese Webseite an und teile den QR-Code gern weiter.',
-      url: 'https://flussdeslebens.live',
+      url: 'https://www.flussdeslebens.live',
     });
   });
 
   it('renders a direct QR code download link', async () => {
     const { default: QrShareActions } = await import('@/components/QrShareActions');
-    render(React.createElement(QrShareActions, { siteUrl: 'https://flussdeslebens.live' }));
+    render(React.createElement(QrShareActions, { siteUrl: 'https://www.flussdeslebens.live' }));
 
     const link = screen.getByRole('link', { name: /QR-Code herunterladen/i });
     expect(link).toHaveAttribute('href', '/api/share-qr?format=png&download=1');
@@ -56,15 +56,15 @@ describe('QrShareActions', () => {
 
   it('renders direct WhatsApp and Facebook share links', async () => {
     const { default: QrShareActions } = await import('@/components/QrShareActions');
-    render(React.createElement(QrShareActions, { siteUrl: 'https://flussdeslebens.live' }));
+    render(React.createElement(QrShareActions, { siteUrl: 'https://www.flussdeslebens.live' }));
 
     expect(screen.getByRole('link', { name: /Auf WhatsApp teilen/i })).toHaveAttribute(
       'href',
-      'https://wa.me/?text=Schau%20dir%20diese%20Webseite%20an%20und%20teile%20den%20QR-Code%20gern%20weiter.%20https%3A%2F%2Fflussdeslebens.live',
+      'https://wa.me/?text=Schau%20dir%20diese%20Webseite%20an%20und%20teile%20den%20QR-Code%20gern%20weiter.%20https%3A%2F%2Fwww.flussdeslebens.live',
     );
     expect(screen.getByRole('link', { name: /Auf Facebook teilen/i })).toHaveAttribute(
       'href',
-      'https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fflussdeslebens.live',
+      'https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.flussdeslebens.live',
     );
   });
 });

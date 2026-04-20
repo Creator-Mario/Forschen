@@ -7,7 +7,7 @@
  *   OPERATOR_NAME          – full legal name of the operator
  *   OPERATOR_EMAIL         – public contact e-mail address
  *   OPERATOR_PHONE_E164    – contact phone in E.164 format (e.g. +6283832835228)
- *   SITE_DOMAIN            – naked domain without protocol (e.g. flussdeslebens.live)
+ *   SITE_DOMAIN            – naked domain without protocol (e.g. www.flussdeslebens.live)
  *   ADMIN_SEED_EMAIL       – e-mail used to seed / identify the single admin account
  */
 

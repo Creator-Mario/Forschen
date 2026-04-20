@@ -424,7 +424,7 @@ describe('POST /api/user/intro', () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(USER_SESSION) }));
     vi.doMock('@/lib/db', () => ({ getUserByIdFresh: vi.fn().mockResolvedValue(undefined), saveUser: vi.fn() }));
     vi.doMock('@/lib/email', () => ({ sendEmail: vi.fn(), sendRegistrationPendingEmail: vi.fn(), escHtml: (s: string) => s }));
-    vi.doMock('@/lib/config', () => ({ operatorEmail: 'op@example.com', canonicalSiteUrl: 'https://flussdeslebens.live', siteDomain: 'example.com', siteName: 'Site' }));
+    vi.doMock('@/lib/config', () => ({ operatorEmail: 'op@example.com', canonicalSiteUrl: 'https://www.flussdeslebens.live', siteDomain: 'example.com', siteName: 'Site' }));
     const { POST } = await import('@/app/api/user/intro/route');
     const res = await POST(makeJsonRequest('http://localhost/api/user/intro', { userId: 'u1' }));
     expect(res.status).toBe(400);
@@ -434,7 +434,7 @@ describe('POST /api/user/intro', () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(USER_SESSION) }));
     vi.doMock('@/lib/db', () => ({ getUserByIdFresh: vi.fn().mockResolvedValue({ id: 'u1', status: 'email_verified' }), saveUser: vi.fn() }));
     vi.doMock('@/lib/email', () => ({ sendEmail: vi.fn(), sendRegistrationPendingEmail: vi.fn(), escHtml: (s: string) => s }));
-    vi.doMock('@/lib/config', () => ({ operatorEmail: 'op@example.com', canonicalSiteUrl: 'https://flussdeslebens.live', siteDomain: 'example.com', siteName: 'Site' }));
+    vi.doMock('@/lib/config', () => ({ operatorEmail: 'op@example.com', canonicalSiteUrl: 'https://www.flussdeslebens.live', siteDomain: 'example.com', siteName: 'Site' }));
     const { POST } = await import('@/app/api/user/intro/route');
     const res = await POST(makeJsonRequest('http://localhost/api/user/intro', { userId: 'u1', motivation: 'too short', vorstellung: 'too short' }));
     expect(res.status).toBe(400);
@@ -451,7 +451,7 @@ describe('POST /api/user/intro', () => {
       saveUser,
     }));
     vi.doMock('@/lib/email', () => ({ sendEmail, sendRegistrationPendingEmail, escHtml: (s: string) => s }));
-    vi.doMock('@/lib/config', () => ({ operatorEmail: 'op@example.com', canonicalSiteUrl: 'https://flussdeslebens.live', siteDomain: 'example.com', siteName: 'Site' }));
+    vi.doMock('@/lib/config', () => ({ operatorEmail: 'op@example.com', canonicalSiteUrl: 'https://www.flussdeslebens.live', siteDomain: 'example.com', siteName: 'Site' }));
     const longText = 'A'.repeat(180);
     const { POST } = await import('@/app/api/user/intro/route');
     const res = await POST(makeJsonRequest('http://localhost/api/user/intro', { token: 'good-token', motivation: longText, vorstellung: longText }));
@@ -460,9 +460,9 @@ describe('POST /api/user/intro', () => {
     expect(saveUser.mock.calls[0][0].status).toBe('awaiting_admin_review');
     expect(saveUser.mock.calls[0][0].emailToken).toBeUndefined();
     expect(sendEmail).toHaveBeenCalledOnce();
-    expect(sendEmail.mock.calls[0][0].html).toContain('https://flussdeslebens.live/admin/vorstellungen');
+    expect(sendEmail.mock.calls[0][0].html).toContain('https://www.flussdeslebens.live/admin/vorstellungen');
     expect(sendEmail.mock.calls[0][0].html).toContain(longText);
-    expect(sendEmail.mock.calls[0][0].text).toContain('https://flussdeslebens.live/admin/vorstellungen');
+    expect(sendEmail.mock.calls[0][0].text).toContain('https://www.flussdeslebens.live/admin/vorstellungen');
     expect(sendEmail.mock.calls[0][0].text).toContain(longText);
     expect(sendRegistrationPendingEmail).toHaveBeenCalledWith('alice@example.com', 'Alice');
   });
@@ -478,7 +478,7 @@ describe('POST /api/user/intro', () => {
       saveUser,
     }));
     vi.doMock('@/lib/email', () => ({ sendEmail, sendRegistrationPendingEmail, escHtml: (s: string) => s }));
-    vi.doMock('@/lib/config', () => ({ operatorEmail: 'op@example.com', canonicalSiteUrl: 'https://flussdeslebens.live', siteDomain: 'example.com', siteName: 'Site' }));
+    vi.doMock('@/lib/config', () => ({ operatorEmail: 'op@example.com', canonicalSiteUrl: 'https://www.flussdeslebens.live', siteDomain: 'example.com', siteName: 'Site' }));
     const longText = 'B'.repeat(180);
     const { POST } = await import('@/app/api/user/intro/route');
     const res = await POST(new NextRequest('http://localhost/api/user/intro', {
