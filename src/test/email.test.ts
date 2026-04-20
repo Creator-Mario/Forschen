@@ -28,8 +28,8 @@ vi.mock('resend', () => ({
 
 vi.mock('@/lib/config', () => ({
   siteName: 'Der Fluss des Lebens',
-  siteDomain: 'flussdeslebens.live',
-  canonicalSiteUrl: 'https://flussdeslebens.live',
+  siteDomain: 'www.flussdeslebens.live',
+  canonicalSiteUrl: 'https://www.flussdeslebens.live',
   emailFromAddress: 'kontakt@flussdeslebens.live',
 }));
 
@@ -188,7 +188,7 @@ describe('sendVerificationEmail', () => {
     const callArgs = mockEmailSend.mock.calls[0][0] as { html: string; text: string };
     expect(callArgs.html).toContain('mytoken42');
     expect(callArgs.html).toContain('/email-bestaetigung');
-    expect(callArgs.html).toContain('https://flussdeslebens.live/email-bestaetigung?token=mytoken42');
+    expect(callArgs.html).toContain('https://www.flussdeslebens.live/email-bestaetigung?token=mytoken42');
     expect(callArgs.html).not.toContain('https://example.com');
     expect(callArgs.text).toContain('mytoken42');
   });
@@ -212,7 +212,7 @@ describe('sendPasswordResetEmail', () => {
     const callArgs = mockEmailSend.mock.calls[0][0] as { html: string; text: string };
     expect(callArgs.html).toContain('reset-token-xyz');
     expect(callArgs.html).toContain('/passwort-zuruecksetzen');
-    expect(callArgs.html).toContain('https://flussdeslebens.live/passwort-zuruecksetzen?token=reset-token-xyz');
+    expect(callArgs.html).toContain('https://www.flussdeslebens.live/passwort-zuruecksetzen?token=reset-token-xyz');
     expect(callArgs.html).not.toContain('https://example.com');
     expect(callArgs.text).toContain('reset-token-xyz');
   });
@@ -233,8 +233,8 @@ describe('sendAdminApprovalEmail', () => {
     expect(result).toBe(true);
     expect(mockEmailSend).toHaveBeenCalledOnce();
     const callArgs = mockEmailSend.mock.calls[0][0] as { html: string; text: string };
-    expect(callArgs.html).toContain('https://flussdeslebens.live/login');
-    expect(callArgs.text).toContain('https://flussdeslebens.live/login');
+    expect(callArgs.html).toContain('https://www.flussdeslebens.live/login');
+    expect(callArgs.text).toContain('https://www.flussdeslebens.live/login');
     expect(callArgs.html).not.toContain('https://example.com/login');
   });
 });
