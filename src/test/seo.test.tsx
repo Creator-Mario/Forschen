@@ -10,7 +10,7 @@ import { metadata as forschungMetadata } from '@/app/(public)/forschung/page';
 import manifest from '@/app/manifest';
 import robots from '@/app/robots';
 import sitemap from '@/app/sitemap';
-import { canonicalSiteUrl, siteName } from '@/lib/config';
+import { canonicalSiteUrl, googleSiteVerification, siteName } from '@/lib/config';
 import { organizationStructuredData } from '@/lib/seo';
 
 describe('SEO metadata', () => {
@@ -20,7 +20,7 @@ describe('SEO metadata', () => {
     expect(metadata.alternates?.canonical).toBe('/');
     expect(metadata.openGraph?.url).toBe(canonicalSiteUrl);
     expect(metadata.openGraph?.siteName).toBe(siteName);
-    expect(metadata.verification?.google).toBeUndefined();
+    expect(metadata.verification?.google).toBe(googleSiteVerification);
     expect(metadata.openGraph?.images).toContainEqual(
       expect.objectContaining({ url: '/opengraph-image' }),
     );
