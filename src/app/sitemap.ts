@@ -16,6 +16,8 @@ const PUBLIC_ROUTES = [
   { path: '/glauben-heute/archiv', changeFrequency: 'weekly', priority: 0.7 },
   { path: '/buchempfehlungen', changeFrequency: 'daily', priority: 0.8 },
   { path: '/buchempfehlungen/archiv', changeFrequency: 'weekly', priority: 0.7 },
+  { path: '/forschung', changeFrequency: 'weekly', priority: 0.8 },
+  { path: '/videos', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/aktionen', changeFrequency: 'weekly', priority: 0.8 },
   { path: '/gebet', changeFrequency: 'monthly', priority: 0.6 },
   { path: '/spenden', changeFrequency: 'monthly', priority: 0.6 },
@@ -24,11 +26,9 @@ const PUBLIC_ROUTES = [
 ] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date();
   return PUBLIC_ROUTES.map((route) => ({
     url: `${canonicalSiteUrl}${route.path}`,
     changeFrequency: route.changeFrequency,
     priority: route.priority,
-    lastModified,
   }));
 }

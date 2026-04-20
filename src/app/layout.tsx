@@ -26,11 +26,6 @@ export const websiteStructuredData = {
     name: operatorName,
     url: canonicalSiteUrl,
   },
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: `${canonicalSiteUrl}/?q={search_term_string}`,
-    'query-input': 'required name=search_term_string',
-  },
 } as const;
 
 export const metadata: Metadata = {

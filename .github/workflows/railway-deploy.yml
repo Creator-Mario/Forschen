@@ -14,6 +14,22 @@ jobs:
       - name: Install Railway CLI
         run: npm install -g @railway/cli
       - name: Deploy to Railway
-        run: railway up --service Forschen
+        timeout-minutes: 10
+        run: |
+          set -euo pipefail
+
+          max_attempts=3
+          attempt=1
+
+          until railway up --service Forschen; do
+            if [ "$attempt" -ge "$max_attempts" ]; then
+              echo "Railway deployment failed after $attempt attempts."
+              exit 1
+            fi
+
+            echo "Railway deployment attempt $attempt failed. Retrying in 15 seconds..."
+            attempt=$((attempt + 1))
+            sleep 15
+          done
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
