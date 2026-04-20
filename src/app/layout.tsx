@@ -4,7 +4,7 @@ import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { SessionProvider } from '@/components/SessionProvider';
-import { canonicalSiteUrl, operatorName, siteName } from '@/lib/config';
+import { canonicalSiteUrl, googleSiteVerification, operatorName, siteName } from '@/lib/config';
 import {
   defaultOgImage,
   defaultSeoDescription,
@@ -88,9 +88,9 @@ export const metadata: Metadata = {
       'max-video-preview': -1,
     },
   },
-  ...(process.env.GOOGLE_SITE_VERIFICATION
-    ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
-    : {}),
+  verification: {
+    google: googleSiteVerification,
+  },
 };
 
 export default function RootLayout({
