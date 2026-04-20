@@ -21,7 +21,7 @@ export const operatorPhoneE164 =
   process.env.OPERATOR_PHONE_E164 ?? '+6283832835228';
 
 export const siteDomain =
-  process.env.SITE_DOMAIN ?? 'flussdeslebens.live';
+  process.env.SITE_DOMAIN ?? 'www.flussdeslebens.live';
 
 export const siteName = 'Der Fluss des Lebens';
 
