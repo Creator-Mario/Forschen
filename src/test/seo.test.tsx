@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
 import { metadata, websiteStructuredData } from '@/app/layout';
@@ -88,6 +91,19 @@ describe('SEO metadata', () => {
       ]),
     );
     expect(sitemap().some((entry) => entry.url.endsWith('/registrieren'))).toBe(false);
+  });
+
+  it('ships the Google site verification file at the public root path', () => {
+    const verificationFilePath = path.join(
+      process.cwd(),
+      'public',
+      'googleaf877f42def4409e.html',
+    );
+
+    expect(fs.existsSync(verificationFilePath)).toBe(true);
+    expect(fs.readFileSync(verificationFilePath, 'utf8').trim()).toBe(
+      'google-site-verification: googleaf877f42def4409e.html',
+    );
   });
 
   it('configures standalone output mode with unoptimized images', async () => {
