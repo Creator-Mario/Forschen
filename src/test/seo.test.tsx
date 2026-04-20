@@ -36,6 +36,7 @@ describe('SEO metadata', () => {
     expect(websiteStructuredData['@type']).toBe('WebSite');
     expect(websiteStructuredData.url).toBe(canonicalSiteUrl);
     expect(websiteStructuredData.publisher.name).toBe(siteName);
+    expect('potentialAction' in websiteStructuredData).toBe(false);
   });
 
   it('publishes robots rules that protect private areas while exposing the sitemap', () => {
@@ -50,6 +51,9 @@ describe('SEO metadata', () => {
       sitemap: `${canonicalSiteUrl}/sitemap.xml`,
       host: canonicalSiteUrl,
     });
+    const publicDisallowRules = robots().rules.find((rule) => rule.userAgent === '*')?.disallow ?? [];
+    expect(publicDisallowRules).not.toContain('/forschung');
+    expect(publicDisallowRules).not.toContain('/videos');
   });
 
   it('defines route-specific metadata for the public homepage', () => {
@@ -88,9 +92,12 @@ describe('SEO metadata', () => {
       expect.arrayContaining([
         expect.objectContaining({ url: `${canonicalSiteUrl}/` }),
         expect.objectContaining({ url: `${canonicalSiteUrl}/wochenthema` }),
+        expect.objectContaining({ url: `${canonicalSiteUrl}/forschung` }),
+        expect.objectContaining({ url: `${canonicalSiteUrl}/videos` }),
       ]),
     );
     expect(sitemap().some((entry) => entry.url.endsWith('/registrieren'))).toBe(false);
+    expect(sitemap().every((entry) => !('lastModified' in entry))).toBe(true);
   });
 
   it('ships the Google site verification file at the public root path', () => {
