@@ -134,4 +134,26 @@ describe('SEO metadata', () => {
     expect(nextConfig.output).toBe('standalone');
     expect(nextConfig.images?.unoptimized).toBe(true);
   });
+
+  it('redirects the apex domain to the canonical www host', async () => {
+    const nextConfigModule = await import('../../next.config.js');
+    const nextConfig = nextConfigModule.default ?? nextConfigModule;
+    const redirects = await nextConfig.redirects();
+
+    expect(redirects).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          source: '/:path*',
+          has: expect.arrayContaining([
+            expect.objectContaining({
+              type: 'host',
+              value: 'flussdeslebens.live',
+            }),
+          ]),
+          destination: 'https://www.flussdeslebens.live/:path*',
+          permanent: true,
+        }),
+      ]),
+    );
+  });
 });
