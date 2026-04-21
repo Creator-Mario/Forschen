@@ -364,5 +364,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-04-21",
+    "date": "2026-04-21",
+    "source": "ai",
+    "createdAt": "2026-04-21T01:18:48.006Z",
+    "promptVersion": "v2",
+    "psalm": {
+      "id": "psalm-2026-04-21",
+      "date": "2026-04-21",
+      "psalmReference": "Psalm 46",
+      "title": "Gott ist unsere Zuflucht",
+      "excerpt": "Gott ist für uns ein Zufluchtsort und eine Stärke.",
+      "summary": "Psalm 46 versichert uns von der Gegenwart Gottes in Zeiten der Not. Er ermutigt uns, Vertrauen in seine Macht und seine Hilfe zu setzen, selbst wenn die Welt um uns herum ins Wanken gerät.",
+      "significance": "Der Psalm erinnert uns daran, dass Gott die Quelle unserer Stärke ist. In herausfordernden Zeiten können wir uns auf seine unerschütterliche Unterstützung verlassen.",
+      "practice": "In schweren Zeiten sollten wir regelmäßig beten und uns an Gottes Verheißungen erinnern. Das Singen von Lobpreisliedern kann uns helfen, unseren Fokus auf seinen Frieden zu richten.",
+      "questions": [
+        "Wie erfahre ich Gottes Nähe in herausfordernden Zeiten?",
+        "Was bedeutet es für mich, Gott als meine Zuflucht zu betrachten?",
+        "Wie kann ich anderen in Not helfen, den Frieden Gottes zu finden?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-04-21",
+      "date": "2026-04-21",
+      "title": "Frieden in der Unruhe",
+      "headline": "Wie finden wir Frieden in turbulenten Zeiten?",
+      "worldFocus": "In einer Welt, die von Unsicherheit und Konflikten geprägt ist, suchen viele Menschen nach Stabilität und Ruhe. Der christliche Glaube bietet eine Perspektive, die über die Umstände hinausblickt und uns mit dem Frieden Gottes verbindet.",
+      "faithPerspective": "Der Glaube an Gott als unsere Zuflucht gibt uns die Sicherheit, dass wir nicht allein sind. Wenn wir uns auf ihn verlassen, können wir auch inmitten von Chaos inneren Frieden erfahren.",
+      "discipleshipImpulse": "Als Nachfolger Christi sind wir aufgerufen, den Frieden, den wir empfangen haben, mit anderen zu teilen. Indem wir in unserem eigenen Leben Frieden kultivieren, können wir ein Licht für andere sein.",
+      "bibleVerses": [
+        "Johannes 14,27",
+        "Philipper 4,7",
+        "Matthäus 11,28-30"
+      ],
+      "questions": [
+        "Wie kann ich den Frieden Gottes in meinem Alltag erleben?",
+        "Was sind einige konkrete Schritte, um Frieden in meinem Umfeld zu fördern?",
+        "Wie kann ich mein Vertrauen in Gott stärken, wenn ich mich unruhig fühle?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-04-21",
+      "date": "2026-04-21",
+      "topicTitle": "Frieden finden in stürmischen Zeiten",
+      "introduction": "In dieser Zeit der Unruhe und Unsicherheit ist es wichtig, Wege zu finden, um Frieden in unserem Herzen und Umfeld zu bewahren. Die folgenden Bücher bieten wertvolle Einsichten und praktische Hilfen.",
+      "recommendations": [
+        {
+          "title": "Frieden finden im Sturm",
+          "author": "Max Lucado",
+          "description": "Dieses Buch ermutigt Leser, Frieden inmitten von Herausforderungen zu finden, indem sie sich auf Gottes Verheißungen stützen.",
+          "relevance": "Es bietet praktische Ratschläge und biblische Wahrheiten, die helfen, den inneren Frieden zu bewahren."
+        },
+        {
+          "title": "Gottes Frieden erleben",
+          "author": "Joyce Meyer",
+          "description": "Joyce Meyer zeigt Wege auf, wie wir den Frieden Gottes in unser Leben integrieren können, auch wenn die Umstände schwierig sind.",
+          "relevance": "Das Buch bietet inspirierende Ermutigung und praktische Schritte, um den Frieden Gottes zu erfahren."
+        }
+      ]
+    }
   }
 ]
