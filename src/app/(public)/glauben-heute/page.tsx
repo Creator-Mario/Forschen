@@ -7,21 +7,34 @@ import { getTodayGlaubenHeuteThema } from '@/lib/generated-content';
 import CurrentTopicCard from '@/components/CurrentTopicCard';
 import SubmissionCta from '@/components/SubmissionCta';
 import AmpLink from '@/components/AmpLink';
-import { createPageMetadata } from '@/lib/seo';
+import { createCollectionPageStructuredData, createPageMetadata, serializeJsonLd } from '@/lib/seo';
 
 export const metadata: Metadata = createPageMetadata({
-  title: 'Glauben heute',
-  description: 'Aktuelle Themenimpulse für den Glauben heute mit Fragen zur Vertiefung und Austausch.',
+  title: 'Glauben heute – christliche Themenimpulse',
+  description: 'Aktuelle christliche Themenimpulse für den Glauben heute mit Fragen zur Vertiefung und weiterführender Forschung.',
   path: '/glauben-heute',
-  keywords: ['Glauben heute', 'christliche Impulse', 'Tagesimpuls'],
+  keywords: ['Glauben heute', 'christliche Impulse', 'Tagesimpuls', 'Glaubensfragen'],
 });
 
 export default async function GlaubenHeutePage() {
   const item = await getTodayGlaubenHeuteThema();
+  const structuredData = createCollectionPageStructuredData({
+    name: `${item.title} – Glauben heute`,
+    description: `${item.headline} ${item.worldFocus}`,
+    path: '/glauben-heute',
+    about: [item.title, 'Glauben heute', 'christliche Themenimpulse'],
+    keywords: ['Glauben heute', 'christliche Impulse', 'Glaubensfragen'],
+  });
 
   return (
     <>
       <AmpLink path="/glauben-heute" />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializeJsonLd(structuredData),
+        }}
+      />
       <div className="max-w-3xl mx-auto px-4 py-12">
       <div className="flex items-center justify-between gap-4 mb-8">
         <div>

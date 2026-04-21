@@ -8,7 +8,9 @@ import BibleLink from '@/components/BibleLink';
 import SubmissionCta from '@/components/SubmissionCta';
 import AmpLink from '@/components/AmpLink';
 import { formatDate } from '@/lib/utils';
-import { createPageMetadata } from '@/lib/seo';
+import { createCollectionPageStructuredData, createPageMetadata, serializeJsonLd } from '@/lib/seo';
+
+const MAX_BIBLE_VERSES_IN_STRUCTURED_DATA = 3;
 
 function getSafeVideoUrl(url: string | undefined): string | null {
   if (!url) return null;
@@ -25,10 +27,10 @@ function getSafeVideoUrl(url: string | undefined): string | null {
 }
 
 export const metadata: Metadata = createPageMetadata({
-  title: 'Wochenthema',
-  description: 'Das aktuelle Wochenthema mit Einführung, Bibelstellen, Forschungsfragen und Beiträgen aus der Gemeinschaft.',
+  title: 'Aktuelles Wochenthema zur Bibelforschung',
+  description: 'Entdecke das aktuelle Wochenthema mit Bibelstellen, Einführung, Forschungsfragen sowie passenden Beiträgen und Videos.',
   path: '/wochenthema',
-  keywords: ['Wochenthema', 'Bibelstudium', 'theologisches Thema'],
+  keywords: ['Wochenthema', 'Bibelstudium', 'theologisches Thema', 'christliche Forschung'],
 });
 
 export default async function WochenthemaPage() {
@@ -39,14 +41,31 @@ export default async function WochenthemaPage() {
   const videos = theme
     ? getApprovedVideos().filter(item => item.wochenthemaId === theme.id)
     : [];
+  const structuredData = createCollectionPageStructuredData({
+    name: theme ? `${theme.title} – aktuelles Wochenthema` : 'Aktuelles Wochenthema zur Bibelforschung',
+    description: theme
+      ? `${theme.title}: ${theme.problemStatement}`
+      : 'Das aktuelle Wochenthema mit Bibelstellen, Forschungsfragen und Beiträgen aus der Gemeinschaft.',
+    path: '/wochenthema',
+    about: theme
+      ? [theme.title, ...theme.bibleVerses.slice(0, MAX_BIBLE_VERSES_IN_STRUCTURED_DATA), 'Wochenthema', 'Bibelforschung']
+      : ['Wochenthema', 'Bibelforschung', 'Bibelstudium'],
+    keywords: ['Wochenthema', 'Bibelstudium', 'christliche Forschung'],
+  });
 
   return (
     <>
       <AmpLink path="/wochenthema" />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializeJsonLd(structuredData),
+        }}
+      />
       <div className="max-w-3xl mx-auto px-4 py-12">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-blue-800 mb-1">Wochenthema</h1>
+          <h1 className="text-3xl font-bold text-blue-800 mb-1">Aktuelles Wochenthema</h1>
           {theme && <p className="text-gray-500">Woche {theme.week}</p>}
         </div>
         <Link href="/wochenthema/archiv" className="text-blue-600 hover:text-blue-800 text-sm transition-colors">

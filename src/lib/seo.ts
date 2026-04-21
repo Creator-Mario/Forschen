@@ -42,6 +42,15 @@ type PageMetadataOptions = {
   noIndex?: boolean;
 };
 
+type CollectionPageStructuredDataOptions = {
+  name: string;
+  description: string;
+  path: `/${string}` | '/';
+  about?: string[];
+  keywords?: string[];
+  isAccessibleForFree?: boolean;
+};
+
 export function createPageMetadata({
   title,
   description,
@@ -97,6 +106,47 @@ export function createNoIndexMetadata(
     path,
     noIndex: true,
   });
+}
+
+export function createCollectionPageStructuredData({
+  name,
+  description,
+  path,
+  about = [],
+  keywords = [],
+  isAccessibleForFree = true,
+}: CollectionPageStructuredDataOptions) {
+  const url = `${canonicalSiteUrl}${path === '/' ? '' : path}`;
+  const aboutItems = about.map((item) => ({
+    '@type': 'Thing',
+    name: item,
+  }));
+  const keywordText = keywords.join(', ');
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    '@id': `${url}#webpage`,
+    url,
+    name,
+    description,
+    inLanguage: 'de-DE',
+    isPartOf: {
+      '@id': `${canonicalSiteUrl}#website`,
+    },
+    isAccessibleForFree,
+    ...(aboutItems.length > 0 ? { about: aboutItems } : {}),
+    ...(keywordText ? { keywords: keywordText } : {}),
+  };
+}
+
+export function serializeJsonLd(value: unknown): string {
+  return JSON.stringify(value)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
 }
 
 export const organizationStructuredData = {

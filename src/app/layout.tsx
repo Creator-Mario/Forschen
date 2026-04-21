@@ -10,6 +10,7 @@ import {
   defaultSeoDescription,
   defaultSeoKeywords,
   organizationStructuredData,
+  serializeJsonLd,
 } from '@/lib/seo';
 
 const siteDescription = defaultSeoDescription;
@@ -103,7 +104,7 @@ export default function RootLayout({
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{
-              __html: JSON.stringify([organizationStructuredData, websiteStructuredData]),
+              __html: serializeJsonLd([organizationStructuredData, websiteStructuredData]),
             }}
           />
           <Navbar />

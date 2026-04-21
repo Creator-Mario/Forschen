@@ -10,6 +10,7 @@ import { metadata as forschungMetadata } from '@/app/(public)/forschung/page';
 import manifest from '@/app/manifest';
 import robots from '@/app/robots';
 import sitemap from '@/app/sitemap';
+import { GET as getSiteWebmanifest } from '@/app/site.webmanifest/route';
 import { canonicalSiteUrl, googleSiteVerification, operatorName, siteName } from '@/lib/config';
 import { organizationStructuredData } from '@/lib/seo';
 
@@ -112,6 +113,14 @@ describe('SEO metadata', () => {
     );
     expect(sitemapEntries.some((entry) => entry.url.endsWith('/registrieren'))).toBe(false);
     expect(sitemapEntries.every((entry) => !('lastModified' in entry))).toBe(true);
+  });
+
+  it('serves a compatible site.webmanifest alias without a 404', async () => {
+    const response = await getSiteWebmanifest();
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('content-type')).toContain('application/manifest+json');
+    await expect(response.json()).resolves.toMatchObject(manifest());
   });
 
   it('ships the Google site verification file at the public root path', () => {

@@ -6,13 +6,13 @@ import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { createPageMetadata } from '@/lib/seo';
+import { createCollectionPageStructuredData, createPageMetadata, serializeJsonLd } from '@/lib/seo';
 
 export const metadata: Metadata = createPageMetadata({
-  title: 'Videos',
-  description: 'Freigegebene Video-Beiträge aus der Gemeinschaft mit thematischer Zuordnung.',
+  title: 'Christliche Videos und Bibelforschung',
+  description: 'Entdecke freigegebene christliche Videos, thematische Impulse und Videobeiträge aus der Bibelforschungs-Gemeinschaft.',
   path: '/videos',
-  keywords: ['christliche Videos', 'Bibelforschung Videos', 'Gemeinschaftsvideos'],
+  keywords: ['christliche Videos', 'Bibelforschung Videos', 'Gemeinschaftsvideos', 'theologische Impulse'],
 });
 
 export default async function VideosPage() {
@@ -20,13 +20,26 @@ export default async function VideosPage() {
   const videos = getApprovedVideos();
   const themen = (await getWochenthemaListFresh()).filter(t => t.status === 'published');
   const themenById = new Map(themen.map(theme => [theme.id, theme]));
+  const structuredData = createCollectionPageStructuredData({
+    name: 'Christliche Videos und Bibelforschung',
+    description: 'Freigegebene christliche Videos, Bibelforschungs-Beiträge und thematische Impulse aus der Gemeinschaft.',
+    path: '/videos',
+    about: ['christliche Videos', 'Bibelforschung', 'Wochenthemen', 'Gemeinschaft'],
+    keywords: ['christliche Videos', 'Bibelforschung Videos', 'theologische Impulse'],
+  });
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializeJsonLd(structuredData),
+        }}
+      />
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-blue-800 mb-2">Videos</h1>
-          <p className="text-gray-500">Freigegebene Video-Beiträge aus der Gemeinschaft</p>
+          <h1 className="text-3xl font-bold text-blue-800 mb-2">Christliche Videos aus der Gemeinschaft</h1>
+          <p className="text-gray-500">Freigegebene Video-Beiträge zu Bibelforschung, Wochenthemen und geistlichen Impulsen</p>
         </div>
         {session ? (
           <Link href="/videos/hochladen" className="bg-blue-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
@@ -46,9 +59,9 @@ export default async function VideosPage() {
 
       {!session && (
         <div className="mb-8 rounded-xl border border-blue-100 bg-blue-50 p-5">
-          <h2 className="font-semibold text-blue-900 mb-2">Videos öffentlich ansehen, mit Anmeldung selbst teilen</h2>
+          <h2 className="font-semibold text-blue-900 mb-2">Christliche Videos öffentlich ansehen, mit Anmeldung selbst teilen</h2>
           <p className="text-sm text-gray-700 leading-relaxed">
-            Hier siehst du alle freigegebenen Videos. Auch thematisch zugeordnete Videos bleiben hier sichtbar. Nach der Anmeldung kannst du eigene Beiträge einreichen. Sie gehen automatisch in die Moderation und erscheinen nach der Freigabe im Mitgliederbereich und unter passenden Themen.
+            Hier findest du alle freigegebenen christlichen Videos der Plattform. Auch thematisch zugeordnete Beiträge zu Bibelforschung und Wochenthemen bleiben hier sichtbar. Nach der Anmeldung kannst du eigene Beiträge einreichen. Sie gehen automatisch in die Moderation und erscheinen nach der Freigabe im Mitgliederbereich und unter passenden Themen.
           </p>
         </div>
       )}
