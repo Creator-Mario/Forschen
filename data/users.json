@@ -51,5 +51,18 @@
       "submittedAt": "2026-04-13T01:02:18.638Z"
     },
     "adminNote": "Welcome to our community! \nWe wish you much time with the word of Jesus and that it enriches you. \nBlessed greetings from the River of Life."
+  },
+  {
+    "id": "user-1776734355039-g2cimsc76",
+    "email": "denzer97@gmail.com",
+    "password": "$2b$12$Zmo2bRMPXTT1wlA3wEeuZusRERXNF9fKrnBkA0DCbsEDLpADPrnW.",
+    "name": "Test",
+    "role": "USER",
+    "status": "pending_email",
+    "createdAt": "2026-04-21T01:19:15.039Z",
+    "active": false,
+    "emailToken": "a9fa6b5be514d662888ed99112e579cb52ebd8aebc80eb40ca75e1790eb80ded",
+    "weeklyFaithEmailEnabled": false,
+    "weeklyFaithEmailUpdatedAt": "2026-04-21T01:19:15.039Z"
   }
 ]
