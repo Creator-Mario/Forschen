@@ -33,10 +33,14 @@ describe('SEO metadata', () => {
   it('exposes structured organization and website data with the canonical URL', () => {
     expect(organizationStructuredData['@type']).toBe('Organization');
     expect(organizationStructuredData.url).toBe(canonicalSiteUrl);
+    expect(organizationStructuredData.logo).toBe(`${canonicalSiteUrl}/icon`);
+    expect(organizationStructuredData.address).toMatchObject({
+      '@type': 'PostalAddress',
+    });
     expect(websiteStructuredData['@type']).toBe('WebSite');
     expect(websiteStructuredData.url).toBe(canonicalSiteUrl);
     expect(websiteStructuredData.publisher.name).toBe(siteName);
-    expect('potentialAction' in websiteStructuredData).toBe(false);
+    expect(websiteStructuredData.description).toBe(metadata.description);
   });
 
   it('publishes robots rules that protect private areas while exposing the sitemap', () => {
@@ -45,7 +49,14 @@ describe('SEO metadata', () => {
         {
           userAgent: '*',
           allow: '/',
-          disallow: expect.arrayContaining(['/admin', '/dashboard', '/login', '/registrieren']),
+          disallow: expect.arrayContaining([
+            '/admin',
+            '/dashboard',
+            '/login',
+            '/registrieren',
+            '/videos/hochladen',
+            '/forschung/beitraege',
+          ]),
         },
       ],
       sitemap: `${canonicalSiteUrl}/sitemap.xml`,
@@ -79,6 +90,8 @@ describe('SEO metadata', () => {
   });
 
   it('publishes a web manifest and an indexable sitemap', () => {
+    const sitemapEntries = sitemap();
+
     expect(manifest()).toMatchObject({
       name: siteName,
       start_url: '/',
@@ -88,7 +101,7 @@ describe('SEO metadata', () => {
       ]),
     });
 
-    expect(sitemap()).toEqual(
+    expect(sitemapEntries).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ url: `${canonicalSiteUrl}/` }),
         expect.objectContaining({ url: `${canonicalSiteUrl}/wochenthema` }),
@@ -96,8 +109,8 @@ describe('SEO metadata', () => {
         expect.objectContaining({ url: `${canonicalSiteUrl}/videos` }),
       ]),
     );
-    expect(sitemap().some((entry) => entry.url.endsWith('/registrieren'))).toBe(false);
-    expect(sitemap().every((entry) => !('lastModified' in entry))).toBe(true);
+    expect(sitemapEntries.some((entry) => entry.url.endsWith('/registrieren'))).toBe(false);
+    expect(sitemapEntries.every((entry) => entry.lastModified instanceof Date)).toBe(true);
   });
 
   it('ships the Google site verification file at the public root path', () => {

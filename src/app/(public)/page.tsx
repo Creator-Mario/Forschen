@@ -31,9 +31,33 @@ export default async function HomePage() {
   const psalmThema = await getTodayPsalmThema();
   const glaubenHeute = await getTodayGlaubenHeuteThema();
   const buchempfehlungen = await getTodayBuchempfehlungen();
+  const homepageStructuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    '@id': `${canonicalSiteUrl}/#webpage`,
+    url: canonicalSiteUrl,
+    name: 'Freie christliche Bibelforschung',
+    description: metadata.description,
+    isPartOf: {
+      '@id': `${canonicalSiteUrl}#website`,
+    },
+    about: [
+      'Tageswort',
+      'Psalmen',
+      'Wochenthema',
+      'Bibelforschung',
+      'Gebet',
+    ],
+  } as const;
 
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(homepageStructuredData),
+        }}
+      />
       {/* ── Hero ── */}
       <section
         className="relative overflow-hidden text-white py-20 px-4"

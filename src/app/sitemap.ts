@@ -33,16 +33,20 @@ const AMP_ROUTES = [
 ] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const lastModified = new Date();
+
   const canonical = PUBLIC_ROUTES.map((route) => ({
     url: `${canonicalSiteUrl}${route.path}`,
     changeFrequency: route.changeFrequency,
     priority: route.priority,
+    lastModified,
   }));
 
   const amp = AMP_ROUTES.map((route) => ({
     url: `${canonicalSiteUrl}${route.path}`,
     changeFrequency: route.changeFrequency,
     priority: route.priority,
+    lastModified,
   }));
 
   return [...canonical, ...amp];

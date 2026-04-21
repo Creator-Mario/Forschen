@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import {
   canonicalSiteUrl,
+  operatorAddress,
   operatorEmail,
   operatorName,
   siteDomain,
@@ -101,9 +102,18 @@ export function createNoIndexMetadata(
 export const organizationStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
+  '@id': `${canonicalSiteUrl}#organization`,
   name: operatorName,
   url: canonicalSiteUrl,
   email: operatorEmail,
+  logo: `${canonicalSiteUrl}/icon`,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: operatorAddress.street,
+    addressLocality: operatorAddress.city,
+    postalCode: operatorAddress.zip,
+    addressCountry: operatorAddress.country,
+  },
   sameAs: [`https://${siteDomain}`],
   contactPoint: [
     {
