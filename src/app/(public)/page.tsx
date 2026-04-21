@@ -15,7 +15,7 @@ import { canonicalSiteUrl, siteName } from '@/lib/config';
 import { getTodayTageswortFresh, getCurrentWochenthemaFresh, getApprovedThesen } from '@/lib/db';
 import { getTodayPsalmThema, getTodayGlaubenHeuteThema, getTodayBuchempfehlungen } from '@/lib/generated-content';
 import { founderProfile } from '@/lib/founder-profile';
-import { createPageMetadata } from '@/lib/seo';
+import { createPageMetadata, serializeJsonLd } from '@/lib/seo';
 
 export const metadata: Metadata = createPageMetadata({
   title: 'Freie christliche Bibelforschung',
@@ -55,7 +55,7 @@ export default async function HomePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(homepageStructuredData),
+          __html: serializeJsonLd(homepageStructuredData),
         }}
       />
       {/* ── Hero ── */}

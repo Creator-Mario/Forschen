@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import ThesisCard from '@/components/ThesisCard';
 import { getApprovedThesen } from '@/lib/db';
 import Link from 'next/link';
-import { createCollectionPageStructuredData, createPageMetadata } from '@/lib/seo';
+import { createCollectionPageStructuredData, createPageMetadata, serializeJsonLd } from '@/lib/seo';
 
 export const metadata: Metadata = createPageMetadata({
   title: 'Theologische Thesen und Glaubensfragen',
@@ -28,7 +28,7 @@ export default function ThesenPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData),
+          __html: serializeJsonLd(structuredData),
         }}
       />
       <div className="flex items-center justify-between mb-8">

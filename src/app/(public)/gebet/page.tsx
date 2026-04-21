@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 import Link from 'next/link';
-import { createCollectionPageStructuredData, createPageMetadata } from '@/lib/seo';
+import { createCollectionPageStructuredData, createPageMetadata, serializeJsonLd } from '@/lib/seo';
 
 export const metadata: Metadata = createPageMetadata({
   title: 'Christlicher Gebetsraum',
@@ -24,7 +24,7 @@ export default function GebetPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData),
+          __html: serializeJsonLd(structuredData),
         }}
       />
       <h1 className="text-3xl font-bold text-blue-800 mb-2">Christlicher Gebetsraum</h1>

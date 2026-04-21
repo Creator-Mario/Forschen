@@ -8,7 +8,7 @@ import BibleLink from '@/components/BibleLink';
 import SubmissionCta from '@/components/SubmissionCta';
 import AmpLink from '@/components/AmpLink';
 import { formatDate } from '@/lib/utils';
-import { createCollectionPageStructuredData, createPageMetadata } from '@/lib/seo';
+import { createCollectionPageStructuredData, createPageMetadata, serializeJsonLd } from '@/lib/seo';
 
 const MAX_BIBLE_VERSES_IN_STRUCTURED_DATA = 3;
 
@@ -59,7 +59,7 @@ export default async function WochenthemaPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData),
+          __html: serializeJsonLd(structuredData),
         }}
       />
       <div className="max-w-3xl mx-auto px-4 py-12">

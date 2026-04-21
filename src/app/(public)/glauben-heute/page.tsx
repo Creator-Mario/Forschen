@@ -7,7 +7,7 @@ import { getTodayGlaubenHeuteThema } from '@/lib/generated-content';
 import CurrentTopicCard from '@/components/CurrentTopicCard';
 import SubmissionCta from '@/components/SubmissionCta';
 import AmpLink from '@/components/AmpLink';
-import { createCollectionPageStructuredData, createPageMetadata } from '@/lib/seo';
+import { createCollectionPageStructuredData, createPageMetadata, serializeJsonLd } from '@/lib/seo';
 
 export const metadata: Metadata = createPageMetadata({
   title: 'Glauben heute – christliche Themenimpulse',
@@ -32,7 +32,7 @@ export default async function GlaubenHeutePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData),
+          __html: serializeJsonLd(structuredData),
         }}
       />
       <div className="max-w-3xl mx-auto px-4 py-12">

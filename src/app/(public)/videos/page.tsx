@@ -6,7 +6,7 @@ import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { createCollectionPageStructuredData, createPageMetadata } from '@/lib/seo';
+import { createCollectionPageStructuredData, createPageMetadata, serializeJsonLd } from '@/lib/seo';
 
 export const metadata: Metadata = createPageMetadata({
   title: 'Christliche Videos und Bibelforschung',
@@ -33,7 +33,7 @@ export default async function VideosPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData),
+          __html: serializeJsonLd(structuredData),
         }}
       />
       <div className="flex items-center justify-between mb-8">
