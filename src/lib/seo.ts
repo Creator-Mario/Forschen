@@ -42,6 +42,15 @@ type PageMetadataOptions = {
   noIndex?: boolean;
 };
 
+type CollectionPageStructuredDataOptions = {
+  name: string;
+  description: string;
+  path: `/${string}` | '/';
+  about?: string[];
+  keywords?: string[];
+  isAccessibleForFree?: boolean;
+};
+
 export function createPageMetadata({
   title,
   description,
@@ -97,6 +106,36 @@ export function createNoIndexMetadata(
     path,
     noIndex: true,
   });
+}
+
+export function createCollectionPageStructuredData({
+  name,
+  description,
+  path,
+  about = [],
+  keywords = [],
+  isAccessibleForFree = true,
+}: CollectionPageStructuredDataOptions) {
+  const url = `${canonicalSiteUrl}${path === '/' ? '' : path}`;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    '@id': `${url}#webpage`,
+    url,
+    name,
+    description,
+    inLanguage: 'de-DE',
+    isPartOf: {
+      '@id': `${canonicalSiteUrl}#website`,
+    },
+    isAccessibleForFree,
+    about: about.map((item) => ({
+      '@type': 'Thing',
+      name: item,
+    })),
+    keywords: keywords.join(', '),
+  } as const;
 }
 
 export const organizationStructuredData = {

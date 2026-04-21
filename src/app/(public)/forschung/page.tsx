@@ -7,13 +7,13 @@ import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { createPageMetadata } from '@/lib/seo';
+import { createCollectionPageStructuredData, createPageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = createPageMetadata({
-  title: 'Bibelforschung',
-  description: 'Freigegebene Forschungsbeiträge aus der Gemeinschaft mit Bezügen zu aktuellen Wochenthemen.',
+  title: 'Bibelforschung und Forschungsbeiträge',
+  description: 'Lies freigegebene Forschungsbeiträge zu Tageswort, Psalmen und Wochenthemen aus der christlichen Gemeinschaft.',
   path: '/forschung',
-  keywords: ['Bibelforschung', 'christliche Forschung', 'Wochenthema Beiträge'],
+  keywords: ['Bibelforschung', 'christliche Forschung', 'Wochenthema Beiträge', 'theologische Beiträge'],
 });
 
 export default async function ForschungPage() {
@@ -21,13 +21,26 @@ export default async function ForschungPage() {
   const beitraege = getApprovedForschung();
   const themen = (await getWochenthemaListFresh()).filter(t => t.status === 'published');
   const themenById = new Map(themen.map(theme => [theme.id, theme]));
+  const structuredData = createCollectionPageStructuredData({
+    name: 'Bibelforschung und Forschungsbeiträge',
+    description: 'Öffentliche Forschungsbeiträge der Gemeinschaft zu Bibelversen, Psalmen und theologischen Wochenthemen.',
+    path: '/forschung',
+    about: ['Bibelforschung', 'Tageswort', 'Psalmen', 'Wochenthema', 'theologische Beiträge'],
+    keywords: ['Bibelforschung', 'christliche Forschung', 'theologische Beiträge'],
+  });
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData),
+        }}
+      />
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-blue-800 mb-2">Bibelforschung</h1>
-          <p className="text-gray-500">Freigegebene Forschungsbeiträge aus der Gemeinschaft</p>
+          <h1 className="text-3xl font-bold text-blue-800 mb-2">Bibelforschung und Forschungsbeiträge</h1>
+          <p className="text-gray-500">Freigegebene Beiträge zu Tageswort, Psalmen, Wochenthemen und christlichen Glaubensfragen</p>
         </div>
         {session ? (
           <Link href="/forschung/beitraege" className="bg-blue-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
@@ -49,7 +62,7 @@ export default async function ForschungPage() {
         <div className="mb-8 rounded-xl border border-blue-100 bg-blue-50 p-5">
           <h2 className="font-semibold text-blue-900 mb-2">Öffentlich lesen, als Mitglied selbst beitragen</h2>
           <p className="text-sm text-gray-700 leading-relaxed">
-            Diese Seite zeigt freigegebene Beiträge öffentlich an. Nach der Anmeldung kannst du eigene Forschung zu Tageswort, Psalmen und Wochenthemen einreichen. Jeder Beitrag geht vorher in die Moderation.
+            Diese Seite zeigt freigegebene Forschungsbeiträge öffentlich an. Nach der Anmeldung kannst du eigene Forschung zu Tageswort, Psalmen und Wochenthemen einreichen. Jeder Beitrag geht vorher in die Moderation.
           </p>
         </div>
       )}
