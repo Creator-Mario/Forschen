@@ -1,35 +1,32 @@
+import { NextFetchEvent, NextMiddleware, NextRequest, NextResponse } from 'next/server';
 import { withAuth } from 'next-auth/middleware';
 import { authSecret } from '@/lib/auth-secret';
+import { canonicalSiteUrl } from '@/lib/config';
+import { getCanonicalHostRedirectDestination, isProtectedPath } from '@/lib/request-routing';
 
-export default withAuth({
+const authMiddleware = withAuth({
   pages: { signIn: '/login' },
   secret: authSecret,
-});
+}) as NextMiddleware;
+
+export default function middleware(request: NextRequest, event: NextFetchEvent) {
+  const redirectDestination = getCanonicalHostRedirectDestination({
+    requestUrl: request.url,
+    requestHost: request.headers.get('x-forwarded-host') ?? request.headers.get('host') ?? request.nextUrl.host,
+    canonicalSiteUrl,
+  });
+
+  if (redirectDestination) {
+    return NextResponse.redirect(redirectDestination, 308);
+  }
+
+  if (isProtectedPath(request.nextUrl.pathname)) {
+    return authMiddleware(request, event);
+  }
+
+  return NextResponse.next();
+}
 
 export const config = {
-  // Only protect authenticated (user) and (admin) routes.
-  // Public routes (home, tageswort, wochenthema, thesen, forschung, gebet,
-  // videos, aktionen, vision, login, registrieren, passwort-*, etc.) remain
-  // freely accessible without a session.
-  //
-  // NOTE: /vorstellung, /admin-login and /admin-reset are intentionally NOT
-  // protected here so that newly-verified users can fill in the intro form
-  // before they have a session, and the admin can always reach their own
-  // login / reset pages without an existing session.
-  matcher: [
-    '/dashboard/:path*',
-    '/mein-tageswort/:path*',
-    '/meine-buchempfehlungen/:path*',
-    '/meine-thesen/:path*',
-    '/meine-gebete/:path*',
-    '/thesen/neu',
-    '/buchempfehlungen/neu',
-    '/forschung/beitraege',
-    '/gebet/neu',
-    '/chat/:path*',
-    '/aktionen/neu',
-    '/videos/hochladen',
-    '/profil',
-    '/admin/:path*',
-  ],
+  matcher: '/:path*',
 };
