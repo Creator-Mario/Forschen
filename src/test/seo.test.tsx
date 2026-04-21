@@ -40,6 +40,7 @@ describe('SEO metadata', () => {
     expect(websiteStructuredData['@type']).toBe('WebSite');
     expect(websiteStructuredData.url).toBe(canonicalSiteUrl);
     expect(websiteStructuredData.publisher.name).toBe(operatorName);
+    expect(websiteStructuredData.publisher['@id']).toBe(`${canonicalSiteUrl}#organization`);
     expect(websiteStructuredData.description).toBe(metadata.description);
   });
 
@@ -110,7 +111,7 @@ describe('SEO metadata', () => {
       ]),
     );
     expect(sitemapEntries.some((entry) => entry.url.endsWith('/registrieren'))).toBe(false);
-    expect(sitemapEntries.every((entry) => entry.lastModified instanceof Date)).toBe(true);
+    expect(sitemapEntries.every((entry) => !('lastModified' in entry))).toBe(true);
   });
 
   it('ships the Google site verification file at the public root path', () => {
