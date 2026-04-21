@@ -25,10 +25,25 @@ const PUBLIC_ROUTES = [
   { path: '/datenschutz', changeFrequency: 'yearly', priority: 0.3 },
 ] as const;
 
+const AMP_ROUTES = [
+  { path: '/amp/tageswort', changeFrequency: 'daily', priority: 0.8 },
+  { path: '/amp/wochenthema', changeFrequency: 'weekly', priority: 0.8 },
+  { path: '/amp/psalmen', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/amp/glauben-heute', changeFrequency: 'daily', priority: 0.7 },
+] as const;
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  return PUBLIC_ROUTES.map((route) => ({
+  const canonical = PUBLIC_ROUTES.map((route) => ({
     url: `${canonicalSiteUrl}${route.path}`,
     changeFrequency: route.changeFrequency,
     priority: route.priority,
   }));
+
+  const amp = AMP_ROUTES.map((route) => ({
+    url: `${canonicalSiteUrl}${route.path}`,
+    changeFrequency: route.changeFrequency,
+    priority: route.priority,
+  }));
+
+  return [...canonical, ...amp];
 }

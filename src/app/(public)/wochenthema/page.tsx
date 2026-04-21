@@ -6,6 +6,7 @@ import { getApprovedForschung, getApprovedVideos } from '@/lib/db';
 import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
 import SubmissionCta from '@/components/SubmissionCta';
+import AmpLink from '@/components/AmpLink';
 import { formatDate } from '@/lib/utils';
 import { createPageMetadata } from '@/lib/seo';
 
@@ -40,7 +41,9 @@ export default async function WochenthemaPage() {
     : [];
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12">
+    <>
+      <AmpLink path="/wochenthema" />
+      <div className="max-w-3xl mx-auto px-4 py-12">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-blue-800 mb-1">Wochenthema</h1>
@@ -169,5 +172,6 @@ export default async function WochenthemaPage() {
         </div>
       )}
     </div>
+    </>
   );
 }
