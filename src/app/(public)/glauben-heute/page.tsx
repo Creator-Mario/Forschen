@@ -20,7 +20,7 @@ export default async function GlaubenHeutePage() {
   const item = await getTodayGlaubenHeuteThema();
   const structuredData = createCollectionPageStructuredData({
     name: `${item.title} – Glauben heute`,
-    description: item.introduction,
+    description: `${item.headline} ${item.worldFocus}`,
     path: '/glauben-heute',
     about: [item.title, 'Glauben heute', 'christliche Themenimpulse'],
     keywords: ['Glauben heute', 'christliche Impulse', 'Glaubensfragen'],
