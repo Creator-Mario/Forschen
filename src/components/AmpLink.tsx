@@ -11,7 +11,6 @@ interface AmpLinkProps {
  */
 export default function AmpLink({ path }: AmpLinkProps) {
   return (
-    // eslint-disable-next-line @next/next/no-head-element
     <link rel="amphtml" href={`${canonicalSiteUrl}/amp${path}`} />
   );
 }
