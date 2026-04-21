@@ -6,6 +6,7 @@ import { formatDate } from '@/lib/utils';
 import { getTodayPsalmThema } from '@/lib/generated-content';
 import PsalmThemeCard from '@/components/PsalmThemeCard';
 import SubmissionCta from '@/components/SubmissionCta';
+import AmpLink from '@/components/AmpLink';
 import { createPageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = createPageMetadata({
@@ -19,7 +20,9 @@ export default async function PsalmenPage() {
   const item = await getTodayPsalmThema();
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12">
+    <>
+      <AmpLink path="/psalmen" />
+      <div className="max-w-3xl mx-auto px-4 py-12">
       <div className="flex items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold text-blue-800 mb-2">Psalm des Tages</h1>
@@ -51,5 +54,6 @@ export default async function PsalmenPage() {
         actionLabel="Psalm-Beitrag verfassen"
       />
     </div>
+    </>
   );
 }
