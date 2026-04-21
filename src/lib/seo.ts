@@ -135,7 +135,7 @@ export function createCollectionPageStructuredData({
       name: item,
     })),
     keywords: keywords.join(', '),
-  } as const;
+  };
 }
 
 export const organizationStructuredData = {

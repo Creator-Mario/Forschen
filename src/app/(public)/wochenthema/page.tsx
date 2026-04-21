@@ -10,6 +10,8 @@ import AmpLink from '@/components/AmpLink';
 import { formatDate } from '@/lib/utils';
 import { createCollectionPageStructuredData, createPageMetadata } from '@/lib/seo';
 
+const MAX_BIBLE_VERSES_IN_STRUCTURED_DATA = 3;
+
 function getSafeVideoUrl(url: string | undefined): string | null {
   if (!url) return null;
 
@@ -46,7 +48,7 @@ export default async function WochenthemaPage() {
       : 'Das aktuelle Wochenthema mit Bibelstellen, Forschungsfragen und Beiträgen aus der Gemeinschaft.',
     path: '/wochenthema',
     about: theme
-      ? [theme.title, ...theme.bibleVerses.slice(0, 3), 'Wochenthema', 'Bibelforschung']
+      ? [theme.title, ...theme.bibleVerses.slice(0, MAX_BIBLE_VERSES_IN_STRUCTURED_DATA), 'Wochenthema', 'Bibelforschung']
       : ['Wochenthema', 'Bibelforschung', 'Bibelstudium'],
     keywords: ['Wochenthema', 'Bibelstudium', 'christliche Forschung'],
   });
