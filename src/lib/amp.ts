@@ -33,6 +33,15 @@ const AMP_CUSTOM_STYLES = `
   footer a { color: #6b7280; }
 `;
 
+export function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 export interface AmpPageOptions {
   title: string;
   canonicalPath: string;
@@ -81,13 +90,4 @@ export function ampResponse(html: string): Response {
       'Cache-Control': 'public, max-age=300, stale-while-revalidate=600',
     },
   });
-}
-
-export function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
 }
