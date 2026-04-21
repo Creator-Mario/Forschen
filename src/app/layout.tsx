@@ -26,7 +26,7 @@ export const websiteStructuredData = {
   publisher: {
     '@type': 'Organization',
     '@id': `${canonicalSiteUrl}#organization`,
-    name: siteName,
+    name: operatorName,
     url: canonicalSiteUrl,
   },
 } as const;

@@ -10,7 +10,7 @@ import { metadata as forschungMetadata } from '@/app/(public)/forschung/page';
 import manifest from '@/app/manifest';
 import robots from '@/app/robots';
 import sitemap from '@/app/sitemap';
-import { canonicalSiteUrl, googleSiteVerification, siteName } from '@/lib/config';
+import { canonicalSiteUrl, googleSiteVerification, operatorName, siteName } from '@/lib/config';
 import { organizationStructuredData } from '@/lib/seo';
 
 describe('SEO metadata', () => {
@@ -39,7 +39,7 @@ describe('SEO metadata', () => {
     });
     expect(websiteStructuredData['@type']).toBe('WebSite');
     expect(websiteStructuredData.url).toBe(canonicalSiteUrl);
-    expect(websiteStructuredData.publisher.name).toBe(siteName);
+    expect(websiteStructuredData.publisher.name).toBe(operatorName);
     expect(websiteStructuredData.description).toBe(metadata.description);
   });
 

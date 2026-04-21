@@ -34,7 +34,7 @@ export default async function HomePage() {
   const homepageStructuredData = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    '@id': `${canonicalSiteUrl}/#webpage`,
+    '@id': `${canonicalSiteUrl}#webpage`,
     url: canonicalSiteUrl,
     name: 'Freie christliche Bibelforschung',
     description: metadata.description,
