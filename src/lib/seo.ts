@@ -117,6 +117,11 @@ export function createCollectionPageStructuredData({
   isAccessibleForFree = true,
 }: CollectionPageStructuredDataOptions) {
   const url = `${canonicalSiteUrl}${path === '/' ? '' : path}`;
+  const aboutItems = about.map((item) => ({
+    '@type': 'Thing',
+    name: item,
+  }));
+  const keywordText = keywords.join(', ');
 
   return {
     '@context': 'https://schema.org',
@@ -130,11 +135,8 @@ export function createCollectionPageStructuredData({
       '@id': `${canonicalSiteUrl}#website`,
     },
     isAccessibleForFree,
-    about: about.map((item) => ({
-      '@type': 'Thing',
-      name: item,
-    })),
-    keywords: keywords.join(', '),
+    ...(aboutItems.length > 0 ? { about: aboutItems } : {}),
+    ...(keywordText ? { keywords: keywordText } : {}),
   };
 }
 
