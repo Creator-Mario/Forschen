@@ -425,5 +425,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-04-22",
+    "date": "2026-04-22",
+    "source": "ai",
+    "createdAt": "2026-04-22T01:43:31.120Z",
+    "promptVersion": "v2",
+    "psalm": {
+      "id": "psalm-2026-04-22",
+      "date": "2026-04-22",
+      "psalmReference": "Psalm 23",
+      "title": "Der gute Hirte",
+      "excerpt": "Der Herr ist mein Hirte; mir wird nichts mangeln.",
+      "summary": "Psalm 23 beschreibt die liebevolle Fürsorge Gottes für sein Volk. Er wird als guter Hirte dargestellt, der seine Schafe führt und schützt. Diese Bilder der Geborgenheit und des Vertrauens ermutigen Gläubige, sich in schweren Zeiten auf Gott zu verlassen.",
+      "significance": "Der Psalm hat für viele Menschen eine tiefgreifende Bedeutung, da er Trost und Hoffnung in schwierigen Zeiten bietet. Er erinnert uns daran, dass Gott immer an unserer Seite steht und uns führt, egal wie herausfordernd unser Weg ist.",
+      "practice": "Das Lesen und Meditieren über diesen Psalm kann helfen, eine tiefere Beziehung zu Gott zu entwickeln. Es ist hilfreich, sich regelmäßig Zeit zu nehmen, um über die Fürsorge Gottes nachzudenken und Dankbarkeit für seine Führung auszudrücken.",
+      "questions": [
+        "Wie kann ich Gottes Führung in meinem Leben besser erkennen?",
+        "In welchen Bereichen meines Lebens fühle ich mich besonders geführt oder beschützt?",
+        "Was bedeutet es für mich, dass der Herr mein Hirte ist?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-04-22",
+      "date": "2026-04-22",
+      "title": "Vertrauen in Gottes Fürsorge",
+      "headline": "Wie der Glaube uns in Krisenzeiten trägt",
+      "worldFocus": "In einer Welt voller Unsicherheiten und Herausforderungen ist das Vertrauen in Gottes Fürsorge eine Quelle der Stärke. Viele Menschen suchen nach Halt und Orientierung, und der christliche Glaube bietet ihnen eine feste Grundlage.",
+      "faithPerspective": "Der Glaube an Gottes bedingungslose Liebe und Fürsorge ist entscheidend für das geistliche Wachstum. In Zeiten der Not erfahren wir, dass wir nicht allein sind, sondern von einem liebevollen Gott umgeben sind, der unsere Bedürfnisse kennt.",
+      "discipleshipImpulse": "Als Nachfolger Christi sind wir aufgerufen, anderen von dieser Fürsorge zu erzählen. Dies kann durch Gebet, Unterstützung in Krisensituationen oder einfach durch persönliche Zeugnisse geschehen. Wir sind alle Teil der Herde, die Gott führt.",
+      "bibleVerses": [
+        "Matthäus 6,26",
+        "1. Petrus 5,7",
+        "Römer 8,28"
+      ],
+      "questions": [
+        "Wie kann ich mein Vertrauen in Gott stärken?",
+        "In welchen Situationen habe ich Gottes Fürsorge bereits erfahren?",
+        "Wie kann ich anderen helfen, Gottes Fürsorge zu erkennen?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-04-22",
+      "date": "2026-04-22",
+      "topicTitle": "Vertrauen und Hingabe im Glauben",
+      "introduction": "Die folgenden Bücher bieten wertvolle Einblicke in das Thema Vertrauen in Gottes Fürsorge und wie wir in unserem Glauben wachsen können. Sie laden dazu ein, die eigene Beziehung zu Gott zu vertiefen und Herausforderungen mit einem vertrauensvollen Herzen zu begegnen.",
+      "recommendations": [
+        {
+          "title": "Die Kraft des Gebets",
+          "author": "Stormie Omartian",
+          "description": "Ein praktischer Leitfaden, der zeigt, wie das Gebet unser Vertrauen in Gott stärken kann.",
+          "relevance": "Dieses Buch ermutigt zu einer tiefen Gebetsbeziehung und zur Hingabe an Gottes Willen."
+        },
+        {
+          "title": "Gottvertrauen in Krisenzeiten",
+          "author": "Max Lucado",
+          "description": "Eine inspirierende Lektüre darüber, wie man in schwierigen Zeiten auf Gottes Fürsorge vertrauen kann.",
+          "relevance": "Es bietet Trost und Hoffnung und hilft, den Glauben in herausfordernden Zeiten zu festigen."
+        }
+      ]
+    }
   }
 ]
