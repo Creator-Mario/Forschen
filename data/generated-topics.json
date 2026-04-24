@@ -547,5 +547,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-04-24",
+    "date": "2026-04-24",
+    "source": "ai",
+    "createdAt": "2026-04-24T01:44:32.337Z",
+    "promptVersion": "v2",
+    "psalm": {
+      "id": "psalm-2026-04-24",
+      "date": "2026-04-24",
+      "psalmReference": "Psalm 57",
+      "title": "Ein Lob in der Not",
+      "excerpt": "Sei erhaben über den Himmel, o Gott, und deine Herrlichkeit über alle Länder!",
+      "summary": "Psalm 57 ist ein Ausdruck des Vertrauens in Gott in schwierigen Zeiten. Der Psalmist ruft zu Gott um Hilfe und bringt gleichzeitig Lob und Anbetung dar. Dies verdeutlicht die Kraft des Glaubens, auch in Krisensituationen.",
+      "significance": "Der Psalm lehrt uns, dass Gott in unseren tiefsten Nöten gegenwärtig ist. Er zeigt uns, dass wir trotz unserer Umstände Gott anbeten können und sollen, was uns Trost und Hoffnung gibt.",
+      "practice": "Eine Praxis, die aus diesem Psalm hervorgeht, ist das bewusste Lob Gottes in schwierigen Zeiten. Dies kann durch Gebet, Gesang oder das Teilen von Zeugnissen geschehen, um unsere Augen auf Gott zu richten.",
+      "questions": [
+        "Wie kann ich Gott in meiner aktuellen Lebenssituation loben?",
+        "Was bedeutet es für mich, Gott über meine Probleme zu erheben?",
+        "Wie kann ich anderen in schwierigen Zeiten helfen, ihren Blick auf Gott zu richten?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-04-24",
+      "date": "2026-04-24",
+      "title": "Gott im Sturm vertrauen",
+      "headline": "Lernen, inmitten von Schwierigkeiten zu vertrauen",
+      "worldFocus": "In einer Welt voller Unsicherheiten und Herausforderungen ist es wichtig, den Glauben zu stärken. Viele Menschen kämpfen mit Ängsten und Sorgen, die sie erdrücken können. Gott möchte uns an seinen Frieden erinnern, der alle menschliche Vernunft übersteigt.",
+      "faithPerspective": "Aus der Perspektive des Glaubens können wir lernen, dass Schwierigkeiten Gelegenheiten sind, unseren Glauben zu vertiefen. Wenn wir uns in schweren Zeiten auf Gott verlassen, wächst unser Vertrauen und unsere Beziehung zu ihm wird gestärkt.",
+      "discipleshipImpulse": "Discipleship bedeutet, Jesus nachzufolgen, auch wenn es herausfordernd ist. Wir sind eingeladen, unser Vertrauen in Gott zu setzen und ihm in allen Lebenslagen zu vertrauen. Dies kann uns helfen, ein authentisches Glaubenszeugnis zu leben.",
+      "bibleVerses": [
+        "Philipper 4,6-7",
+        "Jesaja 41,10",
+        "Psalm 46,2"
+      ],
+      "questions": [
+        "Wie kann ich mein Vertrauen in Gott konkret im Alltag leben?",
+        "Welche Erfahrungen habe ich gemacht, die meinen Glauben in schwierigen Zeiten gestärkt haben?",
+        "Wie kann ich anderen helfen, in Stürmen des Lebens Vertrauen zu finden?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-04-24",
+      "date": "2026-04-24",
+      "topicTitle": "Vertrauen in Zeiten der Not",
+      "introduction": "In diesem Thema geht es um den Glauben und das Vertrauen in Gott, besonders in schwierigen Zeiten. Die folgenden Bücher bieten wertvolle Einsichten und Inspirationen, um in stürmischen Zeiten fest im Glauben zu stehen.",
+      "recommendations": [
+        {
+          "title": "Gottvertrauen in Krisenzeiten",
+          "author": "Max Lucado",
+          "description": "Dieses Buch ermutigt den Leser, Vertrauen in Gottes Plan zu setzen, auch wenn die Umstände herausfordernd sind.",
+          "relevance": "Es bietet praktische Ratschläge und ermutigende Geschichten, die den Glauben stärken können."
+        },
+        {
+          "title": "Wenn der Sturm kommt",
+          "author": "John Ortberg",
+          "description": "Ein Buch, das aufzeigt, wie wir in Zeiten der Angst und Unsicherheit an Gott festhalten können.",
+          "relevance": "Es hilft, die Perspektive zu wechseln und Gott in jeder Situation zu sehen."
+        }
+      ]
+    }
   }
 ]
