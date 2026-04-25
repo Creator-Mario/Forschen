@@ -168,6 +168,7 @@ describe('SEO metadata', () => {
 
   it('keeps the redirect target on the canonical www host when SITE_URL is configured without www', async () => {
     vi.resetModules();
+    const originalSiteUrl = process.env.SITE_URL;
     process.env.SITE_URL = 'https://flussdeslebens.live/';
 
     const nextConfigModule = await import('../../next.config.js');
@@ -182,6 +183,10 @@ describe('SEO metadata', () => {
       ]),
     );
 
-    delete process.env.SITE_URL;
+    if (typeof originalSiteUrl === 'string') {
+      process.env.SITE_URL = originalSiteUrl;
+    } else {
+      delete process.env.SITE_URL;
+    }
   });
 });
