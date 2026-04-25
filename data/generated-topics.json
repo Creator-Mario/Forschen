@@ -608,5 +608,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-04-25",
+    "date": "2026-04-25",
+    "source": "ai",
+    "createdAt": "2026-04-25T02:04:46.893Z",
+    "promptVersion": "v2",
+    "psalm": {
+      "id": "psalm-2026-04-25",
+      "date": "2026-04-25",
+      "psalmReference": "Psalm 37,5",
+      "title": "Vertraue auf den Herrn",
+      "excerpt": "Befiehl dem Herrn deine Wege und hoffe auf ihn.",
+      "summary": "In Psalm 37 wird die Einladung ausgesprochen, unser Leben und unsere Sorgen in die Hände Gottes zu legen. Dies ermutigt uns, in schwierigen Zeiten auf die Treue und Güte Gottes zu vertrauen.",
+      "significance": "Dieser Psalm ist eine Zusage, dass Gott die Wege derer lenkt, die ihm vertrauen. Er erinnert uns daran, dass unser Vertrauen auf Gott nicht vergeblich ist und dass er für uns sorgt.",
+      "practice": "Um diese Botschaft in unserem Alltag zu leben, sollten wir regelmäßig beten und unsere Sorgen vor Gott bringen. Das Praktizieren des Vertrauens in Gott kann durch Dankbarkeit und das Teilen von Erfahrungen mit anderen vertieft werden.",
+      "questions": [
+        "In welchen Bereichen deines Lebens fällt es dir schwer, Gott zu vertrauen?",
+        "Wie kannst du konkret deine Wege dem Herrn befehlen?",
+        "Welche Erfahrungen hast du gemacht, als du auf Gott vertraut hast?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-04-25",
+      "date": "2026-04-25",
+      "title": "Vertrauen in schwierigen Zeiten",
+      "headline": "Wie wir Gott in unseren Herausforderungen begegnen",
+      "worldFocus": "In einer Welt, die oft von Unsicherheit und Angst geprägt ist, suchen viele Menschen nach Halt und Orientierung. Das Vertrauen auf Gott bietet eine stabilisierende Kraft, die uns durch schwierige Zeiten führt.",
+      "faithPerspective": "Glauben bedeutet, auch in Krisen an der Zuversicht festzuhalten, dass Gott uns nicht verlässt. Diese Perspektive hilft uns, über unsere Umstände hinauszusehen und die Hoffnung auf das Gute zu bewahren.",
+      "discipleshipImpulse": "Als Nachfolger Christi sind wir aufgerufen, unser Vertrauen in Gott nicht nur für uns selbst zu leben, sondern auch anderen zu zeigen. Durch unser Beispiel können wir andere ermutigen, in ihrem Glauben stark zu bleiben.",
+      "bibleVerses": [
+        "Jesaja 41,10",
+        "Philipper 4,6-7",
+        "Römer 8,28"
+      ],
+      "questions": [
+        "Wie kannst du deinen Glauben in herausfordernden Situationen stärken?",
+        "Was bedeutet es für dich, Gott in Krisenzeiten zu vertrauen?",
+        "Wie kannst du anderen helfen, ebenfalls Vertrauen zu fassen?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-04-25",
+      "date": "2026-04-25",
+      "topicTitle": "Glauben und Vertrauen in Krisenzeiten",
+      "introduction": "In Krisenzeiten kann unser Vertrauen auf Gott auf die Probe gestellt werden. Die folgenden Bücher bieten wertvolle Einblicke und ermutigende Perspektiven, um unseren Glauben zu stärken.",
+      "recommendations": [
+        {
+          "title": "Gottvertrauen in stürmischen Zeiten",
+          "author": "Max Lucado",
+          "description": "Dieses Buch ermutigt Leser, ihr Vertrauen auf Gott zu setzen, selbst wenn das Leben herausfordernd wird.",
+          "relevance": "Es bietet praktische Ratschläge und biblische Perspektiven für das Vertrauen in Gott."
+        },
+        {
+          "title": "Die Kraft des Glaubens",
+          "author": "Joyce Meyer",
+          "description": "Joyce Meyer teilt, wie der Glaube uns in Krisen stärken kann und gibt Anleitungen, wie wir in schwierigen Zeiten standhaft bleiben.",
+          "relevance": "Das Buch ist eine hilfreiche Ressource für alle, die ihre Beziehung zu Gott vertiefen möchten."
+        }
+      ]
+    }
   }
 ]
