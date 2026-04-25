@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { metadata, websiteStructuredData } from '@/app/layout';
 import { metadata as homeMetadata } from '@/app/(public)/page';
@@ -15,6 +15,11 @@ import { canonicalSiteUrl, googleSiteVerification, operatorName, siteName } from
 import { organizationStructuredData } from '@/lib/seo';
 
 describe('SEO metadata', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.resetModules();
+  });
+
   it('configures canonical site metadata for the app shell', () => {
     expect(metadata.metadataBase?.toString()).toBe(`${canonicalSiteUrl}/`);
     expect(metadata.manifest).toBe('/manifest.webmanifest');
@@ -167,9 +172,7 @@ describe('SEO metadata', () => {
   });
 
   it('keeps the redirect target on the canonical www host when SITE_URL is configured without www', async () => {
-    vi.resetModules();
-    const originalSiteUrl = process.env.SITE_URL;
-    process.env.SITE_URL = 'https://flussdeslebens.live/';
+    vi.stubEnv('SITE_URL', 'https://flussdeslebens.live/');
 
     const nextConfigModule = await import('../../next.config.js');
     const nextConfig = nextConfigModule.default ?? nextConfigModule;
@@ -182,11 +185,5 @@ describe('SEO metadata', () => {
         }),
       ]),
     );
-
-    if (typeof originalSiteUrl === 'string') {
-      process.env.SITE_URL = originalSiteUrl;
-    } else {
-      delete process.env.SITE_URL;
-    }
   });
 });
