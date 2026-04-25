@@ -1,9 +1,45 @@
 const DEFAULT_SITE_DOMAIN = 'www.flussdeslebens.live';
 
-function getCanonicalSiteUrl() {
-  return (process.env.EMAIL_LINK_BASE_URL ?? process.env.SITE_URL ?? `https://${process.env.SITE_DOMAIN ?? DEFAULT_SITE_DOMAIN}`)
+function stripWwwPrefix(host) {
+  return host.startsWith('www.') ? host.slice(4) : host;
+}
+
+function normalizeSiteDomain(domain = DEFAULT_SITE_DOMAIN) {
+  const normalizedDomain = domain
     .trim()
-    .replace(/\/$/, '');
+    .toLowerCase()
+    .replace(/^https?:\/\//, '')
+    .replace(/\/.*$/, '');
+
+  return normalizedDomain === stripWwwPrefix(DEFAULT_SITE_DOMAIN)
+    ? DEFAULT_SITE_DOMAIN
+    : normalizedDomain;
+}
+
+function normalizeCanonicalSiteUrl(url, canonicalDomain) {
+  const trimmedUrl = url.trim().replace(/\/$/, '');
+
+  try {
+    const normalizedUrl = new URL(trimmedUrl);
+    const apexDomain = stripWwwPrefix(canonicalDomain);
+
+    if (canonicalDomain.startsWith('www.') && normalizedUrl.host.toLowerCase() === apexDomain) {
+      normalizedUrl.host = canonicalDomain;
+    }
+
+    return normalizedUrl.toString().replace(/\/$/, '');
+  } catch {
+    return trimmedUrl;
+  }
+}
+
+function getCanonicalSiteUrl() {
+  const canonicalDomain = normalizeSiteDomain(process.env.SITE_DOMAIN);
+
+  return normalizeCanonicalSiteUrl(
+    process.env.EMAIL_LINK_BASE_URL ?? process.env.SITE_URL ?? `https://${canonicalDomain}`,
+    canonicalDomain,
+  );
 }
 
 function getCanonicalSiteOrigin() {
@@ -23,7 +59,7 @@ function getCanonicalHost() {
 }
 
 function getApexHost(host) {
-  return host.startsWith('www.') ? host.slice(4) : host;
+  return stripWwwPrefix(host);
 }
 
 /** @type {import('next').NextConfig} */
