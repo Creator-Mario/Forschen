@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { metadata, websiteStructuredData } from '@/app/layout';
 import { metadata as homeMetadata } from '@/app/(public)/page';
@@ -164,5 +164,24 @@ describe('SEO metadata', () => {
         }),
       ]),
     );
+  });
+
+  it('keeps the redirect target on the canonical www host when SITE_URL is configured without www', async () => {
+    vi.resetModules();
+    process.env.SITE_URL = 'https://flussdeslebens.live/';
+
+    const nextConfigModule = await import('../../next.config.js');
+    const nextConfig = nextConfigModule.default ?? nextConfigModule;
+    const redirects = await nextConfig.redirects();
+
+    expect(redirects).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          destination: 'https://www.flussdeslebens.live/:path*',
+        }),
+      ]),
+    );
+
+    delete process.env.SITE_URL;
   });
 });

@@ -11,6 +11,41 @@
  *   ADMIN_SEED_EMAIL       – e-mail used to seed / identify the single admin account
  */
 
+const DEFAULT_SITE_DOMAIN = 'www.flussdeslebens.live';
+
+function stripWwwPrefix(host: string): string {
+  return host.startsWith('www.') ? host.slice(4) : host;
+}
+
+function normalizeSiteDomain(domain: string | undefined): string {
+  const normalizedDomain = (domain ?? DEFAULT_SITE_DOMAIN)
+    .trim()
+    .toLowerCase()
+    .replace(/^https?:\/\//, '')
+    .replace(/\/.*$/, '');
+
+  return normalizedDomain === stripWwwPrefix(DEFAULT_SITE_DOMAIN)
+    ? DEFAULT_SITE_DOMAIN
+    : normalizedDomain;
+}
+
+function normalizeCanonicalSiteUrl(url: string, canonicalDomain: string): string {
+  const trimmedUrl = url.trim().replace(/\/$/, '');
+
+  try {
+    const normalizedUrl = new URL(trimmedUrl);
+    const apexDomain = stripWwwPrefix(canonicalDomain);
+
+    if (canonicalDomain.startsWith('www.') && normalizedUrl.host.toLowerCase() === apexDomain) {
+      normalizedUrl.host = canonicalDomain;
+    }
+
+    return normalizedUrl.toString().replace(/\/$/, '');
+  } catch {
+    return trimmedUrl;
+  }
+}
+
 export const operatorName =
   process.env.OPERATOR_NAME ?? 'Der Fluss des Lebens';
 
@@ -21,7 +56,7 @@ export const operatorPhoneE164 =
   process.env.OPERATOR_PHONE_E164 ?? '+6283832835228';
 
 export const siteDomain =
-  process.env.SITE_DOMAIN ?? 'www.flussdeslebens.live';
+  normalizeSiteDomain(process.env.SITE_DOMAIN);
 
 export const siteName = 'Der Fluss des Lebens';
 
@@ -31,9 +66,10 @@ export const siteName = 'Der Fluss des Lebens';
  * Resend sees matching link URLs and sending domain.
  */
 export const canonicalSiteUrl =
-  (process.env.EMAIL_LINK_BASE_URL ?? process.env.SITE_URL ?? `https://${siteDomain}`)
-    .trim()
-    .replace(/\/$/, '');
+  normalizeCanonicalSiteUrl(
+    process.env.EMAIL_LINK_BASE_URL ?? process.env.SITE_URL ?? `https://${siteDomain}`,
+    siteDomain,
+  );
 
 export const googleSiteVerification =
   process.env.GOOGLE_SITE_VERIFICATION?.trim() || '8qrr9y5mXoHjrEcjmHknia6AII5XTeFlf_uvocJMbCc';
