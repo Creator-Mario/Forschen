@@ -1,12 +1,7 @@
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import os from 'os';
 import path from 'path';
-
-const {
-  generateWeeklyTheme,
-  getLatestPublishedOrArchivedWeek,
-  getPublicationWeek,
-} = require('../../scripts/weekly-theme/shared.cjs');
+import weeklyThemeScripts from '../../scripts/weekly-theme/shared.cjs';
 
 interface TestThemeEntry {
   id: string;
@@ -19,6 +14,20 @@ interface TestThemeEntry {
   status: 'draft' | 'published' | 'archived';
   createdAt: string;
 }
+
+const {
+  generateWeeklyTheme,
+  getLatestPublishedOrArchivedWeek,
+  getPublicationWeek,
+} = weeklyThemeScripts as {
+  generateWeeklyTheme: (options: { dataPath: string; now: Date }) => {
+    status: 'generated' | 'skipped';
+    currentWeek: string;
+    newTheme?: { week: string };
+  };
+  getLatestPublishedOrArchivedWeek: (options: { dataPath: string }) => string;
+  getPublicationWeek: (date: Date) => string;
+};
 
 function createPublishedEntry(week: string): TestThemeEntry {
   return {
