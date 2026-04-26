@@ -89,4 +89,18 @@ describe('weekly theme generation scripts', () => {
     expect(result.currentWeek).toBe(currentWeek);
     expect(savedEntries).toEqual(existingEntries);
   });
+
+  it('generates the next ISO week during the scheduled Sunday publishing window', () => {
+    writeFileSync(dataPath, JSON.stringify([createPublishedEntry('2026-W17')], null, 2));
+
+    const now = new Date('2026-04-26T03:17:34.000Z');
+    const result = generateWeeklyTheme({ dataPath, now });
+    const savedEntries = JSON.parse(readFileSync(dataPath, 'utf8')) as TestThemeEntry[];
+
+    expect(result.status).toBe('generated');
+    expect(result.currentWeek).toBe('2026-W18');
+    expect(result.newTheme?.week).toBe('2026-W18');
+    expect(savedEntries.map(entry => entry.week)).toEqual(['2026-W17', '2026-W18']);
+    expect(getLatestPublishedOrArchivedWeek({ dataPath })).toBe('2026-W18');
+  });
 });
