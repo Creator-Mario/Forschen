@@ -669,5 +669,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-04-26",
+    "date": "2026-04-26",
+    "source": "ai",
+    "createdAt": "2026-04-26T01:10:37.183Z",
+    "promptVersion": "v2",
+    "psalm": {
+      "id": "psalm-2026-04-26",
+      "date": "2026-04-26",
+      "psalmReference": "Psalm 46",
+      "title": "Gott ist unsere Zuflucht",
+      "excerpt": "Gott ist unsere Zuflucht und Stärke, ein bewährter Helfer in Nöten.",
+      "summary": "Psalm 46 ermutigt die Gläubigen, auf die Stärke und den Schutz Gottes zu vertrauen, insbesondere in Zeiten der Unsicherheit und Angst. Der Psalm beschreibt Gott als eine feste Burg, die uns in jeder Lebenslage Sicherheit bietet.",
+      "significance": "Die Botschaft dieses Psalms ist zeitlos und bietet Trost und Hoffnung für alle, die in Schwierigkeiten stecken. Er erinnert uns daran, dass wir uns auf Gott verlassen können, egal wie herausfordernd die Umstände auch sein mögen.",
+      "practice": "Um den Gehalt dieses Psalms zu verinnerlichen, können wir regelmäßig in Gebet und Meditation über Gottes Schutz nachdenken. Es kann hilfreich sein, Dankbarkeit für die Zeiten auszudrücken, in denen Gott uns beigestanden hat.",
+      "questions": [
+        "Wie erfahre ich Gottes Schutz in meinem Alltag?",
+        "In welchen Lebensbereichen fällt es mir schwer, Gott zu vertrauen?",
+        "Wie kann ich anderen von der Stärke Gottes erzählen?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-04-26",
+      "date": "2026-04-26",
+      "title": "Vertrauen in schwierigen Zeiten",
+      "headline": "Wie wir in Krisen auf Gott vertrauen können",
+      "worldFocus": "In vielen Teilen der Welt erleben Menschen Krisen, sei es durch Naturkatastrophen, Kriege oder persönliche Schicksalsschläge. Diese Herausforderungen stellen unseren Glauben oft auf die Probe und fordern uns heraus, in unserer Beziehung zu Gott zu wachsen.",
+      "faithPerspective": "Der christliche Glaube lehrt uns, dass Gott auch in schweren Zeiten bei uns ist. Durch das Vertrauen auf seine Verheißungen können wir Frieden finden, selbst wenn die Umstände uns Angst machen.",
+      "discipleshipImpulse": "Um im Glauben zu wachsen, ist es wichtig, in Krisenzeiten aktiv auf Gott zuzugehen. Dies kann durch Gebet, Bibelstudium und den Austausch mit anderen Gläubigen geschehen, die uns in unserem Glaubensweg unterstützen.",
+      "bibleVerses": [
+        "Jesaja 41,10",
+        "Römer 8,28",
+        "Philipper 4,6-7"
+      ],
+      "questions": [
+        "Wie gehe ich mit Angst und Unsicherheit um?",
+        "Was bedeutet es für mich, Gott als meinen Schutz zu sehen?",
+        "Wie kann ich meinen Glauben in Krisenzeiten stärken?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-04-26",
+      "date": "2026-04-26",
+      "topicTitle": "Vertrauen und Stärke in Krisenzeiten",
+      "introduction": "In Krisenzeiten ist es entscheidend, auf Gottes Verheißungen zu vertrauen und die eigene Glaubensstärke zu festigen. Die folgenden Bücher bieten wertvolle Einsichten und ermutigende Perspektiven.",
+      "recommendations": [
+        {
+          "title": "Gott ist mein Zufluchtsort",
+          "author": "Max Lucado",
+          "description": "Dieses Buch ermutigt dazu, in schwierigen Zeiten Zuflucht bei Gott zu suchen und seinen Frieden zu finden.",
+          "relevance": "Max Lucado vermittelt, wie wichtig es ist, in Krisen auf Gott zu vertrauen."
+        },
+        {
+          "title": "Die Kraft des Gebets",
+          "author": "Stormie Omartian",
+          "description": "Dieses Buch bietet praktische Tipps und Gebete, um in schwierigen Zeiten eine tiefere Verbindung zu Gott herzustellen.",
+          "relevance": "Es zeigt, wie Gebet helfen kann, in Krisen einen klaren Fokus auf Gott zu behalten."
+        }
+      ]
+    }
   }
 ]
