@@ -45,4 +45,5 @@ jobs:
             --max-time 60 \
             --request POST \
             --header "Authorization: Bearer $WEEKLY_FAITH_EMAIL_CRON_SECRET" \
+            --header "X-Weekly-Faith-Email-Secret: $WEEKLY_FAITH_EMAIL_CRON_SECRET" \
             "${SITE_URL%/}/api/internal/weekly-faith-email"

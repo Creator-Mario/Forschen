@@ -2,9 +2,17 @@ import { NextResponse } from 'next/server';
 import { getCurrentWochenthemaFresh, getUsersFresh, saveUser } from '@/lib/db';
 import { sendWeeklyFaithEmail } from '@/lib/email';
 
+function getProvidedSecret(req: Request): string | undefined {
+  return (
+    req.headers.get('x-weekly-faith-email-secret') ??
+    req.headers.get('x-cron-secret') ??
+    req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
+  )?.trim();
+}
+
 export async function POST(req: Request) {
   const expectedSecret = process.env.WEEKLY_FAITH_EMAIL_CRON_SECRET?.trim();
-  const providedSecret = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '').trim();
+  const providedSecret = getProvidedSecret(req);
 
   if (!expectedSecret) {
     return NextResponse.json({ error: 'WEEKLY_FAITH_EMAIL_CRON_SECRET fehlt.' }, { status: 503 });
