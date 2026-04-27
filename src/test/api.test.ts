@@ -958,6 +958,32 @@ describe('POST /api/internal/weekly-faith-email', () => {
 
     expect(res.status).toBe(503);
   });
+
+  it('accepts the dedicated cron header for hosted workflow calls', async () => {
+    vi.doMock('@/lib/db', () => ({
+      getCurrentWochenthemaFresh: vi.fn().mockResolvedValue({
+        id: '2026-W15',
+        week: '2026-W15',
+        title: 'Die Nachfolge',
+        introduction: 'Einführung',
+        bibleVerses: ['Markus 1,16-20'],
+        problemStatement: 'Vertiefung',
+        researchQuestions: ['Frage 1', 'Frage 2'],
+        status: 'published',
+      }),
+      getUsersFresh: vi.fn().mockResolvedValue([]),
+      saveUser: vi.fn(),
+    }));
+    vi.doMock('@/lib/email', () => ({ sendWeeklyFaithEmail: vi.fn() }));
+
+    const { POST } = await import('@/app/api/internal/weekly-faith-email/route');
+    const res = await POST(new Request('http://localhost/api/internal/weekly-faith-email', {
+      method: 'POST',
+      headers: { 'X-Weekly-Faith-Email-Secret': 'secret-123' },
+    }));
+
+    expect(res.status).toBe(200);
+  });
 });
 
 // ─── /api/admin/users – action validation / hard delete ─────────────────────
