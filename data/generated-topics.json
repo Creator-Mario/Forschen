@@ -730,5 +730,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-04-27",
+    "date": "2026-04-27",
+    "source": "ai",
+    "createdAt": "2026-04-27T02:04:38.296Z",
+    "promptVersion": "v2",
+    "psalm": {
+      "id": "psalm-2026-04-27",
+      "date": "2026-04-27",
+      "psalmReference": "Psalm 34, 18-19",
+      "title": "Gott ist nahe den gebrochenen Herzen",
+      "excerpt": "Der HERR ist nahe denen, die zerbrochenen Herzens sind.",
+      "summary": "In Psalm 34 wird die Nähe Gottes zu den leidenden Menschen betont. Der Psalmist spricht davon, dass Gott die Herzen heilt, die gebrochen sind, und dass er Trost in Zeiten der Not bietet. Diese Worte sind eine Erinnerung daran, dass wir in unseren schwierigsten Momenten nicht allein sind.",
+      "significance": "Die Botschaft dieses Psalms ist von zentraler Bedeutung für das christliche Leben. Sie ermutigt uns, unsere Sorgen und Schmerzen vor Gott zu bringen, der uns versteht und uns in unseren Schwierigkeiten beisteht. Es ist ein Aufruf, auf die Liebe und Barmherzigkeit Gottes zu vertrauen, besonders wenn wir uns verloren fühlen.",
+      "practice": "Wir können diesen Psalm als Ermutigung nutzen, um in der Stille zu beten und Gott um Heilung und Trost zu bitten. Es ist hilfreich, in Gemeinschaft mit anderen Gläubigen zu sein, die uns unterstützen und für uns beten. Zudem können wir auch aktiv nach Wegen suchen, anderen in ihrer Trauer beizustehen.",
+      "questions": [
+        "Wie erlebe ich die Nähe Gottes in schweren Zeiten?",
+        "Welche Rolle spielt das Gebet für mich, wenn ich mich gebrochen fühle?",
+        "Wie kann ich anderen Menschen in ihrer Trauer helfen?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-04-27",
+      "date": "2026-04-27",
+      "title": "Gott in der Trauer erfahren",
+      "headline": "Die Hoffnung in der Dunkelheit finden",
+      "worldFocus": "In vielen Teilen der Welt leiden Menschen unter Verlust, Krieg und Ungerechtigkeit. Diese Trauer kann zu einem Gefühl der Isolation führen, aber der Glaube bietet Hoffnung und Gemeinschaft. Wir sind eingeladen, diese Hoffnung zu teilen und Licht in die Dunkelheit zu bringen.",
+      "faithPerspective": "Der christliche Glaube lehrt uns, dass Gott auch in den dunkelsten Zeiten bei uns ist. Jesus selbst hat in seinem Leben Trauer und Schmerz erfahren und uns ein Beispiel gegeben, wie wir damit umgehen können. Durch den Glauben finden wir Trost und die Gewissheit, dass Gott alles zum Guten führt.",
+      "discipleshipImpulse": "Als Nachfolger Christi sind wir aufgerufen, Trauernden beizustehen und sie in ihrem Schmerz zu begleiten. Dies kann durch praktische Hilfe oder durch das Teilen von ermutigenden Worten geschehen. Indem wir uns um andere kümmern, leben wir den Glauben aktiv aus und zeigen die Liebe Gottes.",
+      "bibleVerses": [
+        "Matthäus 11, 28",
+        "2. Korinther 1, 3-4",
+        "Offenbarung 21, 4"
+      ],
+      "questions": [
+        "Wie kann ich in meinem Umfeld Trauernden begegnen?",
+        "Was bedeutet es für mich, dass Gott in meiner Trauer bei mir ist?",
+        "Wie kann ich die Hoffnung, die ich in Christus habe, mit anderen teilen?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-04-27",
+      "date": "2026-04-27",
+      "topicTitle": "Hoffnung in der Trauer",
+      "introduction": "In Zeiten der Trauer und des Verlustes kann es schwierig sein, Hoffnung zu finden. Diese Bücher bieten wertvolle Perspektiven und biblische Einsichten, die helfen, die Nähe Gottes in schwierigen Zeiten zu erleben.",
+      "recommendations": [
+        {
+          "title": "Wenn der Himmel weint",
+          "author": "Jörg Zink",
+          "description": "Ein Buch, das sich mit dem Schmerz und der Trauer auseinandersetzt und Wege aufzeigt, wie wir in Krisenzeiten Trost finden können.",
+          "relevance": "Es verbindet biblische Weisheit mit praktischen Erfahrungen und ermutigt dazu, die Gegenwart Gottes zu suchen."
+        },
+        {
+          "title": "Der Trost Gottes",
+          "author": "Philip Yancey",
+          "description": "Yancey untersucht, wie Gott in Trauer und Schmerz begegnet und bietet tiefe Einsichten, die den Glauben stärken können.",
+          "relevance": "Das Buch hilft, eine Perspektive auf Leiden zu entwickeln, die Hoffnung und Frieden in schwierigen Zeiten bietet."
+        }
+      ]
+    }
   }
 ]
