@@ -37,4 +37,14 @@ describe('config', () => {
     expect(siteDomain).toBe('www.flussdeslebens.live');
     expect(canonicalSiteUrl).toBe('https://www.flussdeslebens.live');
   });
+
+  it('falls back to the default canonical URL when SITE_URL is invalid', async () => {
+    process.env.SITE_DOMAIN = '';
+    process.env.SITE_URL = 'not-a-url';
+
+    const { canonicalSiteUrl, siteDomain } = await import('@/lib/config');
+
+    expect(siteDomain).toBe('www.flussdeslebens.live');
+    expect(canonicalSiteUrl).toBe('https://www.flussdeslebens.live');
+  });
 });
