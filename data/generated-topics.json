@@ -791,5 +791,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-04-28",
+    "date": "2026-04-28",
+    "source": "ai",
+    "createdAt": "2026-04-28T01:55:40.946Z",
+    "promptVersion": "v2",
+    "psalm": {
+      "id": "psalm-2026-04-28",
+      "date": "2026-04-28",
+      "psalmReference": "Psalm 37",
+      "title": "Vertraue auf den Herrn",
+      "excerpt": "Die Gerechten werden das Land besitzen.",
+      "summary": "Psalm 37 ermutigt uns, unser Vertrauen in den Herrn zu setzen, besonders in Zeiten der Bedrängnis. Der Psalmist hebt hervor, dass die Gerechten letztendlich belohnt werden, während die Bösen vergehen werden. Dies bietet Trost und Hoffnung in einer oft ungerechten Welt.",
+      "significance": "Dieser Psalm erinnert uns daran, dass Gott die Kontrolle hat und unser Leben lenkt. Er ermutigt uns, geduldig und treu zu sein, selbst wenn wir Schwierigkeiten erleben. Das Vertrauen auf Gott führt uns zu innerem Frieden und Sicherheit.",
+      "practice": "Um die Lehren dieses Psalms anzuwenden, sollten wir regelmäßig im Gebet und in der Schrift lesen, um unser Vertrauen zu stärken. Zudem ist es wichtig, uns aktiv um Gerechtigkeit zu bemühen und Gutes zu tun, auch wenn die Umstände herausfordernd sind.",
+      "questions": [
+        "Wie kann ich mein Vertrauen in Gott in schwierigen Zeiten stärken?",
+        "Welche Schritte kann ich unternehmen, um gerecht zu handeln?",
+        "Wie erlebe ich die Belohnungen, die Gott für die Gerechten verspricht?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-04-28",
+      "date": "2026-04-28",
+      "title": "Gottes Gerechtigkeit und unser Vertrauen",
+      "headline": "Vertrauen in Gottes Pläne",
+      "worldFocus": "In vielen Teilen der Welt sehen wir Ungerechtigkeit und Leid. Menschen kämpfen mit existenziellen Fragen und suchen nach Antworten. In solch herausfordernden Zeiten ist es wichtig, an Gottes Gerechtigkeit festzuhalten und darauf zu vertrauen, dass Er letztendlich alles zum Guten führen wird.",
+      "faithPerspective": "Der Glaube an Gottes Gerechtigkeit gibt uns die Kraft, auch in schwierigen Zeiten standhaft zu bleiben. Wir sind aufgerufen, unser Vertrauen in den lebendigen Gott zu setzen, der uns nie verlässt. Dies erfordert oft eine bewusste Entscheidung, auf das Gute zu hoffen, auch wenn die Umstände es nicht zeigen.",
+      "discipleshipImpulse": "Disziplin und Hingabe sind notwendig, um in unserem Glauben zu wachsen. Indem wir uns aktiv mit Gottes Wort auseinandersetzen, stärken wir unser Vertrauen und unsere Hoffnung. Dies fördert nicht nur unser persönliches Wachstum, sondern ermutigt auch andere, Gott zu vertrauen.",
+      "bibleVerses": [
+        "Römer 8,28",
+        "Sprüche 3,5-6",
+        "Jesaja 40,31"
+      ],
+      "questions": [
+        "Wie kann ich anderen von Gottes Gerechtigkeit erzählen?",
+        "Was bedeutet es für mich, in meinem Alltag auf Gott zu vertrauen?",
+        "Wie kann ich in meiner Gemeinde ein Vorbild für Vertrauen in Gott sein?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-04-28",
+      "date": "2026-04-28",
+      "topicTitle": "Vertrauen und Gerechtigkeit in der Bibel",
+      "introduction": "Die folgenden Buchempfehlungen helfen dabei, das Vertrauen in Gottes Gerechtigkeit zu vertiefen und die biblischen Prinzipien in unserem Leben anzuwenden. Sie bieten wertvolle Einsichten und praktische Anleitungen.",
+      "recommendations": [
+        {
+          "title": "Gott vertrauen in Krisenzeiten",
+          "author": "Max Lucado",
+          "description": "Dieses Buch bietet ermutigende Gedanken darüber, wie wir in schwierigen Zeiten unser Vertrauen auf Gott setzen können.",
+          "relevance": "Es hilft Lesern, inmitten von Herausforderungen Trost und Hoffnung zu finden."
+        },
+        {
+          "title": "Die Kraft des Glaubens",
+          "author": "Charles Stanley",
+          "description": "Stanley beleuchtet, wie der Glaube an Gott uns in schweren Zeiten stärken kann und ermutigt dazu, aktiv zu glauben.",
+          "relevance": "Dieses Buch bietet praktische Schritte, um den Glauben im Alltag zu leben."
+        }
+      ]
+    }
   }
 ]
