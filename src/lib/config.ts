@@ -12,6 +12,7 @@
  */
 
 const DEFAULT_SITE_DOMAIN = 'www.flussdeslebens.live';
+const DEFAULT_CANONICAL_SITE_URL = `https://${DEFAULT_SITE_DOMAIN}`;
 
 function stripWwwPrefix(host: string): string {
   return host.startsWith('www.') ? host.slice(4) : host;
@@ -24,13 +25,17 @@ function normalizeSiteDomain(domain: string | undefined): string {
     .replace(/^https?:\/\//, '')
     .replace(/\/.*$/, '');
 
+  if (!normalizedDomain) {
+    return DEFAULT_SITE_DOMAIN;
+  }
+
   return normalizedDomain === stripWwwPrefix(DEFAULT_SITE_DOMAIN)
     ? DEFAULT_SITE_DOMAIN
     : normalizedDomain;
 }
 
-function normalizeCanonicalSiteUrl(url: string, canonicalDomain: string): string {
-  const trimmedUrl = url.trim().replace(/\/$/, '');
+function normalizeCanonicalSiteUrl(url: string | undefined, canonicalDomain: string): string {
+  const trimmedUrl = url?.trim().replace(/\/$/, '') || DEFAULT_CANONICAL_SITE_URL;
 
   try {
     const normalizedUrl = new URL(trimmedUrl);
@@ -42,7 +47,7 @@ function normalizeCanonicalSiteUrl(url: string, canonicalDomain: string): string
 
     return normalizedUrl.toString().replace(/\/$/, '');
   } catch {
-    return trimmedUrl;
+    return DEFAULT_CANONICAL_SITE_URL;
   }
 }
 
