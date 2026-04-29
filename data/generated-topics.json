@@ -852,5 +852,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-04-29",
+    "date": "2026-04-29",
+    "source": "ai",
+    "createdAt": "2026-04-29T02:05:06.018Z",
+    "promptVersion": "v2",
+    "psalm": {
+      "id": "psalm-2026-04-29",
+      "date": "2026-04-29",
+      "psalmReference": "Psalm 37:5",
+      "title": "Vertraue auf den Herrn",
+      "excerpt": "Befiehl dem Herrn deine Wege und hoffe auf ihn.",
+      "summary": "In Psalm 37 wird uns die Bedeutung des Vertrauens auf Gott nahegebracht. Der Psalmist ermutigt uns, unsere Pläne und Sorgen in die Hände Gottes zu legen und auf seine Führung zu vertrauen.",
+      "significance": "Das Vertrauen auf den Herrn ist zentral für unseren Glauben. Es zeigt, dass wir Gott als die höchste Autorität anerkennen und ihm die Kontrolle über unser Leben überlassen.",
+      "practice": "Eine praktische Umsetzung dieses Verses könnte durch regelmäßiges Gebet geschehen, in dem wir unsere Sorgen und Pläne vor Gott bringen. Zudem könnten wir uns Zeit nehmen, um auf Gottes Führung in unserem Alltag zu hören.",
+      "questions": [
+        "Was bedeutet es für dich, deine Wege dem Herrn zu befehlen?",
+        "Wie kannst du in schwierigen Situationen mehr auf Gott vertrauen?",
+        "In welchen Bereichen deines Lebens fällt es dir schwer, Gott zu vertrauen?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-04-29",
+      "date": "2026-04-29",
+      "title": "Vertrauen in Gottes Führung",
+      "headline": "Wie wir auf Gottes Plan für unser Leben vertrauen können",
+      "worldFocus": "In einer Welt voller Unsicherheiten und Herausforderungen ist Vertrauen auf Gott mehr denn je gefragt. Viele Menschen suchen nach Orientierung und Halt, während sie sich durch die Schwierigkeiten des Lebens navigieren.",
+      "faithPerspective": "Aus einer christlichen Perspektive ist das Vertrauen auf Gott eine Einladung, die eigene Kontrolle aufzugeben und sich dem göttlichen Plan zu öffnen. Es bedeutet, dass wir unseren Glauben nicht nur in guten Zeiten leben, sondern auch in schweren Momenten auf Gott setzen.",
+      "discipleshipImpulse": "Disziplin im Glauben erfordert, dass wir uns täglich neu entscheiden, Gott zu vertrauen. Dies kann durch Gebet, Bibelstudium und den Austausch mit anderen Gläubigen geschehen, um uns gegenseitig im Glauben zu stärken.",
+      "bibleVerses": [
+        "Sprüche 3:5-6",
+        "Jeremia 29:11",
+        "Hebräer 11:1"
+      ],
+      "questions": [
+        "Welche Rolle spielt Vertrauen in deinem Glaubensleben?",
+        "Wie kannst du anderen helfen, auf Gottes Führung zu vertrauen?",
+        "Welche praktischen Schritte kannst du unternehmen, um dein Vertrauen in Gott zu stärken?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-04-29",
+      "date": "2026-04-29",
+      "topicTitle": "Vertrauen auf Gottes Führung",
+      "introduction": "Das Thema des Vertrauens in Gottes Führung ist entscheidend für unseren Glaubensweg. Die folgenden Bücher bieten tiefgreifende Einsichten und praktische Anleitungen, um Vertrauen in Gott zu entwickeln und zu stärken.",
+      "recommendations": [
+        {
+          "title": "Vertrauen auf Gott: Ein Wegweiser für die Seele",
+          "author": "Max Lucado",
+          "description": "Dieses Buch ermutigt Leser, in allen Lebenslagen auf Gott zu vertrauen und seine Versprechen zu verinnerlichen.",
+          "relevance": "Es bietet praktische Tipps und geistliche Einsichten, die helfen, im Glauben gestärkt zu werden."
+        },
+        {
+          "title": "Gott vertrauen: Ein Glaubensweg in unsicheren Zeiten",
+          "author": "Anne Wilson",
+          "description": "Ein ermutigendes Buch, das zeigt, wie man inmitten von Herausforderungen auf Gottes Führung vertraut.",
+          "relevance": "Es bietet ermutigende Geschichten und biblische Prinzipien, die den Leser dazu anregen, Gott zu vertrauen."
+        }
+      ]
+    }
   }
 ]
