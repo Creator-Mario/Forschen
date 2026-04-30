@@ -16,18 +16,20 @@ const pageMetadata = {
   keywords: ['Tageswort Archiv', 'Bibelarchiv'],
 } satisfies PageMetadataOptions;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const items = keepLatestItemsByDate(
+async function getArchivedTageswortItems() {
+  return keepLatestItemsByDate(
     (await getTageswortListFresh()).filter((item) => item.published),
   );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const items = await getArchivedTageswortItems();
 
   return createContentBackedPageMetadata(pageMetadata, items.length > 0);
 }
 
 export default async function TageswortArchivPage() {
-  const items = keepLatestItemsByDate(
-    (await getTageswortListFresh()).filter(item => item.published)
-  );
+  const items = await getArchivedTageswortItems();
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">

@@ -16,19 +16,23 @@ const pageMetadata = {
   keywords: ['Wochenthema Archiv', 'Themenarchiv'],
 } satisfies PageMetadataOptions;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const themes = keepLatestItemsByWeek(
-    (await getWochenthemaListFresh()).filter((theme) => theme.status === 'published' || theme.status === 'archived'),
+async function getArchivedThemes() {
+  return keepLatestItemsByWeek(
+    (await getWochenthemaListFresh()).filter(
+      (theme) => theme.status === 'published' || theme.status === 'archived',
+    ),
   );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const themes = await getArchivedThemes();
 
   return createContentBackedPageMetadata(pageMetadata, themes.length > 0);
 }
 
 export default async function WochenthemaArchivPage() {
   const currentDate = formatDate(new Date().toISOString());
-  const themes = keepLatestItemsByWeek(
-    (await getWochenthemaListFresh()).filter(t => t.status === 'published' || t.status === 'archived')
-  );
+  const themes = await getArchivedThemes();
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
