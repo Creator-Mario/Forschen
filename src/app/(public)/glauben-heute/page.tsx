@@ -4,7 +4,6 @@ import { formatDate } from '@/lib/utils';
 import { getTodayGlaubenHeuteThema } from '@/lib/generated-content';
 import CurrentTopicCard from '@/components/CurrentTopicCard';
 import SubmissionCta from '@/components/SubmissionCta';
-import AmpLink from '@/components/AmpLink';
 import { createCollectionPageStructuredData, createPageMetadata, serializeJsonLd } from '@/lib/seo';
 
 export const metadata: Metadata = createPageMetadata({
@@ -26,7 +25,6 @@ export default async function GlaubenHeutePage() {
 
   return (
     <>
-      <AmpLink path="/glauben-heute" />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

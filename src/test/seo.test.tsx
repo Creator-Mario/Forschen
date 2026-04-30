@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { metadata, websiteStructuredData } from '@/app/layout';
+import { metadata } from '@/app/layout';
 import { metadata as homeMetadata } from '@/app/(public)/page';
 import { metadata as tageswortMetadata } from '@/app/(public)/tageswort/page';
 import { metadata as forschungMetadata } from '@/app/(public)/forschung/page';
@@ -12,7 +12,7 @@ import robots from '@/app/robots';
 import sitemap from '@/app/sitemap';
 import { GET as getSiteWebmanifest } from '@/app/site.webmanifest/route';
 import { canonicalSiteUrl, googleSiteVerification, operatorName, siteName } from '@/lib/config';
-import { organizationStructuredData } from '@/lib/seo';
+import { organizationStructuredData, websiteStructuredData } from '@/lib/seo';
 
 describe('SEO metadata', () => {
   afterEach(() => {
@@ -166,6 +166,37 @@ describe('SEO metadata', () => {
             }),
           ]),
           destination: 'https://www.flussdeslebens.live/:path*',
+          permanent: true,
+        }),
+      ]),
+    );
+  });
+
+  it('permanently redirects legacy AMP URLs to their canonical pages', async () => {
+    const nextConfigModule = await import('../../next.config.js');
+    const nextConfig = nextConfigModule.default ?? nextConfigModule;
+    const redirects = await nextConfig.redirects();
+
+    expect(redirects).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          source: '/amp/wochenthema',
+          destination: '/wochenthema',
+          permanent: true,
+        }),
+        expect.objectContaining({
+          source: '/amp/tageswort',
+          destination: '/tageswort',
+          permanent: true,
+        }),
+        expect.objectContaining({
+          source: '/amp/glauben-heute',
+          destination: '/glauben-heute',
+          permanent: true,
+        }),
+        expect.objectContaining({
+          source: '/amp/psalmen',
+          destination: '/psalmen',
           permanent: true,
         }),
       ]),
