@@ -48,20 +48,21 @@ export function getCanonicalHostRedirectDestination({
     const apexHost = getApexHost(canonicalHost);
     const redirectUrl = new URL(requestUrl);
     const requestUrlHost = normalizeHost(redirectUrl.host);
-    const effectiveRequestHost = normalizedRequestHost || requestUrlHost;
+    const resolvedRequestHost = normalizedRequestHost || requestUrlHost;
 
     if (!canonicalHost || canonicalHost === apexHost) {
       return null;
     }
 
-    if (requestUrlHost === canonicalHost || effectiveRequestHost !== apexHost) {
+    if (requestUrlHost === canonicalHost || resolvedRequestHost !== apexHost) {
       return null;
     }
 
     redirectUrl.protocol = canonicalUrl.protocol;
     redirectUrl.host = canonicalUrl.host;
+    const redirectDestination = redirectUrl.toString();
 
-    return redirectUrl.toString() === requestUrl ? null : redirectUrl.toString();
+    return redirectDestination === requestUrl ? null : redirectDestination;
   } catch {
     return null;
   }
