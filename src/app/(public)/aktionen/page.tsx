@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic';
-
 import type { Metadata } from 'next';
 import { getApprovedAktionen } from '@/lib/db';
 import { formatDate } from '@/lib/utils';

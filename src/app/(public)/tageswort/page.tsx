@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic';
-
 import type { Metadata } from 'next';
 import BibleVerseCard from '@/components/BibleVerseCard';
 import SubmissionCta from '@/components/SubmissionCta';

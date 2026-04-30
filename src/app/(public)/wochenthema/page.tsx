@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic';
-
 import type { Metadata } from 'next';
 import { getCurrentWochenthemaFresh } from '@/lib/db';
 import { getApprovedForschung, getApprovedVideos } from '@/lib/db';
