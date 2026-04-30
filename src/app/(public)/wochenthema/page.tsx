@@ -4,7 +4,6 @@ import { getApprovedForschung, getApprovedVideos } from '@/lib/db';
 import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
 import SubmissionCta from '@/components/SubmissionCta';
-import AmpLink from '@/components/AmpLink';
 import { formatDate } from '@/lib/utils';
 import { createCollectionPageStructuredData, createPageMetadata, serializeJsonLd } from '@/lib/seo';
 
@@ -53,7 +52,6 @@ export default async function WochenthemaPage() {
 
   return (
     <>
-      <AmpLink path="/wochenthema" />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

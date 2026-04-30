@@ -62,6 +62,13 @@ function getApexHost(host) {
   return stripWwwPrefix(host);
 }
 
+const AMP_REDIRECTS = [
+  ['/amp/glauben-heute', '/glauben-heute'],
+  ['/amp/psalmen', '/psalmen'],
+  ['/amp/tageswort', '/tageswort'],
+  ['/amp/wochenthema', '/wochenthema'],
+];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
@@ -73,23 +80,29 @@ const nextConfig = {
     const canonicalHost = getCanonicalHost();
     const apexHost = getApexHost(canonicalHost);
 
+    const redirects = AMP_REDIRECTS.map(([source, destination]) => ({
+      source,
+      destination,
+      permanent: true,
+    }));
+
     if (!canonicalHost || canonicalHost === apexHost) {
-      return [];
+      return redirects;
     }
 
-    return [
-      {
-        source: '/:path*',
-        has: [
-          {
-            type: 'host',
-            value: apexHost,
-          },
-        ],
-        destination: `${canonicalOrigin}/:path*`,
-        permanent: true,
-      },
-    ];
+    redirects.push({
+      source: '/:path*',
+      has: [
+        {
+          type: 'host',
+          value: apexHost,
+        },
+      ],
+      destination: `${canonicalOrigin}/:path*`,
+      permanent: true,
+    });
+
+    return redirects;
   },
 };
 

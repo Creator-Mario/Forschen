@@ -172,6 +172,37 @@ describe('SEO metadata', () => {
     );
   });
 
+  it('permanently redirects legacy AMP URLs to their canonical pages', async () => {
+    const nextConfigModule = await import('../../next.config.js');
+    const nextConfig = nextConfigModule.default ?? nextConfigModule;
+    const redirects = await nextConfig.redirects();
+
+    expect(redirects).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          source: '/amp/wochenthema',
+          destination: '/wochenthema',
+          permanent: true,
+        }),
+        expect.objectContaining({
+          source: '/amp/tageswort',
+          destination: '/tageswort',
+          permanent: true,
+        }),
+        expect.objectContaining({
+          source: '/amp/glauben-heute',
+          destination: '/glauben-heute',
+          permanent: true,
+        }),
+        expect.objectContaining({
+          source: '/amp/psalmen',
+          destination: '/psalmen',
+          permanent: true,
+        }),
+      ]),
+    );
+  });
+
   it('keeps the redirect target on the canonical www host when SITE_URL is configured without www', async () => {
     vi.stubEnv('SITE_URL', 'https://flussdeslebens.live/');
 
