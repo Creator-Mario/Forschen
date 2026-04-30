@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Logo from './Logo';
 import { operatorName, operatorEmail, operatorPhoneE164 } from '@/lib/config';
+import { footerPageGroups } from '@/lib/public-pages';
 
 export default function Footer() {
   return (
@@ -48,51 +49,34 @@ export default function Footer() {
               </p>
             </div>
 
-            {/* Pages column */}
-            <div>
-              <h3
-                className="font-bold text-white mb-4 text-sm uppercase tracking-widest"
-                style={{ color: '#fbbf24' }}
-              >
-                Seiten
-              </h3>
-              <ul className="text-sm space-y-2">
-                {[
-                  { href: '/vision', label: 'Unsere Vision' },
-                  { href: '/tageswort', label: 'Tageswort' },
-                  { href: '/wochenthema', label: 'Wochenthema' },
-                  { href: '/thesen', label: 'Thesen' },
-                  { href: '/forschung', label: 'Bibelforschung' },
-                ].map(({ href, label }) => (
-                  <li key={href}>
-                    <Link href={href} className="text-blue-200 hover:text-white transition-colors flex items-center gap-2">
-                      <span className="text-blue-400">›</span> {label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {footerPageGroups.map((group) => (
+              <div key={group.title}>
+                <h3
+                  className="font-bold text-white mb-4 text-sm uppercase tracking-widest"
+                  style={{ color: '#fbbf24' }}
+                >
+                  {group.title}
+                </h3>
+                <ul className="text-sm space-y-2">
+                  {group.links.map(({ href, label }) => (
+                    <li key={href}>
+                      <Link href={href} className="text-blue-200 hover:text-white transition-colors flex items-center gap-2">
+                        <span className="text-blue-400">›</span> {label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
 
-            {/* Legal column */}
             <div>
               <h3
                 className="font-bold text-white mb-4 text-sm uppercase tracking-widest"
                 style={{ color: '#fbbf24' }}
               >
-                Rechtliches
+                Kontakt
               </h3>
               <ul className="text-sm space-y-2">
-                {[
-                  { href: '/datenschutz', label: 'Datenschutz' },
-                  { href: '/impressum', label: 'Impressum' },
-                  { href: '/spenden', label: 'Unterstützen' },
-                ].map(({ href, label }) => (
-                  <li key={href}>
-                    <Link href={href} className="text-blue-200 hover:text-white transition-colors flex items-center gap-2">
-                      <span className="text-blue-400">›</span> {label}
-                    </Link>
-                  </li>
-                ))}
                 <li>
                   <a
                     href={`mailto:${operatorEmail}`}
