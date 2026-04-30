@@ -32,6 +32,16 @@ describe('request routing helpers', () => {
     ).toBeNull();
   });
 
+  it('does not create a redirect loop when a proxy forwards the apex host for an already canonical URL', () => {
+    expect(
+      getCanonicalHostRedirectDestination({
+        requestUrl: 'https://www.flussdeslebens.live/wochenthema',
+        requestHost: 'flussdeslebens.live',
+        canonicalSiteUrl: 'https://www.flussdeslebens.live',
+      }),
+    ).toBeNull();
+  });
+
   it('protects only the intended authenticated routes', () => {
     expect(isProtectedPath('/admin')).toBe(true);
     expect(isProtectedPath('/admin/system')).toBe(true);

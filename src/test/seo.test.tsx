@@ -155,28 +155,6 @@ describe('SEO metadata', () => {
     expect(nextConfig.images?.unoptimized).toBe(true);
   });
 
-  it('redirects the apex domain to the canonical www host', async () => {
-    const nextConfigModule = await import('../../next.config.js');
-    const nextConfig = nextConfigModule.default ?? nextConfigModule;
-    const redirects = await nextConfig.redirects();
-
-    expect(redirects).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          source: '/:path*',
-          has: expect.arrayContaining([
-            expect.objectContaining({
-              type: 'host',
-              value: 'flussdeslebens.live',
-            }),
-          ]),
-          destination: 'https://www.flussdeslebens.live/:path*',
-          permanent: true,
-        }),
-      ]),
-    );
-  });
-
   it('permanently redirects legacy AMP URLs to their canonical pages', async () => {
     const nextConfigModule = await import('../../next.config.js');
     const nextConfig = nextConfigModule.default ?? nextConfigModule;
@@ -208,19 +186,12 @@ describe('SEO metadata', () => {
     );
   });
 
-  it('keeps the redirect target on the canonical www host when SITE_URL is configured without www', async () => {
-    vi.stubEnv('SITE_URL', 'https://flussdeslebens.live/');
-
+  it('keeps next.config limited to the fixed AMP canonical redirects', async () => {
     const nextConfigModule = await import('../../next.config.js');
     const nextConfig = nextConfigModule.default ?? nextConfigModule;
     const redirects = await nextConfig.redirects();
 
-    expect(redirects).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          destination: 'https://www.flussdeslebens.live/:path*',
-        }),
-      ]),
-    );
+    expect(redirects).toHaveLength(4);
+    expect(redirects.every((redirect) => !('has' in redirect))).toBe(true);
   });
 });
