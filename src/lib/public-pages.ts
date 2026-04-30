@@ -1,3 +1,14 @@
+import { keepLatestItemsByDate, keepLatestItemsByWeek } from '@/lib/archive-window';
+import {
+  getApprovedAktionen,
+  getApprovedForschung,
+  getApprovedThesen,
+  getApprovedVideos,
+  getCurrentWochenthemaFresh,
+  getTageswortListFresh,
+  getWochenthemaListFresh,
+} from '@/lib/db';
+
 export const publicIndexablePages = [
   { href: '/', label: 'Startseite', changeFrequency: 'daily', priority: 1 },
   { href: '/vision', label: 'Unsere Vision', changeFrequency: 'monthly', priority: 0.9 },
@@ -20,6 +31,38 @@ export const publicIndexablePages = [
   { href: '/impressum', label: 'Impressum', changeFrequency: 'yearly', priority: 0.3 },
   { href: '/datenschutz', label: 'Datenschutz', changeFrequency: 'yearly', priority: 0.3 },
 ] as const;
+
+type PublicIndexablePage = (typeof publicIndexablePages)[number];
+
+const sitemapPageIndexabilityChecks: Partial<
+  Record<PublicIndexablePage['href'], () => boolean | Promise<boolean>>
+> = {
+  '/aktionen': () => getApprovedAktionen().length > 0,
+  '/forschung': () => getApprovedForschung().length > 0,
+  '/tageswort': async () => Boolean((await getTageswortListFresh()).find((item) => item.published)),
+  '/tageswort/archiv': async () =>
+    keepLatestItemsByDate((await getTageswortListFresh()).filter((item) => item.published)).length > 0,
+  '/thesen': () => getApprovedThesen().length > 0,
+  '/videos': () => getApprovedVideos().length > 0,
+  '/wochenthema': async () => Boolean(await getCurrentWochenthemaFresh()),
+  '/wochenthema/archiv': async () =>
+    keepLatestItemsByWeek(
+      (await getWochenthemaListFresh()).filter(
+        (theme) => theme.status === 'published' || theme.status === 'archived',
+      ),
+    ).length > 0,
+};
+
+export async function getSitemapPublicPages(): Promise<PublicIndexablePage[]> {
+  const pages = await Promise.all(
+    publicIndexablePages.map(async (page) => {
+      const isIndexable = await sitemapPageIndexabilityChecks[page.href]?.();
+      return isIndexable === false ? null : page;
+    }),
+  );
+
+  return pages.filter((page): page is PublicIndexablePage => page !== null);
+}
 
 export const footerPageGroups = [
   {

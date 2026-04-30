@@ -3,14 +3,23 @@ import { getApprovedForschung, getWochenthemaListFresh } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
-import { createCollectionPageStructuredData, createPageMetadata, serializeJsonLd } from '@/lib/seo';
+import {
+  createCollectionPageStructuredData,
+  createContentBackedPageMetadata,
+  serializeJsonLd,
+  type PageMetadataOptions,
+} from '@/lib/seo';
 
-export const metadata: Metadata = createPageMetadata({
+const pageMetadata = {
   title: 'Bibelforschung und Forschungsbeiträge',
   description: 'Lies freigegebene Forschungsbeiträge zu Tageswort, Psalmen und Wochenthemen aus der christlichen Gemeinschaft.',
   path: '/forschung',
   keywords: ['Bibelforschung', 'christliche Forschung', 'Wochenthema Beiträge', 'theologische Beiträge'],
-});
+} satisfies PageMetadataOptions;
+
+export function generateMetadata(): Metadata {
+  return createContentBackedPageMetadata(pageMetadata, getApprovedForschung().length > 0);
+}
 
 export default async function ForschungPage() {
   const beitraege = getApprovedForschung();

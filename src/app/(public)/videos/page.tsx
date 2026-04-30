@@ -2,14 +2,23 @@ import type { Metadata } from 'next';
 import { getApprovedVideos, getWochenthemaListFresh } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
-import { createCollectionPageStructuredData, createPageMetadata, serializeJsonLd } from '@/lib/seo';
+import {
+  createCollectionPageStructuredData,
+  createContentBackedPageMetadata,
+  serializeJsonLd,
+  type PageMetadataOptions,
+} from '@/lib/seo';
 
-export const metadata: Metadata = createPageMetadata({
+const pageMetadata = {
   title: 'Christliche Videos und Bibelforschung',
   description: 'Entdecke freigegebene christliche Videos, thematische Impulse und Videobeiträge aus der Bibelforschungs-Gemeinschaft.',
   path: '/videos',
   keywords: ['christliche Videos', 'Bibelforschung Videos', 'Gemeinschaftsvideos', 'theologische Impulse'],
-});
+} satisfies PageMetadataOptions;
+
+export function generateMetadata(): Metadata {
+  return createContentBackedPageMetadata(pageMetadata, getApprovedVideos().length > 0);
+}
 
 export default async function VideosPage() {
   const videos = getApprovedVideos();

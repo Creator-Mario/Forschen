@@ -2,14 +2,23 @@ import type { Metadata } from 'next';
 import ThesisCard from '@/components/ThesisCard';
 import { getApprovedThesen } from '@/lib/db';
 import Link from 'next/link';
-import { createCollectionPageStructuredData, createPageMetadata, serializeJsonLd } from '@/lib/seo';
+import {
+  createCollectionPageStructuredData,
+  createContentBackedPageMetadata,
+  serializeJsonLd,
+  type PageMetadataOptions,
+} from '@/lib/seo';
 
-export const metadata: Metadata = createPageMetadata({
+const pageMetadata = {
   title: 'Theologische Thesen und Glaubensfragen',
   description: 'Lies veröffentlichte theologische Thesen, Glaubensfragen und zugespitzte Kernaussagen aus der Gemeinschaft.',
   path: '/thesen',
   keywords: ['Thesen', 'Theologie', 'Glaubensfragen', 'theologische Diskussion'],
-});
+} satisfies PageMetadataOptions;
+
+export function generateMetadata(): Metadata {
+  return createContentBackedPageMetadata(pageMetadata, getApprovedThesen().length > 0);
+}
 
 export default function ThesenPage() {
   const thesen = getApprovedThesen();

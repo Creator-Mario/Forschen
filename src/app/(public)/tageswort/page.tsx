@@ -4,14 +4,21 @@ import SubmissionCta from '@/components/SubmissionCta';
 import { getTodayTageswortFresh } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
-import { createPageMetadata } from '@/lib/seo';
+import {
+  createContentBackedPageMetadata,
+  type PageMetadataOptions,
+} from '@/lib/seo';
 
-export const metadata: Metadata = createPageMetadata({
+const pageMetadata = {
   title: 'Tageswort',
   description: 'Entdecke das aktuelle Tageswort mit Bibelvers, Auslegung und Forschungsfragen für den Tag.',
   path: '/tageswort',
   keywords: ['Tageswort', 'Bibelvers des Tages', 'Auslegung'],
-});
+} satisfies PageMetadataOptions;
+
+export async function generateMetadata(): Promise<Metadata> {
+  return createContentBackedPageMetadata(pageMetadata, Boolean(await getTodayTageswortFresh()));
+}
 
 export default async function TageswortPage() {
   const tageswort = await getTodayTageswortFresh();
