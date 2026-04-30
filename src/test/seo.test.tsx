@@ -12,6 +12,7 @@ import robots from '@/app/robots';
 import sitemap from '@/app/sitemap';
 import { GET as getSiteWebmanifest } from '@/app/site.webmanifest/route';
 import { canonicalSiteUrl, googleSiteVerification, operatorName, siteName } from '@/lib/config';
+import { publicIndexablePages } from '@/lib/public-pages';
 import { organizationStructuredData, websiteStructuredData } from '@/lib/seo';
 
 describe('SEO metadata', () => {
@@ -108,13 +109,17 @@ describe('SEO metadata', () => {
       ]),
     });
 
+    expect(sitemapEntries).toHaveLength(publicIndexablePages.length);
     expect(sitemapEntries).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ url: `${canonicalSiteUrl}/` }),
-        expect.objectContaining({ url: `${canonicalSiteUrl}/wochenthema` }),
-        expect.objectContaining({ url: `${canonicalSiteUrl}/forschung` }),
-        expect.objectContaining({ url: `${canonicalSiteUrl}/videos` }),
-      ]),
+      expect.arrayContaining(
+        publicIndexablePages.map((page) =>
+          expect.objectContaining({
+            url: `${canonicalSiteUrl}${page.href}`,
+            changeFrequency: page.changeFrequency,
+            priority: page.priority,
+          }),
+        ),
+      ),
     );
     expect(sitemapEntries.some((entry) => entry.url.includes('/amp/'))).toBe(false);
     expect(sitemapEntries.some((entry) => entry.url.endsWith('/registrieren'))).toBe(false);

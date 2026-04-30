@@ -76,6 +76,20 @@ describe('Footer', () => {
 
     expect(screen.getByText(/Entwickelt von Mario Reiner Denzer/i)).toBeInTheDocument();
   });
+
+  it('links every indexable public page from the footer', async () => {
+    const { publicIndexablePages } = await import('@/lib/public-pages');
+    const { default: Footer } = await import('@/components/Footer');
+    render(React.createElement(Footer));
+
+    for (const page of publicIndexablePages) {
+      expect(
+        screen
+          .getAllByRole('link')
+          .find((link) => link.getAttribute('href') === page.href && link.textContent?.includes(page.label)),
+      ).toBeTruthy();
+    }
+  });
 });
 
 describe('UserAvatar', () => {
