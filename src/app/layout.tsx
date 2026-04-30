@@ -11,26 +11,10 @@ import {
   defaultSeoKeywords,
   organizationStructuredData,
   serializeJsonLd,
+  websiteStructuredData,
 } from '@/lib/seo';
 
 const siteDescription = defaultSeoDescription;
-
-export const websiteStructuredData = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  '@id': `${canonicalSiteUrl}#website`,
-  name: siteName,
-  alternateName: 'Der Fluss des Lebens – Freie christliche Bibelforschung',
-  url: canonicalSiteUrl,
-  description: siteDescription,
-  inLanguage: 'de-DE',
-  publisher: {
-    '@type': 'Organization',
-    '@id': `${canonicalSiteUrl}#organization`,
-    name: operatorName,
-    url: canonicalSiteUrl,
-  },
-} as const;
 
 export const metadata: Metadata = {
   metadataBase: new URL(canonicalSiteUrl),

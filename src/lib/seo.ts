@@ -174,3 +174,20 @@ export const organizationStructuredData = {
     },
   ],
 } as const;
+
+export const websiteStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${canonicalSiteUrl}#website`,
+  name: siteName,
+  alternateName: 'Der Fluss des Lebens – Freie christliche Bibelforschung',
+  url: canonicalSiteUrl,
+  description: defaultSeoDescription,
+  inLanguage: 'de-DE',
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${canonicalSiteUrl}#organization`,
+    name: operatorName,
+    url: canonicalSiteUrl,
+  },
+} as const;

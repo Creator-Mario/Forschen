@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { metadata, websiteStructuredData } from '@/app/layout';
+import { metadata } from '@/app/layout';
 import { metadata as homeMetadata } from '@/app/(public)/page';
 import { metadata as tageswortMetadata } from '@/app/(public)/tageswort/page';
 import { metadata as forschungMetadata } from '@/app/(public)/forschung/page';
@@ -12,7 +12,7 @@ import robots from '@/app/robots';
 import sitemap from '@/app/sitemap';
 import { GET as getSiteWebmanifest } from '@/app/site.webmanifest/route';
 import { canonicalSiteUrl, googleSiteVerification, operatorName, siteName } from '@/lib/config';
-import { organizationStructuredData } from '@/lib/seo';
+import { organizationStructuredData, websiteStructuredData } from '@/lib/seo';
 
 describe('SEO metadata', () => {
   afterEach(() => {
