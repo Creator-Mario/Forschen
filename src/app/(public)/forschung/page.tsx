@@ -1,12 +1,8 @@
-export const dynamic = 'force-dynamic';
-
 import type { Metadata } from 'next';
 import { getApprovedForschung, getWochenthemaListFresh } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
 import { createCollectionPageStructuredData, createPageMetadata, serializeJsonLd } from '@/lib/seo';
 
 export const metadata: Metadata = createPageMetadata({
@@ -17,7 +13,6 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default async function ForschungPage() {
-  const session = await getServerSession(authOptions);
   const beitraege = getApprovedForschung();
   const themen = (await getWochenthemaListFresh()).filter(t => t.status === 'published');
   const themenById = new Map(themen.map(theme => [theme.id, theme]));
@@ -42,30 +37,24 @@ export default async function ForschungPage() {
           <h1 className="text-3xl font-bold text-blue-800 mb-2">Bibelforschung und Forschungsbeiträge</h1>
           <p className="text-gray-500">Freigegebene Beiträge zu Tageswort, Psalmen, Wochenthemen und christlichen Glaubensfragen</p>
         </div>
-        {session ? (
+        <div className="flex flex-wrap items-center gap-3">
           <Link href="/forschung/beitraege" className="bg-blue-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
             + Beitrag verfassen
           </Link>
-        ) : (
-          <div className="flex flex-wrap gap-3">
-            <Link href="/login" className="bg-blue-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
-              Anmelden
-            </Link>
-            <Link href="/registrieren" className="border border-blue-200 text-blue-800 px-4 py-2 rounded-lg text-sm hover:bg-blue-50 transition-colors">
-              Kostenlos registrieren
-            </Link>
-          </div>
-        )}
+          <Link href="/registrieren" className="border border-blue-200 text-blue-800 px-4 py-2 rounded-lg text-sm hover:bg-blue-50 transition-colors">
+            Kostenlos registrieren
+          </Link>
+        </div>
       </div>
 
-      {!session && (
-        <div className="mb-8 rounded-xl border border-blue-100 bg-blue-50 p-5">
-          <h2 className="font-semibold text-blue-900 mb-2">Öffentlich lesen, als Mitglied selbst beitragen</h2>
-          <p className="text-sm text-gray-700 leading-relaxed">
-            Diese Seite zeigt freigegebene Forschungsbeiträge öffentlich an. Nach der Anmeldung kannst du eigene Forschung zu Tageswort, Psalmen und Wochenthemen einreichen. Jeder Beitrag geht vorher in die Moderation.
-          </p>
-        </div>
-      )}
+      <div className="mb-8 rounded-xl border border-blue-100 bg-blue-50 p-5">
+        <h2 className="font-semibold text-blue-900 mb-2">Öffentlich lesen, mit Anmeldung selbst beitragen</h2>
+        <p className="text-sm text-gray-700 leading-relaxed">
+          Diese Seite zeigt freigegebene Forschungsbeiträge öffentlich an. Eigene Forschung zu
+          Tageswort, Psalmen und Wochenthemen kannst du nach der Anmeldung einreichen. Jeder
+          Beitrag geht vor der Veröffentlichung in die Moderation.
+        </p>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-5">
@@ -94,6 +83,9 @@ export default async function ForschungPage() {
           )) : (
             <div className="text-center py-12 text-gray-500">
               <p>Noch keine Forschungsbeiträge verfügbar.</p>
+              <Link href="/forschung/beitraege" className="mt-4 inline-block text-blue-600 hover:text-blue-800 transition-colors">
+                Beitrag verfassen →
+              </Link>
             </div>
           )}
         </div>

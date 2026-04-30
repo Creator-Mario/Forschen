@@ -116,6 +116,7 @@ describe('SEO metadata', () => {
         expect.objectContaining({ url: `${canonicalSiteUrl}/videos` }),
       ]),
     );
+    expect(sitemapEntries.some((entry) => entry.url.includes('/amp/'))).toBe(false);
     expect(sitemapEntries.some((entry) => entry.url.endsWith('/registrieren'))).toBe(false);
     expect(sitemapEntries.every((entry) => !('lastModified' in entry))).toBe(true);
   });

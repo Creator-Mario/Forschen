@@ -266,19 +266,15 @@ describe('VideosPage', () => {
   beforeEach(() => vi.resetModules());
 
   it('renders the Videos heading', async () => {
-    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
-    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
     vi.doMock('@/lib/db', () => ({ getApprovedVideos: vi.fn().mockReturnValue([]), getWochenthemaListFresh: vi.fn().mockResolvedValue([]) }));
     const { default: VideosPage } = await import('@/app/(public)/videos/page');
     const jsx = await VideosPage();
     render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByRole('heading', { name: /Videos/i, level: 1 })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /^Anmelden$/i })).toHaveAttribute('href', '/login');
+    expect(screen.getByRole('link', { name: /\+ Video teilen/i })).toHaveAttribute('href', '/videos/hochladen');
   });
 
   it('shows the linked theme title for videos', async () => {
-    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', name: 'Test', role: 'USER' } }) }));
-    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
     vi.doMock('@/lib/db', () => ({
       getApprovedVideos: vi.fn().mockReturnValue([
         { id: 'v1', title: 'Video', description: 'Beschreibung', url: 'https://example.com', authorName: 'Anna', createdAt: '2026-04-11T00:00:00Z', wochenthemaId: 'w1', status: 'published' },
@@ -460,19 +456,15 @@ describe('ForschungPage', () => {
   beforeEach(() => vi.resetModules());
 
   it('renders the Forschung heading', async () => {
-    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
-    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
     vi.doMock('@/lib/db', () => ({ getApprovedForschung: vi.fn().mockReturnValue([]), getWochenthemaListFresh: vi.fn().mockResolvedValue([]) }));
     const { default: ForschungPage } = await import('@/app/(public)/forschung/page');
     const jsx = await ForschungPage();
     render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByRole('heading', { name: /Forschung/i, level: 1 })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /^Anmelden$/i })).toHaveAttribute('href', '/login');
+    expect(screen.getByRole('link', { name: /\+ Beitrag verfassen/i })).toHaveAttribute('href', '/forschung/beitraege');
   });
 
   it('shows the linked theme title for research contributions', async () => {
-    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', name: 'Test', role: 'USER' } }) }));
-    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
     vi.doMock('@/lib/db', () => ({
       getApprovedForschung: vi.fn().mockReturnValue([
         { id: 'f1', userId: 'u1', authorName: 'Alice', title: 'Beitrag', content: 'Inhalt', bibleReference: '', wochenthemaId: 'w1', status: 'published', createdAt: '2026-04-11T00:00:00Z' },

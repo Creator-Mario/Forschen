@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic';
-
 import type { Metadata } from 'next';
 import ThesisCard from '@/components/ThesisCard';
 import { getApprovedThesen } from '@/lib/db';
