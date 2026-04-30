@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import ThesisCard from '@/components/ThesisCard';
-import { getApprovedThesen } from '@/lib/db';
+import { getApprovedThesen, getApprovedThesenFresh } from '@/lib/db';
 import Link from 'next/link';
 import {
   createCollectionPageStructuredData,
@@ -16,8 +16,8 @@ const pageMetadata = {
   keywords: ['Thesen', 'Theologie', 'Glaubensfragen', 'theologische Diskussion'],
 } satisfies PageMetadataOptions;
 
-export function generateMetadata(): Metadata {
-  return createContentBackedPageMetadata(pageMetadata, getApprovedThesen().length > 0);
+export async function generateMetadata(): Promise<Metadata> {
+  return createContentBackedPageMetadata(pageMetadata, (await getApprovedThesenFresh()).length > 0);
 }
 
 export default function ThesenPage() {

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getApprovedAktionen } from '@/lib/db';
+import { getApprovedAktionen, getApprovedAktionenFresh } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import {
@@ -14,8 +14,8 @@ const pageMetadata = {
   keywords: ['Aktionen', 'christliche Treffen', 'Veranstaltungen'],
 } satisfies PageMetadataOptions;
 
-export function generateMetadata(): Metadata {
-  return createContentBackedPageMetadata(pageMetadata, getApprovedAktionen().length > 0);
+export async function generateMetadata(): Promise<Metadata> {
+  return createContentBackedPageMetadata(pageMetadata, (await getApprovedAktionenFresh()).length > 0);
 }
 
 export default function AktionenPage() {

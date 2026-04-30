@@ -1,5 +1,9 @@
 import type { Metadata } from 'next';
-import { getApprovedForschung, getWochenthemaListFresh } from '@/lib/db';
+import {
+  getApprovedForschung,
+  getApprovedForschungFresh,
+  getWochenthemaListFresh,
+} from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
@@ -17,8 +21,8 @@ const pageMetadata = {
   keywords: ['Bibelforschung', 'christliche Forschung', 'Wochenthema Beiträge', 'theologische Beiträge'],
 } satisfies PageMetadataOptions;
 
-export function generateMetadata(): Metadata {
-  return createContentBackedPageMetadata(pageMetadata, getApprovedForschung().length > 0);
+export async function generateMetadata(): Promise<Metadata> {
+  return createContentBackedPageMetadata(pageMetadata, (await getApprovedForschungFresh()).length > 0);
 }
 
 export default async function ForschungPage() {

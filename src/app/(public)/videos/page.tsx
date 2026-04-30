@@ -1,5 +1,9 @@
 import type { Metadata } from 'next';
-import { getApprovedVideos, getWochenthemaListFresh } from '@/lib/db';
+import {
+  getApprovedVideos,
+  getApprovedVideosFresh,
+  getWochenthemaListFresh,
+} from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import {
@@ -16,8 +20,8 @@ const pageMetadata = {
   keywords: ['christliche Videos', 'Bibelforschung Videos', 'Gemeinschaftsvideos', 'theologische Impulse'],
 } satisfies PageMetadataOptions;
 
-export function generateMetadata(): Metadata {
-  return createContentBackedPageMetadata(pageMetadata, getApprovedVideos().length > 0);
+export async function generateMetadata(): Promise<Metadata> {
+  return createContentBackedPageMetadata(pageMetadata, (await getApprovedVideosFresh()).length > 0);
 }
 
 export default async function VideosPage() {

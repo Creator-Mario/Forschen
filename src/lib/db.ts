@@ -339,8 +339,14 @@ export async function saveGeneratedTopicBundle(entry: GeneratedTopicBundle): Pro
 export function getThesen(): These[] {
   return readJson<These>('thesen.json');
 }
+export async function getThesenFresh(): Promise<These[]> {
+  return readJsonFresh<These>('thesen.json');
+}
 export function getApprovedThesen(): These[] {
   return getThesen().filter(t => t.status === 'approved' || t.status === 'published');
+}
+export async function getApprovedThesenFresh(): Promise<These[]> {
+  return (await getThesenFresh()).filter(t => t.status === 'approved' || t.status === 'published');
 }
 export function getTheseById(id: string): These | undefined {
   return getThesen().find(t => t.id === id);
@@ -357,8 +363,14 @@ export async function saveThese(these: These): Promise<void> {
 export function getForschung(): ForschungsBeitrag[] {
   return readJson<ForschungsBeitrag>('forschung.json');
 }
+export async function getForschungFresh(): Promise<ForschungsBeitrag[]> {
+  return readJsonFresh<ForschungsBeitrag>('forschung.json');
+}
 export function getApprovedForschung(): ForschungsBeitrag[] {
   return getForschung().filter(f => f.status === 'approved' || f.status === 'published');
+}
+export async function getApprovedForschungFresh(): Promise<ForschungsBeitrag[]> {
+  return (await getForschungFresh()).filter(f => f.status === 'approved' || f.status === 'published');
 }
 export async function saveForschung(beitrag: ForschungsBeitrag): Promise<void> {
   const list = getForschung();
@@ -387,8 +399,14 @@ export async function saveGebet(gebet: Gebet): Promise<void> {
 export function getVideos(): Video[] {
   return readJson<Video>('videos.json');
 }
+export async function getVideosFresh(): Promise<Video[]> {
+  return readJsonFresh<Video>('videos.json');
+}
 export function getApprovedVideos(): Video[] {
   return getVideos().filter(v => v.status === 'approved' || v.status === 'published');
+}
+export async function getApprovedVideosFresh(): Promise<Video[]> {
+  return (await getVideosFresh()).filter(v => v.status === 'approved' || v.status === 'published');
 }
 export async function saveVideo(video: Video): Promise<void> {
   const list = getVideos();
@@ -402,8 +420,14 @@ export async function saveVideo(video: Video): Promise<void> {
 export function getAktionen(): Aktion[] {
   return readJson<Aktion>('aktionen.json');
 }
+export async function getAktionenFresh(): Promise<Aktion[]> {
+  return readJsonFresh<Aktion>('aktionen.json');
+}
 export function getApprovedAktionen(): Aktion[] {
   return getAktionen().filter(a => a.status === 'approved' || a.status === 'published');
+}
+export async function getApprovedAktionenFresh(): Promise<Aktion[]> {
+  return (await getAktionenFresh()).filter(a => a.status === 'approved' || a.status === 'published');
 }
 export async function saveAktion(aktion: Aktion): Promise<void> {
   const list = getAktionen();

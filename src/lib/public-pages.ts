@@ -1,9 +1,9 @@
 import { keepLatestItemsByDate, keepLatestItemsByWeek } from '@/lib/archive-window';
 import {
-  getApprovedAktionen,
-  getApprovedForschung,
-  getApprovedThesen,
-  getApprovedVideos,
+  getApprovedAktionenFresh,
+  getApprovedForschungFresh,
+  getApprovedThesenFresh,
+  getApprovedVideosFresh,
   getCurrentWochenthemaFresh,
   getTageswortListFresh,
   getWochenthemaListFresh,
@@ -37,13 +37,13 @@ type PublicIndexablePage = (typeof publicIndexablePages)[number];
 const sitemapPageIndexabilityChecks: Partial<
   Record<PublicIndexablePage['href'], () => boolean | Promise<boolean>>
 > = {
-  '/aktionen': () => getApprovedAktionen().length > 0,
-  '/forschung': () => getApprovedForschung().length > 0,
+  '/aktionen': async () => (await getApprovedAktionenFresh()).length > 0,
+  '/forschung': async () => (await getApprovedForschungFresh()).length > 0,
   '/tageswort': async () => Boolean((await getTageswortListFresh()).find((item) => item.published)),
   '/tageswort/archiv': async () =>
     keepLatestItemsByDate((await getTageswortListFresh()).filter((item) => item.published)).length > 0,
-  '/thesen': () => getApprovedThesen().length > 0,
-  '/videos': () => getApprovedVideos().length > 0,
+  '/thesen': async () => (await getApprovedThesenFresh()).length > 0,
+  '/videos': async () => (await getApprovedVideosFresh()).length > 0,
   '/wochenthema': async () => Boolean(await getCurrentWochenthemaFresh()),
   '/wochenthema/archiv': async () =>
     keepLatestItemsByWeek(
