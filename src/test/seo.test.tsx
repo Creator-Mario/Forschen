@@ -194,4 +194,10 @@ describe('SEO metadata', () => {
     expect(redirects).toHaveLength(4);
     expect(redirects.every((redirect) => !('has' in redirect))).toBe(true);
   });
+
+  it('removes the deprecated AMP route handlers from the app router', () => {
+    const deprecatedAmpAppDir = path.join(process.cwd(), 'src', 'app', 'amp');
+
+    expect(fs.existsSync(deprecatedAmpAppDir)).toBe(false);
+  });
 });
