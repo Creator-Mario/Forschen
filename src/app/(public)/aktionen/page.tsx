@@ -1,15 +1,22 @@
 import type { Metadata } from 'next';
-import { getApprovedAktionen } from '@/lib/db';
+import { getApprovedAktionen, getApprovedAktionenFresh } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
-import { createPageMetadata } from '@/lib/seo';
+import {
+  createContentBackedPageMetadata,
+  type PageMetadataOptions,
+} from '@/lib/seo';
 
-export const metadata: Metadata = createPageMetadata({
+const pageMetadata = {
   title: 'Aktionen und Treffen',
   description: 'Gemeinschaftliche Aktionen, Treffen und Veranstaltungen von Der Fluss des Lebens.',
   path: '/aktionen',
   keywords: ['Aktionen', 'christliche Treffen', 'Veranstaltungen'],
-});
+} satisfies PageMetadataOptions;
+
+export async function generateMetadata(): Promise<Metadata> {
+  return createContentBackedPageMetadata(pageMetadata, (await getApprovedAktionenFresh()).length > 0);
+}
 
 export default function AktionenPage() {
   const aktionen = getApprovedAktionen();

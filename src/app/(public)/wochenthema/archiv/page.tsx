@@ -4,20 +4,35 @@ import { keepLatestItemsByWeek } from '@/lib/archive-window';
 import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
 import { formatDate } from '@/lib/utils';
-import { createPageMetadata } from '@/lib/seo';
+import {
+  createContentBackedPageMetadata,
+  type PageMetadataOptions,
+} from '@/lib/seo';
 
-export const metadata: Metadata = createPageMetadata({
+const pageMetadata = {
   title: 'Archiv der Wochenthemen',
   description: 'Sieh dir veröffentlichte Wochenthemen mit Einführungen und Bibelbezügen im Archiv an.',
   path: '/wochenthema/archiv',
   keywords: ['Wochenthema Archiv', 'Themenarchiv'],
-});
+} satisfies PageMetadataOptions;
+
+async function getArchivedThemes() {
+  return keepLatestItemsByWeek(
+    (await getWochenthemaListFresh()).filter(
+      (theme) => theme.status === 'published' || theme.status === 'archived',
+    ),
+  );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const themes = await getArchivedThemes();
+
+  return createContentBackedPageMetadata(pageMetadata, themes.length > 0);
+}
 
 export default async function WochenthemaArchivPage() {
   const currentDate = formatDate(new Date().toISOString());
-  const themes = keepLatestItemsByWeek(
-    (await getWochenthemaListFresh()).filter(t => t.status === 'published' || t.status === 'archived')
-  );
+  const themes = await getArchivedThemes();
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">

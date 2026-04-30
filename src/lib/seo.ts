@@ -34,7 +34,7 @@ export const defaultOgImage = {
   alt: `${siteName} – christliche Bibelforschung`,
 } as const;
 
-type PageMetadataOptions = {
+export type PageMetadataOptions = {
   title: string;
   description: string;
   path: `/${string}` | '/';
@@ -105,6 +105,16 @@ export function createNoIndexMetadata(
     description,
     path,
     noIndex: true,
+  });
+}
+
+export function createContentBackedPageMetadata(
+  options: PageMetadataOptions,
+  hasIndexableContent: boolean,
+): Metadata {
+  return createPageMetadata({
+    ...options,
+    noIndex: !hasIndexableContent,
   });
 }
 

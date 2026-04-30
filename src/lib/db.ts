@@ -16,6 +16,10 @@ const GITHUB_REPO = process.env.GITHUB_REPO || 'Forschen';
 // In-memory overlay so writes are immediately visible within the current process instance.
 const memoryCache = new Map<string, unknown[]>();
 
+function isApprovedOrPublished<T extends { status?: string }>(entry: T): boolean {
+  return entry.status === 'approved' || entry.status === 'published';
+}
+
 function getGithubBranch(): string {
   return process.env.GITHUB_BRANCH || process.env.RAILWAY_GIT_BRANCH || 'main';
 }
@@ -339,8 +343,14 @@ export async function saveGeneratedTopicBundle(entry: GeneratedTopicBundle): Pro
 export function getThesen(): These[] {
   return readJson<These>('thesen.json');
 }
+export async function getThesenFresh(): Promise<These[]> {
+  return readJsonFresh<These>('thesen.json');
+}
 export function getApprovedThesen(): These[] {
-  return getThesen().filter(t => t.status === 'approved' || t.status === 'published');
+  return getThesen().filter(isApprovedOrPublished);
+}
+export async function getApprovedThesenFresh(): Promise<These[]> {
+  return (await getThesenFresh()).filter(isApprovedOrPublished);
 }
 export function getTheseById(id: string): These | undefined {
   return getThesen().find(t => t.id === id);
@@ -357,8 +367,14 @@ export async function saveThese(these: These): Promise<void> {
 export function getForschung(): ForschungsBeitrag[] {
   return readJson<ForschungsBeitrag>('forschung.json');
 }
+export async function getForschungFresh(): Promise<ForschungsBeitrag[]> {
+  return readJsonFresh<ForschungsBeitrag>('forschung.json');
+}
 export function getApprovedForschung(): ForschungsBeitrag[] {
-  return getForschung().filter(f => f.status === 'approved' || f.status === 'published');
+  return getForschung().filter(isApprovedOrPublished);
+}
+export async function getApprovedForschungFresh(): Promise<ForschungsBeitrag[]> {
+  return (await getForschungFresh()).filter(isApprovedOrPublished);
 }
 export async function saveForschung(beitrag: ForschungsBeitrag): Promise<void> {
   const list = getForschung();
@@ -373,7 +389,7 @@ export function getGebete(): Gebet[] {
   return readJson<Gebet>('gebete.json');
 }
 export function getApprovedGebete(): Gebet[] {
-  return getGebete().filter(g => g.status === 'approved' || g.status === 'published');
+  return getGebete().filter(isApprovedOrPublished);
 }
 export async function saveGebet(gebet: Gebet): Promise<void> {
   const list = getGebete();
@@ -387,8 +403,14 @@ export async function saveGebet(gebet: Gebet): Promise<void> {
 export function getVideos(): Video[] {
   return readJson<Video>('videos.json');
 }
+export async function getVideosFresh(): Promise<Video[]> {
+  return readJsonFresh<Video>('videos.json');
+}
 export function getApprovedVideos(): Video[] {
-  return getVideos().filter(v => v.status === 'approved' || v.status === 'published');
+  return getVideos().filter(isApprovedOrPublished);
+}
+export async function getApprovedVideosFresh(): Promise<Video[]> {
+  return (await getVideosFresh()).filter(isApprovedOrPublished);
 }
 export async function saveVideo(video: Video): Promise<void> {
   const list = getVideos();
@@ -402,8 +424,14 @@ export async function saveVideo(video: Video): Promise<void> {
 export function getAktionen(): Aktion[] {
   return readJson<Aktion>('aktionen.json');
 }
+export async function getAktionenFresh(): Promise<Aktion[]> {
+  return readJsonFresh<Aktion>('aktionen.json');
+}
 export function getApprovedAktionen(): Aktion[] {
-  return getAktionen().filter(a => a.status === 'approved' || a.status === 'published');
+  return getAktionen().filter(isApprovedOrPublished);
+}
+export async function getApprovedAktionenFresh(): Promise<Aktion[]> {
+  return (await getAktionenFresh()).filter(isApprovedOrPublished);
 }
 export async function saveAktion(aktion: Aktion): Promise<void> {
   const list = getAktionen();
@@ -418,7 +446,7 @@ export function getBuchempfehlungen(): NutzerBuchempfehlung[] {
   return readJson<NutzerBuchempfehlung>('buchempfehlungen.json');
 }
 export function getApprovedBuchempfehlungen(): NutzerBuchempfehlung[] {
-  return getBuchempfehlungen().filter(b => b.status === 'approved' || b.status === 'published');
+  return getBuchempfehlungen().filter(isApprovedOrPublished);
 }
 export async function saveBuchempfehlung(entry: NutzerBuchempfehlung): Promise<void> {
   const list = getBuchempfehlungen();

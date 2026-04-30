@@ -5,7 +5,12 @@ import Link from 'next/link';
 import BibleLink from '@/components/BibleLink';
 import SubmissionCta from '@/components/SubmissionCta';
 import { formatDate } from '@/lib/utils';
-import { createCollectionPageStructuredData, createPageMetadata, serializeJsonLd } from '@/lib/seo';
+import {
+  createCollectionPageStructuredData,
+  createContentBackedPageMetadata,
+  serializeJsonLd,
+  type PageMetadataOptions,
+} from '@/lib/seo';
 
 const MAX_BIBLE_VERSES_IN_STRUCTURED_DATA = 3;
 
@@ -23,12 +28,16 @@ function getSafeVideoUrl(url: string | undefined): string | null {
   }
 }
 
-export const metadata: Metadata = createPageMetadata({
+const pageMetadata = {
   title: 'Aktuelles Wochenthema zur Bibelforschung',
   description: 'Entdecke das aktuelle Wochenthema mit Bibelstellen, Einführung, Forschungsfragen sowie passenden Beiträgen und Videos.',
   path: '/wochenthema',
   keywords: ['Wochenthema', 'Bibelstudium', 'theologisches Thema', 'christliche Forschung'],
-});
+} satisfies PageMetadataOptions;
+
+export async function generateMetadata(): Promise<Metadata> {
+  return createContentBackedPageMetadata(pageMetadata, Boolean(await getCurrentWochenthemaFresh()));
+}
 
 export default async function WochenthemaPage() {
   const theme = await getCurrentWochenthemaFresh();

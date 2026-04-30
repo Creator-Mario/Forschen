@@ -5,14 +5,15 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { metadata } from '@/app/layout';
 import { metadata as homeMetadata } from '@/app/(public)/page';
-import { metadata as tageswortMetadata } from '@/app/(public)/tageswort/page';
-import { metadata as forschungMetadata } from '@/app/(public)/forschung/page';
+import { generateMetadata as generateAktionenMetadata } from '@/app/(public)/aktionen/page';
+import { generateMetadata as generateTageswortMetadata } from '@/app/(public)/tageswort/page';
+import { generateMetadata as generateForschungMetadata } from '@/app/(public)/forschung/page';
 import manifest from '@/app/manifest';
 import robots from '@/app/robots';
 import sitemap from '@/app/sitemap';
 import { GET as getSiteWebmanifest } from '@/app/site.webmanifest/route';
 import { canonicalSiteUrl, googleSiteVerification, operatorName, siteName } from '@/lib/config';
-import { publicIndexablePages } from '@/lib/public-pages';
+import { getSitemapPublicPages, publicIndexablePages } from '@/lib/public-pages';
 import { organizationStructuredData, websiteStructuredData } from '@/lib/seo';
 
 describe('SEO metadata', () => {
@@ -83,22 +84,38 @@ describe('SEO metadata', () => {
     });
   });
 
-  it('defines route-specific metadata for indexable public content pages', () => {
+  it('defines route-specific metadata for indexable public content pages', async () => {
+    const tageswortMetadata = await generateTageswortMetadata();
+
     expect(tageswortMetadata.alternates?.canonical).toBe('/tageswort');
     expect(tageswortMetadata.openGraph).toMatchObject({
       url: `${canonicalSiteUrl}/tageswort`,
     });
   });
 
-  it('keeps public content pages indexable after the SEO route repairs', () => {
+  it('keeps public content pages indexable after the SEO route repairs', async () => {
+    const forschungMetadata = await generateForschungMetadata();
+
     expect(forschungMetadata.alternates?.canonical).toBe('/forschung');
     expect(forschungMetadata.openGraph).toMatchObject({
       url: `${canonicalSiteUrl}/forschung`,
     });
+    expect(forschungMetadata.robots).toBeUndefined();
   });
 
-  it('publishes a web manifest and an indexable sitemap', () => {
-    const sitemapEntries = sitemap();
+  it('marks empty listing pages as noindex to avoid recurring soft-404 signals', async () => {
+    const aktionenMetadata = await generateAktionenMetadata();
+
+    expect(aktionenMetadata.alternates?.canonical).toBe('/aktionen');
+    expect(aktionenMetadata.robots).toMatchObject({
+      index: false,
+      follow: false,
+    });
+  });
+
+  it('publishes a web manifest and excludes empty soft-404 candidates from the sitemap', async () => {
+    const sitemapEntries = await sitemap();
+    const sitemapPages = await getSitemapPublicPages();
 
     expect(manifest()).toMatchObject({
       name: siteName,
@@ -109,10 +126,13 @@ describe('SEO metadata', () => {
       ]),
     });
 
-    expect(sitemapEntries).toHaveLength(publicIndexablePages.length);
+    expect(publicIndexablePages.some((page) => page.href === '/aktionen')).toBe(true);
+    expect(sitemapPages).toHaveLength(publicIndexablePages.length - 1);
+    expect(sitemapPages.some((page) => page.href === '/aktionen')).toBe(false);
+    expect(sitemapEntries).toHaveLength(sitemapPages.length);
     expect(sitemapEntries).toEqual(
       expect.arrayContaining(
-        publicIndexablePages.map((page) =>
+        sitemapPages.map((page) =>
           expect.objectContaining({
             url: `${canonicalSiteUrl}${page.href}`,
             changeFrequency: page.changeFrequency,
@@ -123,6 +143,7 @@ describe('SEO metadata', () => {
     );
     expect(sitemapEntries.some((entry) => entry.url.includes('/amp/'))).toBe(false);
     expect(sitemapEntries.some((entry) => entry.url.endsWith('/registrieren'))).toBe(false);
+    expect(sitemapEntries.some((entry) => entry.url.endsWith('/aktionen'))).toBe(false);
     expect(sitemapEntries.every((entry) => !('lastModified' in entry))).toBe(true);
   });
 
