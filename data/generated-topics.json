@@ -979,59 +979,59 @@
     "id": "generated-topic-2026-05-01",
     "date": "2026-05-01",
     "source": "ai",
-    "createdAt": "2026-05-01T02:04:23.549Z",
+    "createdAt": "2026-05-01T09:16:13.375Z",
     "promptVersion": "v2",
     "psalm": {
       "id": "psalm-2026-05-01",
       "date": "2026-05-01",
-      "psalmReference": "Psalm 23",
-      "title": "Der gute Hirte",
-      "excerpt": "Der Herr ist mein Hirte, mir wird nichts mangeln.",
-      "summary": "Psalm 23 beschreibt die Fürsorge und Leitung Gottes, die uns durch alle Lebenslagen begleitet. Er zeigt, dass wir in Gottes Gegenwart geborgen sind, egal wie herausfordernd die Umstände auch sein mögen.",
-      "significance": "Dieser Psalm ist eine Quelle des Trostes und der Zuversicht für Gläubige, die auf Gottes Treue vertrauen. Er ermutigt uns, uns in schwierigen Zeiten auf Gott zu verlassen und seinen Schutz zu suchen.",
-      "practice": "Eine regelmäßige Meditation über diesen Psalm kann helfen, das Vertrauen in Gottes Führung zu stärken. Praktizieren Sie Dankbarkeit, indem Sie täglich notieren, wie Gott Sie führt und versorgt.",
+      "psalmReference": "Psalm 119,105",
+      "title": "Gottes Wort als Licht",
+      "excerpt": "Dein Wort ist meines Fußes Leuchte und ein Licht auf meinem Weg.",
+      "summary": "Dieser Psalmvers betont die transformative Kraft des Wortes Gottes in unserem Leben. Es ist eine ständige Erinnerung daran, dass Gottes Wort uns Orientierung und Führung gibt.",
+      "significance": "In einer Welt voller Unsicherheit und Verwirrung ist das Wort Gottes unser stabiler Anker. Es ermutigt uns, in schwierigen Zeiten auf die Verheißungen Gottes zu vertrauen.",
+      "practice": "Um die Leuchtkraft des Wortes Gottes in unserem Leben zu erfahren, sollten wir es regelmäßig lesen und darüber meditieren. Das tägliche Studium der Bibel kann uns helfen, Entscheidungen im Einklang mit Gottes Willen zu treffen.",
       "questions": [
-        "Wie hat Gott Sie in der Vergangenheit durch schwierige Zeiten geführt?",
-        "In welchen Bereichen Ihres Lebens fällt es Ihnen schwer, Gottes Führung zu vertrauen?",
-        "Was bedeutet es für Sie, dass der Herr Ihr Hirte ist?"
+        "Wie hat das Wort Gottes mein Leben bisher geleitet?",
+        "Was bedeutet es für mich, dass Gottes Wort ein Licht ist?",
+        "Wie kann ich anderen helfen, die Orientierung im Leben suchen?"
       ]
     },
     "topic": {
       "id": "glauben-heute-2026-05-01",
       "date": "2026-05-01",
-      "title": "Vertrauen in Gottes Führung",
-      "headline": "Gottes Treue in unsicheren Zeiten",
-      "worldFocus": "In einer Welt voller Unsicherheiten und Herausforderungen suchen viele Menschen nach Stabilität und Orientierung. Der Glaube an Gottes Führung bietet eine Perspektive, die über die gegenwärtigen Umstände hinausgeht.",
-      "faithPerspective": "Als Christen glauben wir, dass Gott uns in allen Lebenslagen leitet und beschützt. Diese Überzeugung gibt uns die Kraft, auch in Krisen gelassen zu bleiben und auf seine Verheißungen zu vertrauen.",
-      "discipleshipImpulse": "Disziplin im Gebet und im Studium des Wortes Gottes kann helfen, ein tieferes Vertrauen in seine Führung zu entwickeln. Indem wir auf seine Stimme hören und seinen Anweisungen folgen, wachsen wir in unserem Glauben.",
+      "title": "Orientierung im Glauben",
+      "headline": "Wie das Wort Gottes uns leitet",
+      "worldFocus": "In einer Zeit, in der viele Menschen nach Sinn und Richtung suchen, bietet der Glaube an Jesus Christus eine klare Perspektive. Die Herausforderungen des modernen Lebens erfordern eine feste Grundlage, die nur durch das Studium der Bibel gefunden werden kann.",
+      "faithPerspective": "Der Glaube ist nicht nur eine persönliche Angelegenheit, sondern auch ein Weg, um Gemeinschaft und Unterstützung zu finden. Durch die Auseinandersetzung mit Gottes Wort können wir erkennen, wie unser Leben in Übereinstimmung mit seinem Willen stehen kann.",
+      "discipleshipImpulse": "Discipleship bedeutet, Jesus nachzufolgen und sein Wort in unseren Alltag zu integrieren. Dies erfordert Hingabe und das Bemühen, das Gehörte in die Tat umzusetzen, um ein Leben zu führen, das andere zu Christus zieht.",
       "bibleVerses": [
-        "Hebräer 13,5",
-        "Römer 8,28",
-        "Sprüche 3,5-6"
+        "2. Timotheus 3,16-17",
+        "Hebräer 4,12",
+        "Psalm 19,8"
       ],
       "questions": [
-        "Wie können Sie Ihr Vertrauen in Gottes Führung im Alltag stärken?",
-        "Welche Wege gibt es, um die Stimme Gottes klarer zu hören?",
-        "Wie können Sie anderen in Ihrem Umfeld helfen, Gottes Führung zu erkennen?"
+        "Wie kann ich mein Verständnis des Wortes Gottes vertiefen?",
+        "In welchen Bereichen meines Lebens brauche ich mehr Führung durch Gottes Wort?",
+        "Wie kann ich anderen helfen, die Kraft des Wortes Gottes zu erkennen?"
       ]
     },
     "books": {
       "id": "buchliste-2026-05-01",
       "date": "2026-05-01",
-      "topicTitle": "Vertrauen und Führung im Glauben",
-      "introduction": "Diese Bücher bieten wertvolle Einblicke und Perspektiven darüber, wie man Gottes Führung im Leben erkennt und vertraut. Sie laden dazu ein, tiefer in die Beziehung zu Gott einzutauchen.",
+      "topicTitle": "Orientierung durch das Wort Gottes",
+      "introduction": "Das Studium der Bibel ist eine wertvolle Praxis, die uns hilft, Gottes Willen für unser Leben zu verstehen. Diese Bücher bieten tiefere Einblicke und praktische Anwendungen des Wortes Gottes.",
       "recommendations": [
         {
-          "title": "Die Kraft des Gebets",
-          "author": "E. M. Bounds",
-          "description": "Dieses Buch erforscht die transformative Kraft des Gebets und wie es uns hilft, Gottes Wille zu erkennen.",
-          "relevance": "Es ermutigt Leser, eine tiefere Verbindung zu Gott aufzubauen und seine Führung zu suchen."
+          "title": "Die Kraft des Wortes",
+          "author": "John Piper",
+          "description": "Ein tiefgehendes Werk über die Bedeutung und Kraft der biblischen Lehre in unserem Leben.",
+          "relevance": "Dieses Buch ermutigt Leser, das Wort Gottes als zentrale Orientierung in ihrem Glaubensleben zu nutzen."
         },
         {
-          "title": "Gott führt uns",
-          "author": "Henry Blackaby",
-          "description": "Blackaby beschreibt, wie wir im Alltag die Führung Gottes erkennen können und was es bedeutet, in seiner Gegenwart zu leben.",
-          "relevance": "Das Buch ist eine praktische Anleitung, um Gottes Stimme im eigenen Leben besser zu verstehen."
+          "title": "Lebendig durch das Wort",
+          "author": "Joyce Meyer",
+          "description": "Ein praktisches Buch, das zeigt, wie das Wort Gottes unser alltägliches Leben beeinflussen kann.",
+          "relevance": "Es bietet praktische Anleitungen, wie wir das Wort Gottes aktiv in unserem Leben umsetzen können."
         }
       ]
     }
