@@ -111,10 +111,11 @@ export function createNoIndexMetadata(
 export function createContentBackedPageMetadata(
   options: PageMetadataOptions,
   hasIndexableContent: boolean,
+  fallbackIndexable = true,
 ): Metadata {
   return createPageMetadata({
     ...options,
-    noIndex: !hasIndexableContent,
+    noIndex: !hasIndexableContent && !fallbackIndexable,
   });
 }
 
