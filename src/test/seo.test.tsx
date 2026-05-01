@@ -94,26 +94,26 @@ describe('SEO metadata', () => {
   });
 
   it('keeps public content pages indexable after the SEO route repairs', async () => {
-    const forschungMetadata = await generateForschungMetadata();
+    const [forschungMetadata, aktionenMetadata, tageswortMetadata] = await Promise.all([
+      generateForschungMetadata(),
+      generateAktionenMetadata(),
+      generateTageswortMetadata(),
+    ]);
 
     expect(forschungMetadata.alternates?.canonical).toBe('/forschung');
     expect(forschungMetadata.openGraph).toMatchObject({
       url: `${canonicalSiteUrl}/forschung`,
     });
     expect(forschungMetadata.robots).toBeUndefined();
-  });
-
-  it('marks empty listing pages as noindex to avoid recurring soft-404 signals', async () => {
-    const aktionenMetadata = await generateAktionenMetadata();
 
     expect(aktionenMetadata.alternates?.canonical).toBe('/aktionen');
-    expect(aktionenMetadata.robots).toMatchObject({
-      index: false,
-      follow: false,
-    });
+    expect(aktionenMetadata.robots).toBeUndefined();
+
+    expect(tageswortMetadata.alternates?.canonical).toBe('/tageswort');
+    expect(tageswortMetadata.robots).toBeUndefined();
   });
 
-  it('publishes a web manifest and excludes empty soft-404 candidates from the sitemap', async () => {
+  it('publishes a web manifest and keeps every public indexable page in the sitemap', async () => {
     const sitemapEntries = await sitemap();
     const sitemapPages = await getSitemapPublicPages();
 
@@ -127,8 +127,8 @@ describe('SEO metadata', () => {
     });
 
     expect(publicIndexablePages.some((page) => page.href === '/aktionen')).toBe(true);
-    expect(sitemapPages).toHaveLength(publicIndexablePages.length - 1);
-    expect(sitemapPages.some((page) => page.href === '/aktionen')).toBe(false);
+    expect(sitemapPages).toHaveLength(publicIndexablePages.length);
+    expect(sitemapPages.some((page) => page.href === '/aktionen')).toBe(true);
     expect(sitemapEntries).toHaveLength(sitemapPages.length);
     expect(sitemapEntries).toEqual(
       expect.arrayContaining(
@@ -143,7 +143,7 @@ describe('SEO metadata', () => {
     );
     expect(sitemapEntries.some((entry) => entry.url.includes('/amp/'))).toBe(false);
     expect(sitemapEntries.some((entry) => entry.url.endsWith('/registrieren'))).toBe(false);
-    expect(sitemapEntries.some((entry) => entry.url.endsWith('/aktionen'))).toBe(false);
+    expect(sitemapEntries.some((entry) => entry.url.endsWith('/aktionen'))).toBe(true);
     expect(sitemapEntries.every((entry) => !('lastModified' in entry))).toBe(true);
   });
 
