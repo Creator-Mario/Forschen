@@ -23,8 +23,8 @@ export const publicIndexablePages = [
 
 type PublicIndexablePage = (typeof publicIndexablePages)[number];
 
-export async function getSitemapPublicPages(): Promise<PublicIndexablePage[]> {
-  return publicIndexablePages.map((page) => ({ ...page }));
+export async function getSitemapPublicPages(): Promise<readonly PublicIndexablePage[]> {
+  return publicIndexablePages;
 }
 
 export const footerPageGroups = [
