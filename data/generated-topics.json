@@ -974,5 +974,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-05-01",
+    "date": "2026-05-01",
+    "source": "ai",
+    "createdAt": "2026-05-01T02:04:23.549Z",
+    "promptVersion": "v2",
+    "psalm": {
+      "id": "psalm-2026-05-01",
+      "date": "2026-05-01",
+      "psalmReference": "Psalm 23",
+      "title": "Der gute Hirte",
+      "excerpt": "Der Herr ist mein Hirte, mir wird nichts mangeln.",
+      "summary": "Psalm 23 beschreibt die Fürsorge und Leitung Gottes, die uns durch alle Lebenslagen begleitet. Er zeigt, dass wir in Gottes Gegenwart geborgen sind, egal wie herausfordernd die Umstände auch sein mögen.",
+      "significance": "Dieser Psalm ist eine Quelle des Trostes und der Zuversicht für Gläubige, die auf Gottes Treue vertrauen. Er ermutigt uns, uns in schwierigen Zeiten auf Gott zu verlassen und seinen Schutz zu suchen.",
+      "practice": "Eine regelmäßige Meditation über diesen Psalm kann helfen, das Vertrauen in Gottes Führung zu stärken. Praktizieren Sie Dankbarkeit, indem Sie täglich notieren, wie Gott Sie führt und versorgt.",
+      "questions": [
+        "Wie hat Gott Sie in der Vergangenheit durch schwierige Zeiten geführt?",
+        "In welchen Bereichen Ihres Lebens fällt es Ihnen schwer, Gottes Führung zu vertrauen?",
+        "Was bedeutet es für Sie, dass der Herr Ihr Hirte ist?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-05-01",
+      "date": "2026-05-01",
+      "title": "Vertrauen in Gottes Führung",
+      "headline": "Gottes Treue in unsicheren Zeiten",
+      "worldFocus": "In einer Welt voller Unsicherheiten und Herausforderungen suchen viele Menschen nach Stabilität und Orientierung. Der Glaube an Gottes Führung bietet eine Perspektive, die über die gegenwärtigen Umstände hinausgeht.",
+      "faithPerspective": "Als Christen glauben wir, dass Gott uns in allen Lebenslagen leitet und beschützt. Diese Überzeugung gibt uns die Kraft, auch in Krisen gelassen zu bleiben und auf seine Verheißungen zu vertrauen.",
+      "discipleshipImpulse": "Disziplin im Gebet und im Studium des Wortes Gottes kann helfen, ein tieferes Vertrauen in seine Führung zu entwickeln. Indem wir auf seine Stimme hören und seinen Anweisungen folgen, wachsen wir in unserem Glauben.",
+      "bibleVerses": [
+        "Hebräer 13,5",
+        "Römer 8,28",
+        "Sprüche 3,5-6"
+      ],
+      "questions": [
+        "Wie können Sie Ihr Vertrauen in Gottes Führung im Alltag stärken?",
+        "Welche Wege gibt es, um die Stimme Gottes klarer zu hören?",
+        "Wie können Sie anderen in Ihrem Umfeld helfen, Gottes Führung zu erkennen?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-05-01",
+      "date": "2026-05-01",
+      "topicTitle": "Vertrauen und Führung im Glauben",
+      "introduction": "Diese Bücher bieten wertvolle Einblicke und Perspektiven darüber, wie man Gottes Führung im Leben erkennt und vertraut. Sie laden dazu ein, tiefer in die Beziehung zu Gott einzutauchen.",
+      "recommendations": [
+        {
+          "title": "Die Kraft des Gebets",
+          "author": "E. M. Bounds",
+          "description": "Dieses Buch erforscht die transformative Kraft des Gebets und wie es uns hilft, Gottes Wille zu erkennen.",
+          "relevance": "Es ermutigt Leser, eine tiefere Verbindung zu Gott aufzubauen und seine Führung zu suchen."
+        },
+        {
+          "title": "Gott führt uns",
+          "author": "Henry Blackaby",
+          "description": "Blackaby beschreibt, wie wir im Alltag die Führung Gottes erkennen können und was es bedeutet, in seiner Gegenwart zu leben.",
+          "relevance": "Das Buch ist eine praktische Anleitung, um Gottes Stimme im eigenen Leben besser zu verstehen."
+        }
+      ]
+    }
   }
 ]
