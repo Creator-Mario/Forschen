@@ -979,59 +979,59 @@
     "id": "generated-topic-2026-05-01",
     "date": "2026-05-01",
     "source": "ai",
-    "createdAt": "2026-05-01T09:16:13.375Z",
+    "createdAt": "2026-05-01T02:04:23.549Z",
     "promptVersion": "v2",
     "psalm": {
       "id": "psalm-2026-05-01",
       "date": "2026-05-01",
-      "psalmReference": "Psalm 119,105",
-      "title": "Gottes Wort als Licht",
-      "excerpt": "Dein Wort ist meines Fußes Leuchte und ein Licht auf meinem Weg.",
-      "summary": "Dieser Psalmvers betont die transformative Kraft des Wortes Gottes in unserem Leben. Es ist eine ständige Erinnerung daran, dass Gottes Wort uns Orientierung und Führung gibt.",
-      "significance": "In einer Welt voller Unsicherheit und Verwirrung ist das Wort Gottes unser stabiler Anker. Es ermutigt uns, in schwierigen Zeiten auf die Verheißungen Gottes zu vertrauen.",
-      "practice": "Um die Leuchtkraft des Wortes Gottes in unserem Leben zu erfahren, sollten wir es regelmäßig lesen und darüber meditieren. Das tägliche Studium der Bibel kann uns helfen, Entscheidungen im Einklang mit Gottes Willen zu treffen.",
+      "psalmReference": "Psalm 23",
+      "title": "Der gute Hirte",
+      "excerpt": "Der Herr ist mein Hirte, mir wird nichts mangeln.",
+      "summary": "Psalm 23 beschreibt die Fürsorge und Leitung Gottes, die uns durch alle Lebenslagen begleitet. Er zeigt, dass wir in Gottes Gegenwart geborgen sind, egal wie herausfordernd die Umstände auch sein mögen.",
+      "significance": "Dieser Psalm ist eine Quelle des Trostes und der Zuversicht für Gläubige, die auf Gottes Treue vertrauen. Er ermutigt uns, uns in schwierigen Zeiten auf Gott zu verlassen und seinen Schutz zu suchen.",
+      "practice": "Eine regelmäßige Meditation über diesen Psalm kann helfen, das Vertrauen in Gottes Führung zu stärken. Praktizieren Sie Dankbarkeit, indem Sie täglich notieren, wie Gott Sie führt und versorgt.",
       "questions": [
-        "Wie hat das Wort Gottes mein Leben bisher geleitet?",
-        "Was bedeutet es für mich, dass Gottes Wort ein Licht ist?",
-        "Wie kann ich anderen helfen, die Orientierung im Leben suchen?"
+        "Wie hat Gott Sie in der Vergangenheit durch schwierige Zeiten geführt?",
+        "In welchen Bereichen Ihres Lebens fällt es Ihnen schwer, Gottes Führung zu vertrauen?",
+        "Was bedeutet es für Sie, dass der Herr Ihr Hirte ist?"
       ]
     },
     "topic": {
       "id": "glauben-heute-2026-05-01",
       "date": "2026-05-01",
-      "title": "Orientierung im Glauben",
-      "headline": "Wie das Wort Gottes uns leitet",
-      "worldFocus": "In einer Zeit, in der viele Menschen nach Sinn und Richtung suchen, bietet der Glaube an Jesus Christus eine klare Perspektive. Die Herausforderungen des modernen Lebens erfordern eine feste Grundlage, die nur durch das Studium der Bibel gefunden werden kann.",
-      "faithPerspective": "Der Glaube ist nicht nur eine persönliche Angelegenheit, sondern auch ein Weg, um Gemeinschaft und Unterstützung zu finden. Durch die Auseinandersetzung mit Gottes Wort können wir erkennen, wie unser Leben in Übereinstimmung mit seinem Willen stehen kann.",
-      "discipleshipImpulse": "Discipleship bedeutet, Jesus nachzufolgen und sein Wort in unseren Alltag zu integrieren. Dies erfordert Hingabe und das Bemühen, das Gehörte in die Tat umzusetzen, um ein Leben zu führen, das andere zu Christus zieht.",
+      "title": "Vertrauen in Gottes Führung",
+      "headline": "Gottes Treue in unsicheren Zeiten",
+      "worldFocus": "In einer Welt voller Unsicherheiten und Herausforderungen suchen viele Menschen nach Stabilität und Orientierung. Der Glaube an Gottes Führung bietet eine Perspektive, die über die gegenwärtigen Umstände hinausgeht.",
+      "faithPerspective": "Als Christen glauben wir, dass Gott uns in allen Lebenslagen leitet und beschützt. Diese Überzeugung gibt uns die Kraft, auch in Krisen gelassen zu bleiben und auf seine Verheißungen zu vertrauen.",
+      "discipleshipImpulse": "Disziplin im Gebet und im Studium des Wortes Gottes kann helfen, ein tieferes Vertrauen in seine Führung zu entwickeln. Indem wir auf seine Stimme hören und seinen Anweisungen folgen, wachsen wir in unserem Glauben.",
       "bibleVerses": [
-        "2. Timotheus 3,16-17",
-        "Hebräer 4,12",
-        "Psalm 19,8"
+        "Hebräer 13,5",
+        "Römer 8,28",
+        "Sprüche 3,5-6"
       ],
       "questions": [
-        "Wie kann ich mein Verständnis des Wortes Gottes vertiefen?",
-        "In welchen Bereichen meines Lebens brauche ich mehr Führung durch Gottes Wort?",
-        "Wie kann ich anderen helfen, die Kraft des Wortes Gottes zu erkennen?"
+        "Wie können Sie Ihr Vertrauen in Gottes Führung im Alltag stärken?",
+        "Welche Wege gibt es, um die Stimme Gottes klarer zu hören?",
+        "Wie können Sie anderen in Ihrem Umfeld helfen, Gottes Führung zu erkennen?"
       ]
     },
     "books": {
       "id": "buchliste-2026-05-01",
       "date": "2026-05-01",
-      "topicTitle": "Orientierung durch das Wort Gottes",
-      "introduction": "Das Studium der Bibel ist eine wertvolle Praxis, die uns hilft, Gottes Willen für unser Leben zu verstehen. Diese Bücher bieten tiefere Einblicke und praktische Anwendungen des Wortes Gottes.",
+      "topicTitle": "Vertrauen und Führung im Glauben",
+      "introduction": "Diese Bücher bieten wertvolle Einblicke und Perspektiven darüber, wie man Gottes Führung im Leben erkennt und vertraut. Sie laden dazu ein, tiefer in die Beziehung zu Gott einzutauchen.",
       "recommendations": [
         {
-          "title": "Die Kraft des Wortes",
-          "author": "John Piper",
-          "description": "Ein tiefgehendes Werk über die Bedeutung und Kraft der biblischen Lehre in unserem Leben.",
-          "relevance": "Dieses Buch ermutigt Leser, das Wort Gottes als zentrale Orientierung in ihrem Glaubensleben zu nutzen."
+          "title": "Die Kraft des Gebets",
+          "author": "E. M. Bounds",
+          "description": "Dieses Buch erforscht die transformative Kraft des Gebets und wie es uns hilft, Gottes Wille zu erkennen.",
+          "relevance": "Es ermutigt Leser, eine tiefere Verbindung zu Gott aufzubauen und seine Führung zu suchen."
         },
         {
-          "title": "Lebendig durch das Wort",
-          "author": "Joyce Meyer",
-          "description": "Ein praktisches Buch, das zeigt, wie das Wort Gottes unser alltägliches Leben beeinflussen kann.",
-          "relevance": "Es bietet praktische Anleitungen, wie wir das Wort Gottes aktiv in unserem Leben umsetzen können."
+          "title": "Gott führt uns",
+          "author": "Henry Blackaby",
+          "description": "Blackaby beschreibt, wie wir im Alltag die Führung Gottes erkennen können und was es bedeutet, in seiner Gegenwart zu leben.",
+          "relevance": "Das Buch ist eine praktische Anleitung, um Gottes Stimme im eigenen Leben besser zu verstehen."
         }
       ]
     }
@@ -1040,59 +1040,59 @@
     "id": "generated-topic-2026-05-02",
     "date": "2026-05-02",
     "source": "ai",
-    "createdAt": "2026-05-02T02:06:17.792Z",
+    "createdAt": "2026-05-02T02:07:37.139Z",
     "promptVersion": "v2",
     "psalm": {
       "id": "psalm-2026-05-02",
       "date": "2026-05-02",
-      "psalmReference": "Psalm 46",
-      "title": "Gott ist unsere Zuflucht",
-      "excerpt": "Gott ist unsere Zuflucht und Stärke, ein bewährter Helfer in Zeiten der Not.",
-      "summary": "Psalm 46 ermutigt die Gläubigen, in schwierigen Zeiten auf Gott zu vertrauen. Er beschreibt, wie Gott inmitten von Chaos und Schwierigkeiten eine sichere Zuflucht bietet.",
-      "significance": "Dieser Psalm ist eine kraftvolle Erinnerung daran, dass Gott in allen Lebenslagen präsent ist. Seine Zusage, uns zu helfen, gibt uns Frieden und Zuversicht, egal was uns begegnet.",
-      "practice": "In der Praxis können wir diesen Psalm nutzen, um in Gebet und Stille zu Gott zu kommen. Wir sollten uns regelmäßig Zeit nehmen, um seine Nähe zu suchen und seine Kraft in unserem Leben zu erfahren.",
+      "psalmReference": "Psalm 23",
+      "title": "Der gute Hirte",
+      "excerpt": "Der Herr ist mein Hirte; mir wird nichts fehlen.",
+      "summary": "Psalm 23 beschreibt die Fürsorge und Leitung Gottes für sein Volk. Er vermittelt ein Gefühl von Sicherheit und Geborgenheit, während wir durch die Herausforderungen des Lebens gehen.",
+      "significance": "Dieser Psalm ermutigt Gläubige, Gottes Führung und Schutz in allen Lebenslagen zu vertrauen. Er erinnert daran, dass wir nicht allein sind, sondern von einem liebevollen Hirten geleitet werden.",
+      "practice": "In Zeiten der Unsicherheit können wir diesen Psalm als Gebet nutzen, um unsere Sorgen Gott anzuvertrauen. Eine regelmäßige Reflexion über die eigenen Erfahrungen mit Gottes Fürsorge kann unser Vertrauen stärken.",
       "questions": [
-        "Wie erfahre ich Gottes Hilfe in meinen Herausforderungen?",
-        "In welchen Bereichen meines Lebens brauche ich mehr Vertrauen auf Gott?",
-        "Was bedeutet es für mich, dass Gott meine Zuflucht ist?"
+        "Wie erlebe ich die Führung Gottes in meinem Leben?",
+        "In welchen Bereichen meines Lebens fällt es mir schwer, Gott zu vertrauen?",
+        "Welche Erfahrungen habe ich gemacht, die mir Zeugnis geben von Gottes Fürsorge?"
       ]
     },
     "topic": {
       "id": "glauben-heute-2026-05-02",
       "date": "2026-05-02",
-      "title": "Gott als Zuflucht in stürmischen Zeiten",
-      "headline": "Die Kraft des Glaubens in Krisen",
-      "worldFocus": "In einer Welt voller Unsicherheiten und Krisen suchen viele Menschen nach Stabilität und Hoffnung. Gott bietet uns diese Sicherheit an, wenn wir uns ihm anvertrauen und ihn als unsere Zuflucht annehmen.",
-      "faithPerspective": "Der Glaube an Gott gibt uns die Möglichkeit, auch in schwierigen Zeiten einen klaren Blick zu behalten. Wir dürfen wissen, dass wir nicht allein sind und dass Gott immer bei uns ist.",
-      "discipleshipImpulse": "In der Nachfolge Jesu lernen wir, wie wichtig es ist, in stürmischen Zeiten auf Gott zu vertrauen. Dies fordert uns heraus, unseren Glauben aktiv zu leben und anderen von Gottes Zuversicht zu erzählen.",
+      "title": "Vertrauen auf Gottes Führung",
+      "headline": "Wie wir in unsicheren Zeiten auf Gott vertrauen können",
+      "worldFocus": "In einer Welt voller Unsicherheit und Chaos suchen viele Menschen nach Halt und Orientierung. Die Herausforderung besteht darin, inmitten von Schwierigkeiten den Glauben nicht zu verlieren und die Hoffnung auf Gottes Führung zu bewahren.",
+      "faithPerspective": "Der Glaube an Gott als unseren Hirten gibt uns die Gewissheit, dass er uns in jeder Situation leitet. Diese Perspektive hilft uns, Frieden zu finden, auch wenn die äußeren Umstände herausfordernd sind.",
+      "discipleshipImpulse": "Als Nachfolger Christi sind wir berufen, nicht nur auf Gottes Führung zu vertrauen, sondern auch anderen davon zu erzählen. Indem wir unsere Erfahrungen teilen, können wir anderen helfen, ebenfalls Vertrauen in Gott zu entwickeln.",
       "bibleVerses": [
-        "Psalm 34,19",
-        "Jesaja 41,10",
-        "Hebräer 13,5"
+        "Jesaja 40,31",
+        "Proverbs 3,5-6",
+        "Philipper 4,6-7"
       ],
       "questions": [
-        "Wie kann ich anderen von der Zuversicht erzählen, die ich in Gott finde?",
-        "Welche Rolle spielt der Glaube in meinem Alltag, besonders in Krisenzeiten?",
-        "Wie kann ich konkret die Zuflucht Gottes in meinem Leben erleben?"
+        "Wie kann ich mein Vertrauen in Gottes Führung stärken?",
+        "Was bedeutet es für mich, Gott als meinen Hirten zu erkennen?",
+        "Wie kann ich anderen in ihrem Glauben helfen, Gottes Führung zu erkennen?"
       ]
     },
     "books": {
       "id": "buchliste-2026-05-02",
       "date": "2026-05-02",
-      "topicTitle": "Glaube und Zuflucht",
-      "introduction": "Diese Buchempfehlungen bieten tiefere Einblicke in das Thema Vertrauen auf Gott und seine Rolle als Zuflucht in schwierigen Zeiten. Sie laden ein, den eigenen Glauben neu zu entdecken und zu vertiefen.",
+      "topicTitle": "Vertrauen und Führung in Gottes Händen",
+      "introduction": "In diesem Bereich finden Sie Bücher, die helfen, das Vertrauen in Gottes Führung zu vertiefen und zu verstehen, wie wir in unserem Glaubensleben auf ihn bauen können.",
       "recommendations": [
         {
-          "title": "Gott als Zuflucht",
-          "author": "John Piper",
-          "description": "Dieses Buch ermutigt dazu, Gott in allen Lebenslagen als Zuflucht zu suchen und zu erfahren.",
-          "relevance": "Es bietet praktische Ansätze, um Glauben und Vertrauen in Krisen zu stärken."
+          "title": "Gottvertrauen – Ein Weg zu innerem Frieden",
+          "author": "Max Lucado",
+          "description": "Dieses Buch ermutigt Leser, in unsicheren Zeiten auf Gott zu vertrauen und seinen Frieden zu finden.",
+          "relevance": "Lucado bietet praktische Schritte an, um das Vertrauen in Gott zu stärken und die eigenen Ängste zu überwinden."
         },
         {
-          "title": "Die Kraft des Gebets",
-          "author": "Stormie Omartian",
-          "description": "Ein Leitfaden, der zeigt, wie Gebet uns in schwierigen Zeiten helfen kann, Gottes Nähe zu erfahren.",
-          "relevance": "Es unterstützt den Leser darin, im Gebet Zuflucht zu finden und die Gegenwart Gottes zu suchen."
+          "title": "Die Kraft des Glaubens",
+          "author": "Joyce Meyer",
+          "description": "Meyer beleuchtet, wie der Glaube an Gott uns helfen kann, in schwierigen Zeiten standhaft zu bleiben.",
+          "relevance": "Sie bietet inspirierende Einblicke und ermutigende Geschichten, die zeigen, wie Gott in unserem Leben wirkt."
         }
       ]
     }
