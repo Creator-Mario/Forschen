@@ -1035,5 +1035,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-05-02",
+    "date": "2026-05-02",
+    "source": "ai",
+    "createdAt": "2026-05-02T02:06:17.792Z",
+    "promptVersion": "v2",
+    "psalm": {
+      "id": "psalm-2026-05-02",
+      "date": "2026-05-02",
+      "psalmReference": "Psalm 46",
+      "title": "Gott ist unsere Zuflucht",
+      "excerpt": "Gott ist unsere Zuflucht und Stärke, ein bewährter Helfer in Zeiten der Not.",
+      "summary": "Psalm 46 ermutigt die Gläubigen, in schwierigen Zeiten auf Gott zu vertrauen. Er beschreibt, wie Gott inmitten von Chaos und Schwierigkeiten eine sichere Zuflucht bietet.",
+      "significance": "Dieser Psalm ist eine kraftvolle Erinnerung daran, dass Gott in allen Lebenslagen präsent ist. Seine Zusage, uns zu helfen, gibt uns Frieden und Zuversicht, egal was uns begegnet.",
+      "practice": "In der Praxis können wir diesen Psalm nutzen, um in Gebet und Stille zu Gott zu kommen. Wir sollten uns regelmäßig Zeit nehmen, um seine Nähe zu suchen und seine Kraft in unserem Leben zu erfahren.",
+      "questions": [
+        "Wie erfahre ich Gottes Hilfe in meinen Herausforderungen?",
+        "In welchen Bereichen meines Lebens brauche ich mehr Vertrauen auf Gott?",
+        "Was bedeutet es für mich, dass Gott meine Zuflucht ist?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-05-02",
+      "date": "2026-05-02",
+      "title": "Gott als Zuflucht in stürmischen Zeiten",
+      "headline": "Die Kraft des Glaubens in Krisen",
+      "worldFocus": "In einer Welt voller Unsicherheiten und Krisen suchen viele Menschen nach Stabilität und Hoffnung. Gott bietet uns diese Sicherheit an, wenn wir uns ihm anvertrauen und ihn als unsere Zuflucht annehmen.",
+      "faithPerspective": "Der Glaube an Gott gibt uns die Möglichkeit, auch in schwierigen Zeiten einen klaren Blick zu behalten. Wir dürfen wissen, dass wir nicht allein sind und dass Gott immer bei uns ist.",
+      "discipleshipImpulse": "In der Nachfolge Jesu lernen wir, wie wichtig es ist, in stürmischen Zeiten auf Gott zu vertrauen. Dies fordert uns heraus, unseren Glauben aktiv zu leben und anderen von Gottes Zuversicht zu erzählen.",
+      "bibleVerses": [
+        "Psalm 34,19",
+        "Jesaja 41,10",
+        "Hebräer 13,5"
+      ],
+      "questions": [
+        "Wie kann ich anderen von der Zuversicht erzählen, die ich in Gott finde?",
+        "Welche Rolle spielt der Glaube in meinem Alltag, besonders in Krisenzeiten?",
+        "Wie kann ich konkret die Zuflucht Gottes in meinem Leben erleben?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-05-02",
+      "date": "2026-05-02",
+      "topicTitle": "Glaube und Zuflucht",
+      "introduction": "Diese Buchempfehlungen bieten tiefere Einblicke in das Thema Vertrauen auf Gott und seine Rolle als Zuflucht in schwierigen Zeiten. Sie laden ein, den eigenen Glauben neu zu entdecken und zu vertiefen.",
+      "recommendations": [
+        {
+          "title": "Gott als Zuflucht",
+          "author": "John Piper",
+          "description": "Dieses Buch ermutigt dazu, Gott in allen Lebenslagen als Zuflucht zu suchen und zu erfahren.",
+          "relevance": "Es bietet praktische Ansätze, um Glauben und Vertrauen in Krisen zu stärken."
+        },
+        {
+          "title": "Die Kraft des Gebets",
+          "author": "Stormie Omartian",
+          "description": "Ein Leitfaden, der zeigt, wie Gebet uns in schwierigen Zeiten helfen kann, Gottes Nähe zu erfahren.",
+          "relevance": "Es unterstützt den Leser darin, im Gebet Zuflucht zu finden und die Gegenwart Gottes zu suchen."
+        }
+      ]
+    }
   }
 ]
