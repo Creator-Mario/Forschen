@@ -1,4 +1,10 @@
 const WWW_PREFIX = 'www.';
+const legacyAmpRedirects = new Map<string, string>([
+  ['/amp/glauben-heute', '/glauben-heute'],
+  ['/amp/psalmen', '/psalmen'],
+  ['/amp/tageswort', '/tageswort'],
+  ['/amp/wochenthema', '/wochenthema'],
+]);
 
 const protectedPathPrefixes = [
   '/dashboard',
@@ -23,6 +29,14 @@ export function normalizeHost(host: string | null | undefined): string {
 
 export function getApexHost(host: string): string {
   return host.startsWith(WWW_PREFIX) ? host.slice(WWW_PREFIX.length) : host;
+}
+
+function normalizePathname(pathname: string): string {
+  if (pathname.length > 1 && pathname.endsWith('/')) {
+    return pathname.slice(0, -1);
+  }
+
+  return pathname;
 }
 
 export function isProtectedPath(pathname: string): boolean {
@@ -63,6 +77,30 @@ export function getCanonicalHostRedirectDestination({
     const redirectDestination = redirectUrl.toString();
 
     return redirectDestination === requestUrl ? null : redirectDestination;
+  } catch {
+    return null;
+  }
+}
+
+export function getLegacyAmpRedirectDestination(
+  requestUrl: string,
+  canonicalSiteUrl: string,
+): string | null {
+  try {
+    const redirectUrl = new URL(requestUrl);
+    const normalizedPathname = normalizePathname(redirectUrl.pathname);
+    const destinationPath = legacyAmpRedirects.get(normalizedPathname);
+
+    if (!destinationPath) {
+      return null;
+    }
+
+    const canonicalUrl = new URL(canonicalSiteUrl);
+    redirectUrl.protocol = canonicalUrl.protocol;
+    redirectUrl.host = canonicalUrl.host;
+    redirectUrl.pathname = destinationPath;
+
+    return redirectUrl.toString();
   } catch {
     return null;
   }
