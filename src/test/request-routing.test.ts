@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   getCanonicalHostRedirectDestination,
+  getLegacyAmpRedirectDestination,
   isProtectedPath,
   normalizeHost,
 } from '@/lib/request-routing';
@@ -39,6 +40,33 @@ describe('request routing helpers', () => {
         requestHost: 'flussdeslebens.live',
         canonicalSiteUrl: 'https://www.flussdeslebens.live',
       }),
+    ).toBeNull();
+  });
+
+  it('redirects legacy AMP URLs to the canonical page while preserving the query string', () => {
+    expect(
+      getLegacyAmpRedirectDestination(
+        'https://flussdeslebens.live/amp/glauben-heute?source=gsc',
+        'https://www.flussdeslebens.live',
+      ),
+    ).toBe('https://www.flussdeslebens.live/glauben-heute?source=gsc');
+  });
+
+  it('normalizes a trailing slash on legacy AMP URLs', () => {
+    expect(
+      getLegacyAmpRedirectDestination(
+        'https://www.flussdeslebens.live/amp/tageswort/',
+        'https://www.flussdeslebens.live',
+      ),
+    ).toBe('https://www.flussdeslebens.live/tageswort');
+  });
+
+  it('ignores unknown AMP-like paths', () => {
+    expect(
+      getLegacyAmpRedirectDestination(
+        'https://www.flussdeslebens.live/amp/unbekannt',
+        'https://www.flussdeslebens.live',
+      ),
     ).toBeNull();
   });
 

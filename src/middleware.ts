@@ -2,7 +2,11 @@ import { NextFetchEvent, NextMiddleware, NextRequest, NextResponse } from 'next/
 import { withAuth } from 'next-auth/middleware';
 import { authSecret } from '@/lib/auth-secret';
 import { canonicalSiteUrl } from '@/lib/config';
-import { getCanonicalHostRedirectDestination, isProtectedPath } from '@/lib/request-routing';
+import {
+  getCanonicalHostRedirectDestination,
+  getLegacyAmpRedirectDestination,
+  isProtectedPath,
+} from '@/lib/request-routing';
 
 const authMiddleware = withAuth({
   pages: { signIn: '/login' },
@@ -15,6 +19,14 @@ export default function middleware(request: NextRequest, event: NextFetchEvent) 
     requestHost: request.headers.get('x-forwarded-host') ?? request.headers.get('host') ?? request.nextUrl.host,
     canonicalSiteUrl,
   });
+  const ampRedirectDestination = getLegacyAmpRedirectDestination(
+    redirectDestination ?? request.url,
+    canonicalSiteUrl,
+  );
+
+  if (ampRedirectDestination) {
+    return NextResponse.redirect(ampRedirectDestination, 308);
+  }
 
   if (redirectDestination) {
     return NextResponse.redirect(redirectDestination, 308);
