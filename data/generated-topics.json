@@ -1096,5 +1096,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-05-03",
+    "date": "2026-05-03",
+    "source": "ai",
+    "createdAt": "2026-05-03T02:05:42.624Z",
+    "promptVersion": "v2",
+    "psalm": {
+      "id": "psalm-2026-05-03",
+      "date": "2026-05-03",
+      "psalmReference": "Psalm 46",
+      "title": "Gott ist unsere Zuflucht",
+      "excerpt": "Gott ist unsere Zuflucht und Stärke, ein bewährter Helfer in Zeiten der Not.",
+      "summary": "Psalm 46 erinnert uns daran, dass Gott inmitten von Chaos und Unsicherheit unser sicherer Ort ist. Er bietet Trost, wenn die Welt um uns herum wankt und wir uns verloren fühlen.",
+      "significance": "Dieser Psalm ermutigt Gläubige, in schwierigen Zeiten auf Gott zu vertrauen. Er zeigt, dass Gott nicht nur gegenwärtig, sondern aktiv in unserem Leben eingreift, um uns zu helfen.",
+      "practice": "Es ist wichtig, regelmäßig Zeiten der Stille und des Gebets einzuplanen, um Gottes Gegenwart zu suchen. Indem wir uns auf Gott konzentrieren, können wir Frieden finden, selbst wenn die Umstände herausfordernd sind.",
+      "questions": [
+        "Wie erfahre ich Gott als meine Zuflucht in schwierigen Zeiten?",
+        "Was bedeutet es für mich, Gott als meine Stärke zu erkennen?",
+        "In welchen Bereichen meines Lebens fällt es mir schwer, Gott zu vertrauen?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-05-03",
+      "date": "2026-05-03",
+      "title": "Glaube in stürmischen Zeiten",
+      "headline": "Vertrauen auf Gott, wenn alles wankt",
+      "worldFocus": "In einer Welt voller Unsicherheiten und Krisen ist der Glaube an Gott eine Quelle der Stabilität. Viele Menschen suchen nach Halt, wenn sie mit persönlichen oder globalen Herausforderungen konfrontiert sind.",
+      "faithPerspective": "Der christliche Glaube lehrt uns, dass Gott auch in den dunkelsten Momenten bei uns ist. Wir sind eingeladen, unsere Sorgen und Ängste vor Ihm zu bringen und Seine Hilfe zu suchen.",
+      "discipleshipImpulse": "Als Nachfolger Christi sind wir aufgerufen, nicht nur für uns selbst zu beten, sondern auch für andere in Not. Indem wir die Liebe Gottes weitergeben, können wir Licht in die Dunkelheit bringen.",
+      "bibleVerses": [
+        "Jesaja 41,10",
+        "Philipper 4,6-7",
+        "Matthäus 11,28-30"
+      ],
+      "questions": [
+        "Wie kann ich meinen Glauben in herausfordernden Zeiten stärken?",
+        "Was kann ich tun, um anderen in meiner Umgebung Hoffnung zu bringen?",
+        "Wie kann ich Gottes Trost in meinem Leben erfahrbar machen?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-05-03",
+      "date": "2026-05-03",
+      "topicTitle": "Glaube in stürmischen Zeiten",
+      "introduction": "In herausfordernden Lebensphasen kann Literatur eine wertvolle Unterstützung bieten. Die folgenden Buchempfehlungen helfen, den Glauben zu vertiefen und Trost zu finden.",
+      "recommendations": [
+        {
+          "title": "Der feste Grund",
+          "author": "Max Lucado",
+          "description": "Ein Buch, das aufzeigt, wie man in stürmischen Zeiten auf Gottes Verheißungen vertrauen kann.",
+          "relevance": "Es bietet praktische Tipps und ermutigende Geschichten, die helfen, den Glauben zu stärken."
+        },
+        {
+          "title": "Vertraue dem Sturm",
+          "author": "Anne Voskamp",
+          "description": "Eine Einladung, inmitten von Schwierigkeiten die Gegenwart Gottes zu entdecken.",
+          "relevance": "Das Buch ermutigt Leser, Gottes Treue auch in Krisenzeiten zu erkennen und zu erleben."
+        }
+      ]
+    }
   }
 ]
