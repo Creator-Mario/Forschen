@@ -108,5 +108,27 @@
     ],
     "status": "published",
     "createdAt": "2026-04-26T03:17:34.000Z"
+  },
+  {
+    "id": "2026-W19",
+    "week": "2026-W19",
+    "title": "Das Gebet – Reden mit Gott, Hören auf Gott",
+    "introduction": "Gebet ist die älteste und persönlichste Form des Gottesverhältnisses. Von den Psalmen bis zum Vaterunser – die Bibel zeigt uns eine reiche Gebetskultur, die weit mehr umfasst als fromme Formeln.",
+    "bibleVerses": [
+      "Matthäus 6,5-15",
+      "Psalm 22",
+      "Römer 8,26-27",
+      "1. Thessalonicher 5,16-18"
+    ],
+    "problemStatement": "Wird Gebet erhört? Diese schlichte Frage birgt tiefe theologische Abgründe. Wie verhält sich das Beten zu Gottes Souveränität? Was bedeutet es, wenn Gebete scheinbar unerhört bleiben?",
+    "researchQuestions": [
+      "Welche verschiedenen Gebetsformen finden sich in der Bibel (Bitte, Klage, Lobpreis, Dank)?",
+      "Was unterscheidet das Vaterunser von Gebeten des antiken Judentums?",
+      "Wie betet der Geist für uns (Römer 8,26)?",
+      "Welche Rolle spielt Stille im biblischen Gebetsverständnis?",
+      "Wie kann Klage (wie in den Klageliedern) eine Form des Gebets sein?"
+    ],
+    "status": "published",
+    "createdAt": "2026-05-03T03:19:26.312Z"
   }
 ]
