@@ -55,10 +55,19 @@ describe('request routing helpers', () => {
   it('normalizes a trailing slash on legacy AMP URLs', () => {
     expect(
       getLegacyAmpRedirectDestination(
-        'https://www.flussdeslebens.live/amp/tageswort/',
+        'https://www.flussdeslebens.live/amp/tageswort/archiv/',
         'https://www.flussdeslebens.live',
       ),
-    ).toBe('https://www.flussdeslebens.live/tageswort');
+    ).toBe('https://www.flussdeslebens.live/tageswort/archiv');
+  });
+
+  it('redirects the deprecated AMP homepage to the root canonical URL', () => {
+    expect(
+      getLegacyAmpRedirectDestination(
+        'https://www.flussdeslebens.live/amp?source=gsc',
+        'https://www.flussdeslebens.live',
+      ),
+    ).toBe('https://www.flussdeslebens.live/?source=gsc');
   });
 
   it('ignores unknown AMP-like paths', () => {

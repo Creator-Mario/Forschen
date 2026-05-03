@@ -1,9 +1,9 @@
-const AMP_REDIRECTS = [
-  ['/amp/glauben-heute', '/glauben-heute'],
-  ['/amp/psalmen', '/psalmen'],
-  ['/amp/tageswort', '/tageswort'],
-  ['/amp/wochenthema', '/wochenthema'],
-];
+const legacyAmpCanonicalPaths = require('./src/lib/legacy-amp-canonical-paths.json');
+
+const AMP_REDIRECTS = legacyAmpCanonicalPaths.map((destination) => [
+  destination === '/' ? '/amp' : `/amp${destination}`,
+  destination,
+]);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
