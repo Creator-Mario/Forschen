@@ -13,6 +13,7 @@ import robots from '@/app/robots';
 import sitemap from '@/app/sitemap';
 import { GET as getSiteWebmanifest } from '@/app/site.webmanifest/route';
 import { canonicalSiteUrl, googleSiteVerification, operatorName, siteName } from '@/lib/config';
+import legacyAmpCanonicalPaths from '@/lib/legacy-amp-canonical-paths.json';
 import { getSitemapPublicPages, publicIndexablePages } from '@/lib/public-pages';
 import { organizationStructuredData, websiteStructuredData } from '@/lib/seo';
 
@@ -181,8 +182,14 @@ describe('SEO metadata', () => {
     const nextConfig = nextConfigModule.default ?? nextConfigModule;
     const redirects = await nextConfig.redirects();
 
+    expect(legacyAmpCanonicalPaths).toEqual(publicIndexablePages.map((page) => page.href));
     expect(redirects).toEqual(
       expect.arrayContaining([
+        expect.objectContaining({
+          source: '/amp',
+          destination: '/',
+          permanent: true,
+        }),
         expect.objectContaining({
           source: '/amp/wochenthema',
           destination: '/wochenthema',
@@ -203,6 +210,16 @@ describe('SEO metadata', () => {
           destination: '/psalmen',
           permanent: true,
         }),
+        expect.objectContaining({
+          source: '/amp/aktionen',
+          destination: '/aktionen',
+          permanent: true,
+        }),
+        expect.objectContaining({
+          source: '/amp/buchempfehlungen/archiv',
+          destination: '/buchempfehlungen/archiv',
+          permanent: true,
+        }),
       ]),
     );
   });
@@ -212,7 +229,7 @@ describe('SEO metadata', () => {
     const nextConfig = nextConfigModule.default ?? nextConfigModule;
     const redirects = await nextConfig.redirects();
 
-    expect(redirects).toHaveLength(4);
+    expect(redirects).toHaveLength(legacyAmpCanonicalPaths.length);
     expect(redirects.every((redirect) => !('has' in redirect))).toBe(true);
   });
 

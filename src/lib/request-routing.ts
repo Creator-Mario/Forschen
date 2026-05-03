@@ -1,10 +1,12 @@
+import legacyAmpCanonicalPaths from '@/lib/legacy-amp-canonical-paths.json';
+
 const WWW_PREFIX = 'www.';
-const legacyAmpRedirects = new Map<string, string>([
-  ['/amp/glauben-heute', '/glauben-heute'],
-  ['/amp/psalmen', '/psalmen'],
-  ['/amp/tageswort', '/tageswort'],
-  ['/amp/wochenthema', '/wochenthema'],
-]);
+const legacyAmpRedirects = new Map<string, string>(
+  legacyAmpCanonicalPaths.map((destinationPath) => [
+    destinationPath === '/' ? '/amp' : `/amp${destinationPath}`,
+    destinationPath,
+  ]),
+);
 
 const protectedPathPrefixes = [
   '/dashboard',
