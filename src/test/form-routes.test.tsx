@@ -213,6 +213,21 @@ describe('public form entry routes', () => {
     await waitFor(() => expect(routerPush).toHaveBeenCalledWith('/admin'));
   });
 
+  it('does not allow regular members to follow admin callback URLs after login', async () => {
+    currentSearchParams = new URLSearchParams('callbackUrl=%2Fadmin%2Fsystem');
+    signInMock.mockResolvedValue({ error: undefined });
+    currentGetSessionResult = { user: { role: 'USER' } };
+
+    const { default: LoginPage } = await import('@/app/(public)/login/page');
+    render(React.createElement(LoginPage));
+
+    await userEvent.type(screen.getByLabelText(/e-mail/i), 'alice@example.com');
+    await userEvent.type(screen.getByLabelText(/passwort/i), 'secret123');
+    await userEvent.click(screen.getByRole('button', { name: /^anmelden$/i }));
+
+    await waitFor(() => expect(routerPush).toHaveBeenCalledWith('/dashboard'));
+  });
+
   it('connects registration page to privacy policy and login', async () => {
     const { default: RegistrierenPage } = await import('@/app/(public)/registrieren/page');
     render(React.createElement(RegistrierenPage));
@@ -310,6 +325,21 @@ describe('public form entry routes', () => {
     expect(screen.getByPlaceholderText(/admin_reset_token eingeben/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /passwort zurücksetzen/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /zurück zum admin-login/i })).toHaveAttribute('href', '/admin-login');
+  });
+
+  it('returns admins to the requested admin page after a successful admin login', async () => {
+    currentSearchParams = new URLSearchParams('callbackUrl=%2Fadmin%2Fsystem');
+    signInMock.mockResolvedValue({ error: undefined });
+    currentGetSessionResult = { user: { role: 'ADMIN' } };
+
+    const { default: AdminLoginPage } = await import('@/app/(admin)/admin-login/page');
+    render(React.createElement(AdminLoginPage));
+
+    await userEvent.type(screen.getByLabelText(/e-mail/i), 'admin@example.com');
+    await userEvent.type(screen.getByLabelText(/passwort/i), 'secret123');
+    await userEvent.click(screen.getByRole('button', { name: /^anmelden$/i }));
+
+    await waitFor(() => expect(routerPush).toHaveBeenCalledWith('/admin/system'));
   });
 });
 

@@ -1,9 +1,10 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { ReactNode } from 'react';
+import { getAuthRedirectPath } from '@/lib/request-routing';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -14,21 +15,23 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (status === 'loading') return;
     if (!session) {
-      const basePath = requireAdmin ? '/admin-login' : '/login';
-      const target = pathname && pathname !== '/'
-        ? `${basePath}?callbackUrl=${encodeURIComponent(pathname)}`
-        : basePath;
+      const target = getAuthRedirectPath({
+        pathname: pathname || '/',
+        search: searchParams.toString(),
+        requireAdmin,
+      });
       router.replace(target);
       return;
     }
     if (requireAdmin && session.user.role !== 'ADMIN') {
-      router.replace('/admin-login');
+      router.replace('/dashboard');
     }
-  }, [session, status, router, requireAdmin, pathname]);
+  }, [session, status, router, requireAdmin, pathname, searchParams]);
 
   if (status === 'loading') {
     return (

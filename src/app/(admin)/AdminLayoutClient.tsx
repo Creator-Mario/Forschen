@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { getAuthRedirectPath } from '@/lib/request-routing';
 
 const adminNav: Array<{
   href: string;
@@ -41,8 +42,12 @@ export default function AdminLayoutClient({ children }: { children: ReactNode })
   useEffect(() => {
     if (isPublicPath) return;
     if (status === 'loading') return;
-    if (!session || session.user.role !== 'ADMIN') {
-      router.replace('/admin-login');
+    if (!session) {
+      router.replace(getAuthRedirectPath({ pathname, requireAdmin: true }));
+      return;
+    }
+    if (session.user.role !== 'ADMIN') {
+      router.replace('/dashboard');
     }
   }, [isPublicPath, pathname, session, status, router]);
 

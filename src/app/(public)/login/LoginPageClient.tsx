@@ -4,6 +4,7 @@ import { signIn, getSession } from 'next-auth/react';
 import { useState, FormEvent, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { getPostLoginRedirectPath } from '@/lib/request-routing';
 
 function LoginPageContent() {
   const [email, setEmail] = useState('');
@@ -27,15 +28,7 @@ function LoginPageContent() {
       setError('Anmeldung fehlgeschlagen. Bitte überprüfe deine Zugangsdaten.');
     } else {
       const session = await getSession();
-      const callbackUrl = searchParams.get('callbackUrl');
-      const safeCallbackUrl = callbackUrl && callbackUrl.startsWith('/') && !callbackUrl.startsWith('//')
-        ? callbackUrl
-        : null;
-      if (session?.user?.role === 'ADMIN') {
-        router.push('/admin');
-      } else {
-        router.push(safeCallbackUrl || '/dashboard');
-      }
+      router.push(getPostLoginRedirectPath(session?.user?.role, searchParams.get('callbackUrl')));
     }
   }
 

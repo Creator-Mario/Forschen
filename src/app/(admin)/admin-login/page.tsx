@@ -2,8 +2,9 @@
 
 import { signIn, signOut, getSession } from 'next-auth/react';
 import { useState, FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { getPostLoginRedirectPath } from '@/lib/request-routing';
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
@@ -11,6 +12,7 @@ export default function AdminLoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -30,7 +32,7 @@ export default function AdminLoginPage() {
       setError('Kein Administratorzugang. Nur Administratoren können sich hier anmelden.');
       return;
     }
-    router.push('/admin');
+    router.push(getPostLoginRedirectPath(session.user.role, searchParams.get('callbackUrl')));
   }
 
   return (
