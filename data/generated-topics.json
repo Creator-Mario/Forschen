@@ -1218,5 +1218,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-05-05",
+    "date": "2026-05-05",
+    "source": "ai",
+    "createdAt": "2026-05-05T02:05:19.577Z",
+    "promptVersion": "v2",
+    "psalm": {
+      "id": "psalm-2026-05-05",
+      "date": "2026-05-05",
+      "psalmReference": "Psalm 23",
+      "title": "Der gute Hirte",
+      "excerpt": "Der Herr ist mein Hirte; mir wird nichts mangeln.",
+      "summary": "Psalm 23 beschreibt das Bild des guten Hirten, der seine Schafe führt und beschützt. In schwierigen Zeiten ermutigt dieser Psalm dazu, auf Gottes Fürsorge und Liebe zu vertrauen. Er versichert uns, dass wir auch in dunklen Tälern nicht allein sind.",
+      "significance": "Dieser Psalm hat über Jahrhunderte Trost gespendet und ist eine Quelle der Hoffnung für viele Gläubige. Die Metapher des Hirten zeigt Gottes Nähe und Fürsorge in unserem Leben. Er erinnert uns daran, dass wir in Gottes Händen geborgen sind.",
+      "practice": "Um die Botschaft dieses Psalms zu verinnerlichen, kann man täglich Zeit im Gebet verbringen und um Gottes Führung bitten. Eine Praxis ist es, in schwierigen Momenten laut den Psalm zu beten oder zu meditieren. Zudem kann das Teilen dieser Botschaft mit anderen helfen, die eigene Glaubensgemeinschaft zu stärken.",
+      "questions": [
+        "Wie erlebe ich Gottes Führung in meinem Leben?",
+        "In welchen Lebensbereichen brauche ich mehr Vertrauen in Gottes Fürsorge?",
+        "Wie kann ich anderen Menschen von Gottes Liebe und Schutz erzählen?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-05-05",
+      "date": "2026-05-05",
+      "title": "Vertrauen in Gottes Führung",
+      "headline": "Gott als unser Führer in unsicheren Zeiten",
+      "worldFocus": "In einer Welt voller Unsicherheiten und Herausforderungen suchen viele Menschen nach Halt. Der Glaube an Gott als unseren Führer bietet eine verlässliche Orientierung. Besonders in Krisensituationen können wir durch Vertrauen in Gottes Plan Frieden finden.",
+      "faithPerspective": "Der Glaube an die Fürsorge Gottes stärkt uns, auch wenn der Weg unklar erscheint. Wir sind eingeladen, in jeder Lebenslage auf Gottes Versprechen zu bauen und seine Stimme zu hören. Dies erfordert oft Geduld und das Streben nach einer tiefen Beziehung zu ihm.",
+      "discipleshipImpulse": "Discipleship bedeutet, nach dem Vorbild Jesu zu leben und seine Lehren in unserem Alltag umzusetzen. Indem wir Gottes Führung in unserem Leben anerkennen, können wir auch anderen helfen, diesen Weg zu finden. Es ist eine Einladung, gemeinsam im Glauben zu wachsen und die Liebe Gottes weiterzugeben.",
+      "bibleVerses": [
+        "Jesaja 40,11",
+        "Matthäus 6,33",
+        "Philipper 4,6-7"
+      ],
+      "questions": [
+        "Wie kann ich meine Beziehung zu Gott stärken, um seine Stimme besser zu hören?",
+        "In welchen Situationen fiel es mir schwer, auf Gottes Führung zu vertrauen?",
+        "Wie kann ich anderen helfen, Gottes Führung in ihrem Leben zu erkennen?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-05-05",
+      "date": "2026-05-05",
+      "topicTitle": "Vertrauen in Gottes Führung",
+      "introduction": "Das Vertrauen in Gottes Führung ist ein zentrales Thema im christlichen Glauben. Die folgenden Bücher bieten tiefere Einblicke und praktische Hilfestellungen, um dieses Vertrauen zu stärken und in schwierigen Zeiten auf Gott zu bauen.",
+      "recommendations": [
+        {
+          "title": "Der gute Hirte: Vertrauen in die Führung Gottes",
+          "author": "Max Lucado",
+          "description": "Dieses Buch ermutigt dazu, Gott als unseren Hirten zu sehen und ihm zu vertrauen. Mit inspirierenden Geschichten und biblischen Wahrheiten wird gezeigt, wie wir in unserem Glaubensweg Halt finden.",
+          "relevance": "Es hilft Lesern, in Krisenzeiten Trost zu finden und den Glauben an Gottes Fürsorge zu stärken."
+        },
+        {
+          "title": "Auf den Wegen Gottes: Vertrauen in schwierigen Zeiten",
+          "author": "John Piper",
+          "description": "Piper bietet eine tiefgehende Auseinandersetzung mit dem Thema Vertrauen und zeigt auf, wie wir Gottes Pläne auch in herausfordernden Zeiten erkennen können.",
+          "relevance": "Das Buch ist eine wertvolle Ressource für alle, die ihre Beziehung zu Gott vertiefen und lernen möchten, ihm zu vertrauen."
+        }
+      ]
+    }
   }
 ]
