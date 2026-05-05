@@ -26,6 +26,7 @@ const protectedPathPrefixes = [
 ] as const;
 
 const ADMIN_PATH_PREFIX = '/admin';
+const CALLBACK_URL_BASE = 'https://flussdeslebens.live';
 
 export function normalizeHost(host: string | null | undefined): string {
   return host?.split(',')[0]?.trim().toLowerCase().replace(/:\d+$/, '') ?? '';
@@ -92,9 +93,9 @@ export function getSafeCallbackUrl(
   }
 
   try {
-    const parsedUrl = new URL(trimmedCallbackUrl, 'https://flussdeslebens.live');
+    const parsedUrl = new URL(trimmedCallbackUrl, CALLBACK_URL_BASE);
 
-    if (parsedUrl.origin !== 'https://flussdeslebens.live') {
+    if (parsedUrl.origin !== CALLBACK_URL_BASE) {
       return null;
     }
 
@@ -113,15 +114,32 @@ export function getSafeCallbackUrl(
 export function getPostLoginRedirectPath(
   role: string | null | undefined,
   callbackUrl: string | null | undefined,
+  { allowAdminCallback = false }: { allowAdminCallback?: boolean } = {},
 ): string {
   const isAdmin = role === 'ADMIN';
-  const safeCallbackUrl = getSafeCallbackUrl(callbackUrl, { allowAdmin: isAdmin });
+
+  if (isAdmin) {
+    if (!allowAdminCallback) {
+      return '/admin';
+    }
+
+    const safeAdminCallbackUrl = getSafeCallbackUrl(callbackUrl, { allowAdmin: true });
+
+    if (!safeAdminCallbackUrl) {
+      return '/admin';
+    }
+
+    const safeAdminCallbackPathname = new URL(safeAdminCallbackUrl, CALLBACK_URL_BASE).pathname;
+    return isAdminPath(safeAdminCallbackPathname) ? safeAdminCallbackUrl : '/admin';
+  }
+
+  const safeCallbackUrl = getSafeCallbackUrl(callbackUrl);
 
   if (safeCallbackUrl) {
     return safeCallbackUrl;
   }
 
-  return isAdmin ? '/admin' : '/dashboard';
+  return '/dashboard';
 }
 
 type CanonicalHostRedirectOptions = {

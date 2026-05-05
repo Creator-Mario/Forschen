@@ -118,7 +118,8 @@ describe('request routing helpers', () => {
   it('chooses the correct post-login destination based on role', () => {
     expect(getPostLoginRedirectPath('USER', '/mitglieder/vorstellungen')).toBe('/mitglieder/vorstellungen');
     expect(getPostLoginRedirectPath('USER', '/admin/system')).toBe('/dashboard');
-    expect(getPostLoginRedirectPath('ADMIN', '/admin/system')).toBe('/admin/system');
+    expect(getPostLoginRedirectPath('ADMIN', '/admin/system')).toBe('/admin');
+    expect(getPostLoginRedirectPath('ADMIN', '/admin/system', { allowAdminCallback: true })).toBe('/admin/system');
     expect(getPostLoginRedirectPath('ADMIN', 'https://evil.example')).toBe('/admin');
   });
 });

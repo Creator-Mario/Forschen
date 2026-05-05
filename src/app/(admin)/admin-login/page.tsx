@@ -32,7 +32,7 @@ function AdminLoginContent() {
       setError('Kein Administratorzugang. Nur Administratoren können sich hier anmelden.');
       return;
     }
-    router.push(getPostLoginRedirectPath(session.user.role, searchParams.get('callbackUrl')));
+    router.push(getPostLoginRedirectPath(session.user.role, searchParams.get('callbackUrl'), { allowAdminCallback: true }));
   }
 
   return (
