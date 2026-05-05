@@ -1,19 +1,16 @@
-import { NextFetchEvent, NextMiddleware, NextRequest, NextResponse } from 'next/server';
-import { withAuth } from 'next-auth/middleware';
+import { NextRequest, NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 import { authSecret } from '@/lib/auth-secret';
 import { canonicalSiteUrl } from '@/lib/config';
 import {
+  getAuthRedirectPath,
   getCanonicalHostRedirectDestination,
   getLegacyAmpRedirectDestination,
+  isAdminPath,
   isProtectedPath,
 } from '@/lib/request-routing';
 
-const authMiddleware = withAuth({
-  pages: { signIn: '/login' },
-  secret: authSecret,
-}) as NextMiddleware;
-
-export default function middleware(request: NextRequest, event: NextFetchEvent) {
+export default async function middleware(request: NextRequest) {
   const redirectDestination = getCanonicalHostRedirectDestination({
     requestUrl: request.url,
     requestHost: request.headers.get('x-forwarded-host') ?? request.headers.get('host') ?? request.nextUrl.host,
@@ -33,7 +30,21 @@ export default function middleware(request: NextRequest, event: NextFetchEvent) 
   }
 
   if (isProtectedPath(request.nextUrl.pathname)) {
-    return authMiddleware(request, event);
+    const token = await getToken({ req: request, secret: authSecret });
+
+    if (!token) {
+      const signInPath = getAuthRedirectPath({
+        pathname: request.nextUrl.pathname,
+        search: request.nextUrl.search,
+        requireAdmin: isAdminPath(request.nextUrl.pathname),
+      });
+
+      return NextResponse.redirect(new URL(signInPath, request.url));
+    }
+
+    if (isAdminPath(request.nextUrl.pathname) && token.role !== 'ADMIN') {
+      return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
   }
 
   return NextResponse.next();

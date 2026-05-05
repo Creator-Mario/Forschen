@@ -25,6 +25,9 @@ const protectedPathPrefixes = [
   '/admin',
 ] as const;
 
+const ADMIN_PATH_PREFIX = '/admin';
+const CALLBACK_URL_BASE = 'https://flussdeslebens.live';
+
 export function normalizeHost(host: string | null | undefined): string {
   return host?.split(',')[0]?.trim().toLowerCase().replace(/:\d+$/, '') ?? '';
 }
@@ -41,8 +44,106 @@ function normalizePathname(pathname: string): string {
   return pathname;
 }
 
+export function isAdminPath(pathname: string): boolean {
+  const normalizedPathname = normalizePathname(pathname);
+  return normalizedPathname === ADMIN_PATH_PREFIX || normalizedPathname.startsWith(`${ADMIN_PATH_PREFIX}/`);
+}
+
 export function isProtectedPath(pathname: string): boolean {
   return protectedPathPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+}
+
+function normalizeSearch(search: string | null | undefined): string {
+  if (!search) {
+    return '';
+  }
+
+  return search.startsWith('?') ? search : `?${search}`;
+}
+
+function getPathnameFromCallbackUrl(callbackUrl: string): string {
+  return callbackUrl.split(/[?#]/, 1)[0] || '/';
+}
+
+export function getAuthRedirectPath({
+  pathname,
+  search,
+  requireAdmin = false,
+}: {
+  pathname: string;
+  search?: string | null;
+  requireAdmin?: boolean;
+}): string {
+  const basePath = requireAdmin || isAdminPath(pathname) ? '/admin-login' : '/login';
+  const callbackUrl = `${normalizePathname(pathname)}${normalizeSearch(search)}`;
+
+  return callbackUrl === '/'
+    ? basePath
+    : `${basePath}?callbackUrl=${encodeURIComponent(callbackUrl)}`;
+}
+
+export function getSafeCallbackUrl(
+  callbackUrl: string | null | undefined,
+  { allowAdmin = false }: { allowAdmin?: boolean } = {},
+): string | null {
+  if (!callbackUrl) {
+    return null;
+  }
+
+  const trimmedCallbackUrl = callbackUrl.trim();
+
+  if (!trimmedCallbackUrl.startsWith('/') || trimmedCallbackUrl.startsWith('//')) {
+    return null;
+  }
+
+  try {
+    const parsedUrl = new URL(trimmedCallbackUrl, CALLBACK_URL_BASE);
+
+    if (parsedUrl.origin !== CALLBACK_URL_BASE) {
+      return null;
+    }
+
+    const normalizedPathname = normalizePathname(parsedUrl.pathname);
+
+    if (!allowAdmin && isAdminPath(normalizedPathname)) {
+      return null;
+    }
+
+    return `${normalizedPathname}${parsedUrl.search}${parsedUrl.hash}`;
+  } catch {
+    return null;
+  }
+}
+
+export function getPostLoginRedirectPath(
+  role: string | null | undefined,
+  callbackUrl: string | null | undefined,
+  { allowAdminCallback = false }: { allowAdminCallback?: boolean } = {},
+): string {
+  const isAdmin = role === 'ADMIN';
+
+  if (isAdmin) {
+    if (!allowAdminCallback) {
+      return '/admin';
+    }
+
+    const safeAdminCallbackUrl = getSafeCallbackUrl(callbackUrl, { allowAdmin: true });
+
+    if (!safeAdminCallbackUrl) {
+      return '/admin';
+    }
+
+    const safeAdminCallbackPathname = getPathnameFromCallbackUrl(safeAdminCallbackUrl);
+    return isAdminPath(safeAdminCallbackPathname) ? safeAdminCallbackUrl : '/admin';
+  }
+
+  const safeCallbackUrl = getSafeCallbackUrl(callbackUrl);
+
+  if (safeCallbackUrl) {
+    return safeCallbackUrl;
+  }
+
+  return '/dashboard';
 }
 
 type CanonicalHostRedirectOptions = {

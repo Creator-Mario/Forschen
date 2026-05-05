@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  getAuthRedirectPath,
   getCanonicalHostRedirectDestination,
   getLegacyAmpRedirectDestination,
+  getPostLoginRedirectPath,
+  getSafeCallbackUrl,
+  isAdminPath,
   isProtectedPath,
   normalizeHost,
 } from '@/lib/request-routing';
@@ -88,5 +92,34 @@ describe('request routing helpers', () => {
     expect(isProtectedPath('/admin-login')).toBe(false);
     expect(isProtectedPath('/vorstellung')).toBe(false);
     expect(isProtectedPath('/wochenthema')).toBe(false);
+  });
+
+  it('detects admin paths consistently', () => {
+    expect(isAdminPath('/admin')).toBe(true);
+    expect(isAdminPath('/admin/system')).toBe(true);
+    expect(isAdminPath('/admin-login')).toBe(false);
+  });
+
+  it('builds login redirects with the original callback target', () => {
+    expect(getAuthRedirectPath({ pathname: '/thesen/neu', search: '?ref=cta' }))
+      .toBe('/login?callbackUrl=%2Fthesen%2Fneu%3Fref%3Dcta');
+    expect(getAuthRedirectPath({ pathname: '/admin/system', search: '?tab=mail', requireAdmin: true }))
+      .toBe('/admin-login?callbackUrl=%2Fadmin%2Fsystem%3Ftab%3Dmail');
+  });
+
+  it('accepts only safe internal callback URLs', () => {
+    expect(getSafeCallbackUrl('/mitglieder/vorstellungen')).toBe('/mitglieder/vorstellungen');
+    expect(getSafeCallbackUrl('/admin/system')).toBeNull();
+    expect(getSafeCallbackUrl('/admin/system', { allowAdmin: true })).toBe('/admin/system');
+    expect(getSafeCallbackUrl('https://evil.example')).toBeNull();
+    expect(getSafeCallbackUrl('//evil.example')).toBeNull();
+  });
+
+  it('chooses the correct post-login destination based on role', () => {
+    expect(getPostLoginRedirectPath('USER', '/mitglieder/vorstellungen')).toBe('/mitglieder/vorstellungen');
+    expect(getPostLoginRedirectPath('USER', '/admin/system')).toBe('/dashboard');
+    expect(getPostLoginRedirectPath('ADMIN', '/admin/system')).toBe('/admin');
+    expect(getPostLoginRedirectPath('ADMIN', '/admin/system', { allowAdminCallback: true })).toBe('/admin/system');
+    expect(getPostLoginRedirectPath('ADMIN', 'https://evil.example')).toBe('/admin');
   });
 });

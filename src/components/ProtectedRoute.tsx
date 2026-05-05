@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { ReactNode } from 'react';
+import { getAuthRedirectPath } from '@/lib/request-routing';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -18,15 +19,17 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
   useEffect(() => {
     if (status === 'loading') return;
     if (!session) {
-      const basePath = requireAdmin ? '/admin-login' : '/login';
-      const target = pathname && pathname !== '/'
-        ? `${basePath}?callbackUrl=${encodeURIComponent(pathname)}`
-        : basePath;
+      const search = typeof window === 'undefined' ? '' : window.location.search;
+      const target = getAuthRedirectPath({
+        pathname: pathname || '/',
+        search,
+        requireAdmin,
+      });
       router.replace(target);
       return;
     }
     if (requireAdmin && session.user.role !== 'ADMIN') {
-      router.replace('/admin-login');
+      router.replace('/dashboard');
     }
   }, [session, status, router, requireAdmin, pathname]);
 

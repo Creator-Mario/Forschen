@@ -16,7 +16,7 @@ let currentPathname = '/';
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: routerPush, replace: routerReplace }),
   usePathname: () => currentPathname,
-  useSearchParams: () => new URLSearchParams(),
+  useSearchParams: () => new URLSearchParams(window.location.search),
 }));
 
 // ─── Mock next/link ────────────────────────────────────────────────────────────
@@ -373,6 +373,7 @@ describe('ProtectedRoute', () => {
     vi.resetModules();
     vi.clearAllMocks();
     currentPathname = '/';
+    window.history.replaceState({}, '', '/');
   });
 
   it('shows loading indicator while session is loading', async () => {
@@ -405,12 +406,13 @@ describe('ProtectedRoute', () => {
 
   it('redirects unauthenticated users back to the requested member page after login', async () => {
     currentPathname = '/mitglieder/vorstellungen';
+    window.history.replaceState({}, '', '/mitglieder/vorstellungen?filter=neu');
     vi.doMock('next-auth/react', () => ({
       useSession: () => ({ data: null, status: 'unauthenticated' }),
     }));
     const { default: ProtectedRoute } = await import('@/components/ProtectedRoute');
     render(React.createElement(ProtectedRoute, null, React.createElement('div', null, 'Protected Content')));
-    expect(routerReplace).toHaveBeenCalledWith('/login?callbackUrl=%2Fmitglieder%2Fvorstellungen');
+    expect(routerReplace).toHaveBeenCalledWith('/login?callbackUrl=%2Fmitglieder%2Fvorstellungen%3Ffilter%3Dneu');
   });
 
   it('redirects unauthenticated users to admin-login for admin-only routes', async () => {
@@ -424,12 +426,14 @@ describe('ProtectedRoute', () => {
   });
 
   it('renders nothing for non-admin user when requireAdmin=true', async () => {
+    currentPathname = '/admin/videos';
     vi.doMock('next-auth/react', () => ({
       useSession: () => ({ data: { user: { id: 'u1', role: 'USER', name: 'Alice' } }, status: 'authenticated' }),
     }));
     const { default: ProtectedRoute } = await import('@/components/ProtectedRoute');
     render(React.createElement(ProtectedRoute, { requireAdmin: true }, React.createElement('div', null, 'Admin Content')));
     expect(screen.queryByText('Admin Content')).toBeNull();
+    expect(routerReplace).toHaveBeenCalledWith('/dashboard');
   });
 
   it('renders admin content for admin user when requireAdmin=true', async () => {
