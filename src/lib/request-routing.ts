@@ -61,6 +61,10 @@ function normalizeSearch(search: string | null | undefined): string {
   return search.startsWith('?') ? search : `?${search}`;
 }
 
+function getPathnameFromCallbackUrl(callbackUrl: string): string {
+  return callbackUrl.split(/[?#]/, 1)[0] || '/';
+}
+
 export function getAuthRedirectPath({
   pathname,
   search,
@@ -129,7 +133,7 @@ export function getPostLoginRedirectPath(
       return '/admin';
     }
 
-    const safeAdminCallbackPathname = new URL(safeAdminCallbackUrl, CALLBACK_URL_BASE).pathname;
+    const safeAdminCallbackPathname = getPathnameFromCallbackUrl(safeAdminCallbackUrl);
     return isAdminPath(safeAdminCallbackPathname) ? safeAdminCallbackUrl : '/admin';
   }
 
