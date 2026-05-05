@@ -28,6 +28,11 @@ function LoginPageContent() {
       setError('Anmeldung fehlgeschlagen. Bitte überprüfe deine Zugangsdaten.');
     } else {
       const session = await getSession();
+      if (session?.user?.role === 'ADMIN') {
+        router.push('/admin');
+        return;
+      }
+
       router.push(getPostLoginRedirectPath(session?.user?.role, searchParams.get('callbackUrl')));
     }
   }

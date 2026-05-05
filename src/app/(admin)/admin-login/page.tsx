@@ -1,12 +1,12 @@
 'use client';
 
 import { signIn, signOut, getSession } from 'next-auth/react';
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { getPostLoginRedirectPath } from '@/lib/request-routing';
 
-export default function AdminLoginPage() {
+function AdminLoginContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -46,8 +46,9 @@ export default function AdminLoginPage() {
         <div className="bg-slate-800 rounded-xl p-8 border border-slate-700">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">E-Mail</label>
+              <label htmlFor="admin-email" className="block text-sm font-medium text-slate-300 mb-1">E-Mail</label>
               <input
+                id="admin-email"
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
@@ -57,8 +58,9 @@ export default function AdminLoginPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Passwort</label>
+              <label htmlFor="admin-password" className="block text-sm font-medium text-slate-300 mb-1">Passwort</label>
               <input
+                id="admin-password"
                 type="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
@@ -90,5 +92,13 @@ export default function AdminLoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-slate-900 flex items-center justify-center px-4"><div className="text-slate-400">Laden...</div></div>}>
+      <AdminLoginContent />
+    </Suspense>
   );
 }

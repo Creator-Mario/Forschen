@@ -11,13 +11,12 @@ import React from 'react';
 const routerPush = vi.fn();
 const routerReplace = vi.fn();
 let currentPathname = '/';
-let currentSearchParams = new URLSearchParams();
 
 // ─── Mock next/navigation (used by ProtectedRoute's router.push) ──────────────
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: routerPush, replace: routerReplace }),
   usePathname: () => currentPathname,
-  useSearchParams: () => currentSearchParams,
+  useSearchParams: () => new URLSearchParams(window.location.search),
 }));
 
 // ─── Mock next/link ────────────────────────────────────────────────────────────
@@ -374,7 +373,7 @@ describe('ProtectedRoute', () => {
     vi.resetModules();
     vi.clearAllMocks();
     currentPathname = '/';
-    currentSearchParams = new URLSearchParams();
+    window.history.replaceState({}, '', '/');
   });
 
   it('shows loading indicator while session is loading', async () => {
@@ -407,7 +406,7 @@ describe('ProtectedRoute', () => {
 
   it('redirects unauthenticated users back to the requested member page after login', async () => {
     currentPathname = '/mitglieder/vorstellungen';
-    currentSearchParams = new URLSearchParams('filter=neu');
+    window.history.replaceState({}, '', '/mitglieder/vorstellungen?filter=neu');
     vi.doMock('next-auth/react', () => ({
       useSession: () => ({ data: null, status: 'unauthenticated' }),
     }));
