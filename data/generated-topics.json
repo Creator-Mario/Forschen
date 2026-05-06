@@ -1279,5 +1279,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-05-06",
+    "date": "2026-05-06",
+    "source": "ai",
+    "createdAt": "2026-05-06T02:05:43.763Z",
+    "promptVersion": "v2",
+    "psalm": {
+      "id": "psalm-2026-05-06",
+      "date": "2026-05-06",
+      "psalmReference": "Psalm 46",
+      "title": "Gott ist unsere Zuflucht",
+      "excerpt": "Gott ist unsere Zuflucht und Stärke, ein bewährter Helfer in Zeiten der Not.",
+      "summary": "Psalm 46 ermutigt uns, inmitten von Chaos und Schwierigkeiten auf Gott zu vertrauen. Er versichert uns, dass Gott immer bei uns ist und uns in schwierigen Zeiten beisteht.",
+      "significance": "Dieser Psalm erinnert uns daran, dass wir in Gott Sicherheit und Frieden finden können, egal wie stürmisch das Leben sein mag. Er fordert uns auf, uns nicht von äußeren Umständen ängstigen zu lassen, sondern unsere Hoffnung auf den Herrn zu setzen.",
+      "practice": "Integriere den Psalm in dein tägliches Gebet und finde Momente der Stille, um Gottes Gegenwart zu suchen. Überlege, wie du in deinem Leben Vertrauen in Gott praktizieren kannst, besonders in herausfordernden Momenten.",
+      "questions": [
+        "Wie erlebst du Gottes Gegenwart in schwierigen Zeiten?",
+        "Was bedeutet es für dich, Gott als Zuflucht zu betrachten?",
+        "Wie kannst du anderen Menschen in Not als Botschafter der Hoffnung dienen?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-05-06",
+      "date": "2026-05-06",
+      "title": "Vertrauen in stürmischen Zeiten",
+      "headline": "Wie wir in herausfordernden Zeiten auf Gott vertrauen können",
+      "worldFocus": "In einer Welt voller Unsicherheiten und Herausforderungen suchen viele Menschen nach Halt und Orientierung. Konflikte, Krisen und persönliche Nöte können uns überwältigen, doch wir sind eingeladen, auf Gottes Verheißungen zu vertrauen.",
+      "faithPerspective": "Der Glaube an Gott gibt uns die Kraft, auch in schwierigen Zeiten standhaft zu bleiben. Wir werden ermutigt, unser Vertrauen in den Herrn zu setzen, der uns niemals verlässt und uns in allen Lebenslagen trägt.",
+      "discipleshipImpulse": "Jeder von uns ist aufgerufen, sein Vertrauen in Gott aktiv zu leben und anderen Menschen von seiner Treue zu erzählen. In der Nachfolge Jesu lernen wir, auch in stürmischen Zeiten auf Gottes Hilfe und Führung zu vertrauen.",
+      "bibleVerses": [
+        "Jesaja 41,10",
+        "Philipper 4,6-7",
+        "Hebräer 13,5"
+      ],
+      "questions": [
+        "In welchen Bereichen deines Lebens fällt es dir schwer, Gott zu vertrauen?",
+        "Wie kannst du deinen Glauben in schwierigen Zeiten stärken?",
+        "Wer in deinem Umfeld braucht gerade jetzt eine Botschaft des Vertrauens und der Hoffnung?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-05-06",
+      "date": "2026-05-06",
+      "topicTitle": "Vertrauen in Gott",
+      "introduction": "Das Vertrauen in Gott ist ein zentrales Thema in der christlichen Spiritualität. Die folgenden Bücher bieten wertvolle Einsichten und praxisnahe Ansätze, um in schwierigen Zeiten auf Gott zu vertrauen.",
+      "recommendations": [
+        {
+          "title": "Die Kraft des Gebets",
+          "author": "Stormie Omartian",
+          "description": "Ein inspirierendes Buch über die transformative Macht des Gebets und wie es unser Vertrauen in Gott stärken kann.",
+          "relevance": "Es hilft Lesern, eine tiefere Beziehung zu Gott aufzubauen und in stürmischen Zeiten Zuversicht zu finden."
+        },
+        {
+          "title": "Vertrauen lernen",
+          "author": "Max Lucado",
+          "description": "Dieses Buch ermutigt dazu, das Vertrauen in Gott zu vertiefen und ihm in allen Lebenslagen zu vertrauen.",
+          "relevance": "Es bietet praktische Ratschläge und ermutigende Geschichten, die den Glauben stärken."
+        }
+      ]
+    }
   }
 ]
