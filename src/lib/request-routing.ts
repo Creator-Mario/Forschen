@@ -172,6 +172,9 @@ export function getCanonicalHostRedirectDestination({
       return null;
     }
 
+    // Redirect only when every observed host still points at the apex domain.
+    // If any trusted host source already reports the canonical host, serving the
+    // page directly is safer than risking a false redirect for crawlers.
     if (observedHosts.includes(canonicalHost) || !observedHosts.includes(apexHost)) {
       return null;
     }
