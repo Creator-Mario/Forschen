@@ -148,30 +148,31 @@ export function getPostLoginRedirectPath(
 
 type CanonicalHostRedirectOptions = {
   requestUrl: string;
-  requestHost: string | null | undefined;
+  requestHosts: Array<string | null | undefined>;
   canonicalSiteUrl: string;
 };
 
+function getObservedHosts(hosts: Array<string | null | undefined>): string[] {
+  return [...new Set(hosts.map(normalizeHost).filter(Boolean))];
+}
+
 export function getCanonicalHostRedirectDestination({
   requestUrl,
-  requestHost,
+  requestHosts,
   canonicalSiteUrl,
 }: CanonicalHostRedirectOptions): string | null {
-  const normalizedRequestHost = normalizeHost(requestHost);
-
   try {
     const canonicalUrl = new URL(canonicalSiteUrl);
     const canonicalHost = normalizeHost(canonicalUrl.host);
     const apexHost = getApexHost(canonicalHost);
     const redirectUrl = new URL(requestUrl);
-    const requestUrlHost = normalizeHost(redirectUrl.host);
-    const resolvedRequestHost = normalizedRequestHost || requestUrlHost;
+    const observedHosts = getObservedHosts([redirectUrl.host, ...requestHosts]);
 
     if (!canonicalHost || canonicalHost === apexHost) {
       return null;
     }
 
-    if (requestUrlHost === canonicalHost || resolvedRequestHost !== apexHost) {
+    if (observedHosts.includes(canonicalHost) || !observedHosts.includes(apexHost)) {
       return null;
     }
 
