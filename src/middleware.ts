@@ -13,7 +13,13 @@ import {
 export default async function middleware(request: NextRequest) {
   const redirectDestination = getCanonicalHostRedirectDestination({
     requestUrl: request.url,
-    requestHost: request.headers.get('x-forwarded-host') ?? request.headers.get('host') ?? request.nextUrl.host,
+    // Keep every host signal so canonical requests are not redirected when a
+    // proxy injects conflicting forwarded-host headers.
+    requestHosts: [
+      request.headers.get('host'),
+      request.headers.get('x-forwarded-host'),
+      request.nextUrl.host,
+    ],
     canonicalSiteUrl,
   });
   const ampRedirectDestination = getLegacyAmpRedirectDestination(

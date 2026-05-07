@@ -148,30 +148,34 @@ export function getPostLoginRedirectPath(
 
 type CanonicalHostRedirectOptions = {
   requestUrl: string;
-  requestHost: string | null | undefined;
+  requestHosts: Array<string | null | undefined>;
   canonicalSiteUrl: string;
 };
 
+function getObservedHosts(hosts: Array<string | null | undefined>): string[] {
+  return [...new Set(hosts.map(normalizeHost).filter(Boolean))];
+}
+
 export function getCanonicalHostRedirectDestination({
   requestUrl,
-  requestHost,
+  requestHosts,
   canonicalSiteUrl,
 }: CanonicalHostRedirectOptions): string | null {
-  const normalizedRequestHost = normalizeHost(requestHost);
-
   try {
     const canonicalUrl = new URL(canonicalSiteUrl);
     const canonicalHost = normalizeHost(canonicalUrl.host);
     const apexHost = getApexHost(canonicalHost);
     const redirectUrl = new URL(requestUrl);
-    const requestUrlHost = normalizeHost(redirectUrl.host);
-    const resolvedRequestHost = normalizedRequestHost || requestUrlHost;
+    const observedHosts = getObservedHosts([redirectUrl.host, ...requestHosts]);
 
     if (!canonicalHost || canonicalHost === apexHost) {
       return null;
     }
 
-    if (requestUrlHost === canonicalHost || resolvedRequestHost !== apexHost) {
+    // Redirect only when every observed host still points at the apex domain.
+    // If any trusted host source already reports the canonical host, serving the
+    // page directly is safer than risking a false redirect for crawlers.
+    if (observedHosts.includes(canonicalHost) || !observedHosts.includes(apexHost)) {
       return null;
     }
 

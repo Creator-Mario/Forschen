@@ -21,7 +21,7 @@ describe('request routing helpers', () => {
     expect(
       getCanonicalHostRedirectDestination({
         requestUrl: 'https://flussdeslebens.live/googleaf877f42def4409e.html?source=gsc',
-        requestHost: 'flussdeslebens.live:443',
+        requestHosts: ['flussdeslebens.live:443'],
         canonicalSiteUrl: 'https://www.flussdeslebens.live',
       }),
     ).toBe('https://www.flussdeslebens.live/googleaf877f42def4409e.html?source=gsc');
@@ -31,7 +31,7 @@ describe('request routing helpers', () => {
     expect(
       getCanonicalHostRedirectDestination({
         requestUrl: 'https://www.flussdeslebens.live/',
-        requestHost: 'www.flussdeslebens.live',
+        requestHosts: ['www.flussdeslebens.live'],
         canonicalSiteUrl: 'https://www.flussdeslebens.live',
       }),
     ).toBeNull();
@@ -41,10 +41,30 @@ describe('request routing helpers', () => {
     expect(
       getCanonicalHostRedirectDestination({
         requestUrl: 'https://www.flussdeslebens.live/wochenthema',
-        requestHost: 'flussdeslebens.live',
+        requestHosts: ['flussdeslebens.live'],
         canonicalSiteUrl: 'https://www.flussdeslebens.live',
       }),
     ).toBeNull();
+  });
+
+  it('does not redirect when at least one trusted host source already matches the canonical host', () => {
+    expect(
+      getCanonicalHostRedirectDestination({
+        requestUrl: 'https://deployment-id.vercel.app/',
+        requestHosts: ['www.flussdeslebens.live', 'flussdeslebens.live'],
+        canonicalSiteUrl: 'https://www.flussdeslebens.live',
+      }),
+    ).toBeNull();
+  });
+
+  it('redirects when all observed hosts point to the apex domain', () => {
+    expect(
+      getCanonicalHostRedirectDestination({
+        requestUrl: 'https://deployment-id.vercel.app/vision?source=gsc',
+        requestHosts: ['flussdeslebens.live', 'flussdeslebens.live:443'],
+        canonicalSiteUrl: 'https://www.flussdeslebens.live',
+      }),
+    ).toBe('https://www.flussdeslebens.live/vision?source=gsc');
   });
 
   it('redirects legacy AMP URLs to the canonical page while preserving the query string', () => {
