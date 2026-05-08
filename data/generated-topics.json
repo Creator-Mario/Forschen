@@ -1401,5 +1401,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-05-08",
+    "date": "2026-05-08",
+    "source": "seed-fallback",
+    "createdAt": "2026-05-08T01:23:54.960Z",
+    "promptVersion": "v2",
+    "psalm": {
+      "id": "psalm-2026-05-08",
+      "date": "2026-05-08",
+      "psalmReference": "Psalm 23,1-4",
+      "title": "Geborgenheit unter Gottes Führung",
+      "excerpt": "Der Herr ist mein Hirte, mir wird nichts mangeln.",
+      "summary": "Der Psalm beschreibt Gott nicht abstrakt, sondern als Hirten, der führt, versorgt und durch dunkle Täler hindurch begleitet.",
+      "significance": "Gerade in unsicheren Zeiten erinnert Psalm 23 daran, dass Nachfolge nicht Kontrolle, sondern Vertrauen lernt.",
+      "practice": "Frage dich heute: Wo versuchst du aus Angst zu kontrollieren, statt dich von Gott leiten zu lassen?",
+      "questions": [
+        "Welche Seiten von Gottes Charakter werden im Hirtenbild sichtbar?",
+        "Wie spricht Psalm 23 in persönliche oder gesellschaftliche Krisenzeiten hinein?",
+        "Was verändert sich, wenn Mangel nicht das letzte Wort hat?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-05-08",
+      "date": "2026-05-08",
+      "title": "Wahrheit in polarisierten Zeiten",
+      "headline": "Wenn Meinungen lauter werden als Weisheit",
+      "worldFocus": "Gesellschaftliche Debatten sind oft von Zuspitzung, Empörung und Misstrauen geprägt. Viele fragen sich, wie Wahrheit überhaupt noch erkannt werden kann.",
+      "faithPerspective": "Der christliche Glaube verbindet Wahrheit mit der Person Jesu und ruft zu Wahrhaftigkeit, Geduld und Demut statt zur bloßen Rechthaberei.",
+      "discipleshipImpulse": "Prüfe heute bewusst, ob deine Worte Frieden stiften, Klarheit schaffen und gleichzeitig in Liebe gesprochen werden.",
+      "bibleVerses": [
+        "Johannes 14,6",
+        "Epheser 4,15",
+        "Jakobus 1,19"
+      ],
+      "questions": [
+        "Wie unterscheidet sich christliche Wahrhaftigkeit von bloßer Schlagfertigkeit?",
+        "Welche Rolle spielt Demut bei der Suche nach Wahrheit?",
+        "Wie können Christen in hitzigen Debatten glaubwürdig bleiben?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-05-08",
+      "date": "2026-05-08",
+      "topicTitle": "Wahrheit in polarisierten Zeiten",
+      "introduction": "Diese Buchempfehlungen greifen das Tagesthema „Wahrheit in polarisierten Zeiten“ auf und helfen dabei, biblische Orientierung zu vertiefen.",
+      "recommendations": [
+        {
+          "title": "Pardon, ich bin Christ",
+          "author": "C. S. Lewis",
+          "description": "Lewis erklärt den Kern des christlichen Glaubens klar, argumentativ und zugleich zugänglich.",
+          "relevance": "Hilfreich, um den Glauben in einer verwirrenden Debattenkultur verständlich und nüchtern zu durchdenken."
+        },
+        {
+          "title": "Basic Christianity",
+          "author": "John Stott",
+          "description": "Ein konzentrierter Überblick über das Evangelium und die daraus folgende Lebenspraxis.",
+          "relevance": "Stärkt die Fähigkeit, zentrale Wahrheiten sauber zu benennen, ohne unnötig zu polarisieren."
+        }
+      ]
+    }
   }
 ]
