@@ -1462,5 +1462,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-05-09",
+    "date": "2026-05-09",
+    "source": "ai",
+    "createdAt": "2026-05-09T01:07:06.064Z",
+    "promptVersion": "v2",
+    "psalm": {
+      "id": "psalm-2026-05-09",
+      "date": "2026-05-09",
+      "psalmReference": "Psalm 37,5",
+      "title": "Vertraue auf den Herrn",
+      "excerpt": "Befiehl dem Herrn deine Wege und hoffe auf ihn.",
+      "summary": "Dieser Vers ermutigt uns, unser Leben in die Hände Gottes zu legen. Es ist eine Einladung, das eigene Vertrauen in Gott zu setzen und auf seine Führung zu vertrauen.",
+      "significance": "Das Vertrauen auf den Herrn ist ein zentraler Aspekt des Glaubenslebens. Es zeigt unsere Abhängigkeit von Gott und unseren Glauben an seine Pläne für uns.",
+      "practice": "Um diesen Psalm in unserem Alltag zu leben, können wir täglich unsere Sorgen und Pläne im Gebet vor Gott bringen. Es ist hilfreich, Momente der Stille einzubauen, um auf Gottes Stimme zu hören.",
+      "questions": [
+        "Wie kann ich konkret meine Wege dem Herrn anvertrauen?",
+        "In welchen Bereichen meines Lebens fällt es mir schwer, auf Gott zu vertrauen?",
+        "Was bedeutet es für mich, auf Gott zu hoffen?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-05-09",
+      "date": "2026-05-09",
+      "title": "Die Wege des Herrn",
+      "headline": "Gottes Führung im Alltag erkennen",
+      "worldFocus": "In einer Welt voller Unsicherheiten suchen viele Menschen nach Orientierung. Die Wege des Herrn bieten uns eine feste Grundlage, die uns stabilisiert und leitet.",
+      "faithPerspective": "Glaube bedeutet, die Führung Gottes im eigenen Leben zu suchen und darauf zu vertrauen, dass er uns leitet. Durch das Studium der Bibel und das Gebet können wir seine Wege besser erkennen.",
+      "discipleshipImpulse": "Disziplinierte Nachfolge erfordert, dass wir täglich in Beziehung zu Gott treten und seine Anweisungen in unser Leben integrieren. Es ist ein Prozess des Lernens und Wachsens.",
+      "bibleVerses": [
+        "Sprüche 3,5-6",
+        "Jesaja 30,21",
+        "Psalm 73,24"
+      ],
+      "questions": [
+        "Wie erkenne ich die Wege Gottes in meinem Leben?",
+        "Welche Rolle spielt das Gebet bei der Suche nach göttlicher Führung?",
+        "Wie kann ich anderen helfen, die Wege des Herrn zu erkennen?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-05-09",
+      "date": "2026-05-09",
+      "topicTitle": "Gottes Wege und unser Vertrauen",
+      "introduction": "Das Vertrauen auf Gott und das Erkennen seiner Wege sind zentrale Themen in der christlichen Literatur. Diese Bücher bieten wertvolle Einsichten und praktische Hilfen für den Glaubensweg.",
+      "recommendations": [
+        {
+          "title": "Vertraue und handle",
+          "author": "Max Lucado",
+          "description": "Dieses Buch ermutigt Leser, im Glauben zu wachsen und auf Gottes Zusagen zu vertrauen.",
+          "relevance": "Es hilft, die Herausforderungen des Lebens mit einer vertrauensvollen Haltung zu begegnen."
+        },
+        {
+          "title": "Die Kunst des Hörens",
+          "author": "Henri Nouwen",
+          "description": "Nouwen beleuchtet, wie wichtig es ist, die Stimme Gottes zu hören und seine Führung zu akzeptieren.",
+          "relevance": "Es bietet praktische Anleitungen, um bessere Entscheidungen im Glauben zu treffen."
+        }
+      ]
+    }
   }
 ]
