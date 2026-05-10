@@ -130,5 +130,27 @@
     ],
     "status": "published",
     "createdAt": "2026-05-03T03:19:26.312Z"
+  },
+  {
+    "id": "2026-W20",
+    "week": "2026-W20",
+    "title": "Die Nachfolge – Was bedeutet es, Jesus nachzufolgen?",
+    "introduction": "Nachfolge Jesu ist mehr als Kirchenmitgliedschaft. Die synoptischen Evangelien zeigen radikale Jünger, die alles zurückließen. Was bedeutet das heute, in einer säkularen Gesellschaft?",
+    "bibleVerses": [
+      "Markus 1,16-20",
+      "Lukas 9,23-25",
+      "Johannes 15,1-17",
+      "Galater 2,20"
+    ],
+    "problemStatement": "Jesus ruft zur Nachfolge unter dem Zeichen des Kreuzes. Diese Einladung ist gleichzeitig befreiend und herausfordernd. Wie lässt sich radikale Nachfolge mit dem Leben in der Welt vereinbaren?",
+    "researchQuestions": [
+      "Was bedeutete 'Nachfolge' (gr. akolouthein) im Kontext des rabbinischen Judentums?",
+      "Welche Konsequenzen hat das 'Selbst verleugnen' (Lukas 9,23) für das moderne Lebensverständnis?",
+      "Wie versteht Paulus Nachfolge als 'mit Christus gekreuzigt sein'?",
+      "Was lernen wir von historischen Nachfolgebewegungen (Franziskaner, Täufer, Bonhoeffer)?",
+      "Wie verhält sich individuelle Nachfolge zu gemeinschaftlicher Nachfolge?"
+    ],
+    "status": "published",
+    "createdAt": "2026-05-10T03:20:20.621Z"
   }
 ]
