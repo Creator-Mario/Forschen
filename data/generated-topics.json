@@ -1527,60 +1527,60 @@
   {
     "id": "generated-topic-2026-05-10",
     "date": "2026-05-10",
-    "source": "seed-fallback",
-    "createdAt": "2026-05-10T01:09:30.678Z",
+    "source": "ai",
+    "createdAt": "2026-05-10T01:59:28.293Z",
     "promptVersion": "v2",
     "psalm": {
       "id": "psalm-2026-05-10",
       "date": "2026-05-10",
-      "psalmReference": "Psalm 42,2-6",
-      "title": "Sehnsucht nach Gottes Nähe",
-      "excerpt": "Wie der Hirsch lechzt nach frischem Wasser, so schreit meine Seele, Gott, zu dir.",
-      "summary": "Psalm 42 zeigt, dass geistliche Sehnsucht und innere Unruhe zusammengehören können. Der Glaube wird hier nicht geschniegelt, sondern ehrlich ausgesprochen.",
-      "significance": "Für die Nachfolge ist dieser Psalm wichtig, weil er lehrt, geistliche Trockenheit nicht zu verstecken, sondern in ein Gespräch mit Gott zu verwandeln.",
-      "practice": "Nimm dir heute einen stillen Moment und formuliere ohne fromme Fassade, wonach sich deine Seele gerade wirklich sehnt.",
+      "psalmReference": "Psalm 23",
+      "title": "Der gute Hirte",
+      "excerpt": "Der Herr ist mein Hirte; mir wird nichts mangeln.",
+      "summary": "In diesem Psalm wird Gott als der gute Hirte beschrieben, der für seine Schafe sorgt und sie auf den richtigen Wegen führt. Er gibt Trost in Zeiten der Not und beschützt vor allem Übel.",
+      "significance": "Psalm 23 ist ein Ausdruck des Vertrauens in Gottes Führung und Fürsorge. Er erinnert uns daran, dass wir in allen Lebenslagen auf den Herrn bauen können.",
+      "practice": "Um die Botschaft dieses Psalms in unserem Alltag zu leben, sollten wir regelmäßig Zeit im Gebet verbringen und Gottes Stimme suchen. Das Vertrauen in Gottes Führung kann durch das Lesen der Bibel und das Teilen von Erfahrungen in Gemeinschaft gestärkt werden.",
       "questions": [
-        "Welche Formen geistlicher Trockenheit beschreibt der Psalm?",
-        "Wie spricht der Beter mit seiner eigenen Seele?",
-        "Was bedeutet Hoffnung, wenn die Antwort Gottes nicht sofort spürbar ist?"
+        "Wie kann ich Gottes Führung in meinem Leben besser erkennen?",
+        "In welchen Bereichen meines Lebens benötige ich besonders Gottes Trost?",
+        "Was bedeutet es für mich, in der Dunkelheit auf Gottes Licht zu vertrauen?"
       ]
     },
     "topic": {
       "id": "glauben-heute-2026-05-10",
       "date": "2026-05-10",
-      "title": "Leistungsdruck und Identität",
-      "headline": "Wenn der eigene Wert an Produktivität gemessen wird",
-      "worldFocus": "Viele Menschen definieren sich über Leistung, Sichtbarkeit und ständige Verbesserung. Ruhe wirkt schnell wie Rückstand.",
-      "faithPerspective": "Das Evangelium widerspricht dieser Logik: Würde ist Geschenk, nicht Ergebnis. Nachfolge beginnt aus Annahme, nicht aus Selbstoptimierung.",
-      "discipleshipImpulse": "Ersetze heute eine innere Selbstanklage bewusst durch einen biblischen Zuspruch über deine Identität in Christus.",
+      "title": "Vertrauen in Gottes Führung",
+      "headline": "Gott leitet uns auf unseren Wegen",
+      "worldFocus": "In einer Welt voller Unsicherheit und Herausforderungen ist das Vertrauen auf Gottes Führung wichtiger denn je. Viele Menschen suchen nach Halt und Orientierung, und wir können ihnen von der Liebe und Fürsorge Gottes erzählen.",
+      "faithPerspective": "Die Beziehung zu Gott ist geprägt von Vertrauen und Glauben. Wenn wir uns auf ihn verlassen, können wir in schwierigen Zeiten Frieden finden. Gott kennt unsere Bedürfnisse und führt uns auf Wegen, die zu unserem Besten sind.",
+      "discipleshipImpulse": "Das Vertrauen in Gott erfordert eine aktive Entscheidung und die Bereitschaft, ihm zu folgen. In der Nachfolge können wir lernen, unsere Zweifel und Ängste ihm zu bringen und seinen Plan für unser Leben zu erkennen.",
       "bibleVerses": [
-        "Matthäus 11,28-30",
-        "Galater 2,20",
-        "Epheser 2,8-10"
+        "Sprüche 3,5-6",
+        "Jesaja 30,21",
+        "Johannes 10,14"
       ],
       "questions": [
-        "Wie prägt Leistungskultur mein Gottesbild und Selbstbild?",
-        "Was bedeutet es, aus Gnade und nicht aus Beweisführung zu leben?",
-        "Wie können Arbeit und Ruhe geistlich gesund zusammenfinden?"
+        "Was hindert mich daran, voll und ganz auf Gottes Führung zu vertrauen?",
+        "Wie kann ich anderen Menschen von Gottes Vertrauen erzählen?",
+        "Welche Schritte kann ich unternehmen, um meine Beziehung zu Gott zu vertiefen?"
       ]
     },
     "books": {
       "id": "buchliste-2026-05-10",
       "date": "2026-05-10",
-      "topicTitle": "Leistungsdruck und Identität",
-      "introduction": "Diese Buchempfehlungen greifen das Tagesthema „Leistungsdruck und Identität“ auf und helfen dabei, biblische Orientierung zu vertiefen.",
+      "topicTitle": "Glauben und Vertrauen",
+      "introduction": "In einer Zeit der Unsicherheit ist es wichtig, den Glauben an Gottes Führung und Fürsorge zu stärken. Diese Bücher bieten wertvolle Einblicke und praktische Ratschläge, um das Vertrauen in Gott zu vertiefen.",
       "recommendations": [
         {
-          "title": "The Spirit of the Disciplines",
-          "author": "Dallas Willard",
-          "description": "Willard zeigt, dass geistliches Wachstum nicht aus Aktivismus entsteht, sondern aus einer geordneten Hingabe an Christus.",
-          "relevance": "Hilft, Leistung und geistliche Formung sauber voneinander zu unterscheiden."
+          "title": "Gott vertrauen in schwierigen Zeiten",
+          "author": "Max Lucado",
+          "description": "Dieses Buch ermutigt Leser, in Krisenzeiten auf Gott zu vertrauen und seine Zusagen zu verinnerlichen.",
+          "relevance": "Es hilft, den Glauben zu stärken und das Vertrauen in Gottes Plan zu festigen."
         },
         {
-          "title": "Leben ist mehr",
-          "author": "Tim Keller",
-          "description": "Keller legt dar, wie das Evangelium falsche Identitätsquellen entlarvt und zu echter Freiheit führt.",
-          "relevance": "Besonders wertvoll, wenn Anerkennung und Erfolg das Denken stark bestimmen."
+          "title": "Die Kraft des Gebets",
+          "author": "Stormie Omartian",
+          "description": "Ein praktischer Leitfaden, der zeigt, wie Gebet eine tiefere Beziehung zu Gott aufbauen kann.",
+          "relevance": "Es betont die Bedeutung des Gebets für unser Vertrauen in Gottes Führung."
         }
       ]
     }
