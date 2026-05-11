@@ -37,11 +37,31 @@ describe('request routing helpers', () => {
     ).toBeNull();
   });
 
+  it('redirects canonical-host requests from http to https', () => {
+    expect(
+      getCanonicalHostRedirectDestination({
+        requestUrl: 'http://www.flussdeslebens.live/glauben-heute?source=gsc',
+        requestHosts: ['www.flussdeslebens.live'],
+        canonicalSiteUrl: 'https://www.flussdeslebens.live',
+      }),
+    ).toBe('https://www.flussdeslebens.live/glauben-heute?source=gsc');
+  });
+
   it('does not create a redirect loop when a proxy forwards the apex host for an already canonical URL', () => {
     expect(
       getCanonicalHostRedirectDestination({
         requestUrl: 'https://www.flussdeslebens.live/wochenthema',
         requestHosts: ['flussdeslebens.live'],
+        canonicalSiteUrl: 'https://www.flussdeslebens.live',
+      }),
+    ).toBeNull();
+  });
+
+  it('does not force a redirect when a proxy already reports the canonical host for an internal runtime URL', () => {
+    expect(
+      getCanonicalHostRedirectDestination({
+        requestUrl: 'http://deployment-id.vercel.app/',
+        requestHosts: ['www.flussdeslebens.live'],
         canonicalSiteUrl: 'https://www.flussdeslebens.live',
       }),
     ).toBeNull();
