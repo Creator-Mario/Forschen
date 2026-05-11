@@ -104,7 +104,7 @@ jobs:
               exit 0
             fi
 
-            if [ "$HAS_FALLBACK" = "true" ] && [ "$CRON_SECRET" != "$WEEKLY_FAITH_EMAIL_CRON_SECRET" ]; then
+            if [ "$HAS_FALLBACK" = "true" ] && [ -n "$CRON_SECRET" ] && [ "$CRON_SECRET" != "$WEEKLY_FAITH_EMAIL_CRON_SECRET" ]; then
               echo "Retrying weekly faith email delivery with legacy fallback secret."
               trigger_delivery "$CRON_SECRET" "legacy fallback"
               exit 0
