@@ -41,6 +41,8 @@ function normalizeCanonicalSiteUrl(url: string | undefined, canonicalDomain: str
     const normalizedUrl = new URL(trimmedUrl);
     const apexDomain = stripWwwPrefix(canonicalDomain);
 
+    normalizedUrl.protocol = 'https:';
+
     if (canonicalDomain.startsWith('www.') && normalizedUrl.host.toLowerCase() === apexDomain) {
       normalizedUrl.host = canonicalDomain;
     }

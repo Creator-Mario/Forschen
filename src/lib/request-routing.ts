@@ -166,15 +166,26 @@ export function getCanonicalHostRedirectDestination({
     const canonicalHost = normalizeHost(canonicalUrl.host);
     const apexHost = getApexHost(canonicalHost);
     const redirectUrl = new URL(requestUrl);
+    const requestHost = normalizeHost(redirectUrl.host);
     const observedHosts = getObservedHosts([redirectUrl.host, ...requestHosts]);
 
-    if (!canonicalHost || canonicalHost === apexHost) {
+    if (
+      requestHost === canonicalHost
+      && redirectUrl.protocol === 'http:'
+      && canonicalUrl.protocol === 'https:'
+    ) {
+      redirectUrl.protocol = canonicalUrl.protocol;
+      return redirectUrl.toString();
+    }
+
+    if (!canonicalHost) {
       return null;
     }
 
-    // Redirect only when every observed host still points at the apex domain.
-    // If any trusted host source already reports the canonical host, serving the
-    // page directly is safer than risking a false redirect for crawlers.
+    // Redirect only when every trusted host signal still points at the
+    // non-canonical apex host. If any trusted source already reports the
+    // canonical host, serving the page directly is safer than risking a false
+    // redirect when the runtime URL is an internal deployment hostname.
     if (observedHosts.includes(canonicalHost) || !observedHosts.includes(apexHost)) {
       return null;
     }
