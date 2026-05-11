@@ -171,8 +171,7 @@ export function getCanonicalHostRedirectDestination({
 
     if (requestHost === canonicalHost && redirectUrl.protocol !== canonicalUrl.protocol) {
       redirectUrl.protocol = canonicalUrl.protocol;
-      const redirectDestination = redirectUrl.toString();
-      return redirectDestination === requestUrl ? null : redirectDestination;
+      return redirectUrl.toString();
     }
 
     if (!canonicalHost) {
