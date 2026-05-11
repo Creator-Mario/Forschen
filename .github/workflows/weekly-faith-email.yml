@@ -121,5 +121,9 @@ jobs:
             exit 1
           fi
 
-          trigger_delivery "$CRON_SECRET" "legacy"
+          if trigger_delivery "$CRON_SECRET" "legacy"; then
+            exit 0
+          fi
+
+          exit 1
         shell: bash
