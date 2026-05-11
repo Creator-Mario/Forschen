@@ -2,6 +2,15 @@ import { NextResponse } from 'next/server';
 import { getCurrentWochenthemaFresh, getUsersFresh, saveUser } from '@/lib/db';
 import { sendWeeklyFaithEmail } from '@/lib/email';
 
+function getExpectedSecrets(): string[] {
+  return [
+    process.env.WEEKLY_FAITH_EMAIL_CRON_SECRET,
+    process.env.CRON_SECRET,
+  ]
+    .map(secret => secret?.trim())
+    .filter((secret): secret is string => Boolean(secret));
+}
+
 function getSecretCandidates(headerValue: string | null): string[] {
   const trimmedValue = headerValue?.trim();
   if (!trimmedValue) {
@@ -24,14 +33,16 @@ function getProvidedSecrets(req: Request): string[] {
 }
 
 export async function POST(req: Request) {
-  const expectedSecret = process.env.WEEKLY_FAITH_EMAIL_CRON_SECRET?.trim();
+  const expectedSecrets = getExpectedSecrets();
   const providedSecrets = getProvidedSecrets(req);
 
-  if (!expectedSecret) {
-    return NextResponse.json({ error: 'WEEKLY_FAITH_EMAIL_CRON_SECRET fehlt.' }, { status: 503 });
+  if (expectedSecrets.length === 0) {
+    return NextResponse.json({
+      error: 'WEEKLY_FAITH_EMAIL_CRON_SECRET oder CRON_SECRET fehlt.',
+    }, { status: 503 });
   }
 
-  if (!providedSecrets.some(secret => secret === expectedSecret)) {
+  if (!providedSecrets.some(secret => expectedSecrets.includes(secret))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

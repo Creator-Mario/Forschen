@@ -888,6 +888,7 @@ describe('POST /api/internal/weekly-faith-email', () => {
   beforeEach(() => {
     vi.resetModules();
     process.env.WEEKLY_FAITH_EMAIL_CRON_SECRET = 'secret-123';
+    delete process.env.CRON_SECRET;
   });
 
   it('sends the weekly faith email to subscribed active users once per week', async () => {
@@ -957,6 +958,34 @@ describe('POST /api/internal/weekly-faith-email', () => {
     }));
 
     expect(res.status).toBe(503);
+  });
+
+  it('accepts the legacy CRON_SECRET when the dedicated weekly secret is not configured', async () => {
+    delete process.env.WEEKLY_FAITH_EMAIL_CRON_SECRET;
+    process.env.CRON_SECRET = 'legacy-secret';
+    vi.doMock('@/lib/db', () => ({
+      getCurrentWochenthemaFresh: vi.fn().mockResolvedValue({
+        id: '2026-W15',
+        week: '2026-W15',
+        title: 'Die Nachfolge',
+        introduction: 'Einführung',
+        bibleVerses: ['Markus 1,16-20'],
+        problemStatement: 'Vertiefung',
+        researchQuestions: ['Frage 1', 'Frage 2'],
+        status: 'published',
+      }),
+      getUsersFresh: vi.fn().mockResolvedValue([]),
+      saveUser: vi.fn(),
+    }));
+    vi.doMock('@/lib/email', () => ({ sendWeeklyFaithEmail: vi.fn() }));
+
+    const { POST } = await import('@/app/api/internal/weekly-faith-email/route');
+    const res = await POST(new Request('http://localhost/api/internal/weekly-faith-email', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer legacy-secret' },
+    }));
+
+    expect(res.status).toBe(200);
   });
 
   it('accepts the dedicated cron header for hosted workflow calls', async () => {

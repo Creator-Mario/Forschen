@@ -22,28 +22,97 @@ jobs:
         id: check
         env:
           WEEKLY_FAITH_EMAIL_CRON_SECRET: ${{ secrets.WEEKLY_FAITH_EMAIL_CRON_SECRET }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
-          if [ -z "$WEEKLY_FAITH_EMAIL_CRON_SECRET" ]; then
-            echo "::warning title=Weekly faith email skipped::WEEKLY_FAITH_EMAIL_CRON_SECRET is not configured."
-            echo "::warning title=Weekly faith email skipped::Set WEEKLY_FAITH_EMAIL_CRON_SECRET in repository secrets."
-            echo "configured=false" >> "$GITHUB_OUTPUT"
+          if [ -n "$WEEKLY_FAITH_EMAIL_CRON_SECRET" ]; then
+            echo "primary_secret=weekly" >> "$GITHUB_OUTPUT"
+            echo "has_fallback=$([ -n "$CRON_SECRET" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+            echo "configured=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          echo "configured=true" >> "$GITHUB_OUTPUT"
+          if [ -n "$CRON_SECRET" ]; then
+            echo "::warning title=Weekly faith email fallback::WEEKLY_FAITH_EMAIL_CRON_SECRET is not configured. Falling back to CRON_SECRET."
+            echo "primary_secret=legacy" >> "$GITHUB_OUTPUT"
+            echo "has_fallback=false" >> "$GITHUB_OUTPUT"
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "::warning title=Weekly faith email skipped::Neither WEEKLY_FAITH_EMAIL_CRON_SECRET nor CRON_SECRET is configured."
+          echo "::warning title=Weekly faith email skipped::Set at least one matching repository secret for the deployed app."
+          echo "primary_secret=none" >> "$GITHUB_OUTPUT"
+          echo "has_fallback=false" >> "$GITHUB_OUTPUT"
+          echo "configured=false" >> "$GITHUB_OUTPUT"
+          exit 0
+        shell: bash
 
       - name: Trigger weekly faith email delivery
         if: steps.check.outputs.configured == 'true'
         env:
           WEEKLY_FAITH_EMAIL_CRON_SECRET: ${{ secrets.WEEKLY_FAITH_EMAIL_CRON_SECRET }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          PRIMARY_SECRET: ${{ steps.check.outputs.primary_secret }}
+          HAS_FALLBACK: ${{ steps.check.outputs.has_fallback }}
         run: |
-          curl --fail-with-body \
-            --retry 3 \
-            --retry-all-errors \
-            --retry-delay 10 \
-            --connect-timeout 10 \
-            --max-time 60 \
-            --request POST \
-            --header "Authorization: Bearer $WEEKLY_FAITH_EMAIL_CRON_SECRET" \
-            --header "X-Weekly-Faith-Email-Secret: $WEEKLY_FAITH_EMAIL_CRON_SECRET" \
-            "${SITE_URL%/}/api/internal/weekly-faith-email"
+          set -euo pipefail
+
+          trigger_delivery() {
+            local secret="$1"
+            local label="$2"
+
+            if [ -z "$secret" ]; then
+              return 1
+            fi
+
+            echo "Triggering weekly faith email delivery with ${label} secret."
+
+            local response_file
+            response_file="$(mktemp)"
+
+            local http_status
+            http_status="$(
+              curl --silent --show-error \
+                --output "$response_file" \
+                --write-out "%{http_code}" \
+                --retry 3 \
+                --retry-all-errors \
+                --retry-delay 10 \
+                --connect-timeout 10 \
+                --max-time 60 \
+                --request POST \
+                --header "Authorization: Bearer $secret" \
+                --header "X-Weekly-Faith-Email-Secret: $secret" \
+                --header "X-Cron-Secret: $secret" \
+                "${SITE_URL%/}/api/internal/weekly-faith-email"
+            )"
+
+            if [ "$http_status" -ge 200 ] && [ "$http_status" -lt 300 ]; then
+              cat "$response_file"
+              rm -f "$response_file"
+              return 0
+            fi
+
+            echo "::warning title=Weekly faith email trigger failed::Attempt with ${label} secret returned HTTP ${http_status}."
+            cat "$response_file"
+            rm -f "$response_file"
+            return 1
+          }
+
+          if [ "$PRIMARY_SECRET" = "weekly" ]; then
+            if trigger_delivery "$WEEKLY_FAITH_EMAIL_CRON_SECRET" "dedicated"; then
+              exit 0
+            fi
+
+            if [ "$HAS_FALLBACK" = "true" ] && [ "$CRON_SECRET" != "$WEEKLY_FAITH_EMAIL_CRON_SECRET" ]; then
+              echo "Retrying weekly faith email delivery with legacy fallback secret."
+              trigger_delivery "$CRON_SECRET" "legacy fallback"
+              exit 0
+            fi
+
+            echo "::error title=Weekly faith email failed::No working secret matched the deployed weekly faith email endpoint."
+            exit 1
+          fi
+
+          trigger_delivery "$CRON_SECRET" "legacy"
+        shell: bash
