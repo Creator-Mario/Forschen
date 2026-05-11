@@ -169,7 +169,11 @@ export function getCanonicalHostRedirectDestination({
     const requestHost = normalizeHost(redirectUrl.host);
     const observedHosts = getObservedHosts([redirectUrl.host, ...requestHosts]);
 
-    if (requestHost === canonicalHost && redirectUrl.protocol !== canonicalUrl.protocol) {
+    if (
+      requestHost === canonicalHost
+      && redirectUrl.protocol === 'http:'
+      && canonicalUrl.protocol === 'https:'
+    ) {
       redirectUrl.protocol = canonicalUrl.protocol;
       return redirectUrl.toString();
     }

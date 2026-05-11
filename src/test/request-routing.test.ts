@@ -47,6 +47,16 @@ describe('request routing helpers', () => {
     ).toBe('https://www.flussdeslebens.live/glauben-heute?source=gsc');
   });
 
+  it('does not downgrade canonical-host requests when a caller provides a non-https canonical URL', () => {
+    expect(
+      getCanonicalHostRedirectDestination({
+        requestUrl: 'https://www.flussdeslebens.live/glauben-heute?source=gsc',
+        requestHosts: ['www.flussdeslebens.live'],
+        canonicalSiteUrl: 'http://www.flussdeslebens.live',
+      }),
+    ).toBeNull();
+  });
+
   it('does not create a redirect loop when a proxy forwards the apex host for an already canonical URL', () => {
     expect(
       getCanonicalHostRedirectDestination({
