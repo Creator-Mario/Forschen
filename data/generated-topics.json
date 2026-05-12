@@ -1645,5 +1645,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-05-12",
+    "date": "2026-05-12",
+    "source": "ai",
+    "createdAt": "2026-05-12T01:36:37.886Z",
+    "promptVersion": "v2",
+    "psalm": {
+      "id": "psalm-2026-05-12",
+      "date": "2026-05-12",
+      "psalmReference": "Psalm 25",
+      "title": "Auf Gott hoffen",
+      "excerpt": "Leite mich in deiner Wahrheit und lehre mich, denn du bist der Gott meines Heils.",
+      "summary": "Psalm 25 ist ein Gebet um Führung und Vergebung. Der Psalmist bittet Gott, ihn in schwierigen Zeiten zu leiten und ihm die Wege der Wahrheit zu zeigen.",
+      "significance": "Dieser Psalm ermutigt uns, unser Vertrauen in Gott zu setzen, besonders wenn wir uns verloren fühlen. Er erinnert uns daran, dass Gott uns stets führt, wenn wir ihn um Weisheit bitten.",
+      "practice": "Eine regelmäßige Praxis könnte das tägliche Gebet um Gottes Führung und Weisheit in unseren Entscheidungen sein. Wir können auch darüber nachdenken, wie wir anderen in ihrem Glaubensweg helfen können.",
+      "questions": [
+        "Wie vertraue ich Gott in schwierigen Zeiten?",
+        "In welchen Bereichen meines Lebens brauche ich Führung?",
+        "Wie kann ich anderen helfen, Gottes Wege zu erkennen?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-05-12",
+      "date": "2026-05-12",
+      "title": "Gottes Führung im Alltag",
+      "headline": "Auf der Suche nach der richtigen Richtung",
+      "worldFocus": "In einer Welt voller Unsicherheiten und Entscheidungen suchen viele Menschen nach Orientierung. Diese Suche kann uns an verschiedene Orte führen, aber die Frage bleibt: Wo finden wir wahre Richtung?",
+      "faithPerspective": "Christen glauben, dass Gott uns durch seinen Geist führt und uns die Weisheit gibt, die wir brauchen. Durch das Gebet und das Studium der Bibel können wir lernen, seine Stimme zu hören und ihm zu folgen.",
+      "discipleshipImpulse": "Disziplin im Glauben bedeutet, regelmäßig Zeit mit Gott zu verbringen und seine Anweisungen in unser Leben zu integrieren. Indem wir anderen von unseren Erfahrungen erzählen, stärken wir auch ihren Glauben und helfen ihnen, Gottes Führung zu erkennen.",
+      "bibleVerses": [
+        "Sprichworte 3,5-6",
+        "Jakobus 1,5",
+        "Psalm 32,8"
+      ],
+      "questions": [
+        "Wie kann ich sicherstellen, dass ich auf Gottes Stimme höre?",
+        "Welche Rolle spielt Gemeinschaft in der Suche nach Gottes Führung?",
+        "Wie reagiere ich, wenn ich die Richtung nicht klar erkenne?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-05-12",
+      "date": "2026-05-12",
+      "topicTitle": "Gott vertrauen: Wege der Führung",
+      "introduction": "Die Suche nach Gottes Führung ist ein zentrales Thema im christlichen Glauben. Diese Bücher bieten tiefere Einblicke und praktische Hilfen, um zu verstehen, wie wir seinen Willen erkennen können.",
+      "recommendations": [
+        {
+          "title": "Gott hören: Die Kunst des Gebets",
+          "author": "Fritz W. B. H. Becker",
+          "description": "Dieses Buch lehrt, wie wir durch Gebet und Stille Gottes Stimme in unserem Leben wahrnehmen können.",
+          "relevance": "Es hilft, eine tiefere Beziehung zu Gott aufzubauen und seine Führung im Alltag zu erfahren."
+        },
+        {
+          "title": "Die Weisheit, die führt",
+          "author": "Ursula K. W. H. Schmidt",
+          "description": "Ein praktischer Leitfaden, der zeigt, wie wir in schwierigen Zeiten weise Entscheidungen treffen können.",
+          "relevance": "Es bietet ermutigende Perspektiven und biblische Prinzipien für die Entscheidungsfindung."
+        }
+      ]
+    }
   }
 ]
