@@ -308,6 +308,8 @@ const AI_MAX_RETRIES = 2;
 const CHRISTIAN_NEWS_TIMEOUT_MS = Number(process.env.CHRISTIAN_NEWS_TIMEOUT_MS ?? 2500);
 const CHRISTIAN_NEWS_SOURCE_LIMIT = 3;
 const CHRISTIAN_NEWS_HEADLINE_LIMIT = 4;
+const CHRISTIAN_NEWS_USER_AGENT = 'Forschen/1.0';
+const CURRENT_TOPIC_HEADLINE_PREFIX = 'Heute im Blick:';
 const inFlightTopicGenerations = new Map<string, Promise<GeneratedTopicBundle>>();
 const inFlightChristianNews = new Map<string, Promise<ChristianNewsContext | null>>();
 
@@ -386,11 +388,23 @@ function buildPsalmThema(date: string): PsalmThema {
 function decodeXmlEntities(value: string): string {
   return value
     .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;|&apos;/g, '\'')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
+    .replace(/&(amp|quot|#39|apos|lt|gt);/g, (_match, entity: string) => {
+      switch (entity) {
+        case 'amp':
+          return '&';
+        case 'quot':
+          return '"';
+        case '#39':
+        case 'apos':
+          return '\'';
+        case 'lt':
+          return '<';
+        case 'gt':
+          return '>';
+        default:
+          return _match;
+      }
+    })
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -414,7 +428,7 @@ function parseChristianNewsFeed(xml: string, source: string): ChristianNewsHeadl
   const items = [...xml.matchAll(/<item\b[\s\S]*?<\/item>/gi)].map(match => match[0]);
   const entries = items.length ? items : [...xml.matchAll(/<entry\b[\s\S]*?<\/entry>/gi)].map(match => match[0]);
 
-  const parsedEntries: Array<ChristianNewsHeadline | null> = entries.map(block => {
+  const parsedEntriesWithNulls: Array<ChristianNewsHeadline | null> = entries.map(block => {
       const title = extractXmlValue(block, 'title');
       if (!title) return null;
       return {
@@ -429,7 +443,7 @@ function parseChristianNewsFeed(xml: string, source: string): ChristianNewsHeadl
       };
     });
 
-  return parsedEntries.filter((entry): entry is ChristianNewsHeadline => entry !== null);
+  return parsedEntriesWithNulls.filter((entry): entry is ChristianNewsHeadline => entry !== null);
 }
 
 function formatChristianNewsDigest(headlines: ChristianNewsHeadline[]): string {
@@ -453,6 +467,7 @@ function buildRecentPromptContext(
 
 async function fetchChristianNewsContext(date: string): Promise<ChristianNewsContext | null> {
   if (process.env.NODE_ENV === 'test') return null;
+  // Only the currently published day should reflect live headlines; archive dates must stay stable.
   if (date !== getCurrentPublicationDate()) return null;
 
   const inFlight = inFlightChristianNews.get(date);
@@ -464,7 +479,7 @@ async function fetchChristianNewsContext(date: string): Promise<ChristianNewsCon
         const response = await fetch(feed.url, {
           headers: {
             Accept: 'application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8',
-            'User-Agent': 'Forschen/1.0',
+            'User-Agent': CHRISTIAN_NEWS_USER_AGENT,
           },
           signal: AbortSignal.timeout(CHRISTIAN_NEWS_TIMEOUT_MS),
         });
@@ -519,7 +534,7 @@ function buildGlaubenHeuteThema(date: string, currentEvents: ChristianNewsContex
     id: `glauben-heute-${date}`,
     date,
     title: seed.title,
-    headline: leadHeadline ? `Heute im Blick: ${leadHeadline}` : seed.headline,
+    headline: leadHeadline ? `${CURRENT_TOPIC_HEADLINE_PREFIX} ${leadHeadline}` : seed.headline,
     worldFocus: newsDigest
       ? `Heute prägen in der christlichen Landschaft unter anderem diese Entwicklungen die Wahrnehmung: ${newsDigest}. ${seed.worldFocus}`
       : seed.worldFocus,

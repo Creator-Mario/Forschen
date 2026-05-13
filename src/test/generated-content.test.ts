@@ -306,6 +306,7 @@ describe('generated-content', () => {
     const topic = await getTodayGlaubenHeuteThema('2026-04-11');
 
     expect(topic.title).toBe('Kirche zwischen Prüfung und Hoffnung');
+    // 3 RSS feeds + 1 OpenAI completion request.
     expect(fetchMock).toHaveBeenCalledTimes(4);
   });
 
