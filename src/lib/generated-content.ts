@@ -414,8 +414,7 @@ function parseChristianNewsFeed(xml: string, source: string): ChristianNewsHeadl
   const items = [...xml.matchAll(/<item\b[\s\S]*?<\/item>/gi)].map(match => match[0]);
   const entries = items.length ? items : [...xml.matchAll(/<entry\b[\s\S]*?<\/entry>/gi)].map(match => match[0]);
 
-  return entries
-    .map(block => {
+  const parsedEntries: Array<ChristianNewsHeadline | null> = entries.map(block => {
       const title = extractXmlValue(block, 'title');
       if (!title) return null;
       return {
@@ -425,10 +424,12 @@ function parseChristianNewsFeed(xml: string, source: string): ChristianNewsHeadl
           extractXmlValue(block, 'pubDate')
           ?? extractXmlValue(block, 'published')
           ?? extractXmlValue(block, 'updated')
+          ?? undefined
         ),
-      } satisfies ChristianNewsHeadline;
-    })
-    .filter((entry): entry is ChristianNewsHeadline => Boolean(entry));
+      };
+    });
+
+  return parsedEntries.filter((entry): entry is ChristianNewsHeadline => entry !== null);
 }
 
 function formatChristianNewsDigest(headlines: ChristianNewsHeadline[]): string {
