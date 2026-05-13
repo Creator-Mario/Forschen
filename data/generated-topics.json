@@ -1706,5 +1706,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-05-13",
+    "date": "2026-05-13",
+    "source": "ai",
+    "createdAt": "2026-05-13T01:55:48.416Z",
+    "promptVersion": "v2",
+    "psalm": {
+      "id": "psalm-2026-05-13",
+      "date": "2026-05-13",
+      "psalmReference": "Psalm 23",
+      "title": "Der gute Hirte",
+      "excerpt": "Der Herr ist mein Hirte; mir wird nichts mangeln.",
+      "summary": "Psalm 23 beschreibt das Bild des Herrn als guten Hirten, der seine Schafe führt und beschützt. Er bietet Trost und Sicherheit in Zeiten der Not und führt uns auf den richtigen Weg.",
+      "significance": "Dieser Psalm ist eine Quelle des Trostes für viele Gläubige, da er das Vertrauen in Gottes Fürsorge und Leitung betont. Er erinnert uns daran, dass wir in schwierigen Zeiten auf die Gegenwart und Hilfe Gottes vertrauen können.",
+      "practice": "Die Praxis des Gebets und der Meditation über diesen Psalm kann helfen, das Vertrauen in Gott zu stärken. Es ist wichtig, regelmäßig innezuhalten und über die Wege nachzudenken, auf denen Gott uns führt und versorgt.",
+      "questions": [
+        "Wie erlebe ich die Führung Gottes in meinem Leben?",
+        "In welchen Bereichen meines Lebens fällt es mir schwer, Gott als meinen Hirten anzunehmen?",
+        "Wie kann ich anderen von der Fürsorge Gottes erzählen?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-05-13",
+      "date": "2026-05-13",
+      "title": "Vertrauen in Gottes Führung",
+      "headline": "Gott als unser Führer im Alltag",
+      "worldFocus": "In einer Welt, die oft von Unsicherheit und Angst geprägt ist, ist das Vertrauen auf Gottes Führung wichtiger denn je. Viele Menschen suchen nach Orientierung und Halt in ihrem Leben.",
+      "faithPerspective": "Aus einer christlichen Perspektive ist es entscheidend, sich auf Gott zu verlassen, der uns bekannt ist als der gute Hirte. Unser Glaube hilft uns, die Herausforderungen des Lebens mit Zuversicht zu meistern.",
+      "discipleshipImpulse": "Als Nachfolger Christi sind wir dazu aufgerufen, nicht nur auf Gottes Führung zu vertrauen, sondern auch anderen diesen Weg zu zeigen. Unsere Erfahrungen können anderen helfen, Gott als verlässlichen Führer zu erkennen.",
+      "bibleVerses": [
+        "Jesaja 40,11",
+        "Johannes 10,11",
+        "Psalm 32,8"
+      ],
+      "questions": [
+        "Was bedeutet es für mich, Gott als meinen Hirten zu akzeptieren?",
+        "Wie kann ich in meinem Alltag aktiver auf Gottes Führung hören?",
+        "Welche Erfahrungen habe ich gemacht, die meinen Glauben an Gottes Führung gestärkt haben?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-05-13",
+      "date": "2026-05-13",
+      "topicTitle": "Vertrauen in Gottes Führung",
+      "introduction": "Diese Bücher bieten wertvolle Einsichten und praktische Tipps, um das Vertrauen in Gottes Führung zu vertiefen. Sie laden dazu ein, den eigenen Glauben zu reflektieren und zu wachsen.",
+      "recommendations": [
+        {
+          "title": "Gott hört die Schreie der Seele",
+          "author": "Anne Graham Lotz",
+          "description": "Dieses Buch ermutigt dazu, in Gebet und Vertrauen zu Gott zu wachsen, auch in schwierigen Zeiten.",
+          "relevance": "Es bietet praktische Hilfen, um die Beziehung zu Gott zu vertiefen und seine Führung zu erkennen."
+        },
+        {
+          "title": "Die Kunst des Hörens",
+          "author": "Janet Davis",
+          "description": "In diesem Buch geht es darum, wie wir Gottes Stimme in unserem Leben hören können und was es bedeutet, ihm zu folgen.",
+          "relevance": "Es ist besonders hilfreich für die persönliche Entwicklung im Glauben und das Verständnis von Gottes Führung."
+        }
+      ]
+    }
   }
 ]
