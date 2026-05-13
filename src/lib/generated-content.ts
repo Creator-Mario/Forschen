@@ -6,7 +6,7 @@ import type {
   GeneratedTopicBundle,
   GeneratedTopicSource,
 } from '@/types';
-import { GENERATED_ARCHIVE_DAYS, MS_PER_DAY } from './archive-window';
+import { GENERATED_ARCHIVE_DAYS } from './archive-window';
 import {
   getGeneratedTopicBundleByDateFresh,
   getGeneratedTopicBundlesFresh,
@@ -300,12 +300,40 @@ const currentTopicSeeds = [
   },
 ] as const;
 
-const GENERATED_TOPIC_PROMPT_VERSION = 'v2';
+const GENERATED_TOPIC_PROMPT_VERSION = 'v3';
 const OPENAI_API_BASE_URL = (process.env.OPENAI_BASE_URL ?? 'https://api.openai.com/v1').replace(/\/$/, '');
 const OPENAI_MODEL = process.env.OPENAI_MODEL?.trim() || 'gpt-4.1-mini';
 const AI_TIMEOUT_MS = Number(process.env.OPENAI_TIMEOUT_MS ?? 20000);
 const AI_MAX_RETRIES = 2;
+const CHRISTIAN_NEWS_TIMEOUT_MS = Number(process.env.CHRISTIAN_NEWS_TIMEOUT_MS ?? 2500);
+const CHRISTIAN_NEWS_SOURCE_LIMIT = 3;
+const CHRISTIAN_NEWS_HEADLINE_LIMIT = 4;
 const inFlightTopicGenerations = new Map<string, Promise<GeneratedTopicBundle>>();
+const inFlightChristianNews = new Map<string, Promise<ChristianNewsContext | null>>();
+
+const CHRISTIAN_NEWS_FEEDS = [
+  { source: 'Vatican News', url: 'https://www.vaticannews.va/de.rss.xml' },
+  { source: 'evangelisch.de', url: 'https://www.evangelisch.de/rss/news.xml' },
+  { source: 'IDEA', url: 'https://www.idea.de/rss/news' },
+  { source: 'katholisch.de', url: 'https://www.katholisch.de/aktuelles/rss' },
+] as const;
+
+interface ChristianNewsHeadline {
+  source: string;
+  title: string;
+  publishedAt?: string;
+}
+
+interface ChristianNewsContext {
+  date: string;
+  headlines: ChristianNewsHeadline[];
+}
+
+interface GeneratedTopicPromptContext {
+  currentEvents: ChristianNewsContext | null;
+  recentTopicTitles: string[];
+  recentPsalmReferences: string[];
+}
 
 function parseIsoDate(value: string): Date {
   const [year, month, day] = value.split('-').map(Number);
@@ -316,13 +344,17 @@ function toIsoDate(date: Date): string {
   return date.toISOString().split('T')[0];
 }
 
-function daysSinceEpoch(date: string): number {
-  return Math.floor(parseIsoDate(date).getTime() / MS_PER_DAY);
+function getDeterministicHash(value: string): number {
+  let hash = 2166136261;
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
 }
 
-function getSeedIndex(date: string, length: number): number {
-  const index = daysSinceEpoch(date) % length;
-  return index >= 0 ? index : index + length;
+function getSeedIndex(date: string, length: number, salt: string): number {
+  return getDeterministicHash(`${date}:${salt}`) % length;
 }
 
 function buildDateList(endDate: string): string[] {
@@ -337,7 +369,7 @@ function buildDateList(endDate: string): string[] {
 }
 
 function buildPsalmThema(date: string): PsalmThema {
-  const seed = psalmSeeds[getSeedIndex(date, psalmSeeds.length)];
+  const seed = psalmSeeds[getSeedIndex(date, psalmSeeds.length, 'psalm')];
   return {
     id: `psalm-${date}`,
     date,
@@ -351,23 +383,163 @@ function buildPsalmThema(date: string): PsalmThema {
   };
 }
 
-function buildGlaubenHeuteThema(date: string): GlaubenHeuteThema {
-  const seed = currentTopicSeeds[getSeedIndex(date, currentTopicSeeds.length)];
+function decodeXmlEntities(value: string): string {
+  return value
+    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, '\'')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function stripHtml(value: string): string {
+  return decodeXmlEntities(value.replace(/<[^>]+>/g, ' '));
+}
+
+function extractXmlValue(block: string, tagName: string): string | null {
+  const match = block.match(new RegExp(`<${tagName}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${tagName}>`, 'i'));
+  return match?.[1] ? stripHtml(match[1]) : null;
+}
+
+function parseFeedDate(value?: string): string | undefined {
+  if (!value) return undefined;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
+}
+
+function parseChristianNewsFeed(xml: string, source: string): ChristianNewsHeadline[] {
+  const items = [...xml.matchAll(/<item\b[\s\S]*?<\/item>/gi)].map(match => match[0]);
+  const entries = items.length ? items : [...xml.matchAll(/<entry\b[\s\S]*?<\/entry>/gi)].map(match => match[0]);
+
+  return entries
+    .map(block => {
+      const title = extractXmlValue(block, 'title');
+      if (!title) return null;
+      return {
+        source,
+        title,
+        publishedAt: parseFeedDate(
+          extractXmlValue(block, 'pubDate')
+          ?? extractXmlValue(block, 'published')
+          ?? extractXmlValue(block, 'updated')
+        ),
+      } satisfies ChristianNewsHeadline;
+    })
+    .filter((entry): entry is ChristianNewsHeadline => Boolean(entry));
+}
+
+function formatChristianNewsDigest(headlines: ChristianNewsHeadline[]): string {
+  return headlines.map(entry => `${entry.source}: ${entry.title}`).join(' | ');
+}
+
+function buildRecentPromptContext(
+  bundles: GeneratedTopicBundle[],
+  date: string
+): Pick<GeneratedTopicPromptContext, 'recentTopicTitles' | 'recentPsalmReferences'> {
+  const recentBundles = bundles
+    .filter(bundle => bundle.date < date && isUsableGeneratedTopicBundle(bundle))
+    .sort((left, right) => right.date.localeCompare(left.date))
+    .slice(0, 12);
+
+  return {
+    recentTopicTitles: recentBundles.map(bundle => bundle.topic.title),
+    recentPsalmReferences: recentBundles.map(bundle => bundle.psalm?.psalmReference ?? '').filter(isNonEmptyString),
+  };
+}
+
+async function fetchChristianNewsContext(date: string): Promise<ChristianNewsContext | null> {
+  if (process.env.NODE_ENV === 'test') return null;
+  if (date !== getCurrentPublicationDate()) return null;
+
+  const inFlight = inFlightChristianNews.get(date);
+  if (inFlight) return inFlight;
+
+  const request = (async () => {
+    const results = await Promise.allSettled(
+      CHRISTIAN_NEWS_FEEDS.slice(0, CHRISTIAN_NEWS_SOURCE_LIMIT).map(async feed => {
+        const response = await fetch(feed.url, {
+          headers: {
+            Accept: 'application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8',
+            'User-Agent': 'Forschen/1.0',
+          },
+          signal: AbortSignal.timeout(CHRISTIAN_NEWS_TIMEOUT_MS),
+        });
+
+        if (!response.ok) {
+          throw new Error(`News feed request failed with status ${response.status}`);
+        }
+
+        return parseChristianNewsFeed(await response.text(), feed.source);
+      })
+    );
+
+    const headlines = results
+      .flatMap(result => (result.status === 'fulfilled' ? result.value : []))
+      .filter(entry => isNonEmptyString(entry.title))
+      .sort((left, right) => (right.publishedAt ?? '').localeCompare(left.publishedAt ?? ''));
+
+    const seen = new Set<string>();
+    const uniqueHeadlines = headlines.filter(entry => {
+      const key = entry.title.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    if (!uniqueHeadlines.length) return null;
+
+    return {
+      date,
+      headlines: uniqueHeadlines.slice(0, CHRISTIAN_NEWS_HEADLINE_LIMIT),
+    };
+  })();
+
+  inFlightChristianNews.set(date, request);
+
+  try {
+    return await request;
+  } catch (error) {
+    console.error('[generated-content] Aktuelle christliche Schlagzeilen konnten nicht geladen werden:', error);
+    return null;
+  } finally {
+    inFlightChristianNews.delete(date);
+  }
+}
+
+function buildGlaubenHeuteThema(date: string, currentEvents: ChristianNewsContext | null = null): GlaubenHeuteThema {
+  const seed = currentTopicSeeds[getSeedIndex(date, currentTopicSeeds.length, 'topic')];
+  const leadHeadline = currentEvents?.headlines[0]?.title;
+  const newsDigest = currentEvents ? formatChristianNewsDigest(currentEvents.headlines) : null;
+
   return {
     id: `glauben-heute-${date}`,
     date,
     title: seed.title,
-    headline: seed.headline,
-    worldFocus: seed.worldFocus,
-    faithPerspective: seed.faithPerspective,
-    discipleshipImpulse: seed.discipleshipImpulse,
+    headline: leadHeadline ? `Heute im Blick: ${leadHeadline}` : seed.headline,
+    worldFocus: newsDigest
+      ? `Heute prägen in der christlichen Landschaft unter anderem diese Entwicklungen die Wahrnehmung: ${newsDigest}. ${seed.worldFocus}`
+      : seed.worldFocus,
+    faithPerspective: newsDigest
+      ? `${seed.faithPerspective} Gerade angesichts solcher Meldungen braucht die Kirche geistliche Unterscheidung, Gebet und nüchterne Hoffnung.`
+      : seed.faithPerspective,
+    discipleshipImpulse: newsDigest
+      ? `${seed.discipleshipImpulse} Bete heute außerdem bewusst für Gemeinden, Verantwortliche und Betroffene, die hinter diesen Nachrichten stehen.`
+      : seed.discipleshipImpulse,
     bibleVerses: [...seed.bibleVerses],
-    questions: [...seed.questions],
+    questions: newsDigest
+      ? [
+        'Welche der aktuellen Entwicklungen in der christlichen Landschaft fordert mein Gebet und meine geistliche Unterscheidung heute besonders heraus?',
+        ...seed.questions.slice(1),
+      ]
+      : [...seed.questions],
   };
 }
 
 function buildBuchempfehlungsSammlung(date: string): BuchempfehlungsSammlung {
-  const seed = currentTopicSeeds[getSeedIndex(date, currentTopicSeeds.length)];
+  const seed = currentTopicSeeds[getSeedIndex(date, currentTopicSeeds.length, 'topic')];
   return {
     id: `buchliste-${date}`,
     date,
@@ -380,6 +552,7 @@ function buildBuchempfehlungsSammlung(date: string): BuchempfehlungsSammlung {
 
 function buildGeneratedTopicBundle(
   date: string,
+  currentEvents: ChristianNewsContext | null = null,
   source: GeneratedTopicSource = 'seed-fallback'
 ): GeneratedTopicBundle {
   return {
@@ -389,7 +562,7 @@ function buildGeneratedTopicBundle(
     createdAt: new Date().toISOString(),
     promptVersion: GENERATED_TOPIC_PROMPT_VERSION,
     psalm: buildPsalmThema(date),
-    topic: buildGlaubenHeuteThema(date),
+    topic: buildGlaubenHeuteThema(date, currentEvents),
     books: buildBuchempfehlungsSammlung(date),
   };
 }
@@ -588,7 +761,22 @@ function parseAiBundle(date: string, rawText: string): GeneratedTopicBundle {
   };
 }
 
-function getAiPrompt(date: string): string {
+function getAiPrompt(date: string, context: GeneratedTopicPromptContext): string {
+  const currentEventsBlock = context.currentEvents
+    ? [
+      'Aktuelle Schlagzeilen aus christlichen Medien (möglichst konkret aufgreifen):',
+      ...context.currentEvents.headlines.map(entry => `- ${entry.source}: ${entry.title}`),
+    ].join('\n')
+    : 'Aktuelle Schlagzeilen aus christlichen Medien: Keine externen Schlagzeilen verfügbar. Formuliere trotzdem klar datiert und ohne generische Wiederholung.';
+
+  const recentTitlesBlock = context.recentTopicTitles.length
+    ? `Jüngste Tagesthemen zur Vermeidung von Wiederholungen:\n${context.recentTopicTitles.map(entry => `- ${entry}`).join('\n')}`
+    : 'Jüngste Tagesthemen zur Vermeidung von Wiederholungen: Keine vorhanden.';
+
+  const recentPsalmBlock = context.recentPsalmReferences.length
+    ? `Zuletzt verwendete Psalmstellen (wenn möglich nicht sofort wiederholen):\n${context.recentPsalmReferences.map(entry => `- ${entry}`).join('\n')}`
+    : 'Zuletzt verwendete Psalmstellen: Keine vorhanden.';
+
   return [
     `Erstelle für ${date} ein christliches Tagesthema für die Website Forschen.`,
     'Antworte ausschließlich als valides JSON ohne Markdown oder zusätzliche Erklärungen.',
@@ -639,11 +827,16 @@ function getAiPrompt(date: string): string {
     '- psalm.excerpt soll ein kurzer prägnanter Satz aus oder über den Psalm sein.',
     '- Genau drei Psalm-Fragen.',
     '- worldFocus, faithPerspective und discipleshipImpulse jeweils 2-4 Sätze.',
+    '- topic.title und topic.headline müssen sich klar von den jüngsten Tagesthemen unterscheiden und dürfen keine bloße Umformulierung davon sein.',
+    '- Wenn aktuelle Schlagzeilen vorhanden sind, muss worldFocus mindestens eine konkrete Beobachtung aus der gegenwärtigen christlichen Landschaft aufnehmen.',
     '- Drei echte Bibelstellen als bibleVerses.',
     '- Genau drei vertiefende Fragen.',
     '- Genau zwei Buchempfehlungen.',
     '- books.topicTitle muss inhaltlich zu topic.title passen.',
     '- books.introduction darf nicht erwähnen, dass der Inhalt von KI erstellt wurde.',
+    currentEventsBlock,
+    recentTitlesBlock,
+    recentPsalmBlock,
   ].join('\n');
 }
 
@@ -655,15 +848,27 @@ function shouldRefreshGeneratedTopicBundle(bundle: GeneratedTopicBundle | undefi
   if (!bundle) return true;
   if (!isUsableGeneratedTopicBundle(bundle)) return true;
   const aiConfigured = Boolean(getOpenAiApiKey());
-  if (!aiConfigured) return false;
+  if (!aiConfigured) {
+    return bundle.source === 'seed-fallback' && bundle.promptVersion !== GENERATED_TOPIC_PROMPT_VERSION;
+  }
   return bundle.source !== 'ai' || bundle.promptVersion !== GENERATED_TOPIC_PROMPT_VERSION;
 }
 
-async function generateTopicBundleWithAi(date: string): Promise<GeneratedTopicBundle | null> {
+async function generateTopicBundleWithAi(
+  date: string,
+  currentEvents: ChristianNewsContext | null = null
+): Promise<GeneratedTopicBundle | null> {
   const apiKey = getOpenAiApiKey();
   if (!apiKey) return null;
 
-  const prompt = getAiPrompt(date);
+  const [storedBundles, effectiveCurrentEvents] = await Promise.all([
+    getGeneratedTopicBundlesFresh(),
+    currentEvents ? Promise.resolve(currentEvents) : fetchChristianNewsContext(date),
+  ]);
+  const prompt = getAiPrompt(date, {
+    ...buildRecentPromptContext(storedBundles, date),
+    currentEvents: effectiveCurrentEvents,
+  });
 
   for (let attempt = 1; attempt <= AI_MAX_RETRIES; attempt += 1) {
     try {
@@ -732,9 +937,12 @@ async function getOrCreateGeneratedTopicBundle(date = getCurrentPublicationDate(
   if (inFlight) return inFlight;
 
   const generation = (async () => {
-    const generated = await generateTopicBundleWithAi(date);
+    const currentEvents = await fetchChristianNewsContext(date);
+    const generated = await generateTopicBundleWithAi(date, currentEvents);
     const bundle = generated
-      ?? (isUsableGeneratedTopicBundle(existing) ? existing : buildGeneratedTopicBundle(date));
+      ?? (isUsableGeneratedTopicBundle(existing) && existing.source === 'ai'
+        ? existing
+        : buildGeneratedTopicBundle(date, currentEvents));
     return persistGeneratedTopicBundle(bundle);
   })();
 

@@ -163,6 +163,152 @@ describe('generated-content', () => {
     expect(dbMock.getEntries()[0]?.source).toBe('ai');
   });
 
+  it('passes current Christian headlines and recent topics into the AI prompt', async () => {
+    process.env.NODE_ENV = 'development';
+    process.env.OPENAI_API_KEY = 'test-key';
+    process.env.OPENAI_BASE_URL = 'https://example.test/v1';
+    process.env.OPENAI_MODEL = 'gpt-test';
+
+    const dbMock = createDbMock([
+      {
+        id: 'generated-topic-2026-04-10',
+        date: '2026-04-10',
+        source: 'ai',
+        createdAt: '2026-04-10T00:00:00.000Z',
+        promptVersion: 'v3',
+        psalm: {
+          id: 'psalm-2026-04-10',
+          date: '2026-04-10',
+          psalmReference: 'Psalm 84,6-8',
+          title: 'Vorheriger Psalm',
+          excerpt: 'Vorheriger Auszug.',
+          summary: 'Vorherige Zusammenfassung.',
+          significance: 'Vorherige Bedeutung.',
+          practice: 'Vorherige Praxis.',
+          questions: ['Frage 1', 'Frage 2', 'Frage 3'],
+        },
+        topic: {
+          id: 'glauben-heute-2026-04-10',
+          date: '2026-04-10',
+          title: 'Vorheriger Schwerpunkt',
+          headline: 'Vorherige Überschrift',
+          worldFocus: 'Vorheriger Fokus.',
+          faithPerspective: 'Vorherige Perspektive.',
+          discipleshipImpulse: 'Vorheriger Impuls.',
+          bibleVerses: ['Johannes 14,6', 'Epheser 4,15', 'Psalm 25,10'],
+          questions: ['Frage 1', 'Frage 2', 'Frage 3'],
+        },
+        books: {
+          id: 'buchliste-2026-04-10',
+          date: '2026-04-10',
+          topicTitle: 'Vorheriger Schwerpunkt',
+          introduction: 'Vorherige Einführung.',
+          recommendations: [
+            {
+              title: 'Buch 1',
+              author: 'Autor 1',
+              description: 'Beschreibung 1',
+              relevance: 'Relevanz 1',
+            },
+            {
+              title: 'Buch 2',
+              author: 'Autor 2',
+              description: 'Beschreibung 2',
+              relevance: 'Relevanz 2',
+            },
+          ],
+        },
+      },
+    ]);
+
+    const feedXml = `
+      <rss>
+        <channel>
+          <item>
+            <title>Synode berät über geistliche Erneuerung in Gemeinden</title>
+            <pubDate>Fri, 11 Apr 2026 06:00:00 GMT</pubDate>
+          </item>
+        </channel>
+      </rss>
+    `;
+    const fetchMock = vi.fn(async (input: string | URL | Request, init?: RequestInit) => {
+      const url = String(input);
+
+      if (url === 'https://example.test/v1/chat/completions') {
+        const body = JSON.parse(String(init?.body ?? '{}')) as {
+          messages: Array<{ content: string }>;
+        };
+        expect(body.messages[1].content).toContain('Synode berät über geistliche Erneuerung in Gemeinden');
+        expect(body.messages[1].content).toContain('Vorheriger Schwerpunkt');
+        expect(body.messages[1].content).toContain('Psalm 84,6-8');
+
+        return {
+          ok: true,
+          json: async () => ({
+            choices: [
+              {
+                message: {
+                  content: JSON.stringify({
+                    psalm: {
+                      psalmReference: 'Psalm 25,4-5',
+                      title: 'Auf Gottes Wegen bleiben',
+                      excerpt: 'Herr, zeige mir deine Wege und lehre mich deine Steige.',
+                      summary: 'Der Psalm bittet Gott um Leitung inmitten von Unsicherheit und offenen Fragen. Er verbindet Demut mit dem Vertrauen, dass Gott seinen Weg zeigt.',
+                      significance: 'Für den Glauben heute heißt das, Orientierung nicht nur in uns selbst zu suchen, sondern im Wort und in der Gegenwart Gottes. Gerade darin wächst geistliche Klarheit.',
+                      practice: 'Nimm dir heute bewusst Zeit, eine Entscheidung oder offene Frage betend vor Gott zu bringen. Bitte ihn konkret um Leitung und Bereitschaft zum Gehorsam.',
+                      questions: ['Wo brauche ich gerade Gottes Leitung?', 'Welche Wege möchte Gott in mir zurechtrücken?', 'Wie übe ich hörenden Gehorsam im Alltag ein?'],
+                    },
+                    topic: {
+                      title: 'Kirche zwischen Prüfung und Hoffnung',
+                      headline: 'Wenn aktuelle Entwicklungen geistliche Klarheit fordern',
+                      worldFocus: 'In christlichen Medien wird heute über geistliche Erneuerung in Gemeinden und die Verantwortung kirchlicher Leitung gesprochen.',
+                      faithPerspective: 'Der Glaube ruft dazu auf, solche Entwicklungen weder zynisch noch naiv zu deuten, sondern im Licht der Schrift zu prüfen.',
+                      discipleshipImpulse: 'Bete heute für Leiter, Gemeinden und geistliche Wachsamkeit in deiner Umgebung.',
+                      bibleVerses: ['Apostelgeschichte 20,28', 'Psalm 78,72', 'Jakobus 1,5'],
+                      questions: ['Wo braucht meine Gemeinde geistliche Erneuerung?', 'Wie prüfe ich aktuelle Entwicklungen biblisch?', 'Wofür will ich heute konkret beten?'],
+                    },
+                    books: {
+                      topicTitle: 'Kirche zwischen Prüfung und Hoffnung',
+                      introduction: 'Diese Buchempfehlungen vertiefen das heutige Tagesthema und helfen, biblische Orientierung praktisch einzuüben.',
+                      recommendations: [
+                        {
+                          title: 'Nachfolge',
+                          author: 'Dietrich Bonhoeffer',
+                          description: 'Ein klares Buch über die Bindung an Christus im Alltag.',
+                          relevance: 'Hilft, geistliche Erneuerung auf Christus auszurichten.',
+                        },
+                        {
+                          title: 'Basic Christianity',
+                          author: 'John Stott',
+                          description: 'Eine konzentrierte Einführung in zentrale Wahrheiten des Glaubens.',
+                          relevance: 'Stärkt nüchterne biblische Orientierung in bewegten Zeiten.',
+                        },
+                      ],
+                    },
+                  }),
+                },
+              },
+            ],
+          }),
+        };
+      }
+
+      return {
+        ok: true,
+        text: async () => feedXml,
+      };
+    });
+
+    vi.stubGlobal('fetch', fetchMock);
+    vi.doMock('@/lib/db', () => dbMock.module);
+    const { getTodayGlaubenHeuteThema } = await import('@/lib/generated-content');
+
+    const topic = await getTodayGlaubenHeuteThema('2026-04-11');
+
+    expect(topic.title).toBe('Kirche zwischen Prüfung und Hoffnung');
+    expect(fetchMock).toHaveBeenCalledTimes(4);
+  });
+
   it('falls back to deterministic content when no AI is configured', async () => {
     const dbMock = createDbMock();
     vi.doMock('@/lib/db', () => dbMock.module);
@@ -175,6 +321,70 @@ describe('generated-content', () => {
     );
     expect(books.introduction).not.toContain('KI-inspirierten');
     expect(dbMock.getEntries()[0]?.source).toBe('seed-fallback');
+  });
+
+  it('refreshes stale fallback bundles even without AI credentials', async () => {
+    const dbMock = createDbMock([
+      {
+        id: 'generated-topic-2026-04-11',
+        date: '2026-04-11',
+        source: 'seed-fallback',
+        createdAt: '2026-04-11T00:00:00.000Z',
+        promptVersion: 'v2',
+        psalm: {
+          id: 'psalm-2026-04-11',
+          date: '2026-04-11',
+          psalmReference: 'Psalm 1,1-3',
+          title: 'Alter Psalm',
+          excerpt: 'Alter Auszug.',
+          summary: 'Alte Zusammenfassung.',
+          significance: 'Alte Bedeutung.',
+          practice: 'Alte Praxis.',
+          questions: ['Frage 1', 'Frage 2', 'Frage 3'],
+        },
+        topic: {
+          id: 'glauben-heute-2026-04-11',
+          date: '2026-04-11',
+          title: 'Alter Schwerpunkt',
+          headline: 'Alte Überschrift',
+          worldFocus: 'Alter Fokus.',
+          faithPerspective: 'Alte Perspektive.',
+          discipleshipImpulse: 'Alter Impuls.',
+          bibleVerses: ['Johannes 14,6', 'Epheser 4,15', 'Psalm 25,10'],
+          questions: ['Frage 1', 'Frage 2', 'Frage 3'],
+        },
+        books: {
+          id: 'buchliste-2026-04-11',
+          date: '2026-04-11',
+          topicTitle: 'Alter Schwerpunkt',
+          introduction: 'Alte Einführung.',
+          recommendations: [
+            {
+              title: 'Altes Buch 1',
+              author: 'Autor 1',
+              description: 'Beschreibung 1',
+              relevance: 'Relevanz 1',
+            },
+            {
+              title: 'Altes Buch 2',
+              author: 'Autor 2',
+              description: 'Beschreibung 2',
+              relevance: 'Relevanz 2',
+            },
+          ],
+        },
+      },
+    ]);
+
+    vi.doMock('@/lib/db', () => dbMock.module);
+    const { getTodayGlaubenHeuteThema } = await import('@/lib/generated-content');
+
+    const topic = await getTodayGlaubenHeuteThema('2026-04-11');
+
+    expect(topic.title).not.toBe('Alter Schwerpunkt');
+    expect(dbMock.saveGeneratedTopicBundle).toHaveBeenCalledTimes(1);
+    expect(dbMock.getEntries()[0]?.source).toBe('seed-fallback');
+    expect(dbMock.getEntries()[0]?.promptVersion).toBe('v3');
   });
 
   it('refreshes old fallback bundles with AI when OpenAI is configured', async () => {
@@ -293,7 +503,7 @@ describe('generated-content', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(dbMock.saveGeneratedTopicBundle).toHaveBeenCalledTimes(1);
     expect(dbMock.getEntries()[0]?.source).toBe('ai');
-    expect(dbMock.getEntries()[0]?.promptVersion).toBe('v2');
+    expect(dbMock.getEntries()[0]?.promptVersion).toBe('v3');
   });
 
   it('rebuilds incomplete stored bundles when AI is unavailable', async () => {
@@ -350,7 +560,7 @@ describe('generated-content', () => {
     expect(books.id).toBe('buchliste-2026-04-11');
     expect(dbMock.saveGeneratedTopicBundle).toHaveBeenCalledTimes(1);
     expect(dbMock.getEntries()[0]?.source).toBe('seed-fallback');
-    expect(dbMock.getEntries()[0]?.promptVersion).toBe('v2');
+    expect(dbMock.getEntries()[0]?.promptVersion).toBe('v3');
     expect(dbMock.getEntries()[0]?.psalm?.id).toBe('psalm-2026-04-11');
   });
 });
