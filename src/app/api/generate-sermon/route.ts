@@ -36,6 +36,7 @@ const DAILY_SERMON_FILE = path.join(DATA_DIR, 'daily-sermon.json');
 const SERMON_HISTORY_FILE = path.join(DATA_DIR, 'sermon-history.json');
 const OPENAI_MODEL = 'gpt-4o-mini';
 const MAX_GENERATION_ATTEMPTS = 4;
+const MIN_TITLE_LENGTH_FOR_SUBSTRING_CHECK = 12;
 
 let sermonCache: StoredDailySermon | null = null;
 let inFlightGeneration: Promise<StoredDailySermon> | null = null;
@@ -82,7 +83,10 @@ function areTitlesTooSimilar(title: string, history: SermonHistoryEntry[]): bool
   return history.some((entry) => {
     if (!entry.title) return false;
     if (entry.normalizedTitle === normalizedTitle) return true;
-    if (normalizedTitle.length >= 12 && (normalizedTitle.includes(entry.normalizedTitle) || entry.normalizedTitle.includes(normalizedTitle))) {
+    if (
+      normalizedTitle.length >= MIN_TITLE_LENGTH_FOR_SUBSTRING_CHECK
+      && (normalizedTitle.includes(entry.normalizedTitle) || entry.normalizedTitle.includes(normalizedTitle))
+    ) {
       return true;
     }
 

@@ -33,8 +33,9 @@ function isSameUtcDay(left: Date, right: Date): boolean {
 }
 
 function getNthSundayLabel(date: Date, seasonStart: Date, label: string): string {
-  const diffDays = Math.floor((startOfUtcDay(date).getTime() - startOfUtcDay(seasonStart).getTime()) / 86_400_000);
-  return `${Math.floor(diffDays / 7)}. ${label}`;
+  const seasonAnchor = addDays(seasonStart, ((7 - seasonStart.getUTCDay()) % 7) || 7);
+  const diffDays = Math.floor((startOfUtcDay(date).getTime() - startOfUtcDay(seasonAnchor).getTime()) / 86_400_000);
+  return `${Math.floor(diffDays / 7) + 1}. ${label}`;
 }
 
 function getOrdinarySundayNumber(date: Date): number {
