@@ -38,14 +38,14 @@ describe('config', () => {
     expect(canonicalSiteUrl).toBe('https://flussdeslebens.live');
   });
 
-  it('preserves an explicitly configured www live domain', async () => {
+  it('normalizes an explicitly configured www live domain to the apex domain', async () => {
     process.env.SITE_DOMAIN = 'www.flussdeslebens.live';
     process.env.SITE_URL = 'https://www.flussdeslebens.live/';
 
     const { canonicalSiteUrl, siteDomain } = await import('@/lib/config');
 
-    expect(siteDomain).toBe('www.flussdeslebens.live');
-    expect(canonicalSiteUrl).toBe('https://www.flussdeslebens.live');
+    expect(siteDomain).toBe('flussdeslebens.live');
+    expect(canonicalSiteUrl).toBe('https://flussdeslebens.live');
   });
 
   it('falls back to the default canonical URL when SITE_URL is invalid', async () => {
@@ -58,12 +58,13 @@ describe('config', () => {
     expect(canonicalSiteUrl).toBe('https://flussdeslebens.live');
   });
 
-  it('forces the canonical site URL onto https even when SITE_URL is configured with http', async () => {
+  it('forces the canonical site URL onto the https apex domain even when SITE_URL uses http and www', async () => {
     process.env.SITE_DOMAIN = 'www.flussdeslebens.live';
     process.env.SITE_URL = 'http://www.flussdeslebens.live';
 
-    const { canonicalSiteUrl } = await import('@/lib/config');
+    const { canonicalSiteUrl, siteDomain } = await import('@/lib/config');
 
-    expect(canonicalSiteUrl).toBe('https://www.flussdeslebens.live');
+    expect(siteDomain).toBe('flussdeslebens.live');
+    expect(canonicalSiteUrl).toBe('https://flussdeslebens.live');
   });
 });

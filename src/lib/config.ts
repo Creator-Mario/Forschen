@@ -14,6 +14,10 @@
 const DEFAULT_SITE_DOMAIN = 'flussdeslebens.live';
 const DEFAULT_CANONICAL_SITE_URL = `https://${DEFAULT_SITE_DOMAIN}`;
 
+function getApexDomain(domain: string): string {
+  return domain.replace(/^www\./, '');
+}
+
 function normalizeSiteDomain(domain: string | undefined): string {
   const normalizedDomain = (domain ?? DEFAULT_SITE_DOMAIN)
     .trim()
@@ -25,7 +29,7 @@ function normalizeSiteDomain(domain: string | undefined): string {
     return DEFAULT_SITE_DOMAIN;
   }
 
-  return normalizedDomain;
+  return getApexDomain(normalizedDomain);
 }
 
 function normalizeCanonicalSiteUrl(url: string | undefined): string {
@@ -35,6 +39,7 @@ function normalizeCanonicalSiteUrl(url: string | undefined): string {
     const normalizedUrl = new URL(trimmedUrl);
 
     normalizedUrl.protocol = 'https:';
+    normalizedUrl.hostname = getApexDomain(normalizedUrl.hostname);
 
     return normalizedUrl.toString().replace(/\/$/, '');
   } catch {
