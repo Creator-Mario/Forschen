@@ -54,5 +54,6 @@ describe('church calendar helpers', () => {
 
     expect(autoExtendedData[2028]).toBeDefined();
     expect(autoExtendedData[2028]).toHaveLength(366);
+    expect(autoExtendedData[2028].some((entry) => entry.date === '2028-02-29')).toBe(true);
   });
 });

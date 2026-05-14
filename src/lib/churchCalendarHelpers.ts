@@ -100,7 +100,7 @@ export function getMonthData(year: number, month: number): MonthCalendarEntry[] 
       return {
         ...entry,
         day: date.getUTCDate(),
-        // ISO-8601-Anordnung für die Kalender-UI: Montag = 0 ... Sonntag = 6.
+        // ISO-8601 ordering for the calendar UI: Monday = 0 ... Sunday = 6.
         weekday: (date.getUTCDay() + 6) % 7,
         abbreviatedLiturgicalName: abbreviateLiturgicalName(entry.liturgicalName),
         displayName: getDisplayLiturgicalDay(entry.date),

@@ -1155,9 +1155,9 @@ function buildCalendarEntry(date: Date): ChurchCalendarEntry {
   const fixedObservance = getFixedObservance(date);
 
   if (movablePrincipal) {
-    // Bewegliche Hochfeste und Feste gehen bewusst vor festen Gedenktagen/Festen,
-    // damit Kollisionen wie 14. Mai 2026 (Christi Himmelfahrt vor Matthias) korrekt
-    // nach der liturgischen Rangordnung behandelt werden.
+    // Movable principal feasts deliberately take precedence over fixed
+    // memorials/feasts so collisions like May 14, 2026 are resolved by
+    // liturgical rank (Ascension before Matthias).
     return {
       date: toIsoDate(date),
       liturgicalName: movablePrincipal.name,
