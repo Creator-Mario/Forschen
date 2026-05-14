@@ -38,7 +38,7 @@ export default function DailySermon() {
 
       const payload = await response.json() as DailySermonPayload | { error?: string };
       if (!response.ok) {
-        throw new Error(payload && 'error' in payload && payload.error ? payload.error : 'Unbekannter Fehler');
+        throw new Error('error' in payload && payload.error ? payload.error : 'Unbekannter Fehler');
       }
 
       setSermon(payload as DailySermonPayload);

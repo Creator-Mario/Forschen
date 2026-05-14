@@ -204,7 +204,7 @@ async function requestUniqueSermon(date: string, liturgicalDay: string, history:
     const completion = await openai.chat.completions.create({
       model: OPENAI_MODEL,
       temperature: 0.85,
-      max_tokens: 950,
+      max_tokens: 700,
       messages,
     });
 
