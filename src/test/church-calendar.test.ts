@@ -39,6 +39,11 @@ describe('church calendar helpers', () => {
     );
   });
 
+  it('keeps boundary days around the start of Lent consistent', () => {
+    expect(getLiturgicalDay(new Date('2026-02-17T00:00:00Z'))).toBe('Dienstag der 6. Woche im Jahreskreis');
+    expect(getLiturgicalDay(new Date('2026-02-18T00:00:00Z'))).toBe('Aschermittwoch');
+  });
+
   it('preloads complete year data for 2026 and 2027', () => {
     expect(churchCalendarData[2026]).toHaveLength(365);
     expect(churchCalendarData[2027]).toHaveLength(365);
