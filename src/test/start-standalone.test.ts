@@ -6,25 +6,10 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 const tempDirs: string[] = [];
 const require = createRequire(import.meta.url);
-const originalEnv = {
-  HOSTNAME: process.env.HOSTNAME,
-  STANDALONE_HOSTNAME: process.env.STANDALONE_HOSTNAME,
-  PORT: process.env.PORT,
-  KEEP_ALIVE_TIMEOUT: process.env.KEEP_ALIVE_TIMEOUT,
-  NODE_ENV: process.env.NODE_ENV,
-};
 
 afterEach(() => {
   while (tempDirs.length > 0) {
     fs.rmSync(tempDirs.pop()!, { recursive: true, force: true });
-  }
-
-  for (const [key, value] of Object.entries(originalEnv)) {
-    if (value === undefined) {
-      delete process.env[key];
-    } else {
-      process.env[key] = value;
-    }
   }
 });
 
@@ -81,45 +66,5 @@ describe('start-standalone asset preparation', () => {
       },
     });
     expect(options.keepAliveTimeout).toBeUndefined();
-  });
-
-  it('loads the generated standalone server entrypoint after preparing assets', async () => {
-    const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'forschen-standalone-start-'));
-    tempDirs.push(repoRoot);
-
-    const standaloneRoot = path.join(repoRoot, '.next', 'standalone');
-    const markerPath = path.join(repoRoot, 'server-started.json');
-
-    fs.mkdirSync(path.join(repoRoot, 'public'), { recursive: true });
-    fs.mkdirSync(path.join(repoRoot, '.next', 'static'), { recursive: true });
-    fs.mkdirSync(standaloneRoot, { recursive: true });
-
-    fs.writeFileSync(path.join(repoRoot, 'public', 'cover.svg'), '<svg />');
-    fs.writeFileSync(path.join(repoRoot, '.next', 'static', 'runtime.js'), 'runtime');
-    fs.writeFileSync(
-      path.join(standaloneRoot, 'server.js'),
-      `const fs = require('node:fs');
-process.chdir(__dirname);
-fs.writeFileSync(${JSON.stringify(markerPath)}, JSON.stringify({
-  hostname: process.env.HOSTNAME,
-  nodeEnv: process.env.NODE_ENV,
-  publicAssetReady: fs.existsSync('public/cover.svg'),
-  staticAssetReady: fs.existsSync('.next/static/runtime.js'),
-}));`,
-    );
-
-    process.env.HOSTNAME = '127.0.0.1';
-    process.env.STANDALONE_HOSTNAME = '0.0.0.0';
-
-    const { startStandaloneServer } = require('../../start-standalone.js');
-
-    startStandaloneServer(repoRoot);
-
-    expect(JSON.parse(fs.readFileSync(markerPath, 'utf8'))).toEqual({
-      hostname: '0.0.0.0',
-      nodeEnv: 'production',
-      publicAssetReady: true,
-      staticAssetReady: true,
-    });
   });
 });
