@@ -3,9 +3,10 @@ import GenealogiePreviewCards from '@/components/GenealogiePreviewCards';
 import ImageHero from '@/components/ImageHero';
 import LoginFormCard from '@/components/LoginFormCard';
 import { canonicalSiteUrl, siteName } from '@/lib/config';
+import { genealogyPageSubtitle, genealogyPageTitle } from '@/lib/genealogie';
 import { defaultOgImage } from '@/lib/seo';
 
-const pageTitle = 'Der Fluss des Lebens – Meine geistliche Ahnenreihe';
+const pageTitle = genealogyPageTitle;
 const pageDescription =
   'Entdecke deine Glaubenswurzeln mit täglichen Impulsen, persönlichem Segen und geschützter Gemeinschaft – kostenlos und ohne versteckte Kosten.';
 const pagePath = '/genealogie/login' as const;
@@ -37,8 +38,8 @@ export default function GenealogieLoginPage() {
   return (
     <div className="bg-gradient-to-b from-[#eff6ff] via-[#f8fafc] to-white">
       <ImageHero
-        title="Der Fluss des Lebens – Meine geistliche Ahnenreihe"
-        subtitle="Entdecke deine Glaubenswurzeln. Täglich Impulse. Wöchentlich persönlicher Segen. Kostenlos."
+        title={genealogyPageTitle}
+        subtitle={genealogyPageSubtitle}
       />
 
       <section className="px-4 pb-20 pt-10 md:pb-24 md:pt-14">

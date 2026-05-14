@@ -115,7 +115,7 @@ function LoginFormCardContent() {
 
 export default function LoginFormCard() {
   return (
-    <Suspense fallback={<div className="rounded-[1.75rem] border border-white/70 bg-white p-8 text-sm text-slate-500 shadow-[0_30px_80px_-40px_rgba(15,23,42,0.45)]">Laden…</div>}>
+    <Suspense fallback={<div role="status" aria-live="polite" className="rounded-[1.75rem] border border-white/70 bg-white p-8 text-sm text-slate-500 shadow-[0_30px_80px_-40px_rgba(15,23,42,0.45)]">Laden…</div>}>
       <LoginFormCardContent />
     </Suspense>
   );

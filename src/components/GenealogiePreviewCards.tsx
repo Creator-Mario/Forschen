@@ -50,7 +50,10 @@ export default function GenealogiePreviewCards() {
               : '',
           ].join(' ')}
         >
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-2xl shadow-inner shadow-blue-100">
+          <div
+            className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-2xl shadow-inner shadow-blue-100"
+            aria-hidden="true"
+          >
             <span aria-hidden="true">{card.icon}</span>
           </div>
           <h3 className="text-lg font-semibold text-blue-950">{card.title}</h3>

@@ -63,11 +63,11 @@ describe('SEO metadata', () => {
           userAgent: '*',
           allow: '/',
           disallow: expect.arrayContaining([
-             '/admin',
-             '/dashboard',
-             '/login',
-             '/registrieren',
-             '/videos/hochladen',
+            '/admin',
+            '/dashboard',
+            '/login',
+            '/registrieren',
+            '/videos/hochladen',
             '/forschung/beitraege',
           ]),
         },
@@ -165,7 +165,9 @@ describe('SEO metadata', () => {
     expect(sitemapEntries.some((entry) => entry.url.includes('/amp/'))).toBe(false);
     expect(sitemapEntries.some((entry) => entry.url.endsWith('/genealogie/login'))).toBe(true);
     expect(sitemapEntries.some((entry) => entry.url.endsWith('/genealogie/registrieren'))).toBe(true);
-    expect(sitemapEntries.some((entry) => entry.url.endsWith('/registrieren'))).toBe(false);
+    // Die generische Formularroute bleibt aus der Sitemap raus, weil für Suchmaschinen die neue
+    // Genealogie-Landingpage als indexierbarer Einstieg verwendet wird.
+    expect(sitemapEntries.some((entry) => entry.url === `${canonicalSiteUrl}/registrieren`)).toBe(false);
     expect(sitemapEntries.some((entry) => entry.url.endsWith('/aktionen'))).toBe(true);
     expect(sitemapEntries.every((entry) => !('lastModified' in entry))).toBe(true);
   });

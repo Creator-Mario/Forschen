@@ -1,3 +1,5 @@
+import { genealogyHeroImageUrl } from '@/lib/genealogie';
+
 type ImageHeroProps = {
   imageUrl?: string;
   eyebrow?: string;
@@ -5,10 +7,8 @@ type ImageHeroProps = {
   subtitle: string;
 };
 
-const defaultImageUrl = 'https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&fit=crop&w=1600&q=80';
-
 export default function ImageHero({
-  imageUrl = defaultImageUrl,
+  imageUrl = genealogyHeroImageUrl,
   eyebrow = 'Genealogie',
   title,
   subtitle,
