@@ -104,13 +104,13 @@ function generateTageswortEntries(existing, templates, today) {
       throw new Error(`Tageswort sequence cannot generate entries before ${TAGESWORT_SEQUENCE_START_DATE}.`);
     }
 
-    const template = templates[sequenceIndex];
-
-    if (!template) {
+    if (sequenceIndex >= templates.length) {
       throw new Error(
-        `No Tageswort template available for ${date} (sequence index ${sequenceIndex}, ${templates.length} templates configured).`
+        `No Tageswort template available for ${date}: sequence index ${sequenceIndex} exceeds ${templates.length} configured templates.`
       );
     }
+
+    const template = templates[sequenceIndex];
 
     const key = `${template.verse}\n${template.text}`;
     if (usedKeys.has(key)) {

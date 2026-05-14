@@ -2,8 +2,9 @@ name: Daily Tageswort Generation
 
 on:
   schedule:
-    # GitHub cron runs in UTC. Running at both 01:05 and 02:05 UTC covers
-    # 03:05 Europe/Berlin across summer and winter time without missing the switch.
+    # GitHub cron runs in UTC. 01:05 UTC catches the 03:00 Berlin switch during
+    # summer time, while 02:05 UTC catches it during winter time. The extra run
+    # simply skips when Berlin has not crossed the publication cutoff yet.
     - cron: '5 1 * * *'
     - cron: '5 2 * * *'
   workflow_dispatch:
