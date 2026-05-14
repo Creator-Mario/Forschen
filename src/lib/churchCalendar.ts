@@ -66,10 +66,10 @@ function getFixedFeastLabel(month: number, day: number): string | null {
 export function getLiturgicalDay(date: Date): string {
   const normalized = startOfUtcDay(date);
   const year = normalized.getUTCFullYear();
-  const churchYear = SUPPORTED_CHURCH_YEARS[year as keyof typeof SUPPORTED_CHURCH_YEARS];
-  if (!churchYear) {
+  if (!(year in SUPPORTED_CHURCH_YEARS)) {
     return `${getOrdinarySundayNumber(normalized)}. Sonntag im Jahreskreis`;
   }
+  const churchYear = SUPPORTED_CHURCH_YEARS[year as keyof typeof SUPPORTED_CHURCH_YEARS];
 
   const fixedFeast = getFixedFeastLabel(normalized.getUTCMonth() + 1, normalized.getUTCDate());
   if (fixedFeast) return fixedFeast;

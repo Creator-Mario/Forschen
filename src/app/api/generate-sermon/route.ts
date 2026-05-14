@@ -37,6 +37,9 @@ const SERMON_HISTORY_FILE = path.join(DATA_DIR, 'sermon-history.json');
 const OPENAI_MODEL = 'gpt-4o-mini';
 const MAX_GENERATION_ATTEMPTS = 4;
 const MIN_TITLE_LENGTH_FOR_SUBSTRING_CHECK = 12;
+const SERMON_WORD_COUNT_RANGE = '300-400 Wörter';
+const OPENAI_TEMPERATURE = 0.85;
+const OPENAI_MAX_TOKENS = 700;
 
 let sermonCache: StoredDailySermon | null = null;
 let inFlightGeneration: Promise<StoredDailySermon> | null = null;
@@ -189,6 +192,7 @@ async function requestUniqueSermon(date: string, liturgicalDay: string, history:
       role: 'user',
       content: [
         `Erstelle eine kurze Tagespredigt (ca. 300-400 Wörter) für den ${liturgicalDay}.`,
+        `Die Predigt soll ungefähr ${SERMON_WORD_COUNT_RANGE} umfassen.`,
         'Stil: warm, einladend, nicht dogmatisch, mit Bibelbezug, praktischem Impuls und einem kurzen Gebet.',
         'Verwende einen neuen, klar unterscheidbaren Titel.',
         recentTitles ? `Bereits verwendete Titel:\n${recentTitles}` : 'Es gibt noch keine früheren Titel.',
@@ -203,8 +207,8 @@ async function requestUniqueSermon(date: string, liturgicalDay: string, history:
   for (let attempt = 1; attempt <= MAX_GENERATION_ATTEMPTS; attempt += 1) {
     const completion = await openai.chat.completions.create({
       model: OPENAI_MODEL,
-      temperature: 0.85,
-      max_tokens: 700,
+      temperature: OPENAI_TEMPERATURE,
+      max_tokens: OPENAI_MAX_TOKENS,
       messages,
     });
 
