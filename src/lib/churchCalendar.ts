@@ -51,10 +51,6 @@ function startOfUtcDay(date: Date): Date {
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 }
 
-function isSameUtcDay(left: Date, right: Date): boolean {
-  return toIsoDate(startOfUtcDay(left)) === toIsoDate(startOfUtcDay(right));
-}
-
 function getOrdinarySundayNumber(date: Date): number {
   const normalized = startOfUtcDay(date);
   const sunday = addDays(normalized, -normalized.getUTCDay());
