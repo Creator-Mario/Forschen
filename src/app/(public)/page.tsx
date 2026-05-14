@@ -228,9 +228,9 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div className="mb-14 grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.25fr)_minmax(320px,0.75fr)] xl:items-start">
+        <div className="mb-14 grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] xl:items-start">
           <HomeSermonPreview />
-          <div className="flex justify-center xl:justify-end">
+          <div className="w-full">
             <ChurchCalendar sermonDates={sermonDates} />
           </div>
         </div>

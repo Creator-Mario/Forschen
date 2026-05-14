@@ -260,6 +260,31 @@ describe('SermonArchiveDetailPage', () => {
   });
 });
 
+describe('LiturgicalDayDetailPage', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('renders the liturgical detail page with sermon link when available', async () => {
+    vi.doMock('@/lib/sermonArchive', () => ({
+      loadSermon: vi.fn().mockResolvedValue({
+        date: '2026-05-14',
+        liturgicalDay: 'Christi Himmelfahrt',
+        title: 'Aufgefahren, aber nicht fort',
+        content: 'Vollständige Predigt',
+        prayer: 'Abschlussgebet',
+        createdAt: '2026-05-14T04:00:00.000Z',
+      }),
+    }));
+
+    const { default: LiturgicalDayDetailPage } = await import('@/app/kalender/[date]/page');
+    const jsx = await LiturgicalDayDetailPage({ params: Promise.resolve({ date: '2026-05-14' }) });
+    render(React.createElement(React.Fragment, null, jsx));
+
+    expect(screen.getByRole('heading', { name: /Christi Himmelfahrt/i })).toBeInTheDocument();
+    expect(screen.getByText(/vierzigster Tag der Osterzeit/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Aufgefahren, aber nicht fort/i })).toHaveAttribute('href', '/archiv/2026-05-14');
+  });
+});
+
 // ─── Thesen page ──────────────────────────────────────────────────────────────
 
 describe('ThesenPage', () => {
