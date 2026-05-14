@@ -14,7 +14,7 @@ import { emailFromAddress, siteDomain, canonicalSiteUrl } from '@/lib/config';
  * The test e-mail is sent to the currently logged-in admin's address.
  *
  * Example usage (curl):
- *   curl -X GET https://www.flussdeslebens.live/api/send-test-email \
+ *   curl -X GET https://flussdeslebens.live/api/send-test-email \
  *     -H "Cookie: next-auth.session-token=..."
  */
 export async function GET() {
