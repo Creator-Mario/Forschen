@@ -791,7 +791,7 @@ describe('HomePage', () => {
       '/mario-reiner-denzer-book.svg',
     );
     expect(screen.getByText('Der Fluss des Lebens')).toBeInTheDocument();
-    expect(screen.getByText('https://www.flussdeslebens.live')).toBeInTheDocument();
+    expect(screen.getByText('https://flussdeslebens.live')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Link teilen/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /QR-Code herunterladen/i })).toHaveAttribute('href', '/api/share-qr?format=png&download=1');
     expect(screen.getByRole('link', { name: /Auf WhatsApp teilen/i })).toBeInTheDocument();
