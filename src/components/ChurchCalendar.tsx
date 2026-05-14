@@ -107,7 +107,10 @@ export default function ChurchCalendar({ sermonDates = [] }: ChurchCalendarProps
   }, [monthOverview, todayIso]);
 
   return (
-    <section className="w-full max-w-[400px] overflow-hidden rounded-[2rem] border border-blue-100 bg-slate-50 shadow-lg shadow-blue-100/60">
+    <section
+      aria-label="Kirchenkalender"
+      className="w-full max-w-[400px] overflow-hidden rounded-[2rem] border border-blue-100 bg-slate-50 shadow-lg shadow-blue-100/60"
+    >
       <div className="border-b border-blue-100 bg-white px-6 py-6 sm:px-8">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">Kirchenkalender</p>
         <div className="mt-4 flex items-center justify-between gap-3">

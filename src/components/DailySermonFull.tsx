@@ -118,7 +118,7 @@ export default function DailySermonFull() {
                   <h2 className="mb-4 text-lg font-semibold text-slate-900">Predigt</h2>
                   <div className="space-y-5">
                     {splitParagraphs(sermon.content).map((paragraph, index) => (
-                      <p key={`${sermon.date}-paragraph-${index}`}>{paragraph}</p>
+                      <p key={`sermon-content-paragraph-${sermon.date}-${index}`}>{paragraph}</p>
                     ))}
                   </div>
                 </section>
@@ -127,7 +127,7 @@ export default function DailySermonFull() {
                   <h2 className="text-lg font-semibold text-amber-900">Gebet</h2>
                   <div className="mt-3 space-y-4 text-amber-950">
                     {splitParagraphs(sermon.prayer).map((paragraph, index) => (
-                      <p key={`${sermon.date}-prayer-${index}`}>{paragraph}</p>
+                      <p key={`sermon-prayer-paragraph-${sermon.date}-${index}`}>{paragraph}</p>
                     ))}
                   </div>
                 </section>
