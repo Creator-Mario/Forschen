@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { createContentBackedPageMetadata } from '@/lib/seo';
-import { getCalendarDay, getDisplayLiturgicalDay } from '@/lib/churchCalendarHelpers';
+import { getCalendarDay } from '@/lib/churchCalendarHelpers';
 import { loadSermon } from '@/lib/sermonArchive';
 import { formatDate } from '@/lib/utils';
 import type { LiturgicalColor } from '@/data/churchCalendarData';
@@ -81,7 +81,6 @@ export default async function LiturgicalDayDetailPage({ params }: LiturgicalDayD
 
             <h2 className="mt-5 text-lg font-semibold text-slate-900">Bedeutung</h2>
             <p className="mt-3 text-base leading-8 text-slate-700">{entry.significance}</p>
-            <p className="mt-4 text-sm leading-7 text-slate-500">{getDisplayLiturgicalDay(date)}</p>
           </section>
 
           <section className="rounded-[1.75rem] border border-amber-100 bg-amber-50/80 p-6">

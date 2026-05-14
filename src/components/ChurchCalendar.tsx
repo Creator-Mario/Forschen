@@ -155,8 +155,9 @@ export default function ChurchCalendar({ sermonDates = [] }: ChurchCalendarProps
             <button
               type="button"
               onClick={() => {
-                setVisibleMonth(toMonthAnchor(new Date()));
-                setSelectedDate(new Date().toISOString().slice(0, 10));
+                const currentDate = new Date();
+                setVisibleMonth(toMonthAnchor(currentDate));
+                setSelectedDate(currentDate.toISOString().slice(0, 10));
               }}
               className="inline-flex min-h-11 items-center justify-center rounded-full border border-blue-200 bg-blue-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-800"
             >
@@ -230,7 +231,7 @@ export default function ChurchCalendar({ sermonDates = [] }: ChurchCalendarProps
                         ) : null}
                       </div>
 
-                      <p className="mt-3 line-clamp-3 text-[0.72rem] leading-4 text-slate-700">
+                      <p className="mt-3 line-clamp-3 text-xs leading-4 text-slate-700">
                         {entry.abbreviatedLiturgicalName}
                       </p>
                     </button>

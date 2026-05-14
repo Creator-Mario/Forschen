@@ -100,7 +100,7 @@ export function getMonthData(year: number, month: number): MonthCalendarEntry[] 
       return {
         ...entry,
         day: date.getUTCDate(),
-        // ISO-8601 ordering for the calendar UI: Monday = 0 ... Sunday = 6.
+        // Transform JavaScript's Sunday = 0 to ISO-style Monday = 0 for grid alignment.
         weekday: (date.getUTCDay() + 6) % 7,
         abbreviatedLiturgicalName: abbreviateLiturgicalName(entry.liturgicalName),
         displayName: getDisplayLiturgicalDay(entry.date),
