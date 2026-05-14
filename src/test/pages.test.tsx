@@ -711,7 +711,21 @@ describe('ChatPage', () => {
 describe('HomePage', () => {
   beforeEach(() => vi.resetModules());
 
-  it('renders the hero section', async () => {
+  it('redirects unauthenticated visitors to the login page first', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
+    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
+
+    const navigation = await import('next/navigation');
+    const { default: HomePage } = await import('@/app/(public)/page');
+
+    await HomePage();
+
+    expect(navigation.redirect).toHaveBeenCalledWith('/login');
+  });
+
+  it('renders the hero section for authenticated visitors', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', role: 'USER' } }) }));
+    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
     vi.doMock('@/lib/db', () => ({
       getTodayTageswortFresh: vi.fn().mockResolvedValue(undefined),
       getCurrentWochenthemaFresh: vi.fn().mockResolvedValue(undefined),
