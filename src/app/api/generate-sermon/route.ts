@@ -137,14 +137,15 @@ async function requestUniqueSermon(date: string, liturgicalDay: string): Promise
     }
 
     const similarTitles = archivedTitles.filter((title) => title !== sermon.title).slice(0, 5);
+    const titleFeedback = similarTitles.length > 0
+      ? `Achte besonders auf deutlichen Abstand zu diesen vorhandenen Titeln: ${similarTitles.join('; ')}`
+      : 'Wähle bitte ein deutlich neues Thema und einen klar unterscheidbaren Titel.';
     messages.push({ role: 'assistant', content: rawContent });
     messages.push({
       role: 'user',
       content: [
         `Der Titel „${sermon.title}“ ist dem Archiv zu ähnlich.`,
-        similarTitles.length > 0
-          ? `Achte besonders auf deutlichen Abstand zu diesen vorhandenen Titeln: ${similarTitles.join('; ')}`
-          : 'Wähle bitte ein deutlich neues Thema und einen klar unterscheidbaren Titel.',
+        titleFeedback,
         'Bitte verfasse eine neue Predigt mit abweichendem Schwerpunkt und bleibe exakt im Format TITEL / PREDIGT / GEBET.',
       ].join(' '),
     });
