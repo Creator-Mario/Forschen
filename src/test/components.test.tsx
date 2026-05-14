@@ -145,12 +145,14 @@ describe('BookRecommendationsCard', () => {
 });
 
 describe('HomeSermonPreview', () => {
+  const PREVIEW_WORD_LIMIT = 150;
+
   beforeEach(() => {
     vi.restoreAllMocks();
   });
 
   it('loads the preview excerpt and archive links from the API', async () => {
-    const longContent = Array.from({ length: 170 }, (_, index) => `Wort${index + 1}`).join(' ');
+    const longContent = Array.from({ length: PREVIEW_WORD_LIMIT + 20 }, (_, index) => `Wort${index + 1}`).join(' ');
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({

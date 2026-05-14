@@ -23,6 +23,11 @@ function shiftMonth(date: Date, amount: number): Date {
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + amount, 1));
 }
 
+function getMillisecondsUntilNextUtcDay(date: Date): number {
+  const nextDay = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1));
+  return Math.max(1_000, nextDay.getTime() - date.getTime());
+}
+
 export default function ChurchCalendar({ sermonDates = [] }: ChurchCalendarProps) {
   const [today, setToday] = useState(() => new Date());
   const todayIso = useMemo(() => today.toISOString().slice(0, 10), [today]);
@@ -37,14 +42,14 @@ export default function ChurchCalendar({ sermonDates = [] }: ChurchCalendarProps
   );
 
   useEffect(() => {
-    const timer = window.setInterval(() => {
+    const timer = window.setTimeout(() => {
       setToday(new Date());
-    }, 60_000);
+    }, getMillisecondsUntilNextUtcDay(today));
 
     return () => {
-      window.clearInterval(timer);
+      window.clearTimeout(timer);
     };
-  }, []);
+  }, [today]);
 
   useEffect(() => {
     const previousTodayIso = previousTodayIsoRef.current;

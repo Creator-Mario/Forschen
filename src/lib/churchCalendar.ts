@@ -32,6 +32,10 @@ const FIXED_FEASTS: Record<string, string> = {
   '12-31': 'Altjahresabend',
 };
 
+function getMonthDayKey(date: Date): string {
+  return `${String(date.getUTCMonth() + 1).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}`;
+}
+
 function parseIsoDate(value: string): Date {
   const [year, month, day] = value.split('-').map(Number);
   return new Date(Date.UTC(year, month - 1, day));
@@ -72,8 +76,7 @@ function getYearDefinition(year: number): SupportedChurchYear | null {
 }
 
 function getFixedFeastLabel(date: Date): string | null {
-  const key = `${String(date.getUTCMonth() + 1).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}`;
-  return FIXED_FEASTS[key] ?? null;
+  return FIXED_FEASTS[getMonthDayKey(date)] ?? null;
 }
 
 // Die beweglichen Feiertage sind zentral aus den Osterdaten abgeleitet.
