@@ -8,6 +8,7 @@ import { metadata as homeMetadata } from '@/app/(public)/page';
 import { generateMetadata as generateAktionenMetadata } from '@/app/(public)/aktionen/page';
 import { generateMetadata as generateTageswortMetadata } from '@/app/(public)/tageswort/page';
 import { generateMetadata as generateForschungMetadata } from '@/app/(public)/forschung/page';
+import { metadata as predigtMetadata } from '@/app/predigt/page';
 import manifest from '@/app/manifest';
 import robots from '@/app/robots';
 import sitemap from '@/app/sitemap';
@@ -91,6 +92,10 @@ describe('SEO metadata', () => {
     expect(tageswortMetadata.alternates?.canonical).toBe('/tageswort');
     expect(tageswortMetadata.openGraph).toMatchObject({
       url: `${canonicalSiteUrl}/tageswort`,
+    });
+    expect(predigtMetadata.alternates?.canonical).toBe('/predigt');
+    expect(predigtMetadata.openGraph).toMatchObject({
+      url: `${canonicalSiteUrl}/predigt`,
     });
   });
 

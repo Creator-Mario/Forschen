@@ -1,0 +1,14 @@
+name: Daily Sermon Warmup
+
+on:
+  schedule:
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+jobs:
+  warmup-sermon:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Trigger daily sermon generation
+        run: curl --fail --show-error --silent --max-time 60 https://www.flussdeslebens.live/api/generate-sermon
