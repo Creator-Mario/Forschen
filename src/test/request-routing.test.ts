@@ -138,6 +138,8 @@ describe('request routing helpers', () => {
     expect(isProtectedPath('/admin/system')).toBe(true);
     expect(isProtectedPath('/chat')).toBe(true);
     expect(isProtectedPath('/chat/123')).toBe(true);
+    expect(isProtectedPath('/fragestellungen')).toBe(true);
+    expect(isProtectedPath('/fragestellungen/neu')).toBe(true);
     expect(isProtectedPath('/profil')).toBe(true);
     expect(isProtectedPath('/admin-login')).toBe(false);
     expect(isProtectedPath('/vorstellung')).toBe(false);

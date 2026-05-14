@@ -14,6 +14,7 @@ const protectedPathPrefixes = [
   '/meine-buchempfehlungen',
   '/meine-thesen',
   '/meine-gebete',
+  '/fragestellungen',
   '/thesen/neu',
   '/buchempfehlungen/neu',
   '/forschung/beitraege',
