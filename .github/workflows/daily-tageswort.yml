@@ -2,7 +2,9 @@ name: Daily Tageswort Generation
 
 on:
   schedule:
-    # Runs every day shortly after the 03:00 publication switch in Berlin
+    # GitHub cron runs in UTC. Running at both 01:05 and 02:05 UTC covers
+    # 03:05 Europe/Berlin across summer and winter time without missing the switch.
+    - cron: '5 1 * * *'
     - cron: '5 2 * * *'
   workflow_dispatch:
 
@@ -33,108 +35,39 @@ jobs:
           node << 'EOF'
           const fs = require('fs');
           const path = require('path');
-
-          const BERLIN_TIMEZONE = 'Europe/Berlin';
-          const DAILY_PUBLISH_HOUR = 3;
-          const TAGESWORT_ARCHIVE_LIMIT = 90;
-
-          function getBerlinPublicationDate(date = new Date()) {
-            const formatter = new Intl.DateTimeFormat('en-CA', {
-              timeZone: BERLIN_TIMEZONE,
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-              hour: '2-digit',
-              hourCycle: 'h23',
-            });
-            const parts = Object.fromEntries(
-              formatter
-                .formatToParts(date)
-                .filter(part => part.type !== 'literal')
-                .map(part => [part.type, part.value])
-            );
-            const berlinDate = `${parts.year}-${parts.month}-${parts.day}`;
-            if (Number(parts.hour) >= DAILY_PUBLISH_HOUR) return berlinDate;
-            const previousDate = new Date(`${berlinDate}T00:00:00Z`);
-            previousDate.setUTCDate(previousDate.getUTCDate() - 1);
-            return previousDate.toISOString().split('T')[0];
-          }
-
-          // Template-based verse selection
-          const verses = [
-            {
-              verse: "Philipper 4,13",
-              text: "Ich vermag alles durch den, der mich stärkt.",
-              context: "Paulus schreibt aus dem Gefängnis an die Gemeinde in Philippi. Diese Aussage ist kein Triumphialismus, sondern ein Bekenntnis der Abhängigkeit von Christus. 'Alles' meint nicht das Unmögliche, sondern die Kraft, in jeder Lage – in Not und Überfluss – zufrieden zu sein."
-            },
-            {
-              verse: "Jesaja 40,31",
-              text: "Die aber, die auf den HERRN hoffen, schöpfen neue Kraft. Sie heben die Schwingen wie Adler. Sie laufen und werden nicht müde, sie gehen und werden nicht matt.",
-              context: "Deuterojesaja richtet diese Worte an das im babylonischen Exil lebende Volk. Die Verheißung der Erneuerung gilt denen, die aktiv auf Gott warten – ein Warten, das nicht passiv ist, sondern vertrauensvolle Ausrichtung auf Gottes Handeln."
-            },
-            {
-              verse: "Matthäus 11,28",
-              text: "Kommt her zu mir, alle, die ihr mühselig und beladen seid; ich will euch Ruhe geben.",
-              context: "Jesus spricht diese Einladung in einem Kontext aus, in dem er die religiöse Last der Zeit beschreibt. Die Einladung ist universell – sie gilt allen Erschöpften. Das griechische 'anapausis' bedeutet nicht nur Pause, sondern tiefe innere Erneuerung."
-            },
-            {
-              verse: "1. Johannes 4,19",
-              text: "Wir lieben, weil er uns zuerst geliebt hat.",
-              context: "Dieser kurze Vers des Johannesbriefes ist ein theologisches Fundament der christlichen Ethik: Liebe ist nicht menschliche Leistung, sondern Reaktion auf Gottes vorausgehende Liebe. Die Fähigkeit zu lieben ist ein Geschenk, keine Pflicht, die aus eigener Kraft erfüllt wird."
-            },
-            {
-              verse: "Psalm 46,2",
-              text: "Gott ist unsere Zuflucht und Stärke, eine Hilfe in den großen Nöten, die uns getroffen haben.",
-              context: "Psalm 46 entstand möglicherweise im Kontext einer konkreten Bedrohung Jerusalems. Das Bild der 'Zuflucht' (hebr. machse) bezeichnet nicht Weltflucht, sondern einen Ort der Sicherheit inmitten des Sturms. Gott ist nicht jenseits der Not, sondern mitten in ihr als Fels."
-            }
-          ];
+          const {
+            DEFAULT_TAGESWORT_ARCHIVE_LIMIT,
+            appendAndPrune,
+            generateTageswortEntries,
+            getBerlinPublicationDate,
+          } = require('./src/lib/tageswort-rotation.js');
 
           const today = getBerlinPublicationDate();
           const dataPath = path.join(process.cwd(), 'data', 'tageswort.json');
+          const templatesPath = path.join(process.cwd(), 'data', 'tageswort-templates.json');
           const existing = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+          const templates = JSON.parse(fs.readFileSync(templatesPath, 'utf-8'));
+          const newEntries = generateTageswortEntries(existing, templates, today);
 
-          // Check if today's entry already exists
-          if (existing.find(e => e.date === today)) {
+          if (newEntries.length === 0) {
             console.log('Tageswort for today already exists, skipping.');
             process.exit(0);
           }
 
-          // Select verse based on day of year
-          const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-          const selectedVerse = verses[dayOfYear % verses.length];
-
-          const questions = [
-            `Was ist der historische Kontext von ${selectedVerse.verse}?`,
-            `Welche theologischen Kernaussagen enthält dieser Vers?`,
-            `Wie verbindet sich dieser Text mit dem Gesamtzeugnis der Schrift?`,
-            `Was fordert dieser Vers mein persönliches Denken heraus?`,
-            `Wie kann die Botschaft dieses Verses konkret gelebt werden?`
-          ];
-
-          const newEntry = {
-            id: today,
-            date: today,
-            verse: selectedVerse.verse,
-            text: selectedVerse.text,
-            context: selectedVerse.context,
-            questions,
-            published: true
-          };
-
-          const updated = [...existing, newEntry];
-          const published = updated
-            .filter(entry => entry.published)
-            .sort((a, b) => a.date.localeCompare(b.date));
-          const retainedPublished = published.slice(-TAGESWORT_ARCHIVE_LIMIT);
-          const unpublished = updated.filter(entry => !entry.published);
-          const prunedCount = published.length - retainedPublished.length;
+          const { entries, prunedCount } = appendAndPrune(
+            existing,
+            newEntries,
+            DEFAULT_TAGESWORT_ARCHIVE_LIMIT
+          );
 
           fs.writeFileSync(
             dataPath,
-            JSON.stringify([...retainedPublished, ...unpublished], null, 2),
+            JSON.stringify(entries, null, 2),
             'utf-8'
           );
-          console.log(`Generated Tageswort for ${today}: ${selectedVerse.verse}`);
+          console.log(
+            `Generated ${newEntries.length} Tageswort entr${newEntries.length === 1 ? 'y' : 'ies'} through ${today}.`
+          );
           if (prunedCount > 0) {
             console.log(`Pruned ${prunedCount} archived Tageswort entr${prunedCount === 1 ? 'y' : 'ies'}.`);
           }
