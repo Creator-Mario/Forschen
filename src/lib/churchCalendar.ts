@@ -22,6 +22,9 @@ const CHURCH_YEAR_TABLE: Record<number, SupportedChurchYear> = {
   },
 };
 
+// Für weitere Jahre muss diese Tabelle ergänzt werden. Außerhalb der
+// hinterlegten Jahre liefern die Helfer bewusst nur allgemeine Fallback-Labels.
+
 const FIXED_FEASTS: Record<string, string> = {
   '01-01': 'Neujahr / Hochfest der Gottesmutter Maria',
   '01-06': 'Epiphanias / Erscheinung des Herrn',
@@ -142,6 +145,7 @@ export function isFeastDay(date: Date): boolean {
 
 // Für die UI wird jeder Kalendertag vollständig vorbereitet ausgeliefert:
 // Datum, liturgische Bezeichnung und Markierungen für Sonntage/Festtage.
+// Nicht hinterlegte Jahre verwenden dabei die allgemeinen Fallback-Bezeichnungen.
 export function getMonthOverview(year: number, month: number): MonthOverviewDay[] {
   if (month < 1 || month > 12) {
     throw new Error('month must be between 1 and 12 (inclusive)');

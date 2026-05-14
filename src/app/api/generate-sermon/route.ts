@@ -4,6 +4,7 @@ import OpenAI from 'openai';
 import { getCurrentPublicationDate } from '@/lib/publishing';
 import { getLiturgicalDay } from '@/lib/churchCalendar';
 import {
+  areSermonTitlesSimilar,
   getAllSermons,
   loadSermon,
   saveSermon,
@@ -28,7 +29,7 @@ const OPENAI_MODEL = 'gpt-4o-mini';
 const MAX_GENERATION_ATTEMPTS = 4;
 const SERMON_WORD_COUNT_RANGE = '600-800 Wörter';
 const OPENAI_TEMPERATURE = 0.85;
-const OPENAI_MAX_TOKENS = 1800;
+const OPENAI_MAX_TOKENS = 2400;
 
 let sermonCache: ArchivedSermon | null = null;
 let inFlightGeneration: Promise<ArchivedSermon> | null = null;
@@ -136,7 +137,9 @@ async function requestUniqueSermon(date: string, liturgicalDay: string): Promise
       return sermon;
     }
 
-    const similarTitles = archivedTitles.filter((title) => title !== sermon.title).slice(0, 5);
+    const similarTitles = archivedTitles
+      .filter((title) => areSermonTitlesSimilar(sermon.title, title))
+      .slice(0, 5);
     const titleFeedback = similarTitles.length > 0
       ? `Achte besonders auf deutlichen Abstand zu diesen vorhandenen Titeln: ${similarTitles.join('; ')}`
       : 'Wähle bitte ein deutlich neues Thema und einen klar unterscheidbaren Titel.';
