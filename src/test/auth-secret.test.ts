@@ -1,14 +1,10 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('auth secret', () => {
   beforeEach(() => {
     vi.resetModules();
     delete process.env.NEXTAUTH_SECRET;
     delete process.env.NODE_ENV;
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
   });
 
   it('uses the configured NEXTAUTH_SECRET when present', async () => {
@@ -28,14 +24,11 @@ describe('auth secret', () => {
     expect(authSecret).toBe('dev-secret-please-set-in-production');
   });
 
-  it('uses a temporary runtime secret when NEXTAUTH_SECRET is missing in production', async () => {
+  it('throws when NEXTAUTH_SECRET is missing in production', async () => {
     process.env.NODE_ENV = 'production';
-    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    const { authSecret, MISSING_PRODUCTION_AUTH_SECRET_WARNING } = await import('@/lib/auth-secret');
-
-    expect(authSecret).toMatch(/^[a-f0-9]{64}$/);
-    expect(authSecret).not.toBe('dev-secret-please-set-in-production');
-    expect(consoleError).toHaveBeenCalledWith(MISSING_PRODUCTION_AUTH_SECRET_WARNING);
+    await expect(import('@/lib/auth-secret')).rejects.toThrow(
+      'NEXTAUTH_SECRET must be set in production.',
+    );
   });
 });

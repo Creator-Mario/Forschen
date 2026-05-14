@@ -156,10 +156,6 @@ function getObservedHosts(hosts: Array<string | null | undefined>): string[] {
   return [...new Set(hosts.map(normalizeHost).filter(Boolean))];
 }
 
-function getSiblingHost(host: string): string {
-  return host.startsWith(WWW_PREFIX) ? host.slice(WWW_PREFIX.length) : `${WWW_PREFIX}${host}`;
-}
-
 export function getCanonicalHostRedirectDestination({
   requestUrl,
   requestHosts,
@@ -168,13 +164,10 @@ export function getCanonicalHostRedirectDestination({
   try {
     const canonicalUrl = new URL(canonicalSiteUrl);
     const canonicalHost = normalizeHost(canonicalUrl.host);
+    const apexHost = getApexHost(canonicalHost);
     const redirectUrl = new URL(requestUrl);
     const requestHost = normalizeHost(redirectUrl.host);
     const observedHosts = getObservedHosts([redirectUrl.host, ...requestHosts]);
-    const siblingHost = getSiblingHost(canonicalHost);
-    const publicHosts = observedHosts.filter(
-      (host) => host === canonicalHost || host === siblingHost,
-    );
 
     if (
       requestHost === canonicalHost
@@ -190,15 +183,10 @@ export function getCanonicalHostRedirectDestination({
     }
 
     // Redirect only when every trusted host signal still points at the
-    // same non-canonical public sibling host. If any trusted source already
-    // reports the canonical host, serving the page directly is safer than
-    // risking a false redirect when the runtime URL is an internal deployment
-    // hostname.
-    if (
-      publicHosts.length === 0
-      || publicHosts.includes(canonicalHost)
-      || !publicHosts.every((host) => host === siblingHost)
-    ) {
+    // non-canonical apex host. If any trusted source already reports the
+    // canonical host, serving the page directly is safer than risking a false
+    // redirect when the runtime URL is an internal deployment hostname.
+    if (observedHosts.includes(canonicalHost) || !observedHosts.includes(apexHost)) {
       return null;
     }
 

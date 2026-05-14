@@ -711,64 +711,7 @@ describe('ChatPage', () => {
 describe('HomePage', () => {
   beforeEach(() => vi.resetModules());
 
-  it('renders the public homepage for unauthenticated visitors', async () => {
-    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
-    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
-    vi.doMock('@/lib/db', () => ({
-      getTodayTageswortFresh: vi.fn().mockResolvedValue(undefined),
-      getCurrentWochenthemaFresh: vi.fn().mockResolvedValue(undefined),
-      getApprovedThesen: vi.fn().mockReturnValue([]),
-    }));
-    vi.doMock('@/lib/generated-content', () => ({
-      getTodayPsalmThema: vi.fn().mockReturnValue({
-        id: 'ps-1',
-        date: '2026-04-11',
-        psalmReference: 'Psalm 1,1-3',
-        title: 'Verwurzelt leben',
-        excerpt: 'Auszug',
-        summary: 'Zusammenfassung',
-        significance: 'Bedeutung',
-        practice: 'Praxis',
-        questions: [],
-      }),
-      getTodayGlaubenHeuteThema: vi.fn().mockReturnValue({
-        id: 'gh-1',
-        date: '2026-04-11',
-        title: 'Digitale Überforderung',
-        headline: 'Zwischen Dauerrauschen',
-        worldFocus: 'Weltfokus',
-        faithPerspective: 'Perspektive',
-        discipleshipImpulse: 'Impuls',
-        bibleVerses: [],
-        questions: [],
-      }),
-      getTodayBuchempfehlungen: vi.fn().mockReturnValue({
-        id: 'bk-1',
-        date: '2026-04-11',
-        topicTitle: 'Digitale Überforderung',
-        introduction: 'Intro',
-        recommendations: [],
-      }),
-    }));
-    vi.doMock('@/lib/sermonArchive', () => ({
-      getLatestSermons: vi.fn().mockResolvedValue([]),
-    }));
-    vi.doMock('@/components/BibleVerseCard', () => ({ default: () => null }));
-    vi.doMock('@/components/WeeklyThemeCard', () => ({ default: () => null }));
-    vi.doMock('@/components/Logo', () => ({ default: () => React.createElement('div', null, 'Logo') }));
-    vi.doMock('@/components/HomeSermonPreview', () => ({ default: () => React.createElement('div', null, 'Home sermon preview') }));
-    vi.doMock('@/components/ChurchCalendar', () => ({ default: () => React.createElement('div', null, 'Church calendar') }));
-    const { default: HomePage } = await import('@/app/(public)/page');
-    const jsx = await HomePage();
-
-    render(React.createElement(React.Fragment, null, jsx));
-    expect(screen.getByRole('heading', { name: /Der Fluss/i, level: 1 })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /jetzt kostenlos registrieren/i })).toHaveAttribute('href', '/registrieren');
-  });
-
-  it('renders the hero section for authenticated visitors', async () => {
-    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', role: 'USER' } }) }));
-    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
+  it('renders the hero section', async () => {
     vi.doMock('@/lib/db', () => ({
       getTodayTageswortFresh: vi.fn().mockResolvedValue(undefined),
       getCurrentWochenthemaFresh: vi.fn().mockResolvedValue(undefined),
@@ -825,7 +768,7 @@ describe('HomePage', () => {
       '/mario-reiner-denzer-book.svg',
     );
     expect(screen.getByText('Der Fluss des Lebens')).toBeInTheDocument();
-    expect(screen.getByText('https://flussdeslebens.live')).toBeInTheDocument();
+    expect(screen.getByText('https://www.flussdeslebens.live')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Link teilen/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /QR-Code herunterladen/i })).toHaveAttribute('href', '/api/share-qr?format=png&download=1');
     expect(screen.getByRole('link', { name: /Auf WhatsApp teilen/i })).toBeInTheDocument();

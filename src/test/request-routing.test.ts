@@ -97,16 +97,6 @@ describe('request routing helpers', () => {
     ).toBe('https://www.flussdeslebens.live/vision?source=gsc');
   });
 
-  it('redirects the www host back to the configured apex canonical host', () => {
-    expect(
-      getCanonicalHostRedirectDestination({
-        requestUrl: 'https://www.flussdeslebens.live/vision?source=gsc',
-        requestHosts: ['www.flussdeslebens.live:443'],
-        canonicalSiteUrl: 'https://flussdeslebens.live',
-      }),
-    ).toBe('https://flussdeslebens.live/vision?source=gsc');
-  });
-
   it('redirects legacy AMP URLs to the canonical page while preserving the query string', () => {
     expect(
       getLegacyAmpRedirectDestination(

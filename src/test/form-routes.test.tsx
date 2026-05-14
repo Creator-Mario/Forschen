@@ -146,8 +146,6 @@ afterEach(() => {
 
 describe('public form entry routes', () => {
   it('exposes registration entry points on home and vision pages', async () => {
-    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', role: 'USER' } }) }));
-    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
     const { default: HomePage } = await import('@/app/(public)/page');
     const { default: VisionPage } = await import('@/app/(public)/vision/page');
 
