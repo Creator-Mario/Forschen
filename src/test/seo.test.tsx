@@ -5,6 +5,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { metadata } from '@/app/layout';
 import { metadata as homeMetadata } from '@/app/(public)/page';
+import { metadata as genealogieLoginMetadata } from '@/app/genealogie/login/page';
+import { metadata as genealogieRegisterMetadata } from '@/app/genealogie/registrieren/page';
 import { generateMetadata as generateAktionenMetadata } from '@/app/(public)/aktionen/page';
 import { generateMetadata as generateTageswortMetadata } from '@/app/(public)/tageswort/page';
 import { generateMetadata as generateForschungMetadata } from '@/app/(public)/forschung/page';
@@ -61,11 +63,13 @@ describe('SEO metadata', () => {
           userAgent: '*',
           allow: '/',
           disallow: expect.arrayContaining([
-            '/admin',
-            '/dashboard',
-            '/login',
-            '/registrieren',
-            '/videos/hochladen',
+             '/admin',
+             '/dashboard',
+             '/genealogie/login',
+             '/genealogie/registrieren',
+             '/login',
+             '/registrieren',
+             '/videos/hochladen',
             '/forschung/beitraege',
           ]),
         },
@@ -83,6 +87,19 @@ describe('SEO metadata', () => {
     expect(homeMetadata.alternates?.canonical).toBe('/');
     expect(homeMetadata.openGraph).toMatchObject({
       url: canonicalSiteUrl,
+    });
+  });
+
+  it('marks genealogy auth landing pages as noindex with dedicated canonical paths', () => {
+    expect(genealogieLoginMetadata.alternates?.canonical).toBe('/genealogie/login');
+    expect(genealogieRegisterMetadata.alternates?.canonical).toBe('/genealogie/registrieren');
+    expect(genealogieLoginMetadata.robots).toMatchObject({ index: false, follow: false });
+    expect(genealogieRegisterMetadata.robots).toMatchObject({ index: false, follow: false });
+    expect(genealogieLoginMetadata.openGraph).toMatchObject({
+      url: `${canonicalSiteUrl}/genealogie/login`,
+    });
+    expect(genealogieRegisterMetadata.openGraph).toMatchObject({
+      url: `${canonicalSiteUrl}/genealogie/registrieren`,
     });
   });
 

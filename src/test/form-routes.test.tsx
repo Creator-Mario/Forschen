@@ -240,6 +240,26 @@ describe('public form entry routes', () => {
     expect(screen.getByRole('button', { name: /konto erstellen/i })).toBeInTheDocument();
   });
 
+  it('renders the genealogy login landing page with preview cards and the genealogy registration link', async () => {
+    const { default: GenealogieLoginPage } = await import('@/app/genealogie/login/page');
+    render(React.createElement(GenealogieLoginPage));
+
+    expect(screen.getByRole('heading', { name: /meine geistliche ahnenreihe/i })).toBeInTheDocument();
+    expect(screen.getByText(/eine einladende vorschau auf deine geistliche genealogie/i)).toBeInTheDocument();
+    expect(screen.getByText(/gemeinschaft & chat/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /kostenlos registrieren/i })).toHaveAttribute('href', '/genealogie/registrieren');
+  });
+
+  it('renders the genealogy registration page with privacy consent and the genealogy login link', async () => {
+    const { default: GenealogieRegistrierenPage } = await import('@/app/genealogie/registrieren/page');
+    render(React.createElement(GenealogieRegistrierenPage));
+
+    expect(screen.getByRole('heading', { name: /meine geistliche ahnenreihe/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /datenschutzerklärung/i })).toHaveAttribute('href', '/datenschutz');
+    expect(screen.getByRole('link', { name: /^anmelden$/i })).toHaveAttribute('href', '/genealogie/login');
+    expect(screen.getByText(/ohne abo und ohne versteckte gebühren/i)).toBeInTheDocument();
+  });
+
   it('connects forgot-password page back to login', async () => {
     const { default: PasswortVergessenPage } = await import('@/app/(public)/passwort-vergessen/page');
     render(React.createElement(PasswortVergessenPage));
