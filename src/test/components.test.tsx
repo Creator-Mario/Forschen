@@ -188,7 +188,7 @@ describe('ChurchCalendar', () => {
     render(React.createElement(ChurchCalendar, { sermonDates: ['2026-05-14'] }));
 
     expect(screen.getByRole('heading', { name: /Mai 2026/i })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: /14\. Tag des Monats/i }));
+    fireEvent.click(screen.getByRole('button', { name: /2026-05-14, Christi Himmelfahrt/i }));
     expect(screen.getAllByText('Christi Himmelfahrt').length).toBeGreaterThan(0);
     expect(screen.getByRole('link', { name: /Predigt dieses Tages öffnen/i })).toHaveAttribute('href', '/archiv/2026-05-14');
   });

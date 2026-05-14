@@ -106,8 +106,8 @@ async function requestUniqueSermon(date: string, liturgicalDay: string): Promise
     {
       role: 'user',
       content: [
-        `Erstelle eine ausführliche, geistlich tiefgehende Predigt (ca. 600-800 Wörter) für den ${liturgicalDay}.`,
-        `Die Predigt soll ungefähr ${SERMON_WORD_COUNT_RANGE} umfassen und mit Einleitung, Hauptteil, praktischer Anwendung und einem abschließenden Gebet aufgebaut sein.`,
+        `Erstelle eine ausführliche, geistlich tiefgehende Predigt (ca. ${SERMON_WORD_COUNT_RANGE}) für den ${liturgicalDay}.`,
+        'Die Predigt soll mit Einleitung, Hauptteil, praktischer Anwendung und einem abschließenden Gebet aufgebaut sein.',
         'Stil: warm, einladend, geistlich tiefgehend, nicht dogmatisch, mit Bibelbezug und seelsorglicher Klarheit.',
         uniquenessInstruction,
         'Format:',

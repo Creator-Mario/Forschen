@@ -141,7 +141,7 @@ export function isFeastDay(date: Date): boolean {
 // Datum, liturgische Bezeichnung und Markierungen für Sonntage/Festtage.
 export function getMonthOverview(year: number, month: number): MonthOverviewDay[] {
   if (month < 1 || month > 12) {
-    throw new Error('month must be between 1 and 12');
+    throw new Error('month must be between 1 and 12 (inclusive)');
   }
 
   const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();

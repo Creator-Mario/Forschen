@@ -45,7 +45,11 @@ export default function HomeSermonPreview() {
 
       const payload = await response.json() as DailySermonPayload | { error?: string };
       if (!response.ok) {
-        throw new Error('error' in payload && payload.error ? payload.error : 'Unbekannter Fehler');
+        throw new Error(
+          'error' in payload && payload.error
+            ? payload.error
+            : `Die API antwortete mit Status ${response.status}.`,
+        );
       }
 
       setSermon(payload as DailySermonPayload);

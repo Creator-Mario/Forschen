@@ -112,6 +112,7 @@ export default function ChurchCalendar({ sermonDates = [] }: ChurchCalendarProps
                 <button
                   type="button"
                   onClick={() => setSelectedDate(entry.date)}
+                  aria-label={`${entry.date}, ${entry.liturgicalDay}`}
                   className={[
                     'flex w-full items-start justify-between rounded-2xl border px-4 py-4 text-left transition',
                     isSelected ? 'border-blue-400 bg-blue-50 shadow-sm' : 'border-slate-200 bg-white hover:border-blue-200 hover:bg-blue-50/70',
