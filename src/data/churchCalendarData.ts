@@ -1207,7 +1207,7 @@ function generateChurchCalendarYear(year: number): ChurchCalendarEntry[] {
 }
 
 function getLastAutoMaintainedYear(referenceDate = new Date()): number {
-  return Math.max(2027, referenceDate.getUTCFullYear() + 1);
+  return Math.max(...PRELOADED_YEARS, referenceDate.getUTCFullYear() + 1);
 }
 
 export function getChurchCalendarYearData(year: number): ChurchCalendarEntry[] {

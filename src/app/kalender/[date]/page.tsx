@@ -57,7 +57,7 @@ export default async function LiturgicalDayDetailPage({ params }: LiturgicalDayD
             <Link href="/" className="transition hover:text-white">
               ← Zur Startseite
             </Link>
-            <Link href={`/archiv/${date}`} className="transition hover:text-white">
+            <Link href={sermon ? `/archiv/${date}` : '/archiv'} className="transition hover:text-white">
               {sermon ? 'Zur Predigt dieses Tages' : 'Predigtarchiv'}
             </Link>
           </div>
