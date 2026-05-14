@@ -723,6 +723,9 @@ describe('HomePage', () => {
         recommendations: [],
       }),
     }));
+    vi.doMock('@/lib/sermonArchive', () => ({
+      getLatestSermons: vi.fn().mockResolvedValue([]),
+    }));
     vi.doMock('@/components/BibleVerseCard', () => ({ default: () => null }));
     vi.doMock('@/components/WeeklyThemeCard', () => ({ default: () => null }));
     vi.doMock('@/components/Logo', () => ({ default: () => React.createElement('div', null, 'Logo') }));

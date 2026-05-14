@@ -16,6 +16,7 @@ import { getTodayTageswortFresh, getCurrentWochenthemaFresh, getApprovedThesen }
 import { getTodayPsalmThema, getTodayGlaubenHeuteThema, getTodayBuchempfehlungen } from '@/lib/generated-content';
 import { founderProfile } from '@/lib/founder-profile';
 import { createPageMetadata, serializeJsonLd } from '@/lib/seo';
+import { getLatestSermons } from '@/lib/sermonArchive';
 
 export const metadata: Metadata = createPageMetadata({
   title: 'Freie christliche Bibelforschung',
@@ -31,6 +32,7 @@ export default async function HomePage() {
   const psalmThema = await getTodayPsalmThema();
   const glaubenHeute = await getTodayGlaubenHeuteThema();
   const buchempfehlungen = await getTodayBuchempfehlungen();
+  const sermonDates = (await getLatestSermons(366)).map((sermon) => sermon.date);
   const homepageStructuredData = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
@@ -228,7 +230,7 @@ export default async function HomePage() {
 
         <div className="mb-14 grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.25fr)_minmax(320px,0.75fr)]">
           <HomeSermonPreview />
-          <ChurchCalendar />
+          <ChurchCalendar sermonDates={sermonDates} />
         </div>
 
         <div className="mb-14">

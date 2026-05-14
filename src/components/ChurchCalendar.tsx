@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { getMonthOverview } from '@/lib/churchCalendar';
 
@@ -24,16 +24,49 @@ function shiftMonth(date: Date, amount: number): Date {
 }
 
 export default function ChurchCalendar({ sermonDates = [] }: ChurchCalendarProps) {
-  const today = useMemo(() => new Date(), []);
+  const [today, setToday] = useState(() => new Date());
   const todayIso = useMemo(() => today.toISOString().slice(0, 10), [today]);
-  const [visibleMonth, setVisibleMonth] = useState(() => toMonthAnchor(today));
-  const [selectedDate, setSelectedDate] = useState(todayIso);
+  const [visibleMonth, setVisibleMonth] = useState(() => toMonthAnchor(new Date()));
+  const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const previousTodayIsoRef = useRef(todayIso);
   const sermonDateSet = useMemo(() => new Set(sermonDates), [sermonDates]);
 
   const monthOverview = useMemo(
     () => getMonthOverview(visibleMonth.getUTCFullYear(), visibleMonth.getUTCMonth() + 1),
     [visibleMonth],
   );
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setToday(new Date());
+    }, 60_000);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, []);
+
+  useEffect(() => {
+    const previousTodayIso = previousTodayIsoRef.current;
+    if (previousTodayIso === todayIso) return;
+
+    setSelectedDate((current) => (current === previousTodayIso ? todayIso : current));
+    setVisibleMonth((current) => {
+      const previousMonth = toMonthAnchor(new Date(`${previousTodayIso}T00:00:00Z`));
+      const nextMonth = toMonthAnchor(today);
+
+      if (
+        current.getUTCFullYear() === previousMonth.getUTCFullYear()
+        && current.getUTCMonth() === previousMonth.getUTCMonth()
+      ) {
+        return nextMonth;
+      }
+
+      return current;
+    });
+
+    previousTodayIsoRef.current = todayIso;
+  }, [today, todayIso]);
 
   useEffect(() => {
     if (!monthOverview.some((entry) => entry.date === selectedDate)) {

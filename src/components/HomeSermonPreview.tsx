@@ -25,7 +25,7 @@ function formatGermanDate(date: string): string {
 function buildExcerpt(content: string, wordLimit = 150): string {
   const words = content.trim().split(/\s+/);
   if (words.length <= wordLimit) return content;
-  return `${words.slice(0, wordLimit).join(' ')}...`;
+  return `${words.slice(0, wordLimit).join(' ')} ...`;
 }
 
 export default function HomeSermonPreview() {
