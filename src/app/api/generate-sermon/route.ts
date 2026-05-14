@@ -27,7 +27,7 @@ type DailySermonResponse = {
 
 const OPENAI_MODEL = 'gpt-4o-mini';
 const MAX_GENERATION_ATTEMPTS = 4;
-const SERMON_WORD_COUNT_TARGET = '600-800';
+const SERMON_WORD_COUNT_RANGE = '600-800';
 const OPENAI_TEMPERATURE = 0.85;
 const OPENAI_MAX_TOKENS = 2400;
 
@@ -108,7 +108,7 @@ async function requestUniqueSermon(date: string, liturgicalDay: string): Promise
     {
       role: 'user',
       content: [
-        `Erstelle eine ausführliche, geistlich tiefgehende Predigt (ca. ${SERMON_WORD_COUNT_TARGET} Wörter) für den ${liturgicalDay}.`,
+        `Erstelle eine ausführliche, geistlich tiefgehende Predigt (ca. ${SERMON_WORD_COUNT_RANGE} Wörter) für den ${liturgicalDay}.`,
         'Die Predigt soll mit Einleitung, Hauptteil, praktischer Anwendung und einem abschließenden Gebet aufgebaut sein.',
         'Stil: warm, einladend, geistlich tiefgehend, nicht dogmatisch, mit Bibelbezug und seelsorglicher Klarheit.',
         uniquenessInstruction,

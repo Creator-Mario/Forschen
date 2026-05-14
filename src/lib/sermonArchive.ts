@@ -81,7 +81,7 @@ async function readSermonFile(filePath: string): Promise<ArchivedSermon | null> 
 
 export async function saveSermon(sermon: ArchivedSermon): Promise<void> {
   await ensureArchiveDirectory();
-  await fs.writeFile(getSermonFilePath(sermon.date), `${JSON.stringify(sermon, null, 2)}\n`, 'utf-8');
+  await fs.writeFile(getSermonFilePath(sermon.date), JSON.stringify(sermon, null, 2) + '\n', 'utf-8');
 }
 
 export async function loadSermon(date: string): Promise<ArchivedSermon | null> {
