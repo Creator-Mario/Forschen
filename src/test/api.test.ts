@@ -344,24 +344,21 @@ describe('GET /api/generate-sermon', () => {
     vi.unstubAllEnvs();
   });
 
-  it('returns the stored sermon for the current publication date', async () => {
+  it('returns the archived sermon for the current publication date', async () => {
     vi.stubEnv('OPENAI_API_KEY', 'test-key');
     vi.doMock('@/lib/publishing', () => ({ getCurrentPublicationDate: vi.fn().mockReturnValue('2026-05-14') }));
-    vi.doMock('node:fs/promises', () => ({
-      default: {
-        readFile: vi.fn()
-          .mockResolvedValueOnce(JSON.stringify({
-            date: '2026-05-14',
-            liturgicalDay: 'Christi Himmelfahrt',
-            title: 'Aufgefahren, aber nicht fort',
-            content: 'Predigttext',
-            prayer: 'Gebetstext',
-            createdAt: '2026-05-14T05:00:00.000Z',
-          }))
-          .mockResolvedValueOnce(JSON.stringify([])),
-        writeFile: vi.fn(),
-        mkdir: vi.fn(),
-      },
+    vi.doMock('@/lib/sermonArchive', () => ({
+      loadSermon: vi.fn().mockResolvedValue({
+        date: '2026-05-14',
+        liturgicalDay: 'Christi Himmelfahrt',
+        title: 'Aufgefahren, aber nicht fort',
+        content: 'Predigttext',
+        prayer: 'Gebetstext',
+        createdAt: '2026-05-14T05:00:00.000Z',
+      }),
+      getAllSermons: vi.fn().mockResolvedValue([]),
+      saveSermon: vi.fn(),
+      titleExists: vi.fn().mockResolvedValue(false),
     }));
     vi.doMock('openai', () => ({
       default: vi.fn().mockImplementation(() => ({
@@ -381,31 +378,30 @@ describe('GET /api/generate-sermon', () => {
     expect(json).toMatchObject({
       date: '2026-05-14',
       title: 'Aufgefahren, aber nicht fort',
-      cached: true,
+      fromCache: true,
+      archived: true,
     });
   });
 
-  it('generates and stores a new sermon when no current cache exists', async () => {
+  it('generates and archives a new sermon when nothing exists for today', async () => {
     vi.stubEnv('OPENAI_API_KEY', 'test-key');
-    const readFile = vi.fn()
-      .mockRejectedValueOnce(Object.assign(new Error('missing'), { code: 'ENOENT' }))
-      .mockResolvedValueOnce(JSON.stringify([
+    const saveSermon = vi.fn();
+    const titleExists = vi.fn().mockResolvedValue(false);
+    vi.doMock('@/lib/publishing', () => ({ getCurrentPublicationDate: vi.fn().mockReturnValue('2026-05-14') }));
+    vi.doMock('@/lib/sermonArchive', () => ({
+      loadSermon: vi.fn().mockResolvedValue(null),
+      getAllSermons: vi.fn().mockResolvedValue([
         {
           date: '2026-05-13',
           liturgicalDay: 'Mittwoch',
           title: 'Alte Hoffnung',
-          normalizedTitle: 'alte hoffnung',
+          content: 'Predigt',
+          prayer: 'Gebet',
           createdAt: '2026-05-13T05:00:00.000Z',
         },
-      ]));
-    const writeFile = vi.fn();
-    vi.doMock('@/lib/publishing', () => ({ getCurrentPublicationDate: vi.fn().mockReturnValue('2026-05-14') }));
-    vi.doMock('node:fs/promises', () => ({
-      default: {
-        readFile,
-        writeFile,
-        mkdir: vi.fn(),
-      },
+      ]),
+      saveSermon,
+      titleExists,
     }));
     const createCompletion = vi.fn().mockResolvedValue({
       choices: [
@@ -439,9 +435,11 @@ describe('GET /api/generate-sermon', () => {
       date: '2026-05-14',
       liturgicalDay: 'Christi Himmelfahrt',
       title: 'Aufgefahren, aber nicht fort',
-      cached: false,
+      fromCache: false,
+      archived: true,
     });
-    expect(writeFile).toHaveBeenCalledTimes(2);
+    expect(saveSermon).toHaveBeenCalledTimes(1);
+    expect(titleExists).toHaveBeenCalledWith('Aufgefahren, aber nicht fort');
   });
 });
 

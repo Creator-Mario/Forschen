@@ -9,6 +9,8 @@ import CurrentTopicCard from '@/components/CurrentTopicCard';
 import BookRecommendationsCard from '@/components/BookRecommendationsCard';
 import QrShareActions from '@/components/QrShareActions';
 import Logo from '@/components/Logo';
+import HomeSermonPreview from '@/components/HomeSermonPreview';
+import ChurchCalendar from '@/components/ChurchCalendar';
 import { canonicalSiteUrl, siteName } from '@/lib/config';
 import { getTodayTageswortFresh, getCurrentWochenthemaFresh, getApprovedThesen } from '@/lib/db';
 import { getTodayPsalmThema, getTodayGlaubenHeuteThema, getTodayBuchempfehlungen } from '@/lib/generated-content';
@@ -222,6 +224,11 @@ export default async function HomePage() {
               <div className="card-river p-6 text-gray-500 text-center">Kein Wochenthema verfügbar</div>
             )}
           </div>
+        </div>
+
+        <div className="mb-14 grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.25fr)_minmax(320px,0.75fr)]">
+          <HomeSermonPreview />
+          <ChurchCalendar />
         </div>
 
         <div className="mb-14">

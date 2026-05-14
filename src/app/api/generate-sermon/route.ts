@@ -1,11 +1,15 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
-
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
 import { getCurrentPublicationDate } from '@/lib/publishing';
 import { getLiturgicalDay } from '@/lib/churchCalendar';
+import {
+  getAllSermons,
+  loadSermon,
+  saveSermon,
+  titleExists,
+  type ArchivedSermon,
+} from '@/lib/sermonArchive';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -16,33 +20,18 @@ type DailySermonResponse = {
   title: string;
   content: string;
   prayer: string;
-  cached: boolean;
+  fromCache: boolean;
+  archived: boolean;
 };
 
-type StoredDailySermon = Omit<DailySermonResponse, 'cached'> & {
-  createdAt: string;
-};
-
-type SermonHistoryEntry = {
-  date: string;
-  liturgicalDay: string;
-  title: string;
-  normalizedTitle: string;
-  createdAt: string;
-};
-
-const DATA_DIR = path.join(process.cwd(), 'data');
-const DAILY_SERMON_FILE = path.join(DATA_DIR, 'daily-sermon.json');
-const SERMON_HISTORY_FILE = path.join(DATA_DIR, 'sermon-history.json');
 const OPENAI_MODEL = 'gpt-4o-mini';
 const MAX_GENERATION_ATTEMPTS = 4;
-const MIN_TITLE_LENGTH_FOR_SUBSTRING_CHECK = 12;
-const SERMON_WORD_COUNT_RANGE = '300-400 Wörter';
+const SERMON_WORD_COUNT_RANGE = '600-800 Wörter';
 const OPENAI_TEMPERATURE = 0.85;
-const OPENAI_MAX_TOKENS = 700;
+const OPENAI_MAX_TOKENS = 1800;
 
-let sermonCache: StoredDailySermon | null = null;
-let inFlightGeneration: Promise<StoredDailySermon> | null = null;
+let sermonCache: ArchivedSermon | null = null;
+let inFlightGeneration: Promise<ArchivedSermon> | null = null;
 
 function getOpenAiClient(): OpenAI {
   const apiKey = process.env.OPENAI_API_KEY?.trim();
@@ -58,51 +47,7 @@ function parseIsoDate(value: string): Date {
   return new Date(Date.UTC(year, month - 1, day));
 }
 
-function normalizeTitle(title: string): string {
-  return title
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9äöüß\s]/gi, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function titleTokens(title: string): string[] {
-  const stopWords = new Set([
-    'der', 'die', 'das', 'ein', 'eine', 'und', 'oder', 'aber', 'nicht', 'doch', 'den', 'dem', 'des',
-    'zu', 'zur', 'zum', 'im', 'in', 'am', 'an', 'auf', 'mit', 'für', 'von', 'ist', 'wir', 'du',
-  ]);
-
-  return normalizeTitle(title)
-    .split(' ')
-    .filter((token) => token.length > 2 && !stopWords.has(token));
-}
-
-function areTitlesTooSimilar(title: string, history: SermonHistoryEntry[]): boolean {
-  const normalizedTitle = normalizeTitle(title);
-  const tokens = new Set(titleTokens(title));
-
-  return history.some((entry) => {
-    if (!entry.title) return false;
-    if (entry.normalizedTitle === normalizedTitle) return true;
-    if (
-      normalizedTitle.length >= MIN_TITLE_LENGTH_FOR_SUBSTRING_CHECK
-      && (normalizedTitle.includes(entry.normalizedTitle) || entry.normalizedTitle.includes(normalizedTitle))
-    ) {
-      return true;
-    }
-
-    const entryTokens = new Set(titleTokens(entry.title));
-    if (tokens.size === 0 || entryTokens.size === 0) return false;
-
-    const overlap = [...tokens].filter((token) => entryTokens.has(token)).length;
-    const ratio = overlap / Math.min(tokens.size, entryTokens.size);
-    return ratio >= 0.75;
-  });
-}
-
-function parseSermonPayload(rawContent: string, date: string, liturgicalDay: string): StoredDailySermon {
+function parseSermonPayload(rawContent: string, date: string, liturgicalDay: string): ArchivedSermon {
   const cleaned = rawContent.replace(/\r/g, '').replace(/\*\*/g, '').trim();
   const match = cleaned.match(/TITEL:\s*(.+?)\n+PREDIGT:\s*([\s\S]+?)\n+GEBET:\s*([\s\S]+)/i);
 
@@ -129,60 +74,30 @@ function parseSermonPayload(rawContent: string, date: string, liturgicalDay: str
   };
 }
 
-async function ensureDataDirectory(): Promise<void> {
-  await fs.mkdir(DATA_DIR, { recursive: true });
+function toApiResponse(sermon: ArchivedSermon, fromCache: boolean): DailySermonResponse {
+  return {
+    date: sermon.date,
+    liturgicalDay: sermon.liturgicalDay,
+    title: sermon.title,
+    content: sermon.content,
+    prayer: sermon.prayer,
+    fromCache,
+    archived: true,
+  };
 }
 
-async function readJsonFile<T>(filePath: string, fallback: T): Promise<T> {
-  try {
-    const content = await fs.readFile(filePath, 'utf-8');
-    return JSON.parse(content) as T;
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-      return fallback;
-    }
-
-    throw error;
-  }
-}
-
-async function writeJsonFile(filePath: string, payload: unknown): Promise<void> {
-  await ensureDataDirectory();
-  await fs.writeFile(filePath, `${JSON.stringify(payload, null, 2)}\n`, 'utf-8');
-}
-
-async function readStoredDailySermon(): Promise<StoredDailySermon | null> {
-  const sermon = await readJsonFile<StoredDailySermon | null>(DAILY_SERMON_FILE, null);
-  if (!sermon || typeof sermon !== 'object') return null;
-  return sermon;
-}
-
-async function readSermonHistory(): Promise<SermonHistoryEntry[]> {
-  const history = await readJsonFile<SermonHistoryEntry[]>(SERMON_HISTORY_FILE, []);
-  return Array.isArray(history) ? history : [];
-}
-
-async function persistSermon(sermon: StoredDailySermon, history: SermonHistoryEntry[]): Promise<void> {
-  const nextHistory = [
-    ...history,
-    {
-      date: sermon.date,
-      liturgicalDay: sermon.liturgicalDay,
-      title: sermon.title,
-      normalizedTitle: normalizeTitle(sermon.title),
-      createdAt: sermon.createdAt,
-    },
-  ];
-
-  await Promise.all([
-    writeJsonFile(DAILY_SERMON_FILE, sermon),
-    writeJsonFile(SERMON_HISTORY_FILE, nextHistory),
-  ]);
-}
-
-async function requestUniqueSermon(date: string, liturgicalDay: string, history: SermonHistoryEntry[]): Promise<StoredDailySermon> {
+async function requestUniqueSermon(date: string, liturgicalDay: string): Promise<ArchivedSermon> {
   const openai = getOpenAiClient();
-  const recentTitles = history.slice(-12).map((entry) => `- ${entry.title}`).join('\n');
+  const archivedSermons = await getAllSermons();
+  const archivedTitles = archivedSermons.map((sermon) => sermon.title);
+  const recentTitles = archivedTitles.slice(0, 20).map((title) => `- ${title}`).join('\n');
+  const uniquenessInstruction = archivedTitles.length > 0
+    ? [
+        'Im Archiv existieren bereits Predigten. Wähle daher ausdrücklich ein neues, klar abweichendes Thema und keinen ähnlichen Titel.',
+        'Vermeide insbesondere diese bereits verwendeten Titel:',
+        recentTitles,
+      ].join('\n')
+    : 'Es gibt noch keine gespeicherten Predigten im Archiv.';
   const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
     {
       role: 'system',
@@ -191,11 +106,10 @@ async function requestUniqueSermon(date: string, liturgicalDay: string, history:
     {
       role: 'user',
       content: [
-        `Erstelle eine kurze Tagespredigt (ca. 300-400 Wörter) für den ${liturgicalDay}.`,
-        `Die Predigt soll ungefähr ${SERMON_WORD_COUNT_RANGE} umfassen.`,
-        'Stil: warm, einladend, nicht dogmatisch, mit Bibelbezug, praktischem Impuls und einem kurzen Gebet.',
-        'Verwende einen neuen, klar unterscheidbaren Titel.',
-        recentTitles ? `Bereits verwendete Titel:\n${recentTitles}` : 'Es gibt noch keine früheren Titel.',
+        `Erstelle eine ausführliche, geistlich tiefgehende Predigt (ca. 600-800 Wörter) für den ${liturgicalDay}.`,
+        `Die Predigt soll ungefähr ${SERMON_WORD_COUNT_RANGE} umfassen und mit Einleitung, Hauptteil, praktischer Anwendung und einem abschließenden Gebet aufgebaut sein.`,
+        'Stil: warm, einladend, geistlich tiefgehend, nicht dogmatisch, mit Bibelbezug und seelsorglicher Klarheit.',
+        uniquenessInstruction,
         'Format:',
         'TITEL: ...',
         'PREDIGT: ...',
@@ -218,29 +132,25 @@ async function requestUniqueSermon(date: string, liturgicalDay: string, history:
     }
 
     const sermon = parseSermonPayload(rawContent, date, liturgicalDay);
-    if (!areTitlesTooSimilar(sermon.title, history)) {
+    if (!(await titleExists(sermon.title))) {
       return sermon;
     }
 
+    const similarTitles = archivedTitles.filter((title) => title !== sermon.title).slice(0, 5);
     messages.push({ role: 'assistant', content: rawContent });
     messages.push({
       role: 'user',
-      content: `Der Titel "${sermon.title}" ist zu ähnlich zu bereits verwendeten Titeln. Bitte liefere eine neue Predigt mit einem deutlich anderen Titel und bleibe exakt im Format TITEL / PREDIGT / GEBET.`,
+      content: [
+        `Der Titel „${sermon.title}“ ist dem Archiv zu ähnlich.`,
+        similarTitles.length > 0
+          ? `Achte besonders auf deutlichen Abstand zu diesen vorhandenen Titeln: ${similarTitles.join('; ')}`
+          : 'Wähle bitte ein deutlich neues Thema und einen klar unterscheidbaren Titel.',
+        'Bitte verfasse eine neue Predigt mit abweichendem Schwerpunkt und bleibe exakt im Format TITEL / PREDIGT / GEBET.',
+      ].join(' '),
     });
   }
 
   throw new Error('Es konnte keine ausreichend neue Predigt erzeugt werden.');
-}
-
-function toApiResponse(sermon: StoredDailySermon, cached: boolean): DailySermonResponse {
-  return {
-    date: sermon.date,
-    liturgicalDay: sermon.liturgicalDay,
-    title: sermon.title,
-    content: sermon.content,
-    prayer: sermon.prayer,
-    cached,
-  };
 }
 
 async function getOrCreateDailySermon(): Promise<DailySermonResponse> {
@@ -250,18 +160,17 @@ async function getOrCreateDailySermon(): Promise<DailySermonResponse> {
     return toApiResponse(sermonCache, true);
   }
 
-  const storedSermon = await readStoredDailySermon();
-  if (storedSermon?.date === publicationDate) {
-    sermonCache = storedSermon;
-    return toApiResponse(storedSermon, true);
+  const archivedSermon = await loadSermon(publicationDate);
+  if (archivedSermon) {
+    sermonCache = archivedSermon;
+    return toApiResponse(archivedSermon, true);
   }
 
   if (!inFlightGeneration) {
     inFlightGeneration = (async () => {
       const liturgicalDay = getLiturgicalDay(parseIsoDate(publicationDate));
-      const history = await readSermonHistory();
-      const sermon = await requestUniqueSermon(publicationDate, liturgicalDay, history);
-      await persistSermon(sermon, history);
+      const sermon = await requestUniqueSermon(publicationDate, liturgicalDay);
+      await saveSermon(sermon);
       sermonCache = sermon;
       return sermon;
     })();
