@@ -711,25 +711,59 @@ describe('ChatPage', () => {
 describe('HomePage', () => {
   beforeEach(() => vi.resetModules());
 
-  it('redirects unauthenticated visitors to the login page first', async () => {
+  it('renders the public homepage for unauthenticated visitors', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
     vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
-    vi.doMock('next/navigation', () => ({
-      useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn() }),
-      usePathname: () => '/',
-      useSearchParams: () => new URLSearchParams(),
-      redirect: vi.fn(() => {
-        throw new Error('NEXT_REDIRECT');
-      }),
-      notFound: vi.fn(() => { throw new Error('NEXT_NOT_FOUND'); }),
+    vi.doMock('@/lib/db', () => ({
+      getTodayTageswortFresh: vi.fn().mockResolvedValue(undefined),
+      getCurrentWochenthemaFresh: vi.fn().mockResolvedValue(undefined),
+      getApprovedThesen: vi.fn().mockReturnValue([]),
     }));
-
-    const navigation = await import('next/navigation');
+    vi.doMock('@/lib/generated-content', () => ({
+      getTodayPsalmThema: vi.fn().mockReturnValue({
+        id: 'ps-1',
+        date: '2026-04-11',
+        psalmReference: 'Psalm 1,1-3',
+        title: 'Verwurzelt leben',
+        excerpt: 'Auszug',
+        summary: 'Zusammenfassung',
+        significance: 'Bedeutung',
+        practice: 'Praxis',
+        questions: [],
+      }),
+      getTodayGlaubenHeuteThema: vi.fn().mockReturnValue({
+        id: 'gh-1',
+        date: '2026-04-11',
+        title: 'Digitale Überforderung',
+        headline: 'Zwischen Dauerrauschen',
+        worldFocus: 'Weltfokus',
+        faithPerspective: 'Perspektive',
+        discipleshipImpulse: 'Impuls',
+        bibleVerses: [],
+        questions: [],
+      }),
+      getTodayBuchempfehlungen: vi.fn().mockReturnValue({
+        id: 'bk-1',
+        date: '2026-04-11',
+        topicTitle: 'Digitale Überforderung',
+        introduction: 'Intro',
+        recommendations: [],
+      }),
+    }));
+    vi.doMock('@/lib/sermonArchive', () => ({
+      getLatestSermons: vi.fn().mockResolvedValue([]),
+    }));
+    vi.doMock('@/components/BibleVerseCard', () => ({ default: () => null }));
+    vi.doMock('@/components/WeeklyThemeCard', () => ({ default: () => null }));
+    vi.doMock('@/components/Logo', () => ({ default: () => React.createElement('div', null, 'Logo') }));
+    vi.doMock('@/components/HomeSermonPreview', () => ({ default: () => React.createElement('div', null, 'Home sermon preview') }));
+    vi.doMock('@/components/ChurchCalendar', () => ({ default: () => React.createElement('div', null, 'Church calendar') }));
     const { default: HomePage } = await import('@/app/(public)/page');
+    const jsx = await HomePage();
 
-    await expect(HomePage()).rejects.toThrow('NEXT_REDIRECT');
-
-    expect(navigation.redirect).toHaveBeenCalledWith('/login');
+    render(React.createElement(React.Fragment, null, jsx));
+    expect(screen.getByRole('heading', { name: /Der Fluss/i, level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /jetzt kostenlos registrieren/i })).toHaveAttribute('href', '/registrieren');
   });
 
   it('renders the hero section for authenticated visitors', async () => {
