@@ -22,8 +22,6 @@ export default function robots(): MetadataRoute.Robots {
           '/fragestellungen',
           '/fragestellungen/neu',
           '/gebet/neu',
-          '/genealogie/login',
-          '/genealogie/registrieren',
           '/login',
           '/mein-tageswort',
           '/meine-',

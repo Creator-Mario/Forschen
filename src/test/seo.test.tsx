@@ -65,8 +65,6 @@ describe('SEO metadata', () => {
           disallow: expect.arrayContaining([
              '/admin',
              '/dashboard',
-             '/genealogie/login',
-             '/genealogie/registrieren',
              '/login',
              '/registrieren',
              '/videos/hochladen',
@@ -90,11 +88,11 @@ describe('SEO metadata', () => {
     });
   });
 
-  it('marks genealogy auth landing pages as noindex with dedicated canonical paths', () => {
+  it('publishes genealogy landing pages with dedicated canonical paths for indexing', () => {
     expect(genealogieLoginMetadata.alternates?.canonical).toBe('/genealogie/login');
     expect(genealogieRegisterMetadata.alternates?.canonical).toBe('/genealogie/registrieren');
-    expect(genealogieLoginMetadata.robots).toMatchObject({ index: false, follow: false });
-    expect(genealogieRegisterMetadata.robots).toMatchObject({ index: false, follow: false });
+    expect(genealogieLoginMetadata.robots).toBeUndefined();
+    expect(genealogieRegisterMetadata.robots).toBeUndefined();
     expect(genealogieLoginMetadata.openGraph).toMatchObject({
       url: `${canonicalSiteUrl}/genealogie/login`,
     });
@@ -165,6 +163,8 @@ describe('SEO metadata', () => {
       ),
     );
     expect(sitemapEntries.some((entry) => entry.url.includes('/amp/'))).toBe(false);
+    expect(sitemapEntries.some((entry) => entry.url.endsWith('/genealogie/login'))).toBe(true);
+    expect(sitemapEntries.some((entry) => entry.url.endsWith('/genealogie/registrieren'))).toBe(true);
     expect(sitemapEntries.some((entry) => entry.url.endsWith('/registrieren'))).toBe(false);
     expect(sitemapEntries.some((entry) => entry.url.endsWith('/aktionen'))).toBe(true);
     expect(sitemapEntries.every((entry) => !('lastModified' in entry))).toBe(true);

@@ -31,16 +31,6 @@ export const metadata: Metadata = {
     description: pageDescription,
     images: [defaultOgImage.url],
   },
-  robots: {
-    index: false,
-    follow: false,
-    nocache: true,
-    googleBot: {
-      index: false,
-      follow: false,
-      noimageindex: true,
-    },
-  },
 };
 
 export default function GenealogieLoginPage() {
