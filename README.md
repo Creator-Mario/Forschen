@@ -33,6 +33,8 @@ Production deployments are triggered by the GitHub Actions workflow in `.github/
 
 Configure the `RAILWAY_TOKEN` GitHub repository secret so the workflow can deploy the `Forschen` Railway service.
 
+The committed `railway.json` codifies the current Railway builder/runtime defaults so dashboard-only deploy settings do not drift from the repository.
+
 For app data persistence in Railway, set `GITHUB_TOKEN` in the Railway service. The app now enables GitHub-backed JSON storage automatically on Railway; `ENABLE_GITHUB_DATA_SYNC=true` is only needed outside Railway if you want to force the same behavior manually.
 
 Because `next.config.js` uses `output: 'standalone'`, production startup uses `npm start` and reads the generated `.next/required-server-files.json` config directly. The wrapper keeps static assets available and intentionally avoids forcing Next.js to validate requests against a single `HOSTNAME`, which prevents proxied CSS, JS and image requests from failing with `400 Bad Request`. If a fixed hostname is ever required, set `STANDALONE_HOSTNAME` explicitly.
