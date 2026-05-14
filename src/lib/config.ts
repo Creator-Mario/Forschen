@@ -7,16 +7,12 @@
  *   OPERATOR_NAME          – full legal name of the operator
  *   OPERATOR_EMAIL         – public contact e-mail address
  *   OPERATOR_PHONE_E164    – contact phone in E.164 format (e.g. +6283832835228)
- *   SITE_DOMAIN            – naked domain without protocol (e.g. www.flussdeslebens.live)
+ *   SITE_DOMAIN            – live domain without protocol (e.g. flussdeslebens.live)
  *   ADMIN_SEED_EMAIL       – e-mail used to seed / identify the single admin account
  */
 
-const DEFAULT_SITE_DOMAIN = 'www.flussdeslebens.live';
+const DEFAULT_SITE_DOMAIN = 'flussdeslebens.live';
 const DEFAULT_CANONICAL_SITE_URL = `https://${DEFAULT_SITE_DOMAIN}`;
-
-function stripWwwPrefix(host: string): string {
-  return host.startsWith('www.') ? host.slice(4) : host;
-}
 
 function normalizeSiteDomain(domain: string | undefined): string {
   const normalizedDomain = (domain ?? DEFAULT_SITE_DOMAIN)
@@ -29,23 +25,16 @@ function normalizeSiteDomain(domain: string | undefined): string {
     return DEFAULT_SITE_DOMAIN;
   }
 
-  return normalizedDomain === stripWwwPrefix(DEFAULT_SITE_DOMAIN)
-    ? DEFAULT_SITE_DOMAIN
-    : normalizedDomain;
+  return normalizedDomain;
 }
 
-function normalizeCanonicalSiteUrl(url: string | undefined, canonicalDomain: string): string {
+function normalizeCanonicalSiteUrl(url: string | undefined): string {
   const trimmedUrl = url?.trim().replace(/\/$/, '') || DEFAULT_CANONICAL_SITE_URL;
 
   try {
     const normalizedUrl = new URL(trimmedUrl);
-    const apexDomain = stripWwwPrefix(canonicalDomain);
 
     normalizedUrl.protocol = 'https:';
-
-    if (canonicalDomain.startsWith('www.') && normalizedUrl.host.toLowerCase() === apexDomain) {
-      normalizedUrl.host = canonicalDomain;
-    }
 
     return normalizedUrl.toString().replace(/\/$/, '');
   } catch {
@@ -75,7 +64,6 @@ export const siteName = 'Der Fluss des Lebens';
 export const canonicalSiteUrl =
   normalizeCanonicalSiteUrl(
     process.env.EMAIL_LINK_BASE_URL ?? process.env.SITE_URL ?? `https://${siteDomain}`,
-    siteDomain,
   );
 
 export const googleSiteVerification =

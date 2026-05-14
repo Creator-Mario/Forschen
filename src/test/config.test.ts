@@ -28,9 +28,19 @@ describe('config', () => {
     expect(emailFromAddress).toBe('kontakt@flussdeslebens.live');
   });
 
-  it('normalizes the live site domain to the canonical www host', async () => {
+  it('preserves an explicitly configured apex live domain', async () => {
     process.env.SITE_DOMAIN = 'flussdeslebens.live';
     process.env.SITE_URL = 'https://flussdeslebens.live/';
+
+    const { canonicalSiteUrl, siteDomain } = await import('@/lib/config');
+
+    expect(siteDomain).toBe('flussdeslebens.live');
+    expect(canonicalSiteUrl).toBe('https://flussdeslebens.live');
+  });
+
+  it('preserves an explicitly configured www live domain', async () => {
+    process.env.SITE_DOMAIN = 'www.flussdeslebens.live';
+    process.env.SITE_URL = 'https://www.flussdeslebens.live/';
 
     const { canonicalSiteUrl, siteDomain } = await import('@/lib/config');
 
@@ -44,8 +54,8 @@ describe('config', () => {
 
     const { canonicalSiteUrl, siteDomain } = await import('@/lib/config');
 
-    expect(siteDomain).toBe('www.flussdeslebens.live');
-    expect(canonicalSiteUrl).toBe('https://www.flussdeslebens.live');
+    expect(siteDomain).toBe('flussdeslebens.live');
+    expect(canonicalSiteUrl).toBe('https://flussdeslebens.live');
   });
 
   it('forces the canonical site URL onto https even when SITE_URL is configured with http', async () => {
