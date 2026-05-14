@@ -93,7 +93,7 @@ fs.writeFileSync(${JSON.stringify(markerPath)}, JSON.stringify({
 }));`,
     );
 
-    process.env.HOSTNAME = '';
+    process.env.HOSTNAME = '127.0.0.1';
     process.env.STANDALONE_HOSTNAME = '0.0.0.0';
 
     const { startStandaloneServer } = require('../../start-standalone.js');
