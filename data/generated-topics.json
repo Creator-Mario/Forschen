@@ -1767,5 +1767,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-05-14",
+    "date": "2026-05-14",
+    "source": "ai",
+    "createdAt": "2026-05-14T01:11:19.466Z",
+    "promptVersion": "v3",
+    "psalm": {
+      "id": "psalm-2026-05-14",
+      "date": "2026-05-14",
+      "psalmReference": "Psalm 42",
+      "title": "Seele, wo bleibst du?",
+      "excerpt": "Wie der Hirsch schreit nach frischem Wasser, so schreit meine Seele, Gott, zu dir.",
+      "summary": "Psalm 42 beschreibt die Sehnsucht der Seele nach Gott in Zeiten der Trockenheit und des Zweifels. Der Psalmist drückt seine innere Not aus und sucht Trost in der Gegenwart Gottes. Diese Worte laden uns ein, unsere tiefsten Bedürfnisse und Fragen vor Gott zu bringen.",
+      "significance": "Die Sehnsucht nach Gott ist ein zentrales Thema im Glauben. Der Psalm zeigt, dass es in Ordnung ist, Zweifel und inneren Schmerz zu empfinden, während wir gleichzeitig Gott suchen. Es ist eine Erinnerung, dass Gott unsere Suche nach ihm sieht und versteht.",
+      "practice": "In Zeiten der Unsicherheit sollten wir regelmäßig innehalten und unsere Herzen in Gebet und Anbetung zu Gott ausrichten. Das Lesen von Psalmen kann helfen, die eigene Sehnsucht nach Gott zu formulieren und zu vertiefen. Wir können auch Gemeinschaft mit anderen suchen, um gemeinsam zu beten und zu reflektieren.",
+      "questions": [
+        "In welchen Momenten fühle ich mich Gott besonders fern?",
+        "Wie kann ich meine Sehnsucht nach Gott in meinem Alltag konkret ausdrücken?",
+        "Was hilft mir, in Zeiten der Trockenheit im Glauben standhaft zu bleiben?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-05-14",
+      "date": "2026-05-14",
+      "title": "Sehnsucht nach Gott in herausfordernden Zeiten",
+      "headline": "Hoffnung und Trost in der Dunkelheit finden",
+      "worldFocus": "In einer Welt, die oft von Unsicherheit und Angst geprägt ist, kämpfen viele Gläubige mit der Frage, wo Gott in ihren Herausforderungen ist. Die Sehnsucht nach einem tieferen Verständnis und Erleben Gottes ist in der heutigen Zeit besonders ausgeprägt.",
+      "faithPerspective": "Der Glaube bietet uns die Möglichkeit, in schwierigen Zeiten Hoffnung zu finden. Wir sind eingeladen, unsere Fragen und Zweifel offen vor Gott zu bringen und auf seine Gegenwart zu vertrauen. Diese Haltung stärkt unseren Glauben und ermutigt uns, in der Gemeinschaft zu wachsen.",
+      "discipleshipImpulse": "Als Nachfolger Christi sind wir berufen, in Zeiten der Not zu beten und zu suchen. Das ist eine Gelegenheit, das Vertrauen und die Abhängigkeit von Gott zu vertiefen, während wir gleichzeitig anderen in ähnlichen Situationen helfen. Wir können lernen, unsere eigene Sehnsucht nach Gott mit anderen zu teilen und sie auf ihrem Weg zu unterstützen.",
+      "bibleVerses": [
+        "Psalm 42,1-2",
+        "Matthäus 5,6",
+        "Hebräer 11,1"
+      ],
+      "questions": [
+        "Wie kann ich meine Sehnsucht nach Gott mit anderen teilen?",
+        "Was bedeutet es für mich, Gott in Zeiten der Not zu vertrauen?",
+        "Wie kann ich aktiv nach Gottes Gegenwart suchen, wenn ich mich verloren fühle?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-05-14",
+      "date": "2026-05-14",
+      "topicTitle": "Sehnsucht und Hoffnung: Gottes Nähe entdecken",
+      "introduction": "In Zeiten der inneren Not und der Suche nach Gott können Bücher wertvolle Begleiter sein. Sie laden uns ein, in die Tiefen des Glaubens einzutauchen und neue Perspektiven zu entdecken.",
+      "recommendations": [
+        {
+          "title": "Gott nahe sein",
+          "author": "Henri Nouwen",
+          "description": "Dieser Klassiker ermutigt dazu, die Stille und das Gebet als Wege zur Begegnung mit Gott zu nutzen.",
+          "relevance": "Nouwens Einsichten helfen, die eigene Sehnsucht nach Gott zu erkennen und zu vertiefen."
+        },
+        {
+          "title": "Der Weg des Herzens",
+          "author": "Brennan Manning",
+          "description": "Manning spricht darüber, wie wir Gottes Liebe in den Herausforderungen des Lebens erfahren können.",
+          "relevance": "Dieses Buch ermutigt, die eigene Verletzlichkeit zuzulassen und sich auf die Liebe Gottes zu stützen."
+        }
+      ]
+    }
   }
 ]
