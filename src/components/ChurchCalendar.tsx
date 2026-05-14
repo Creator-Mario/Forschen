@@ -25,6 +25,8 @@ function shiftMonth(date: Date, amount: number): Date {
 
 function getMillisecondsUntilNextUtcDay(date: Date): number {
   const nextDay = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1));
+  // Der Mindestwert verhindert einen 0-ms-Timer, falls die Berechnung exakt
+  // am Tageswechsel erfolgt und der Timeout sonst sofort erneut angesetzt würde.
   return Math.max(1_000, nextDay.getTime() - date.getTime());
 }
 
