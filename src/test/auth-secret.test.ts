@@ -1,10 +1,14 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('auth secret', () => {
   beforeEach(() => {
     vi.resetModules();
     delete process.env.NEXTAUTH_SECRET;
     delete process.env.NODE_ENV;
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('uses the configured NEXTAUTH_SECRET when present', async () => {
@@ -33,6 +37,5 @@ describe('auth secret', () => {
     expect(authSecret).toMatch(/^[a-f0-9]{64}$/);
     expect(authSecret).not.toBe('dev-secret-please-set-in-production');
     expect(consoleError).toHaveBeenCalledWith(MISSING_PRODUCTION_AUTH_SECRET_WARNING);
-    consoleError.mockRestore();
   });
 });
