@@ -714,11 +714,20 @@ describe('HomePage', () => {
   it('redirects unauthenticated visitors to the login page first', async () => {
     vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
     vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
+    vi.doMock('next/navigation', () => ({
+      useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn() }),
+      usePathname: () => '/',
+      useSearchParams: () => new URLSearchParams(),
+      redirect: vi.fn(() => {
+        throw new Error('NEXT_REDIRECT');
+      }),
+      notFound: vi.fn(() => { throw new Error('NEXT_NOT_FOUND'); }),
+    }));
 
     const navigation = await import('next/navigation');
     const { default: HomePage } = await import('@/app/(public)/page');
 
-    await HomePage();
+    await expect(HomePage()).rejects.toThrow('NEXT_REDIRECT');
 
     expect(navigation.redirect).toHaveBeenCalledWith('/login');
   });

@@ -33,7 +33,6 @@ export default async function HomePage() {
 
   if (!session) {
     redirect('/login');
-    return null;
   }
 
   const tageswort = await getTodayTageswortFresh();
