@@ -9,6 +9,7 @@ export type MonthOverviewDay = {
 type SupportedChurchYear = {
   easter: string;
   firstAdvent: string;
+  // ISO-Datum -> deutscher Festtagsname für bewegliche Feiertage des jeweiligen Jahres.
   movableFeasts: Record<string, string>;
 };
 
@@ -121,6 +122,9 @@ function getFixedFeastLabel(date: Date): string | null {
 
 function getMovableFeasts(year: number): Map<string, string> {
   const definition = getYearDefinition(year);
+  // Die Tabelle enthält die beweglichen Feiertage bereits aufgelöst pro Jahr,
+  // damit 2026/2027 exakt abgedeckt bleiben und weitere Jahre leicht ergänzt
+  // werden können.
   return new Map(Object.entries(definition?.movableFeasts ?? {}));
 }
 
