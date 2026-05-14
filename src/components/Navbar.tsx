@@ -64,6 +64,7 @@ export default function Navbar() {
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
             {[
               { href: '/tageswort', label: 'Tageswort' },
+              { href: '/predigt', label: 'Predigt' },
               { href: '/psalmen', label: 'Psalmen' },
               { href: '/wochenthema', label: 'Wochenthema' },
               { href: '/glauben-heute', label: 'Glauben heute' },
@@ -139,6 +140,7 @@ export default function Navbar() {
           <div className="xl:hidden pb-4 pt-2 flex flex-col gap-1 text-sm border-t border-blue-700">
             {[
               { href: '/tageswort', label: 'Tageswort' },
+              { href: '/predigt', label: 'Predigt' },
               { href: '/psalmen', label: 'Psalmen' },
               { href: '/wochenthema', label: 'Wochenthema' },
               { href: '/glauben-heute', label: 'Glauben heute' },

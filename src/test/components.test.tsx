@@ -144,6 +144,47 @@ describe('BookRecommendationsCard', () => {
   });
 });
 
+describe('DailySermon', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('loads and renders the daily sermon from the API', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        date: '2026-05-14',
+        liturgicalDay: 'Christi Himmelfahrt',
+        title: 'Aufgefahren, aber nicht fort',
+        content: 'Predigttext für heute.',
+        prayer: 'Gebet für heute.',
+        cached: true,
+      }),
+    }));
+
+    const { default: DailySermon } = await import('@/components/DailySermon');
+    render(React.createElement(DailySermon));
+
+    expect(await screen.findByRole('heading', { name: 'Aufgefahren, aber nicht fort' })).toBeInTheDocument();
+    expect(screen.getByText('Christi Himmelfahrt')).toBeInTheDocument();
+    expect(screen.getByText('Predigttext für heute.')).toBeInTheDocument();
+    expect(screen.getByText('Gebet für heute.')).toBeInTheDocument();
+  });
+
+  it('shows an error state when the API call fails', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: false,
+      json: async () => ({ error: 'OpenAI nicht erreichbar' }),
+    }));
+
+    const { default: DailySermon } = await import('@/components/DailySermon');
+    render(React.createElement(DailySermon));
+
+    expect(await screen.findByText(/Die Tagespredigt konnte nicht geladen werden/i)).toBeInTheDocument();
+    expect(screen.getByText('OpenAI nicht erreichbar')).toBeInTheDocument();
+  });
+});
+
 // ─── BibleLink ────────────────────────────────────────────────────────────────
 
 describe('BibleLink', () => {

@@ -338,6 +338,112 @@ describe('GET /api/tageswort', () => {
   });
 });
 
+describe('GET /api/generate-sermon', () => {
+  beforeEach(() => {
+    vi.resetModules();
+    vi.unstubAllEnvs();
+  });
+
+  it('returns the stored sermon for the current publication date', async () => {
+    vi.stubEnv('OPENAI_API_KEY', 'test-key');
+    vi.doMock('@/lib/publishing', () => ({ getCurrentPublicationDate: vi.fn().mockReturnValue('2026-05-14') }));
+    vi.doMock('node:fs/promises', () => ({
+      default: {
+        readFile: vi.fn()
+          .mockResolvedValueOnce(JSON.stringify({
+            date: '2026-05-14',
+            liturgicalDay: 'Christi Himmelfahrt',
+            title: 'Aufgefahren, aber nicht fort',
+            content: 'Predigttext',
+            prayer: 'Gebetstext',
+            createdAt: '2026-05-14T05:00:00.000Z',
+          }))
+          .mockResolvedValueOnce(JSON.stringify([])),
+        writeFile: vi.fn(),
+        mkdir: vi.fn(),
+      },
+    }));
+    vi.doMock('openai', () => ({
+      default: vi.fn().mockImplementation(() => ({
+        chat: {
+          completions: {
+            create: vi.fn(),
+          },
+        },
+      })),
+    }));
+
+    const { GET } = await import('@/app/api/generate-sermon/route');
+    const response = await GET();
+    const json = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(json).toMatchObject({
+      date: '2026-05-14',
+      title: 'Aufgefahren, aber nicht fort',
+      cached: true,
+    });
+  });
+
+  it('generates and stores a new sermon when no current cache exists', async () => {
+    vi.stubEnv('OPENAI_API_KEY', 'test-key');
+    const readFile = vi.fn()
+      .mockRejectedValueOnce(Object.assign(new Error('missing'), { code: 'ENOENT' }))
+      .mockResolvedValueOnce(JSON.stringify([
+        {
+          date: '2026-05-13',
+          liturgicalDay: 'Mittwoch',
+          title: 'Alte Hoffnung',
+          normalizedTitle: 'alte hoffnung',
+          createdAt: '2026-05-13T05:00:00.000Z',
+        },
+      ]));
+    const writeFile = vi.fn();
+    vi.doMock('@/lib/publishing', () => ({ getCurrentPublicationDate: vi.fn().mockReturnValue('2026-05-14') }));
+    vi.doMock('node:fs/promises', () => ({
+      default: {
+        readFile,
+        writeFile,
+        mkdir: vi.fn(),
+      },
+    }));
+    vi.doMock('openai', () => ({
+      default: vi.fn().mockImplementation(() => ({
+        chat: {
+          completions: {
+            create: vi.fn().mockResolvedValue({
+              choices: [
+                {
+                  message: {
+                    content: [
+                      'TITEL: Aufgefahren, aber nicht fort',
+                      'PREDIGT: Jesus entzieht sich nicht unserer Nähe. Er öffnet einen neuen Blick auf Gottes Gegenwart im Alltag.',
+                      'GEBET: Herr, richte meinen Blick heute neu auf deine Nähe.',
+                    ].join('\n'),
+                  },
+                },
+              ],
+            }),
+          },
+        },
+      })),
+    }));
+
+    const { GET } = await import('@/app/api/generate-sermon/route');
+    const response = await GET();
+    const json = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(json).toMatchObject({
+      date: '2026-05-14',
+      liturgicalDay: 'Christi Himmelfahrt',
+      title: 'Aufgefahren, aber nicht fort',
+      cached: false,
+    });
+    expect(writeFile).toHaveBeenCalledTimes(2);
+  });
+});
+
 // ─── /api/wochenthema ────────────────────────────────────────────────────────
 
 describe('GET /api/wochenthema', () => {

@@ -197,6 +197,21 @@ describe('TageswortArchivPage', () => {
   });
 });
 
+describe('PredigtPage', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('renders the daily sermon component on the public page', async () => {
+    vi.doMock('@/components/DailySermon', () => ({
+      default: () => React.createElement('div', null, 'Daily sermon component'),
+    }));
+
+    const { default: PredigtPage } = await import('@/app/predigt/page');
+    render(React.createElement(PredigtPage));
+
+    expect(screen.getByText('Daily sermon component')).toBeInTheDocument();
+  });
+});
+
 // ─── Thesen page ──────────────────────────────────────────────────────────────
 
 describe('ThesenPage', () => {
