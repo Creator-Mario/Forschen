@@ -4,7 +4,7 @@
  * Render tests for all shared UI components using React Testing Library.
  * next-auth and next/navigation are mocked so components render in jsdom.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 
@@ -144,6 +144,58 @@ describe('BookRecommendationsCard', () => {
   });
 });
 
+describe('HomeSermonPreview', () => {
+  const PREVIEW_WORD_LIMIT = 150;
+
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('loads the preview excerpt and archive links from the API', async () => {
+    const longContent = Array.from({ length: PREVIEW_WORD_LIMIT + 20 }, (_, index) => `Wort${index + 1}`).join(' ');
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        date: '2026-05-14',
+        liturgicalDay: 'Christi Himmelfahrt',
+        title: 'Aufgefahren, aber nicht fort',
+        content: longContent,
+        prayer: 'Gebet für heute.',
+        fromCache: true,
+        archived: true,
+      }),
+    }));
+
+    const { default: HomeSermonPreview } = await import('@/components/HomeSermonPreview');
+    render(React.createElement(HomeSermonPreview));
+
+    expect(await screen.findByRole('heading', { name: 'Aufgefahren, aber nicht fort' })).toBeInTheDocument();
+    expect(screen.getByText('Christi Himmelfahrt')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Zur heutigen Predigt/i })).toHaveAttribute('href', '/predigt');
+    expect(screen.getByRole('link', { name: /Alle Predigten im Archiv/i })).toHaveAttribute('href', '/archiv');
+    expect(screen.getByText(/\.\.\.$/)).toBeInTheDocument();
+  });
+});
+
+describe('ChurchCalendar', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('shows the selected liturgical day and optional archive link', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-05-14T12:00:00Z'));
+
+    const { default: ChurchCalendar } = await import('@/components/ChurchCalendar');
+    render(React.createElement(ChurchCalendar, { sermonDates: ['2026-05-14'] }));
+
+    expect(screen.getByRole('heading', { name: /Mai 2026/i })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /2026-05-14, Christi Himmelfahrt/i }));
+    expect(screen.getAllByText('Christi Himmelfahrt').length).toBeGreaterThan(0);
+    expect(screen.getByRole('link', { name: /Predigt dieses Tages öffnen/i })).toHaveAttribute('href', '/archiv/2026-05-14');
+  });
+});
+
 describe('DailySermon', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
@@ -158,7 +210,8 @@ describe('DailySermon', () => {
         title: 'Aufgefahren, aber nicht fort',
         content: 'Predigttext für heute.',
         prayer: 'Gebet für heute.',
-        cached: true,
+        fromCache: true,
+        archived: true,
       }),
     }));
 

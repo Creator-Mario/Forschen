@@ -16,6 +16,7 @@ vi.mock('next/navigation', () => ({
   usePathname: () => '/',
   useSearchParams: () => new URLSearchParams(),
   redirect: vi.fn(),
+  notFound: vi.fn(() => { throw new Error('NEXT_NOT_FOUND'); }),
 }));
 
 vi.mock('next/link', () => ({
@@ -209,6 +210,53 @@ describe('PredigtPage', () => {
     render(React.createElement(PredigtPage));
 
     expect(screen.getByText('Daily sermon component')).toBeInTheDocument();
+  });
+});
+
+describe('SermonArchivePage', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('renders archived sermons in descending order', async () => {
+    vi.doMock('@/lib/sermonArchive', () => ({
+      getAllSermons: vi.fn().mockResolvedValue([
+        { date: '2026-05-14', liturgicalDay: 'Christi Himmelfahrt', title: 'Aufgefahren, aber nicht fort', content: 'Predigt', prayer: 'Gebet', createdAt: '2026-05-14T04:00:00.000Z' },
+        { date: '2026-05-13', liturgicalDay: 'Mittwoch', title: 'Treue im Alltag', content: 'Predigt', prayer: 'Gebet', createdAt: '2026-05-13T04:00:00.000Z' },
+      ]),
+    }));
+
+    const { default: SermonArchivePage } = await import('@/app/archiv/page');
+    const jsx = await SermonArchivePage();
+    render(React.createElement(React.Fragment, null, jsx));
+
+    expect(screen.getByRole('heading', { name: /Archiv – Tagespredigten/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Aufgefahren, aber nicht fort/i })).toHaveAttribute('href', '/archiv/2026-05-14');
+    expect(screen.getByText('Christi Himmelfahrt')).toBeInTheDocument();
+  });
+});
+
+describe('SermonArchiveDetailPage', () => {
+  beforeEach(() => vi.resetModules());
+
+  it('renders a stored sermon from the archive', async () => {
+    vi.doMock('@/lib/sermonArchive', () => ({
+      loadSermon: vi.fn().mockResolvedValue({
+        date: '2026-05-14',
+        liturgicalDay: 'Christi Himmelfahrt',
+        title: 'Aufgefahren, aber nicht fort',
+        content: 'Vollständige Predigt',
+        prayer: 'Abschlussgebet',
+        createdAt: '2026-05-14T04:00:00.000Z',
+      }),
+    }));
+
+    const { default: SermonArchiveDetailPage } = await import('@/app/archiv/[date]/page');
+    const jsx = await SermonArchiveDetailPage({ params: Promise.resolve({ date: '2026-05-14' }) });
+    render(React.createElement(React.Fragment, null, jsx));
+
+    expect(screen.getByRole('heading', { name: /Aufgefahren, aber nicht fort/i })).toBeInTheDocument();
+    expect(screen.getByText('Vollständige Predigt')).toBeInTheDocument();
+    expect(screen.getByText('Abschlussgebet')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Zurück zum Archiv/i })).toHaveAttribute('href', '/archiv');
   });
 });
 
@@ -675,9 +723,14 @@ describe('HomePage', () => {
         recommendations: [],
       }),
     }));
+    vi.doMock('@/lib/sermonArchive', () => ({
+      getLatestSermons: vi.fn().mockResolvedValue([]),
+    }));
     vi.doMock('@/components/BibleVerseCard', () => ({ default: () => null }));
     vi.doMock('@/components/WeeklyThemeCard', () => ({ default: () => null }));
     vi.doMock('@/components/Logo', () => ({ default: () => React.createElement('div', null, 'Logo') }));
+    vi.doMock('@/components/HomeSermonPreview', () => ({ default: () => React.createElement('div', null, 'Home sermon preview') }));
+    vi.doMock('@/components/ChurchCalendar', () => ({ default: () => React.createElement('div', null, 'Church calendar') }));
     const { default: HomePage } = await import('@/app/(public)/page');
     const jsx = await HomePage();
     render(React.createElement(React.Fragment, null, jsx));
@@ -696,5 +749,7 @@ describe('HomePage', () => {
     expect(screen.getByRole('link', { name: /Auf WhatsApp teilen/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Auf Facebook teilen/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Zur Vision des Gründers/i })).toHaveAttribute('href', '/vision');
+    expect(screen.getByText('Home sermon preview')).toBeInTheDocument();
+    expect(screen.getByText('Church calendar')).toBeInTheDocument();
   });
 });

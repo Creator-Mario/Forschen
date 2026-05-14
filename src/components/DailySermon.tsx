@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 type DailySermonPayload = {
@@ -8,7 +9,8 @@ type DailySermonPayload = {
   title: string;
   content: string;
   prayer: string;
-  cached: boolean;
+  fromCache: boolean;
+  archived: boolean;
 };
 
 function formatGermanDate(date: string): string {
@@ -25,7 +27,6 @@ export default function DailySermon() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Der Abruf läuft clientseitig, damit die Anzeige beim ersten Besuch live aktualisiert wird.
   const loadSermon = useCallback(async () => {
     try {
       setLoading(true);
@@ -99,9 +100,10 @@ export default function DailySermon() {
               <div className="rounded-2xl bg-blue-50/80 p-5">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Titel</p>
                 <h2 className="mt-2 text-2xl font-semibold text-slate-900">{sermon.title}</h2>
-                <p className="mt-3 text-sm text-slate-500">
-                  {sermon.cached ? 'Bereits für heute vorbereitet.' : 'Gerade frisch für heute erstellt.'}
-                </p>
+                <div className="mt-3 flex flex-wrap gap-3 text-sm text-slate-500">
+                  <span>{sermon.fromCache ? 'Aus dem Archiv für heute geladen.' : 'Gerade frisch für heute erstellt.'}</span>
+                  {sermon.archived ? <span>Im Predigtarchiv gespeichert.</span> : null}
+                </div>
               </div>
 
               <article className="space-y-6 text-base leading-8 text-slate-700">
@@ -115,6 +117,21 @@ export default function DailySermon() {
                   <p className="mt-3 whitespace-pre-line text-amber-950">{sermon.prayer}</p>
                 </div>
               </article>
+
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Link
+                  href="/archiv"
+                  className="inline-flex items-center justify-center rounded-full bg-blue-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-800"
+                >
+                  Zum Predigtarchiv
+                </Link>
+                <Link
+                  href={`/archiv/${sermon.date}`}
+                  className="inline-flex items-center justify-center rounded-full border border-blue-200 bg-blue-50 px-5 py-3 text-sm font-semibold text-blue-800 transition hover:border-blue-300 hover:bg-blue-100"
+                >
+                  Diese Predigt im Archiv öffnen
+                </Link>
+              </div>
             </>
           ) : null}
         </div>
