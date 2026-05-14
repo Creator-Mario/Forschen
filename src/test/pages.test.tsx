@@ -202,7 +202,7 @@ describe('PredigtPage', () => {
   beforeEach(() => vi.resetModules());
 
   it('renders the daily sermon component on the public page', async () => {
-    vi.doMock('@/components/DailySermon', () => ({
+    vi.doMock('@/components/DailySermonFull', () => ({
       default: () => React.createElement('div', null, 'Daily sermon component'),
     }));
 

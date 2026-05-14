@@ -22,7 +22,7 @@ function formatGermanDate(date: string): string {
   }).format(new Date(`${date}T00:00:00Z`));
 }
 
-function buildExcerpt(content: string, wordLimit = 150): string {
+function buildExcerpt(content: string, wordLimit = 180): string {
   const words = content.trim().split(/\s+/);
   if (words.length <= wordLimit) return content;
   return `${words.slice(0, wordLimit).join(' ')}...`;
@@ -67,10 +67,10 @@ export default function HomeSermonPreview() {
   const previewText = useMemo(() => (sermon ? buildExcerpt(sermon.content) : ''), [sermon]);
 
   return (
-    <section className="overflow-hidden rounded-[2rem] border border-blue-100 bg-white shadow-lg shadow-blue-100/70">
+    <section className="overflow-hidden rounded-[2rem] border border-blue-100 bg-gradient-to-br from-white via-blue-50/70 to-slate-50 shadow-lg shadow-blue-100/70">
       <div className="bg-gradient-to-r from-blue-900 via-blue-700 to-sky-600 px-6 py-8 text-white sm:px-8">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-100">Tagespredigt</p>
-        <h2 className="mt-3 text-2xl font-bold font-serif sm:text-3xl">Die Predigt für heute</h2>
+        <h2 className="mt-3 text-2xl font-bold font-serif sm:text-3xl">Ein geistlicher Impuls für heute</h2>
         <p className="mt-3 text-sm text-blue-50">
           {sermon ? formatGermanDate(sermon.date) : 'Die heutige Predigt wird geladen ...'}
         </p>
@@ -96,10 +96,13 @@ export default function HomeSermonPreview() {
           </div>
         ) : sermon ? (
           <>
-            <div className="rounded-2xl bg-blue-50/80 p-5">
+            <div className="rounded-[1.5rem] border border-blue-100 bg-white/90 p-5 shadow-sm">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">Titel</p>
               <h3 className="mt-2 text-2xl font-semibold text-slate-900">{sermon.title}</h3>
-              <p className="mt-3 text-sm leading-7 text-slate-600">{previewText}</p>
+              <p className="mt-4 text-sm leading-7 text-slate-600">{previewText}</p>
+              <p className="mt-4 text-xs font-medium text-slate-500">
+                {sermon.archived ? 'Bereits im Tagesarchiv gespeichert.' : 'Wird nach der Erstellung archiviert.'}
+              </p>
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -111,7 +114,7 @@ export default function HomeSermonPreview() {
               </Link>
               <Link
                 href="/archiv"
-                className="inline-flex min-h-12 items-center justify-center rounded-full border border-blue-200 bg-blue-50 px-5 py-3 text-sm font-semibold text-blue-800 transition hover:border-blue-300 hover:bg-blue-100"
+                className="inline-flex min-h-12 items-center justify-center rounded-full border border-blue-200 bg-white px-5 py-3 text-sm font-semibold text-blue-800 transition hover:border-blue-300 hover:bg-blue-100"
               >
                 Alle Predigten im Archiv
               </Link>

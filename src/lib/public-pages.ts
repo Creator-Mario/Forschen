@@ -3,6 +3,7 @@ export const publicIndexablePages = [
   { href: '/vision', label: 'Unsere Vision', changeFrequency: 'monthly', priority: 0.9 },
   { href: '/tageswort', label: 'Tageswort', changeFrequency: 'daily', priority: 0.9 },
   { href: '/predigt', label: 'Tagespredigt', changeFrequency: 'daily', priority: 0.85 },
+  { href: '/archiv', label: 'Predigt Archiv', changeFrequency: 'daily', priority: 0.75 },
   { href: '/tageswort/archiv', label: 'Tageswort Archiv', changeFrequency: 'weekly', priority: 0.7 },
   { href: '/wochenthema', label: 'Wochenthema', changeFrequency: 'weekly', priority: 0.9 },
   { href: '/wochenthema/archiv', label: 'Wochenthema Archiv', changeFrequency: 'weekly', priority: 0.7 },
@@ -53,6 +54,7 @@ export const footerPageGroups = [
     links: publicIndexablePages.filter((page) =>
       [
         '/tageswort/archiv',
+        '/archiv',
         '/wochenthema/archiv',
         '/psalmen/archiv',
         '/glauben-heute/archiv',

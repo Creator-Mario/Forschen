@@ -145,7 +145,7 @@ describe('BookRecommendationsCard', () => {
 });
 
 describe('HomeSermonPreview', () => {
-  const PREVIEW_WORD_LIMIT = 150;
+  const PREVIEW_WORD_LIMIT = 180;
 
   beforeEach(() => {
     vi.restoreAllMocks();

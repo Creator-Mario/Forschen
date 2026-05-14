@@ -32,7 +32,7 @@ describe('church calendar helpers', () => {
     });
   });
 
-  it('falls back to an ordinary-time label for uncovered dates', () => {
-    expect(getLiturgicalDay(new Date('2026-02-10T00:00:00Z'))).toMatch(/Sonntag im Jahreskreis/);
+  it('returns a weekday label within ordinary time for uncovered dates', () => {
+    expect(getLiturgicalDay(new Date('2026-02-10T00:00:00Z'))).toBe('Dienstag der 6. Woche im Jahreskreis');
   });
 });

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import DailySermon from '@/components/DailySermon';
+import DailySermonFull from '@/components/DailySermonFull';
 import { createPageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = createPageMetadata({
@@ -12,5 +12,5 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default function PredigtPage() {
-  return <DailySermon />;
+  return <DailySermonFull />;
 }
