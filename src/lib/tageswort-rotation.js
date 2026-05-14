@@ -99,10 +99,17 @@ function generateTageswortEntries(existing, templates, today) {
   );
 
   return getMissingPublicationDates(existing, today).map(date => {
-    const template = templates[getSequenceIndex(date)];
+    const sequenceIndex = getSequenceIndex(date);
+    if (sequenceIndex < 0) {
+      throw new Error(`Tageswort sequence cannot generate entries before ${TAGESWORT_SEQUENCE_START_DATE}.`);
+    }
+
+    const template = templates[sequenceIndex];
 
     if (!template) {
-      throw new Error(`No Tageswort template configured for ${date}.`);
+      throw new Error(
+        `No Tageswort template available for ${date} (sequence index ${sequenceIndex}, ${templates.length} templates configured).`
+      );
     }
 
     const key = `${template.verse}\n${template.text}`;

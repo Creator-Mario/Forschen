@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
+type GeneratedEntry = {
+  date: string;
+  verse: string;
+};
+
 describe('tageswort rotation', () => {
   async function getRotation() {
     const rotationModule = await import('@/lib/tageswort-rotation.js');
@@ -11,6 +16,8 @@ describe('tageswort rotation', () => {
 
     expect(getBerlinPublicationDate(new Date('2026-05-14T00:30:00Z'))).toBe('2026-05-13');
     expect(getBerlinPublicationDate(new Date('2026-05-14T01:30:00Z'))).toBe('2026-05-14');
+    expect(getBerlinPublicationDate(new Date('2026-12-14T01:30:00Z'))).toBe('2026-12-13');
+    expect(getBerlinPublicationDate(new Date('2026-12-14T02:30:00Z'))).toBe('2026-12-14');
   });
 
   it('starts a non-repeating sequence on 2026-05-14', async () => {
@@ -46,7 +53,7 @@ describe('tageswort rotation', () => {
 
     const generated = generateTageswortEntries(existing, templates, '2026-05-16');
 
-    expect(generated.map((entry: { date: string; verse: string }) => [entry.date, entry.verse])).toEqual([
+    expect(generated.map((entry: GeneratedEntry) => [entry.date, entry.verse])).toEqual([
       ['2026-05-14', 'Römer 12,2'],
       ['2026-05-15', '2. Korinther 5,17'],
       ['2026-05-16', 'Psalm 139,14'],
