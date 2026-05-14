@@ -5,6 +5,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { metadata } from '@/app/layout';
 import { metadata as homeMetadata } from '@/app/(public)/page';
+import { metadata as genealogieLoginMetadata } from '@/app/genealogie/login/page';
+import { metadata as genealogieRegisterMetadata } from '@/app/genealogie/registrieren/page';
 import { generateMetadata as generateAktionenMetadata } from '@/app/(public)/aktionen/page';
 import { generateMetadata as generateTageswortMetadata } from '@/app/(public)/tageswort/page';
 import { generateMetadata as generateForschungMetadata } from '@/app/(public)/forschung/page';
@@ -86,6 +88,19 @@ describe('SEO metadata', () => {
     });
   });
 
+  it('publishes genealogy landing pages with dedicated canonical paths for indexing', () => {
+    expect(genealogieLoginMetadata.alternates?.canonical).toBe('/genealogie/login');
+    expect(genealogieRegisterMetadata.alternates?.canonical).toBe('/genealogie/registrieren');
+    expect(genealogieLoginMetadata.robots).toBeUndefined();
+    expect(genealogieRegisterMetadata.robots).toBeUndefined();
+    expect(genealogieLoginMetadata.openGraph).toMatchObject({
+      url: `${canonicalSiteUrl}/genealogie/login`,
+    });
+    expect(genealogieRegisterMetadata.openGraph).toMatchObject({
+      url: `${canonicalSiteUrl}/genealogie/registrieren`,
+    });
+  });
+
   it('defines route-specific metadata for indexable public content pages', async () => {
     const tageswortMetadata = await generateTageswortMetadata();
 
@@ -148,7 +163,11 @@ describe('SEO metadata', () => {
       ),
     );
     expect(sitemapEntries.some((entry) => entry.url.includes('/amp/'))).toBe(false);
-    expect(sitemapEntries.some((entry) => entry.url.endsWith('/registrieren'))).toBe(false);
+    expect(sitemapEntries.some((entry) => entry.url.endsWith('/genealogie/login'))).toBe(true);
+    expect(sitemapEntries.some((entry) => entry.url.endsWith('/genealogie/registrieren'))).toBe(true);
+    // Die generische Formularroute bleibt aus der Sitemap raus, weil für Suchmaschinen die neue
+    // Genealogie-Landingpage als indexierbarer Einstieg verwendet wird.
+    expect(sitemapEntries.some((entry) => entry.url === `${canonicalSiteUrl}/registrieren`)).toBe(false);
     expect(sitemapEntries.some((entry) => entry.url.endsWith('/aktionen'))).toBe(true);
     expect(sitemapEntries.every((entry) => !('lastModified' in entry))).toBe(true);
   });
