@@ -9,16 +9,43 @@ export type MonthOverviewDay = {
 type SupportedChurchYear = {
   easter: string;
   firstAdvent: string;
+  movableFeasts: Record<string, string>;
 };
 
 const CHURCH_YEAR_TABLE: Record<number, SupportedChurchYear> = {
   2026: {
     easter: '2026-04-05',
     firstAdvent: '2026-11-29',
+    movableFeasts: {
+      '2026-02-18': 'Aschermittwoch',
+      '2026-03-29': 'Palmsonntag',
+      '2026-04-02': 'Gründonnerstag',
+      '2026-04-03': 'Karfreitag',
+      '2026-04-05': 'Ostersonntag',
+      '2026-04-06': 'Ostermontag',
+      '2026-05-14': 'Christi Himmelfahrt',
+      '2026-05-24': 'Pfingstsonntag',
+      '2026-05-25': 'Pfingstmontag',
+      '2026-05-31': 'Trinitatis',
+      '2026-06-04': 'Fronleichnam',
+    },
   },
   2027: {
     easter: '2027-03-28',
     firstAdvent: '2027-11-28',
+    movableFeasts: {
+      '2027-02-10': 'Aschermittwoch',
+      '2027-03-21': 'Palmsonntag',
+      '2027-03-25': 'Gründonnerstag',
+      '2027-03-26': 'Karfreitag',
+      '2027-03-28': 'Ostersonntag',
+      '2027-03-29': 'Ostermontag',
+      '2027-05-06': 'Christi Himmelfahrt',
+      '2027-05-16': 'Pfingstsonntag',
+      '2027-05-17': 'Pfingstmontag',
+      '2027-05-23': 'Trinitatis',
+      '2027-05-27': 'Fronleichnam',
+    },
   },
 };
 
@@ -34,6 +61,16 @@ const FIXED_FEASTS: Record<string, string> = {
   '12-26': '2. Weihnachtstag',
   '12-31': 'Altjahresabend',
 };
+
+const WEEKDAY_LABELS = [
+  'Sonntag',
+  'Montag',
+  'Dienstag',
+  'Mittwoch',
+  'Donnerstag',
+  'Freitag',
+  'Samstag',
+] as const;
 
 function getMonthDayKey(date: Date): string {
   return `${String(date.getUTCMonth() + 1).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}`;
@@ -82,35 +119,9 @@ function getFixedFeastLabel(date: Date): string | null {
   return FIXED_FEASTS[getMonthDayKey(date)] ?? null;
 }
 
-// Die beweglichen Feiertage sind zentral aus den Osterdaten abgeleitet.
-// Dadurch bleibt die Tabelle für weitere Jahre leicht erweiterbar, ohne jede
-// einzelne Datumskombination erneut manuell pflegen zu müssen.
 function getMovableFeasts(year: number): Map<string, string> {
   const definition = getYearDefinition(year);
-  const feasts = new Map<string, string>();
-
-  if (!definition) return feasts;
-
-  const easter = parseIsoDate(definition.easter);
-  const movableFeasts = [
-    { offset: -46, label: 'Aschermittwoch' },
-    { offset: -7, label: 'Palmsonntag' },
-    { offset: -3, label: 'Gründonnerstag' },
-    { offset: -2, label: 'Karfreitag' },
-    { offset: 0, label: 'Ostersonntag' },
-    { offset: 1, label: 'Ostermontag' },
-    { offset: 39, label: 'Christi Himmelfahrt' },
-    { offset: 49, label: 'Pfingstsonntag' },
-    { offset: 50, label: 'Pfingstmontag' },
-    { offset: 56, label: 'Trinitatis' },
-    { offset: 60, label: 'Fronleichnam' },
-  ] as const;
-
-  for (const feast of movableFeasts) {
-    feasts.set(toIsoDate(addDays(easter, feast.offset)), feast.label);
-  }
-
-  return feasts;
+  return new Map(Object.entries(definition?.movableFeasts ?? {}));
 }
 
 function getSeasonalSundayLabel(date: Date, yearDefinition: SupportedChurchYear): string | null {
@@ -136,6 +147,50 @@ function getSeasonalSundayLabel(date: Date, yearDefinition: SupportedChurchYear)
   }
 
   return `${getOrdinarySundayNumber(date)}. Sonntag im Jahreskreis`;
+}
+
+function getOrdinaryWeekLabel(date: Date): string {
+  return `${getOrdinarySundayNumber(date)}. Woche im Jahreskreis`;
+}
+
+function getWeekdaySeasonLabel(date: Date, yearDefinition: SupportedChurchYear): string {
+  const weekday = WEEKDAY_LABELS[date.getUTCDay()];
+  const easter = parseIsoDate(yearDefinition.easter);
+  const ashWednesday = addDays(easter, -46);
+  const palmSunday = addDays(easter, -7);
+  const pentecostSunday = addDays(easter, 49);
+  const firstAdvent = parseIsoDate(yearDefinition.firstAdvent);
+  const christmasEve = parseIsoDate(`${date.getUTCFullYear()}-12-24`);
+  const christmasDay = parseIsoDate(`${date.getUTCFullYear()}-12-25`);
+  const altjahresabend = parseIsoDate(`${date.getUTCFullYear()}-12-31`);
+  const jan2 = parseIsoDate(`${date.getUTCFullYear()}-01-02`);
+  const epiphany = parseIsoDate(`${date.getUTCFullYear()}-01-06`);
+
+  if (date >= jan2 && date < epiphany) {
+    return `${weekday} in der Weihnachtszeit`;
+  }
+
+  if (date > christmasDay && date < altjahresabend) {
+    return `${weekday} in der Weihnachtszeit`;
+  }
+
+  if (date >= firstAdvent && date < christmasEve) {
+    return `${weekday} im Advent`;
+  }
+
+  if (date > palmSunday && date < easter) {
+    return `${weekday} der Karwoche`;
+  }
+
+  if (date > ashWednesday && date < palmSunday) {
+    return `${weekday} der Passionszeit`;
+  }
+
+  if (date > easter && date < pentecostSunday) {
+    return `${weekday} der Osterzeit`;
+  }
+
+  return `${weekday} der ${getOrdinaryWeekLabel(date)}`;
 }
 
 export function isFeastDay(date: Date): boolean {
@@ -174,11 +229,13 @@ export function getLiturgicalDay(date: Date): string {
 
   const yearDefinition = getYearDefinition(normalized.getUTCFullYear());
   if (!yearDefinition) {
-    return `${getOrdinarySundayNumber(normalized)}. Sonntag im Jahreskreis`;
+    return normalized.getUTCDay() === 0
+      ? `${getOrdinarySundayNumber(normalized)}. Sonntag im Jahreskreis`
+      : `${WEEKDAY_LABELS[normalized.getUTCDay()]} der ${getOrdinaryWeekLabel(normalized)}`;
   }
 
   const seasonalSunday = getSeasonalSundayLabel(normalized, yearDefinition);
   if (seasonalSunday) return seasonalSunday;
 
-  return `${getOrdinarySundayNumber(normalized)}. Sonntag im Jahreskreis`;
+  return getWeekdaySeasonLabel(normalized, yearDefinition);
 }
