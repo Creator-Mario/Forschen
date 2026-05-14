@@ -6,10 +6,25 @@ import { afterEach, describe, expect, it } from 'vitest';
 
 const tempDirs: string[] = [];
 const require = createRequire(import.meta.url);
+const originalEnv = {
+  HOSTNAME: process.env.HOSTNAME,
+  STANDALONE_HOSTNAME: process.env.STANDALONE_HOSTNAME,
+  PORT: process.env.PORT,
+  KEEP_ALIVE_TIMEOUT: process.env.KEEP_ALIVE_TIMEOUT,
+  NODE_ENV: process.env.NODE_ENV,
+};
 
 afterEach(() => {
   while (tempDirs.length > 0) {
     fs.rmSync(tempDirs.pop()!, { recursive: true, force: true });
+  }
+
+  for (const [key, value] of Object.entries(originalEnv)) {
+    if (value === undefined) {
+      delete process.env[key];
+    } else {
+      process.env[key] = value;
+    }
   }
 });
 
