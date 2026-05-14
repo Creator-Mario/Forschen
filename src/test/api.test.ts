@@ -407,26 +407,27 @@ describe('GET /api/generate-sermon', () => {
         mkdir: vi.fn(),
       },
     }));
-    vi.doMock('openai', () => ({
-      default: vi.fn().mockImplementation(() => ({
-        chat: {
-          completions: {
-            create: vi.fn().mockResolvedValue({
-              choices: [
-                {
-                  message: {
-                    content: [
-                      'TITEL: Aufgefahren, aber nicht fort',
-                      'PREDIGT: Jesus entzieht sich nicht unserer Nähe. Er öffnet einen neuen Blick auf Gottes Gegenwart im Alltag.',
-                      'GEBET: Herr, richte meinen Blick heute neu auf deine Nähe.',
-                    ].join('\n'),
-                  },
-                },
-              ],
-            }),
+    const createCompletion = vi.fn().mockResolvedValue({
+      choices: [
+        {
+          message: {
+            content: [
+              'TITEL: Aufgefahren, aber nicht fort',
+              'PREDIGT: Jesus entzieht sich nicht unserer Nähe. Er öffnet einen neuen Blick auf Gottes Gegenwart im Alltag.',
+              'GEBET: Herr, richte meinen Blick heute neu auf deine Nähe.',
+            ].join('\n'),
           },
         },
-      })),
+      ],
+    });
+    vi.doMock('openai', () => ({
+      default: class MockOpenAI {
+        chat = {
+          completions: {
+            create: createCompletion,
+          },
+        };
+      },
     }));
 
     const { GET } = await import('@/app/api/generate-sermon/route');
