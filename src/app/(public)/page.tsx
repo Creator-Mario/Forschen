@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -17,6 +19,7 @@ import { getTodayPsalmThema, getTodayGlaubenHeuteThema, getTodayBuchempfehlungen
 import { founderProfile } from '@/lib/founder-profile';
 import { createPageMetadata, serializeJsonLd } from '@/lib/seo';
 import { getLatestSermons } from '@/lib/sermonArchive';
+import { authOptions } from '@/lib/auth';
 
 export const metadata: Metadata = createPageMetadata({
   title: 'Freie christliche Bibelforschung',
@@ -26,6 +29,12 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default async function HomePage() {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect('/login');
+  }
+
   const tageswort = await getTodayTageswortFresh();
   const wochenthema = await getCurrentWochenthemaFresh();
   const thesen = getApprovedThesen().slice(0, 2);

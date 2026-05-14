@@ -35,9 +35,17 @@ function prepareStandaloneAssets(repoRoot) {
   ensureDirectoryAvailable(path.join(resolvedRepoRoot, '.next', 'static'), path.join(standaloneRoot, '.next', 'static'));
 }
 
+function getStandaloneServerEntryPath(repoRoot) {
+  const resolvedRepoRoot = repoRoot ?? __dirname;
+  return path.join(resolvedRepoRoot, '.next', 'standalone', 'server.js');
+}
+
+function getConfiguredStandaloneHostname() {
+  return (process.env.STANDALONE_HOSTNAME ?? '').trim() || undefined;
+}
+
 function getStandaloneServerOptions(repoRoot) {
   const resolvedRepoRoot = repoRoot ?? __dirname;
-  const configuredHostname = (process.env.STANDALONE_HOSTNAME ?? '').trim() || undefined;
   const requiredServerFiles = JSON.parse(
     fs.readFileSync(path.join(resolvedRepoRoot, '.next', 'required-server-files.json'), 'utf8'),
   );
@@ -56,22 +64,25 @@ function getStandaloneServerOptions(repoRoot) {
     dir: resolvedRepoRoot,
     isDev: false,
     config: requiredServerFiles.config,
-    hostname: configuredHostname,
+    hostname: getConfiguredStandaloneHostname(),
     port: currentPort,
     allowRetry: false,
     keepAliveTimeout,
   };
 }
 
-function startStandaloneServer() {
-  prepareStandaloneAssets(__dirname);
+function startStandaloneServer(repoRoot) {
+  const resolvedRepoRoot = repoRoot ?? __dirname;
+  const configuredHostname = getConfiguredStandaloneHostname();
+
+  prepareStandaloneAssets(resolvedRepoRoot);
   process.env.NODE_ENV = 'production';
 
-  const { startServer } = require('next/dist/server/lib/start-server');
-  startServer(getStandaloneServerOptions(__dirname)).catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+  if (configuredHostname) {
+    process.env.HOSTNAME = configuredHostname;
+  }
+
+  require(getStandaloneServerEntryPath(resolvedRepoRoot));
 }
 
 if (require.main === module) {
@@ -81,6 +92,7 @@ if (require.main === module) {
 module.exports = {
   ensureDirectoryAvailable,
   prepareStandaloneAssets,
+  getStandaloneServerEntryPath,
   getStandaloneServerOptions,
   startStandaloneServer,
 };

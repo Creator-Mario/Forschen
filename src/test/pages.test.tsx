@@ -711,7 +711,30 @@ describe('ChatPage', () => {
 describe('HomePage', () => {
   beforeEach(() => vi.resetModules());
 
-  it('renders the hero section', async () => {
+  it('redirects unauthenticated visitors to the login page first', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue(null) }));
+    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
+    vi.doMock('next/navigation', () => ({
+      useRouter: () => ({ push: vi.fn(), replace: vi.fn(), back: vi.fn() }),
+      usePathname: () => '/',
+      useSearchParams: () => new URLSearchParams(),
+      redirect: vi.fn(() => {
+        throw new Error('NEXT_REDIRECT');
+      }),
+      notFound: vi.fn(() => { throw new Error('NEXT_NOT_FOUND'); }),
+    }));
+
+    const navigation = await import('next/navigation');
+    const { default: HomePage } = await import('@/app/(public)/page');
+
+    await expect(HomePage()).rejects.toThrow('NEXT_REDIRECT');
+
+    expect(navigation.redirect).toHaveBeenCalledWith('/login');
+  });
+
+  it('renders the hero section for authenticated visitors', async () => {
+    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', role: 'USER' } }) }));
+    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
     vi.doMock('@/lib/db', () => ({
       getTodayTageswortFresh: vi.fn().mockResolvedValue(undefined),
       getCurrentWochenthemaFresh: vi.fn().mockResolvedValue(undefined),
