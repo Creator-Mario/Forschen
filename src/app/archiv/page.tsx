@@ -5,6 +5,8 @@ import { getAllSermons } from '@/lib/sermonArchive';
 import { formatDate } from '@/lib/utils';
 import { createContentBackedPageMetadata, type PageMetadataOptions } from '@/lib/seo';
 
+export const revalidate = 300;
+
 const pageMetadata = {
   title: 'Archiv der Tagespredigten',
   description: 'Alle gespeicherten KI-gestützten Tagespredigten im Überblick – mit Datum, liturgischem Tag und Titel.',

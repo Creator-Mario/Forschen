@@ -6,6 +6,8 @@ import { loadSermon } from '@/lib/sermonArchive';
 import { formatDate } from '@/lib/utils';
 import { createContentBackedPageMetadata } from '@/lib/seo';
 
+export const revalidate = 300;
+
 type SermonArchiveDetailPageProps = {
   params: Promise<{
     date: string;
