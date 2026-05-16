@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 env:
-  SITE_URL: ${{ vars.SITE_URL || vars.EMAIL_LINK_BASE_URL || vars.NEXTAUTH_URL || 'https://www.flussdeslebens.live' }}
+  SITE_URL: ${{ vars.SITE_URL || 'https://www.flussdeslebens.live' }}
 
 jobs:
   warmup-sermon:
@@ -39,13 +39,21 @@ jobs:
           current_path = Path("data/daily-sermon.json")
 
           current = json.loads(current_path.read_text(encoding="utf-8"))
+          if not isinstance(current, dict) or not current.get("date"):
+            raise SystemExit("Daily sermon response is missing a valid date.")
+
           existing = json.loads(archive_path.read_text(encoding="utf-8")) if archive_path.exists() else []
 
           if not isinstance(existing, list):
             existing = []
 
-          merged = [current, *[entry for entry in existing if entry.get("date") != current.get("date")]]
-          merged.sort(key=lambda entry: entry.get("date", ""), reverse=True)
+          valid_existing = [
+            entry for entry in existing
+            if isinstance(entry, dict) and entry.get("date") and entry.get("date") != current["date"]
+          ]
+
+          merged = [current, *valid_existing]
+          merged.sort(key=lambda entry: entry["date"], reverse=True)
           archive_path.write_text(json.dumps(merged[:50], ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
           PY
 
