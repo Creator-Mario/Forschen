@@ -1,9 +1,10 @@
 'use client';
 
-import { signIn, signOut, getSession } from 'next-auth/react';
+import { signIn, signOut } from 'next-auth/react';
 import { useState, FormEvent, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { waitForSessionAfterSignIn } from '@/lib/client-auth';
 import { getPostLoginRedirectPath } from '@/lib/request-routing';
 
 function AdminLoginContent() {
@@ -25,7 +26,7 @@ function AdminLoginContent() {
       return;
     }
     // Verify the authenticated user actually has the ADMIN role
-    const session = await getSession();
+    const session = await waitForSessionAfterSignIn();
     setLoading(false);
     if (session?.user?.role !== 'ADMIN') {
       await signOut({ redirect: false });
