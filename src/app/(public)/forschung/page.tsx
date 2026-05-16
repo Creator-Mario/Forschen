@@ -51,6 +51,9 @@ export default async function ForschungPage() {
           <p className="text-gray-500">Freigegebene Beiträge zu Tageswort, Psalmen, Wochenthemen und christlichen Glaubensfragen</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
+          <Link href="/forschung/archiv" className="border border-blue-200 text-blue-800 px-4 py-2 rounded-lg text-sm hover:bg-blue-50 transition-colors">
+            Zum Archiv
+          </Link>
           <Link href="/forschung/beitraege" className="bg-blue-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
             + Beitrag verfassen
           </Link>

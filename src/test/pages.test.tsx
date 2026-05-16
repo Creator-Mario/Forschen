@@ -313,25 +313,30 @@ describe('ThesenPage', () => {
     const { default: ThesenPage } = await import('@/app/(public)/thesen/page');
     render(React.createElement(ThesenPage));
     expect(screen.getByText('My Thesis')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Zum Archiv/i })).toHaveAttribute('href', '/thesen/archiv');
   });
 });
 
 describe('ThesenArchivPage', () => {
   beforeEach(() => vi.resetModules());
 
-  it('renders published theses in the member archive', async () => {
-    const these = { id: 'th1', userId: 'u1', authorName: 'Alice', title: 'Archiv-These', content: 'Body', bibleReference: '', status: 'published', createdAt: '2024-01-01T00:00:00Z' };
-    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', name: 'Test', role: 'USER' } }) }));
-    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
-    vi.doMock('@/lib/db', () => ({ getApprovedThesen: vi.fn().mockReturnValue([these]) }));
+  it('renders only recent published theses in the public archive', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-05-16T12:00:00Z'));
+    const recentThese = { id: 'th1', userId: 'u1', authorName: 'Alice', title: 'Archiv-These', content: 'Body', bibleReference: '', status: 'published', createdAt: '2026-05-14T00:00:00Z' };
+    const oldThese = { id: 'th2', userId: 'u2', authorName: 'Bob', title: 'Alte These', content: 'Alt', bibleReference: '', status: 'published', createdAt: '2025-01-01T00:00:00Z' };
+    vi.doMock('@/lib/db', () => ({ getApprovedThesenFresh: vi.fn().mockResolvedValue([recentThese, oldThese]) }));
     vi.doMock('@/components/ThesisCard', () => ({
       default: ({ these }: { these: { title: string } }) => React.createElement('div', null, these.title),
     }));
-    const { default: ThesenArchivPage } = await import('@/app/(user)/thesen/archiv/page');
+    const { default: ThesenArchivPage } = await import('@/app/(public)/thesen/archiv/page');
     const jsx = await ThesenArchivPage();
     render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByRole('heading', { name: /Archiv – Thesen/i, level: 1 })).toBeInTheDocument();
     expect(screen.getByText('Archiv-These')).toBeInTheDocument();
+    expect(screen.queryByText('Alte These')).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Aktuelle Thesen/i })).toHaveAttribute('href', '/thesen');
+    vi.useRealTimers();
   });
 });
 
@@ -550,6 +555,7 @@ describe('ForschungPage', () => {
     render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByRole('heading', { name: /Forschung/i, level: 1 })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /\+ Beitrag verfassen/i })).toHaveAttribute('href', '/forschung/beitraege');
+    expect(screen.getByRole('link', { name: /Zum Archiv/i })).toHaveAttribute('href', '/forschung/archiv');
   });
 
   it('shows the linked theme title for research contributions', async () => {
@@ -571,19 +577,23 @@ describe('ForschungPage', () => {
 describe('ForschungArchivPage', () => {
   beforeEach(() => vi.resetModules());
 
-  it('renders published research contributions in the member archive', async () => {
-    vi.doMock('next-auth', () => ({ getServerSession: vi.fn().mockResolvedValue({ user: { id: 'u1', name: 'Test', role: 'USER' } }) }));
-    vi.doMock('@/lib/auth', () => ({ authOptions: {} }));
+  it('renders only recent published research contributions in the public archive', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-05-16T12:00:00Z'));
     vi.doMock('@/lib/db', () => ({
-      getApprovedForschung: vi.fn().mockReturnValue([
-        { id: 'f1', userId: 'u1', authorName: 'Alice', title: 'Archiv-Beitrag', content: 'Inhalt', bibleReference: '', status: 'published', createdAt: '2024-01-01T00:00:00Z' },
+      getApprovedForschungFresh: vi.fn().mockResolvedValue([
+        { id: 'f1', userId: 'u1', authorName: 'Alice', title: 'Archiv-Beitrag', content: 'Inhalt', bibleReference: '', status: 'published', createdAt: '2026-05-14T00:00:00Z' },
+        { id: 'f2', userId: 'u2', authorName: 'Bob', title: 'Alter Beitrag', content: 'Alt', bibleReference: '', status: 'published', createdAt: '2024-01-01T00:00:00Z' },
       ]),
     }));
-    const { default: ForschungArchivPage } = await import('@/app/(user)/forschung/archiv/page');
+    const { default: ForschungArchivPage } = await import('@/app/(public)/forschung/archiv/page');
     const jsx = await ForschungArchivPage();
     render(React.createElement(React.Fragment, null, jsx));
     expect(screen.getByRole('heading', { name: /Archiv – Forschungsbeiträge/i, level: 1 })).toBeInTheDocument();
     expect(screen.getByText('Archiv-Beitrag')).toBeInTheDocument();
+    expect(screen.queryByText('Alter Beitrag')).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Aktuelle Beiträge/i })).toHaveAttribute('href', '/forschung');
+    vi.useRealTimers();
   });
 });
 

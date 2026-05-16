@@ -77,6 +77,8 @@ describe('SEO metadata', () => {
     });
     const publicDisallowRules = robots().rules.find((rule) => rule.userAgent === '*')?.disallow ?? [];
     expect(publicDisallowRules).not.toContain('/forschung');
+    expect(publicDisallowRules).not.toContain('/forschung/archiv');
+    expect(publicDisallowRules).not.toContain('/thesen/archiv');
     expect(publicDisallowRules).not.toContain('/videos');
   });
 
