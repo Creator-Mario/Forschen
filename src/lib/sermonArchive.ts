@@ -10,8 +10,12 @@ export type ArchivedSermon = {
   createdAt: string;
 };
 
+type CurrentSermonDocument = ArchivedSermon | null;
+
 const SERMON_ARCHIVE_FILENAME = 'sermon-history.json';
 const SERMON_ARCHIVE_FILE_PATH = path.join(process.cwd(), 'data', SERMON_ARCHIVE_FILENAME);
+const CURRENT_SERMON_FILENAME = 'daily-sermon.json';
+const CURRENT_SERMON_FILE_PATH = path.join(process.cwd(), 'data', CURRENT_SERMON_FILENAME);
 const SERMON_ARCHIVE_DIR = path.join(process.cwd(), 'data', 'sermons');
 export const SERMON_ARCHIVE_LIMIT = 50;
 const MIN_TITLE_LENGTH_FOR_SUBSTRING_CHECK = 12;
@@ -19,10 +23,6 @@ const STOP_WORDS = new Set([
   'der', 'die', 'das', 'ein', 'eine', 'und', 'oder', 'aber', 'nicht', 'doch', 'den', 'dem', 'des',
   'zu', 'zur', 'zum', 'im', 'in', 'am', 'an', 'auf', 'mit', 'für', 'von', 'ist', 'wir', 'du',
 ]);
-
-function getSermonFilePath(date: string): string {
-  return path.join(SERMON_ARCHIVE_DIR, `${date}.json`);
-}
 
 function normalizeTitle(title: string): string {
   return title
@@ -38,6 +38,37 @@ function titleTokens(title: string): string[] {
   return normalizeTitle(title)
     .split(' ')
     .filter((token) => token.length > 2 && !STOP_WORDS.has(token));
+}
+
+function isArchivedSermon(value: unknown): value is ArchivedSermon {
+  if (!value || typeof value !== 'object') return false;
+  const sermon = value as Record<string, unknown>;
+  return ['date', 'liturgicalDay', 'title', 'content', 'prayer', 'createdAt']
+    .every((key) => typeof sermon[key] === 'string');
+}
+
+function normalizeSermons(entries: unknown): ArchivedSermon[] {
+  if (!Array.isArray(entries)) return [];
+  return entries.filter(isArchivedSermon);
+}
+
+function sermonsEqual(left: ArchivedSermon[], right: ArchivedSermon[]): boolean {
+  return JSON.stringify(left) === JSON.stringify(right);
+}
+
+function mergeSermonSources(...sources: Array<ArchivedSermon[] | CurrentSermonDocument>): ArchivedSermon[] {
+  const merged = new Map<string, ArchivedSermon>();
+
+  for (const source of sources) {
+    if (!source) continue;
+    const sermons = Array.isArray(source) ? source : [source];
+    for (const sermon of sermons) {
+      if (!isArchivedSermon(sermon) || merged.has(sermon.date)) continue;
+      merged.set(sermon.date, sermon);
+    }
+  }
+
+  return keepLatestSermons([...merged.values()]);
 }
 
 export function areSermonTitlesSimilar(left: string, right: string): boolean {
@@ -85,7 +116,7 @@ async function readSermonFile(filePath: string): Promise<ArchivedSermon | null> 
 async function readStoredArchiveFromLocalFile(): Promise<ArchivedSermon[]> {
   try {
     const content = await fs.readFile(SERMON_ARCHIVE_FILE_PATH, 'utf-8');
-    return JSON.parse(content) as ArchivedSermon[];
+    return normalizeSermons(JSON.parse(content));
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       return [];
@@ -100,6 +131,25 @@ async function writeStoredArchiveToLocalFile(sermons: ArchivedSermon[]): Promise
   await fs.writeFile(SERMON_ARCHIVE_FILE_PATH, JSON.stringify(sermons, null, 2) + '\n', 'utf-8');
 }
 
+async function readCurrentSermonFromLocalFile(): Promise<CurrentSermonDocument> {
+  try {
+    const content = await fs.readFile(CURRENT_SERMON_FILE_PATH, 'utf-8');
+    const parsed = JSON.parse(content) as unknown;
+    return isArchivedSermon(parsed) ? parsed : null;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+async function writeCurrentSermonToLocalFile(sermon: CurrentSermonDocument): Promise<void> {
+  await fs.mkdir(path.dirname(CURRENT_SERMON_FILE_PATH), { recursive: true });
+  await fs.writeFile(CURRENT_SERMON_FILE_PATH, JSON.stringify(sermon, null, 2) + '\n', 'utf-8');
+}
+
 function keepLatestSermons(sermons: ArchivedSermon[]): ArchivedSermon[] {
   return [...sermons]
     .sort((left, right) => right.date.localeCompare(left.date))
@@ -111,7 +161,7 @@ async function readStoredArchive(): Promise<ArchivedSermon[]> {
   const sermons = Reflect.has(db, 'readStoredCollectionFresh')
     ? await db.readStoredCollectionFresh<ArchivedSermon>(SERMON_ARCHIVE_FILENAME)
     : await readStoredArchiveFromLocalFile();
-  return keepLatestSermons(sermons);
+  return keepLatestSermons(normalizeSermons(sermons));
 }
 
 async function writeStoredArchive(sermons: ArchivedSermon[]): Promise<void> {
@@ -122,6 +172,26 @@ async function writeStoredArchive(sermons: ArchivedSermon[]): Promise<void> {
   }
 
   await writeStoredArchiveToLocalFile(sermons);
+}
+
+export async function loadCurrentSermon(): Promise<CurrentSermonDocument> {
+  const db = await import('@/lib/db');
+  if (Reflect.has(db, 'readStoredDocumentFresh')) {
+    const sermon = await db.readStoredDocumentFresh<CurrentSermonDocument>(CURRENT_SERMON_FILENAME, null);
+    return isArchivedSermon(sermon) ? sermon : null;
+  }
+
+  return readCurrentSermonFromLocalFile();
+}
+
+export async function saveCurrentSermon(sermon: CurrentSermonDocument): Promise<void> {
+  const db = await import('@/lib/db');
+  if (Reflect.has(db, 'writeStoredDocument')) {
+    await db.writeStoredDocument(CURRENT_SERMON_FILENAME, sermon);
+    return;
+  }
+
+  await writeCurrentSermonToLocalFile(sermon);
 }
 
 async function readLegacyArchiveFromFiles(): Promise<ArchivedSermon[]> {
@@ -149,22 +219,23 @@ export async function saveSermon(sermon: ArchivedSermon): Promise<void> {
 }
 
 export async function loadSermon(date: string): Promise<ArchivedSermon | null> {
-  const sermons = await readStoredArchive();
-  if (sermons.length > 0) {
-    return sermons.find((sermon) => sermon.date === date) ?? null;
-  }
-
-  await ensureArchiveDirectory();
-  return readSermonFile(getSermonFilePath(date));
+  const sermons = await getAllSermons();
+  return sermons.find((sermon) => sermon.date === date) ?? null;
 }
 
 export async function getAllSermons(): Promise<ArchivedSermon[]> {
-  const sermons = await readStoredArchive();
-  if (sermons.length > 0) {
-    return sermons;
+  const [storedSermons, currentSermon, legacySermons] = await Promise.all([
+    readStoredArchive(),
+    loadCurrentSermon(),
+    readLegacyArchiveFromFiles(),
+  ]);
+  const mergedSermons = mergeSermonSources(storedSermons, currentSermon, legacySermons);
+
+  if (!sermonsEqual(storedSermons, mergedSermons)) {
+    await writeStoredArchive(mergedSermons);
   }
 
-  return readLegacyArchiveFromFiles();
+  return mergedSermons;
 }
 
 export async function getLatestSermons(limit: number): Promise<ArchivedSermon[]> {
