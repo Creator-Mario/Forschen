@@ -5,10 +5,61 @@ on:
     - cron: '0 4 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
+env:
+  SITE_URL: ${{ vars.SITE_URL || vars.EMAIL_LINK_BASE_URL || vars.NEXTAUTH_URL || 'https://www.flussdeslebens.live' }}
+
 jobs:
   warmup-sermon:
     runs-on: ubuntu-latest
-    permissions: {}
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
       - name: Trigger daily sermon generation
-        run: curl --fail --show-error --silent --max-time 60 https://www.flussdeslebens.live/api/generate-sermon
+        run: |
+          set -euo pipefail
+          response_file="$(mktemp)"
+
+          curl --fail --show-error --silent --max-time 60 \
+            "${SITE_URL%/}/api/generate-sermon" \
+            > "$response_file"
+
+          cat "$response_file"
+          mkdir -p data
+          cp "$response_file" data/daily-sermon.json
+
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          archive_path = Path("data/sermon-history.json")
+          current_path = Path("data/daily-sermon.json")
+
+          current = json.loads(current_path.read_text(encoding="utf-8"))
+          existing = json.loads(archive_path.read_text(encoding="utf-8")) if archive_path.exists() else []
+
+          if not isinstance(existing, list):
+            existing = []
+
+          merged = [current, *[entry for entry in existing if entry.get("date") != current.get("date")]]
+          merged.sort(key=lambda entry: entry.get("date", ""), reverse=True)
+          archive_path.write_text(json.dumps(merged[:50], ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          PY
+
+      - name: Commit persisted sermon data
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet -- data/daily-sermon.json data/sermon-history.json; then
+            echo "No sermon archive changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/daily-sermon.json data/sermon-history.json
+          git commit -m "data: update daily-sermon.json"
+          git push
