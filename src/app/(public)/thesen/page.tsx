@@ -38,14 +38,19 @@ export default function ThesenPage() {
           __html: serializeJsonLd(structuredData),
         }}
       />
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-blue-800 mb-2">Theologische Thesen und Glaubensfragen</h1>
-          <p className="text-gray-500">Veröffentlichte Kernaussagen, Diskussionsanstöße und zugespitzte Glaubensfragen aus der Gemeinschaft</p>
+       <div className="flex items-center justify-between mb-8">
+         <div>
+           <h1 className="text-3xl font-bold text-blue-800 mb-2">Theologische Thesen und Glaubensfragen</h1>
+           <p className="text-gray-500">Veröffentlichte Kernaussagen, Diskussionsanstöße und zugespitzte Glaubensfragen aus der Gemeinschaft</p>
+         </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link href="/thesen/archiv" className="border border-blue-200 text-blue-800 px-4 py-2 rounded-lg text-sm hover:bg-blue-50 transition-colors">
+            Zum Archiv
+          </Link>
+          <Link href="/thesen/neu" className="bg-blue-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
+            + These verfassen
+          </Link>
         </div>
-        <Link href="/thesen/neu" className="bg-blue-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
-          + These verfassen
-        </Link>
       </div>
 
       {thesen.length > 0 ? (

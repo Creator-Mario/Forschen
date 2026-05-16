@@ -10,7 +10,10 @@ export type ArchivedSermon = {
   createdAt: string;
 };
 
+const SERMON_ARCHIVE_FILENAME = 'sermon-history.json';
+const SERMON_ARCHIVE_FILE_PATH = path.join(process.cwd(), 'data', SERMON_ARCHIVE_FILENAME);
 const SERMON_ARCHIVE_DIR = path.join(process.cwd(), 'data', 'sermons');
+export const SERMON_ARCHIVE_LIMIT = 50;
 const MIN_TITLE_LENGTH_FOR_SUBSTRING_CHECK = 12;
 const STOP_WORDS = new Set([
   'der', 'die', 'das', 'ein', 'eine', 'und', 'oder', 'aber', 'nicht', 'doch', 'den', 'dem', 'des',
@@ -79,17 +82,49 @@ async function readSermonFile(filePath: string): Promise<ArchivedSermon | null> 
   }
 }
 
-export async function saveSermon(sermon: ArchivedSermon): Promise<void> {
-  await ensureArchiveDirectory();
-  await fs.writeFile(getSermonFilePath(sermon.date), JSON.stringify(sermon, null, 2) + '\n', 'utf-8');
+async function readStoredArchiveFromLocalFile(): Promise<ArchivedSermon[]> {
+  try {
+    const content = await fs.readFile(SERMON_ARCHIVE_FILE_PATH, 'utf-8');
+    return JSON.parse(content) as ArchivedSermon[];
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      return [];
+    }
+
+    throw error;
+  }
 }
 
-export async function loadSermon(date: string): Promise<ArchivedSermon | null> {
-  await ensureArchiveDirectory();
-  return readSermonFile(getSermonFilePath(date));
+async function writeStoredArchiveToLocalFile(sermons: ArchivedSermon[]): Promise<void> {
+  await fs.mkdir(path.dirname(SERMON_ARCHIVE_FILE_PATH), { recursive: true });
+  await fs.writeFile(SERMON_ARCHIVE_FILE_PATH, JSON.stringify(sermons, null, 2) + '\n', 'utf-8');
 }
 
-export async function getAllSermons(): Promise<ArchivedSermon[]> {
+function keepLatestSermons(sermons: ArchivedSermon[]): ArchivedSermon[] {
+  return [...sermons]
+    .sort((left, right) => right.date.localeCompare(left.date))
+    .slice(0, SERMON_ARCHIVE_LIMIT);
+}
+
+async function readStoredArchive(): Promise<ArchivedSermon[]> {
+  const db = await import('@/lib/db');
+  const sermons = Reflect.has(db, 'readStoredCollectionFresh')
+    ? await db.readStoredCollectionFresh<ArchivedSermon>(SERMON_ARCHIVE_FILENAME)
+    : await readStoredArchiveFromLocalFile();
+  return keepLatestSermons(sermons);
+}
+
+async function writeStoredArchive(sermons: ArchivedSermon[]): Promise<void> {
+  const db = await import('@/lib/db');
+  if (Reflect.has(db, 'writeStoredCollection')) {
+    await db.writeStoredCollection(SERMON_ARCHIVE_FILENAME, sermons);
+    return;
+  }
+
+  await writeStoredArchiveToLocalFile(sermons);
+}
+
+async function readLegacyArchiveFromFiles(): Promise<ArchivedSermon[]> {
   await ensureArchiveDirectory();
 
   const entries = await fs.readdir(SERMON_ARCHIVE_DIR, { withFileTypes: true });
@@ -99,9 +134,37 @@ export async function getAllSermons(): Promise<ArchivedSermon[]> {
       .map((entry) => readSermonFile(path.join(SERMON_ARCHIVE_DIR, entry.name))),
   );
 
-  return sermons
-    .filter((sermon): sermon is ArchivedSermon => sermon !== null)
+  return sermons.filter((sermon): sermon is ArchivedSermon => sermon !== null)
     .sort((left, right) => right.date.localeCompare(left.date));
+}
+
+export async function saveSermon(sermon: ArchivedSermon): Promise<void> {
+  const sermons = await getAllSermons();
+  const updated = keepLatestSermons([
+    sermon,
+    ...sermons.filter((entry) => entry.date !== sermon.date),
+  ]);
+
+  await writeStoredArchive(updated);
+}
+
+export async function loadSermon(date: string): Promise<ArchivedSermon | null> {
+  const sermons = await readStoredArchive();
+  if (sermons.length > 0) {
+    return sermons.find((sermon) => sermon.date === date) ?? null;
+  }
+
+  await ensureArchiveDirectory();
+  return readSermonFile(getSermonFilePath(date));
+}
+
+export async function getAllSermons(): Promise<ArchivedSermon[]> {
+  const sermons = await readStoredArchive();
+  if (sermons.length > 0) {
+    return sermons;
+  }
+
+  return readLegacyArchiveFromFiles();
 }
 
 export async function getLatestSermons(limit: number): Promise<ArchivedSermon[]> {
