@@ -132,4 +132,42 @@ describe('sermonArchive helpers', () => {
     await expect(getAllSermons()).resolves.toEqual([legacySermon]);
     await expect(loadSermon('2026-05-14')).resolves.toEqual(legacySermon);
   });
+
+  it('backfills the shared archive from the current sermon file and legacy files', async () => {
+    const { getAllSermons, loadSermon } = await import('@/lib/sermonArchive');
+    const currentSermon = {
+      date: '2026-05-16',
+      liturgicalDay: 'Samstag der 6. Osterwoche',
+      title: 'Die Kraft der Liebe',
+      content: 'Aktuelle Predigt',
+      prayer: 'Aktuelles Gebet',
+      createdAt: '2026-05-16T04:00:00.000Z',
+    };
+    const legacySermon = {
+      date: '2026-05-15',
+      liturgicalDay: 'Freitag der 6. Osterwoche',
+      title: 'Bleib in meiner Liebe',
+      content: 'Archivpredigt',
+      prayer: 'Archivgebet',
+      createdAt: '2026-05-15T04:00:00.000Z',
+    };
+
+    mkdirSync(path.join(tempDir, 'data', 'sermons'), { recursive: true });
+    writeFileSync(path.join(tempDir, 'data', 'daily-sermon.json'), JSON.stringify(currentSermon, null, 2), 'utf-8');
+    writeFileSync(
+      path.join(tempDir, 'data', 'sermons', '2026-05-15.json'),
+      JSON.stringify(legacySermon, null, 2),
+      'utf-8',
+    );
+
+    await expect(getAllSermons()).resolves.toEqual([currentSermon, legacySermon]);
+    await expect(loadSermon('2026-05-16')).resolves.toEqual(currentSermon);
+
+    const storedArchive = JSON.parse(
+      readFileSync(path.join(tempDir, 'data', 'sermon-history.json'), 'utf-8'),
+    ) as Array<{ date: string }>;
+    expect(storedArchive).toHaveLength(2);
+    expect(storedArchive[0]?.date).toBe('2026-05-16');
+    expect(storedArchive[1]?.date).toBe('2026-05-15');
+  });
 });

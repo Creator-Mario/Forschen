@@ -346,6 +346,7 @@ describe('GET /api/generate-sermon', () => {
 
   it('returns the archived sermon for the current publication date', async () => {
     vi.stubEnv('OPENAI_API_KEY', 'test-key');
+    const saveCurrentSermon = vi.fn();
     vi.doMock('@/lib/publishing', () => ({ getCurrentPublicationDate: vi.fn().mockReturnValue('2026-05-14') }));
     vi.doMock('@/lib/sermonArchive', () => ({
       loadSermon: vi.fn().mockResolvedValue({
@@ -357,6 +358,7 @@ describe('GET /api/generate-sermon', () => {
         createdAt: '2026-05-14T05:00:00.000Z',
       }),
       getAllSermons: vi.fn().mockResolvedValue([]),
+      saveCurrentSermon,
       saveSermon: vi.fn(),
       titleExists: vi.fn().mockResolvedValue(false),
     }));
@@ -381,10 +383,12 @@ describe('GET /api/generate-sermon', () => {
       fromCache: true,
       archived: true,
     });
+    expect(saveCurrentSermon).toHaveBeenCalledWith(expect.objectContaining({ date: '2026-05-14' }));
   });
 
   it('generates and archives a new sermon when nothing exists for today', async () => {
     vi.stubEnv('OPENAI_API_KEY', 'test-key');
+    const saveCurrentSermon = vi.fn();
     const saveSermon = vi.fn();
     const titleExists = vi.fn().mockResolvedValue(false);
     vi.doMock('@/lib/publishing', () => ({ getCurrentPublicationDate: vi.fn().mockReturnValue('2026-05-14') }));
@@ -400,6 +404,7 @@ describe('GET /api/generate-sermon', () => {
           createdAt: '2026-05-13T05:00:00.000Z',
         },
       ]),
+      saveCurrentSermon,
       saveSermon,
       titleExists,
     }));
@@ -439,6 +444,7 @@ describe('GET /api/generate-sermon', () => {
       archived: true,
     });
     expect(saveSermon).toHaveBeenCalledTimes(1);
+    expect(saveCurrentSermon).toHaveBeenCalledTimes(1);
     expect(titleExists).toHaveBeenCalledWith('Aufgefahren, aber nicht fort');
   });
 });

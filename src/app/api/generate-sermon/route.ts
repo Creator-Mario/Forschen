@@ -7,6 +7,7 @@ import {
   areSermonTitlesSimilar,
   getAllSermons,
   loadSermon,
+  saveCurrentSermon,
   saveSermon,
   titleExists,
   type ArchivedSermon,
@@ -167,6 +168,7 @@ async function getOrCreateDailySermon(): Promise<DailySermonResponse> {
 
   const archivedSermon = await loadSermon(publicationDate);
   if (archivedSermon) {
+    await saveCurrentSermon(archivedSermon);
     sermonCache = archivedSermon;
     return toApiResponse(archivedSermon, true);
   }
@@ -176,6 +178,7 @@ async function getOrCreateDailySermon(): Promise<DailySermonResponse> {
       const liturgicalDay = getLiturgicalDay(parseIsoDate(publicationDate));
       const sermon = await requestUniqueSermon(publicationDate, liturgicalDay);
       await saveSermon(sermon);
+      await saveCurrentSermon(sermon);
       sermonCache = sermon;
       return sermon;
     })();

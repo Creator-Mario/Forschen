@@ -14,7 +14,7 @@ const GITHUB_OWNER = process.env.GITHUB_OWNER || 'Creator-Mario';
 const GITHUB_REPO = process.env.GITHUB_REPO || 'Forschen';
 
 // In-memory overlay so writes are immediately visible within the current process instance.
-const memoryCache = new Map<string, unknown[]>();
+const memoryCache = new Map<string, unknown>();
 
 function isApprovedOrPublished<T extends { status?: string }>(entry: T): boolean {
   return entry.status === 'approved' || entry.status === 'published';
@@ -31,6 +31,13 @@ function readJsonFromLocalFile<T>(filename: string): T[] {
   return JSON.parse(content) as T[];
 }
 
+function readJsonDocumentFromLocalFile<T>(filename: string, fallback: T): T {
+  const filePath = path.join(DATA_DIR, filename);
+  if (!fs.existsSync(filePath)) return fallback;
+  const content = fs.readFileSync(filePath, 'utf-8');
+  return JSON.parse(content) as T;
+}
+
 function readJson<T>(filename: string): T[] {
   if (memoryCache.has(filename)) return memoryCache.get(filename) as T[];
   return readJsonFromLocalFile<T>(filename);
@@ -39,7 +46,7 @@ function readJson<T>(filename: string): T[] {
 async function readJsonFresh<T>(filename: string): Promise<T[]> {
   if (!shouldUseGithubBackedStorage()) {
     const parsed = readJsonFromLocalFile<T>(filename);
-    memoryCache.set(filename, parsed as unknown[]);
+    memoryCache.set(filename, parsed);
     return parsed;
   }
 
@@ -59,12 +66,45 @@ async function readJsonFresh<T>(filename: string): Promise<T[]> {
 
     const decoded = Buffer.from(data.content, 'base64').toString('utf-8');
     const parsed = JSON.parse(decoded) as T[];
-    memoryCache.set(filename, parsed as unknown[]);
+    memoryCache.set(filename, parsed);
     return parsed;
   } catch (error) {
     console.error(`[db] GitHub read failed for ${filename}; falling back to local data:`, error);
     const parsed = readJsonFromLocalFile<T>(filename);
-    memoryCache.set(filename, parsed as unknown[]);
+    memoryCache.set(filename, parsed);
+    return parsed;
+  }
+}
+
+async function readJsonDocumentFresh<T>(filename: string, fallback: T): Promise<T> {
+  if (!shouldUseGithubBackedStorage()) {
+    const parsed = readJsonDocumentFromLocalFile(filename, fallback);
+    memoryCache.set(filename, parsed);
+    return parsed;
+  }
+
+  try {
+    const { Octokit } = await import('@octokit/rest');
+    const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+    const { data } = await octokit.repos.getContent({
+      owner: GITHUB_OWNER,
+      repo: GITHUB_REPO,
+      path: `data/${filename}`,
+      ref: getGithubBranch(),
+    });
+
+    if (Array.isArray(data) || !('content' in data) || typeof data.content !== 'string') {
+      throw new Error(`Unexpected GitHub response format for ${filename}`);
+    }
+
+    const decoded = Buffer.from(data.content, 'base64').toString('utf-8');
+    const parsed = JSON.parse(decoded) as T;
+    memoryCache.set(filename, parsed);
+    return parsed;
+  } catch (error) {
+    console.error(`[db] GitHub read failed for ${filename}; falling back to local data:`, error);
+    const parsed = readJsonDocumentFromLocalFile(filename, fallback);
+    memoryCache.set(filename, parsed);
     return parsed;
   }
 }
@@ -95,7 +135,7 @@ function shouldUseGithubBackedStorage(): boolean {
 
 async function writeJson<T>(filename: string, data: T[]): Promise<void> {
   // Update in-memory cache so this process instance sees the change immediately.
-  memoryCache.set(filename, data as unknown[]);
+  memoryCache.set(filename, data);
 
   if (shouldUseGithubBackedStorage()) {
     // Production sync: commit data changes back to the GitHub repo via the API.
@@ -157,12 +197,78 @@ async function writeJson<T>(filename: string, data: T[]): Promise<void> {
   }
 }
 
+async function writeJsonDocument<T>(filename: string, data: T): Promise<void> {
+  memoryCache.set(filename, data);
+
+  if (shouldUseGithubBackedStorage()) {
+    const { Octokit } = await import('@octokit/rest');
+    const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+    const filePath = `data/${filename}`;
+    const encoded = Buffer.from(JSON.stringify(data, null, 2) + '\n', 'utf-8').toString('base64');
+
+    const MAX_RETRIES = 3;
+    let lastError: unknown;
+
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt += 1) {
+      try {
+        const { data: existing } = await octokit.repos.getContent({
+          owner: GITHUB_OWNER,
+          repo: GITHUB_REPO,
+          path: filePath,
+          ref: getGithubBranch(),
+        });
+        const sha =
+          !Array.isArray(existing) && 'sha' in existing
+            ? (existing.sha as string)
+            : undefined;
+
+        await octokit.repos.createOrUpdateFileContents({
+          owner: GITHUB_OWNER,
+          repo: GITHUB_REPO,
+          path: filePath,
+          branch: getGithubBranch(),
+          message: `data: update ${filename}`,
+          content: encoded,
+          sha,
+        });
+
+        return;
+      } catch (error) {
+        lastError = error;
+        const status = (error as { status?: number }).status;
+        if (status === 422 && attempt < MAX_RETRIES) {
+          await new Promise((resolve) => setTimeout(resolve, 200 * attempt));
+          continue;
+        }
+        break;
+      }
+    }
+
+    console.error(`[db] GitHub write failed for ${filename} after ${MAX_RETRIES} attempts:`, lastError);
+    throw new Error(
+      `Datenpersistenz fehlgeschlagen: ${filename}. ${lastError instanceof Error ? lastError.message : String(lastError)}`
+    );
+  }
+
+  const filePath = path.join(DATA_DIR, filename);
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + '\n', 'utf-8');
+}
+
 export async function readStoredCollectionFresh<T>(filename: string): Promise<T[]> {
   return readJsonFresh<T>(filename);
 }
 
 export async function writeStoredCollection<T>(filename: string, data: T[]): Promise<void> {
   await writeJson(filename, data);
+}
+
+export async function readStoredDocumentFresh<T>(filename: string, fallback: T): Promise<T> {
+  return readJsonDocumentFresh(filename, fallback);
+}
+
+export async function writeStoredDocument<T>(filename: string, data: T): Promise<void> {
+  await writeJsonDocument(filename, data);
 }
 
 // Users
