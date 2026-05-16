@@ -237,7 +237,7 @@ async function writeJsonDocument<T>(filename: string, data: T): Promise<void> {
         lastError = error;
         const status = (error as { status?: number }).status;
         if (status === 422 && attempt < MAX_RETRIES) {
-          await new Promise(resolve => setTimeout(resolve, 200 * attempt));
+          await new Promise((resolve) => setTimeout(resolve, 200 * attempt));
           continue;
         }
         break;
