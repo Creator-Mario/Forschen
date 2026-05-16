@@ -1,9 +1,10 @@
 'use client';
 
-import { signIn, getSession } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import { useState, FormEvent, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { waitForSessionAfterSignIn } from '@/lib/client-auth';
 import { getPostLoginRedirectPath } from '@/lib/request-routing';
 
 function LoginPageContent() {
@@ -27,7 +28,7 @@ function LoginPageContent() {
     if (result?.error) {
       setError('Anmeldung fehlgeschlagen. Bitte überprüfe deine Zugangsdaten.');
     } else {
-      const session = await getSession();
+      const session = await waitForSessionAfterSignIn();
       router.push(getPostLoginRedirectPath(session?.user?.role, searchParams.get('callbackUrl')));
     }
   }

@@ -3,7 +3,8 @@
 import { FormEvent, Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { getSession, signIn } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
+import { waitForSessionAfterSignIn } from '@/lib/client-auth';
 import { getPostLoginRedirectPath } from '@/lib/request-routing';
 
 function LoginFormCardContent() {
@@ -32,7 +33,7 @@ function LoginFormCardContent() {
       return;
     }
 
-    const session = await getSession();
+    const session = await waitForSessionAfterSignIn();
     router.push(getPostLoginRedirectPath(session?.user?.role, searchParams.get('callbackUrl')));
   }
 

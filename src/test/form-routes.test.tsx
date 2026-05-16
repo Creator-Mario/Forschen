@@ -17,6 +17,7 @@ const signOutMock = vi.fn();
 let currentSearchParams = new URLSearchParams();
 let currentSession: SessionState = { data: null, status: 'unauthenticated' };
 let currentGetSessionResult: { user: { role: 'USER' | 'ADMIN' } } | null = { user: { role: 'USER' } };
+let currentGetSessionResults: Array<{ user: { role: 'USER' | 'ADMIN' } } | null> = [];
 let currentTageswort: { id: string; date: string; verse: string; text: string; context: string; questions: string[]; published: boolean } | undefined;
 let approvedThesen: Array<{ id: string; title: string; content: string; authorName: string; createdAt: string }> = [];
 let approvedAktionen: Array<{ id: string; title: string; description: string; authorName: string; createdAt: string }> = [];
@@ -42,7 +43,13 @@ vi.mock('next-auth/react', () => ({
   useSession: () => currentSession,
   signIn: signInMock,
   signOut: signOutMock,
-  getSession: vi.fn().mockImplementation(async () => currentGetSessionResult),
+  getSession: vi.fn().mockImplementation(async () => {
+    if (currentGetSessionResults.length > 0) {
+      return currentGetSessionResults.shift() ?? null;
+    }
+
+    return currentGetSessionResult;
+  }),
   SessionProvider: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
 }));
 
@@ -123,6 +130,7 @@ beforeEach(() => {
   currentSearchParams = new URLSearchParams();
   currentSession = { data: null, status: 'unauthenticated' };
   currentGetSessionResult = { user: { role: 'USER' } };
+  currentGetSessionResults = [];
   currentTageswort = undefined;
   approvedThesen = [];
   approvedAktionen = [];
@@ -181,6 +189,22 @@ describe('public form entry routes', () => {
     await userEvent.click(screen.getByRole('button', { name: /^anmelden$/i }));
 
     await waitFor(() => expect(routerPush).toHaveBeenCalledWith('/mitglieder/vorstellungen'));
+  });
+
+  it('waits for the new session before returning members to the protected archive', async () => {
+    currentSearchParams = new URLSearchParams('callbackUrl=%2Farchiv');
+    signInMock.mockResolvedValue({ error: undefined });
+    currentGetSessionResult = { user: { role: 'USER' } };
+    currentGetSessionResults = [null, { user: { role: 'USER' } }];
+
+    const { default: LoginPage } = await import('@/app/(public)/login/page');
+    render(React.createElement(LoginPage));
+
+    await userEvent.type(screen.getByLabelText(/e-mail/i), 'alice@example.com');
+    await userEvent.type(screen.getByLabelText(/passwort/i), 'secret123');
+    await userEvent.click(screen.getByRole('button', { name: /^anmelden$/i }));
+
+    await waitFor(() => expect(routerPush).toHaveBeenCalledWith('/archiv'));
   });
 
   it('ignores unsafe callback URLs and falls back to the dashboard', async () => {
@@ -351,6 +375,22 @@ describe('public form entry routes', () => {
     currentSearchParams = new URLSearchParams('callbackUrl=%2Fadmin%2Fsystem');
     signInMock.mockResolvedValue({ error: undefined });
     currentGetSessionResult = { user: { role: 'ADMIN' } };
+
+    const { default: AdminLoginPage } = await import('@/app/(admin)/admin-login/page');
+    render(React.createElement(AdminLoginPage));
+
+    await userEvent.type(screen.getByLabelText(/e-mail/i), 'admin@example.com');
+    await userEvent.type(screen.getByLabelText(/passwort/i), 'secret123');
+    await userEvent.click(screen.getByRole('button', { name: /^anmelden$/i }));
+
+    await waitFor(() => expect(routerPush).toHaveBeenCalledWith('/admin/system'));
+  });
+
+  it('waits for the admin session before following the requested admin callback', async () => {
+    currentSearchParams = new URLSearchParams('callbackUrl=%2Fadmin%2Fsystem');
+    signInMock.mockResolvedValue({ error: undefined });
+    currentGetSessionResult = { user: { role: 'ADMIN' } };
+    currentGetSessionResults = [null, { user: { role: 'ADMIN' } }];
 
     const { default: AdminLoginPage } = await import('@/app/(admin)/admin-login/page');
     render(React.createElement(AdminLoginPage));
