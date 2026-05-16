@@ -136,12 +136,17 @@ describe('request routing helpers', () => {
   it('protects only the intended authenticated routes', () => {
     expect(isProtectedPath('/admin')).toBe(true);
     expect(isProtectedPath('/admin/system')).toBe(true);
+    expect(isProtectedPath('/archiv')).toBe(true);
+    expect(isProtectedPath('/archiv/2026-05-14')).toBe(true);
     expect(isProtectedPath('/chat')).toBe(true);
     expect(isProtectedPath('/chat/123')).toBe(true);
+    expect(isProtectedPath('/forschung/archiv')).toBe(true);
     expect(isProtectedPath('/fragestellungen')).toBe(true);
     expect(isProtectedPath('/fragestellungen/neu')).toBe(true);
     expect(isProtectedPath('/profil')).toBe(true);
+    expect(isProtectedPath('/thesen/archiv/')).toBe(true);
     expect(isProtectedPath('/admin-login')).toBe(false);
+    expect(isProtectedPath('/forschung')).toBe(false);
     expect(isProtectedPath('/vorstellung')).toBe(false);
     expect(isProtectedPath('/wochenthema')).toBe(false);
   });

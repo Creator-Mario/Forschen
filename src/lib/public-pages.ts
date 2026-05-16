@@ -29,8 +29,19 @@ export const publicIndexablePages = [
 
 type PublicIndexablePage = (typeof publicIndexablePages)[number];
 
+const privateArchiveHrefs = new Set([
+  '/archiv',
+  '/tageswort/archiv',
+  '/wochenthema/archiv',
+  '/thesen/archiv',
+  '/psalmen/archiv',
+  '/glauben-heute/archiv',
+  '/buchempfehlungen/archiv',
+  '/forschung/archiv',
+]);
+
 export async function getSitemapPublicPages(): Promise<readonly PublicIndexablePage[]> {
-  return publicIndexablePages;
+  return publicIndexablePages.filter((page) => !privateArchiveHrefs.has(page.href));
 }
 
 export const footerPageGroups = [

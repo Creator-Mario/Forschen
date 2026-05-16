@@ -64,9 +64,12 @@ describe('SEO metadata', () => {
           allow: '/',
           disallow: expect.arrayContaining([
             '/admin',
+            '/archiv',
             '/dashboard',
+            '/forschung/archiv',
             '/login',
             '/registrieren',
+            '/thesen/archiv',
             '/videos/hochladen',
             '/forschung/beitraege',
           ]),
@@ -77,8 +80,8 @@ describe('SEO metadata', () => {
     });
     const publicDisallowRules = robots().rules.find((rule) => rule.userAgent === '*')?.disallow ?? [];
     expect(publicDisallowRules).not.toContain('/forschung');
-    expect(publicDisallowRules).not.toContain('/forschung/archiv');
-    expect(publicDisallowRules).not.toContain('/thesen/archiv');
+    expect(publicDisallowRules).toContain('/forschung/archiv');
+    expect(publicDisallowRules).toContain('/thesen/archiv');
     expect(publicDisallowRules).not.toContain('/videos');
   });
 
@@ -150,7 +153,9 @@ describe('SEO metadata', () => {
     });
 
     expect(publicIndexablePages.some((page) => page.href === '/aktionen')).toBe(true);
-    expect(sitemapPages).toHaveLength(publicIndexablePages.length);
+    expect(sitemapPages).toHaveLength(
+      publicIndexablePages.filter((page) => !page.href.endsWith('/archiv') && page.href !== '/archiv').length,
+    );
     expect(sitemapPages.some((page) => page.href === '/aktionen')).toBe(true);
     expect(sitemapEntries).toHaveLength(sitemapPages.length);
     expect(sitemapEntries).toEqual(
@@ -165,6 +170,10 @@ describe('SEO metadata', () => {
       ),
     );
     expect(sitemapEntries.some((entry) => entry.url.includes('/amp/'))).toBe(false);
+    expect(sitemapEntries.some((entry) => entry.url.endsWith('/archiv'))).toBe(false);
+    expect(sitemapEntries.some((entry) => entry.url.endsWith('/tageswort/archiv'))).toBe(false);
+    expect(sitemapEntries.some((entry) => entry.url.endsWith('/thesen/archiv'))).toBe(false);
+    expect(sitemapEntries.some((entry) => entry.url.endsWith('/forschung/archiv'))).toBe(false);
     expect(sitemapEntries.some((entry) => entry.url.endsWith('/genealogie/login'))).toBe(true);
     expect(sitemapEntries.some((entry) => entry.url.endsWith('/genealogie/registrieren'))).toBe(true);
     // Die generische Formularroute bleibt aus der Sitemap raus, weil für Suchmaschinen die neue

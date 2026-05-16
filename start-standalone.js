@@ -35,12 +35,23 @@ function prepareStandaloneAssets(repoRoot) {
   ensureDirectoryAvailable(path.join(resolvedRepoRoot, '.next', 'static'), path.join(standaloneRoot, '.next', 'static'));
 }
 
+function getRequiredServerFiles(repoRoot) {
+  const resolvedRepoRoot = repoRoot ?? __dirname;
+  return JSON.parse(
+    fs.readFileSync(path.join(resolvedRepoRoot, '.next', 'required-server-files.json'), 'utf8'),
+  );
+}
+
+function applyStandaloneConfigEnv(repoRoot) {
+  process.env.__NEXT_PRIVATE_STANDALONE_CONFIG = JSON.stringify(
+    getRequiredServerFiles(repoRoot).config,
+  );
+}
+
 function getStandaloneServerOptions(repoRoot) {
   const resolvedRepoRoot = repoRoot ?? __dirname;
   const configuredHostname = (process.env.STANDALONE_HOSTNAME ?? '').trim() || undefined;
-  const requiredServerFiles = JSON.parse(
-    fs.readFileSync(path.join(resolvedRepoRoot, '.next', 'required-server-files.json'), 'utf8'),
-  );
+  const requiredServerFiles = getRequiredServerFiles(resolvedRepoRoot);
   const currentPort = parseInt(process.env.PORT, 10) || 3000;
   let keepAliveTimeout = parseInt(process.env.KEEP_ALIVE_TIMEOUT, 10);
 
@@ -66,6 +77,7 @@ function getStandaloneServerOptions(repoRoot) {
 function startStandaloneServer() {
   prepareStandaloneAssets(__dirname);
   process.env.NODE_ENV = 'production';
+  applyStandaloneConfigEnv(__dirname);
 
   const { startServer } = require('next/dist/server/lib/start-server');
   startServer(getStandaloneServerOptions(__dirname)).catch((error) => {
@@ -81,6 +93,7 @@ if (require.main === module) {
 module.exports = {
   ensureDirectoryAvailable,
   prepareStandaloneAssets,
+  applyStandaloneConfigEnv,
   getStandaloneServerOptions,
   startStandaloneServer,
 };
