@@ -1889,5 +1889,66 @@
         }
       ]
     }
+  },
+  {
+    "id": "generated-topic-2026-05-16",
+    "date": "2026-05-16",
+    "source": "ai",
+    "createdAt": "2026-05-16T01:46:33.887Z",
+    "promptVersion": "v3",
+    "psalm": {
+      "id": "psalm-2026-05-16",
+      "date": "2026-05-16",
+      "psalmReference": "Psalm 25",
+      "title": "Gott als Wegweiser",
+      "excerpt": "Leite mich in deiner Wahrheit und lehre mich.",
+      "summary": "Psalm 25 ist ein Gebet um Führung und Vergebung. Der Psalmist bittet Gott um Hilfe in Zeiten der Unsicherheit und erkennt die eigene Schwäche und Abhängigkeit von Gottes Weisheit.",
+      "significance": "Dieser Psalm betont die Bedeutung von Gottes Führung im Leben der Gläubigen. Er ermutigt dazu, sich auf Gott zu verlassen, besonders wenn man an Weggabelungen im Leben steht und eine Entscheidung treffen muss.",
+      "practice": "Eine praktische Anwendung könnte sein, täglich Zeit im Gebet zu verbringen und um Gottes Führung in persönlichen Entscheidungen zu bitten. Auch das Studium von Gottes Wort kann helfen, Klarheit und Richtung zu finden.",
+      "questions": [
+        "Wie erkenne ich Gottes Stimme in meinem Leben?",
+        "In welchen Bereichen meines Lebens benötige ich dringend Gottes Führung?",
+        "Gibt es Entscheidungen, die ich vor Gott bringen sollte?"
+      ]
+    },
+    "topic": {
+      "id": "glauben-heute-2026-05-16",
+      "date": "2026-05-16",
+      "title": "Gottes Führung im Alltag",
+      "headline": "Wege finden in der Unsicherheit",
+      "worldFocus": "In einer Welt, die von raschen Veränderungen und Unsicherheiten geprägt ist, suchen viele Menschen nach Orientierung. Christen sind aufgerufen, in solch herausfordernden Zeiten auf Gottes Führung zu vertrauen und diese auch mit anderen zu teilen.",
+      "faithPerspective": "Der Glaube an Gott als Wegweiser gibt uns Sicherheit und Frieden. In schwierigen Zeiten können wir uns auf die Verheißungen Gottes stützen und darauf vertrauen, dass Er uns den richtigen Weg zeigt.",
+      "discipleshipImpulse": "Jeder Christ sollte lernen, auf Gottes Führung zu hören und diese aktiv zu suchen. Dies kann durch Gebet, Bibelstudium und Gemeinschaft mit anderen Gläubigen geschehen, die uns ermutigen und unterstützen.",
+      "bibleVerses": [
+        "Sprüche 3,5-6",
+        "Jesaja 30,21",
+        "Jakobus 1,5"
+      ],
+      "questions": [
+        "Wie kann ich sicherstellen, dass ich auf dem richtigen Weg bin?",
+        "Was hindert mich daran, Gottes Führung zu akzeptieren?",
+        "Wie kann ich anderen helfen, Gottes Führung zu erkennen?"
+      ]
+    },
+    "books": {
+      "id": "buchliste-2026-05-16",
+      "date": "2026-05-16",
+      "topicTitle": "Führung und Entscheidung im Glauben",
+      "introduction": "Das richtige Verständnis von Gottes Führung ist entscheidend für ein erfülltes Glaubensleben. Diese Bücher bieten wertvolle Einsichten und praktische Anleitungen, um in Entscheidungsprozessen auf Gottes Stimme zu hören.",
+      "recommendations": [
+        {
+          "title": "Hören auf Gottes Stimme",
+          "author": "Samuel Schmid",
+          "description": "Dieses Buch gibt praktische Tipps und biblische Grundlagen, um die Stimme Gottes im Alltag zu erkennen und zu folgen.",
+          "relevance": "Es hilft den Lesern, ein tieferes Verständnis für die Führung Gottes zu entwickeln."
+        },
+        {
+          "title": "Entscheidungen im Glauben treffen",
+          "author": "Clara Müller",
+          "description": "Die Autorin beschreibt, wie man in unsicheren Zeiten weise Entscheidungen trifft und sich dabei auf Gott verlässt.",
+          "relevance": "Ein wertvolles Werk für jeden, der in seinem Glaubensweg Orientierung sucht."
+        }
+      ]
+    }
   }
 ]
