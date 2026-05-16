@@ -71,6 +71,7 @@ async function readJsonFresh<T>(filename: string): Promise<T[]> {
 
 function writeJsonToLocalFile<T>(filename: string, data: T[]): void {
   const filePath = path.join(DATA_DIR, filename);
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
 }
 
@@ -154,6 +155,14 @@ async function writeJson<T>(filename: string, data: T[]): Promise<void> {
     // Development: write directly to local filesystem.
     writeJsonToLocalFile(filename, data);
   }
+}
+
+export async function readStoredCollectionFresh<T>(filename: string): Promise<T[]> {
+  return readJsonFresh<T>(filename);
+}
+
+export async function writeStoredCollection<T>(filename: string, data: T[]): Promise<void> {
+  await writeJson(filename, data);
 }
 
 // Users
