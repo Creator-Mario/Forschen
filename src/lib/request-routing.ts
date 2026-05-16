@@ -23,6 +23,14 @@ const protectedPathPrefixes = [
   '/aktionen/neu',
   '/videos/hochladen',
   '/profil',
+  '/archiv',
+  '/tageswort/archiv',
+  '/wochenthema/archiv',
+  '/thesen/archiv',
+  '/psalmen/archiv',
+  '/glauben-heute/archiv',
+  '/buchempfehlungen/archiv',
+  '/forschung/archiv',
   '/admin',
 ] as const;
 
@@ -51,7 +59,10 @@ export function isAdminPath(pathname: string): boolean {
 }
 
 export function isProtectedPath(pathname: string): boolean {
-  return protectedPathPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+  const normalizedPathname = normalizePathname(pathname);
+  return protectedPathPrefixes.some(
+    (prefix) => normalizedPathname === prefix || normalizedPathname.startsWith(`${prefix}/`),
+  );
 }
 
 function normalizeSearch(search: string | null | undefined): string {

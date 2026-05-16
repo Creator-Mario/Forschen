@@ -11,6 +11,7 @@ afterEach(() => {
   while (tempDirs.length > 0) {
     fs.rmSync(tempDirs.pop()!, { recursive: true, force: true });
   }
+  delete process.env.__NEXT_PRIVATE_STANDALONE_CONFIG;
 });
 
 describe('start-standalone asset preparation', () => {
@@ -66,5 +67,33 @@ describe('start-standalone asset preparation', () => {
       },
     });
     expect(options.keepAliveTimeout).toBeUndefined();
+  });
+
+  it('publishes the standalone build config to suppress the Next.js start warning', async () => {
+    const repoRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'forschen-standalone-config-'));
+    tempDirs.push(repoRoot);
+
+    fs.mkdirSync(path.join(repoRoot, '.next'), { recursive: true });
+    fs.writeFileSync(
+      path.join(repoRoot, '.next', 'required-server-files.json'),
+      JSON.stringify({
+        config: {
+          distDir: '.next',
+          output: 'standalone',
+        },
+      }),
+    );
+
+    delete process.env.__NEXT_PRIVATE_STANDALONE_CONFIG;
+
+    const { applyStandaloneConfigEnv } = require('../../start-standalone.js');
+    applyStandaloneConfigEnv(repoRoot);
+
+    expect(process.env.__NEXT_PRIVATE_STANDALONE_CONFIG).toBe(
+      JSON.stringify({
+        distDir: '.next',
+        output: 'standalone',
+      }),
+    );
   });
 });
